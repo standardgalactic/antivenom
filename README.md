@@ -16,5 +16,15 @@ So, what have we learned? Your brain is an anxious little prediction engine, con
 
 Click [here](https://standardgalactic.github.io/antivenom/notes-on-active-inference) to find out if YOU are a victim of surprise-induced existential meltdown!
 
+# Conceptual Map
 
+![](mindmap.webp)
 
+<!-- 
+![](swipe_animation.gif)
+![](continuous_swipe_trace.gif)
+-->
+
+# Secret Message
+
+![](swipe_multiple_words_fixed.gif)
