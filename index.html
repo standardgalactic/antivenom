@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antivenom Repository Showcase</title>
+    <style>
+        @font-face {
+            src: url('fonts/Sga-Regular.woff2') format('woff2'),
+                 url('fonts/Sga-Regular.woff') format('woff'),
+                 url('fonts/Sga-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            font-family: 'Sga Regular';
+        }
+
+        body.sga {
+            font-family: 'Sga Regular';
+        }
+
+        body.sans-serif {
+            font-family: sans-serif;
+        }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            color: white;
+        }
+
+        .description {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border: 1px solid #fff;
+            z-index: 1000;
+        }
+
+        #controlPanel {
+            z-index: 1000;
+            max-width: 300px;
+            display: none;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        @media(min-width: 768px) {
+            #controlPanel {
+                display: block;
+            }
+        }
+
+        body.sga #controlPanel,
+        body.sga .description {
+            font-size: 14px;
+        }
+
+        body.sans-serif #controlPanel,
+        body.sans-serif .description {
+            font-size: 10px;
+        }
+    </style>
+</head>
+<body class="sga">
+    <div id="description" class="description" style="display: none;"></div>
+    <div id="controlPanel">
+        <p>Controls:</p>
+        <ul>
+            <li>C: Show/Hide Commands</li>
+            <li>W/S: Zoom in/out</li>
+            <li>A/D: Slide left/right</li>
+            <li>R/F: Slide up/down</li>
+            <li>Q/E: Rotate left/right</li>
+            <li>Z: Toggle Standard Galactic</li>
+            <li>X: Toggle Labels</li>
+            <li>G: Global Reset</li>
+            <li>+: Speed up expansion</li>
+            <li>-: Slow down expansion</li>
+            <li>F11: Toggle Fullscreen</li>
+        </ul>
+    </div>
+
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const files = [
+            { name: 'LICENSE', description: 'License file detailing terms and permissions for using content from the Antivenom repository.' },
+            { name: 'README.md', description: 'Comprehensive README providing an introduction and key information about the Antivenom repository.' },
+            { name: 'Solar-Powered Laptop.txt', description: 'Detailed overview of Lenovo’s Yoga Solar PC, featuring integrated solar panels enabling charging through direct sunlight.' },
+            { name: 'Synthetic Epistemology.mhtml', description: 'A web archive (MHTML format) exploring Synthetic Epistemology, covering its foundations and implications.' },
+            { name: 'The-Gospel-of-the-Blatherskite.pdf', description: 'PDF document titled "The Gospel of the Blatherskite," exploring philosophical or satirical themes.' },
+            { name: 'antivenom-overview.txt', description: 'An overview document providing insights into the Antivenom project, including key objectives and context.' },
+            { name: 'biomimetics-overview.txt', description: 'Detailed explanation of methods to improve energy efficiency, latency, and representation in bioimaging AI models, highlighting pruning, quantization, and knowledge distillation.' },
+            { name: 'biomimetics.mp3', description: 'Audio discussion covering biomimetics, likely addressing recent advances and research findings.' },
+            { name: 'biomimetics.txt', description: 'Summary of research on efficient bioimaging AI, emphasizing compression techniques for enhanced model efficiency.' },
+            { name: 'continuous_swipe_trace.gif', description: 'Animated GIF illustrating a continuous swipe trace, demonstrating gesture input methods.' },
+            { name: 'continuum-overview.txt', description: 'Exploration of Stephen L. Talbot’s critical analysis on technology’s impact on human relationships, agency, and responsibility.' },
+            { name: 'continuum.mp3', description: 'Audio content discussing themes from Stephen L. Talbot’s "The Future Does Not Compute," focusing on technological skepticism and human agency.' },
+            { name: 'continuum.txt', description: 'Written summary reflecting on Stephen L. Talbot’s perspectives on technology and human relational authenticity.' },
+            { name: 'get-summaries.sh', description: 'Shell script designed to automatically retrieve and summarize contents of specified files.' },
+            { name: 'iconoclasm-overview.txt', description: 'Explanation of ensemble methods in machine learning, emphasizing the benefits of combining multiple models to enhance prediction accuracy.' },
+            { name: 'iconoclasm.mp3', description: 'Audio exploration of iconoclastic themes, drawing parallels with historical or contemporary challenges to established norms.' },
+            { name: 'iconoclasm.txt', description: 'Discussion on iconoclasm in religious texts, particularly examining acts challenging established practices or institutions.' },
+            { name: 'intersubjectividad-overview.txt', description: 'Analysis of intersubjectivity collapse due to cognitive diversity introduced by artificial intelligence, highlighting societal impacts and ethical challenges.' },
+            { name: 'intersubjectividad.mp3', description: 'Audio covering intersubjectividad, specifically its philosophical and societal implications in the context of AI and cognitive diversity.' },
+            { name: 'intersubjectividad.txt', description: 'Detailed exploration of intersubjectividad collapse and its implications on social coherence due to diverse cognitive architectures.' },
+            { name: 'intersubjectividad-overview.txt', description: 'Summary of intersubjectividad collapse, discussing societal vulnerabilities arising from cognitive and experiential diversity.' },
+            { name: 'intersubjectividad.mp3', description: 'Audio analysis of intersubjectividad collapse, examining potential existential risks for societies.' },
+            { name: 'intersubjectividad.txt', description: 'Insightful examination of Pavel Pakniewski’s concept of intersubjectividad collapse and its possible catastrophic outcomes.' },
+            { name: 'introduction-to-spherepop-overview.txt', description: 'Introductory overview of Sphere Pop, an innovative 3D programming language designed for intuitive learning and visualization of complex coding concepts.' },
+            { name: 'introduction-to-spherepop.mp3', description: 'Audio introduction outlining Sphere Pop’s educational value, innovative programming approach, and visualization capabilities.' },
+            { name: 'introduction-to-spherepop.txt', description: 'Written introduction to Sphere Pop, explaining its core concepts, applications, and educational implications.' },
+            { name: 'mindmap.webp', description: 'Mindmap image visually representing conceptual relationships and key ideas discussed in the repository.' },
+            { name: 'multiscale-overview.txt', description: 'Discussion on AI common sense testing via the Winograd Schema Challenge, analyzing its effectiveness and limitations with current AI advancements.' },
+            { name: 'multiscale.mp3', description: 'Audio content addressing linguistic disambiguation tests and their relevance in evaluating AI’s common sense reasoning abilities.' },
+            { name: 'multiscale.txt', description: 'Written summary critiquing the Winograd Schema Challenge’s adequacy in assessing true common sense reasoning in AI systems.' },
+            { name: 'notes-on-active-inference', description: 'Notes elaborating on active inference, a framework for understanding decision-making and cognition in biological and artificial systems.' },
+            { name: 'relevance-relations-overview.txt', description: 'Examination of non-computational aspects of cognition and consciousness, emphasizing evolutionary dynamics and the limitations of algorithmic approaches.' },
+            { name: 'relevance-relations.mp3', description: 'Audio discussing naturalistic theories of cognition, particularly the concept of relevance realization in organisms.' },
+            { name: 'relevance-relations.txt', description: 'Written review explaining why cognition and agency cannot be fully captured by computational models, highlighting biological complexity and adaptivity.' },
+            { name: 'spacetime-agency-overview.txt', description: 'Analysis of analogies in human language versus computer languages, addressing truth, lying, and interpretative contexts.' },
+            { name: 'spacetime-agency.mp3', description: 'Audio discussion on language, analogies, and the role of deception in human communication versus computational systems.' },
+            { name: 'spacetime-agency.txt', description: 'Reflection on the differences between natural analogical thinking and symbolic language, including societal implications.' },
+            { name: 'spherepop-overview.txt', description: 'In-depth introduction to Sphere Pop’s revolutionary programming approach, leveraging immersive 3D visualizations for educational and interactive coding experiences.' },
+            { name: 'spherepop.mp3', description: 'Audio elaboration on Sphere Pop, covering practical applications, game-based learning, and interactive programming.' },
+            { name: 'spherepop.txt', description: 'Detailed description of Sphere Pop’s interactive features, educational potential, and conceptual foundations.' }
+        ];
+
+        let isUsingCustomFont = true;
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        context.font = "24px 'Sga Regular'";
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        let controlPanelTimeout;
+
+        function toggleControlPanel() {
+            const controlPanel = document.getElementById("controlPanel");
+            if (controlPanel.style.display === "none") {
+                controlPanel.style.display = "block";
+                resetControlPanelTimeout();
+            } else {
+                controlPanel.style.display = "none";
+                clearTimeout(controlPanelTimeout);
+            }
+        }
+
+        function resetControlPanelTimeout() {
+            clearTimeout(controlPanelTimeout);
+            controlPanelTimeout = setTimeout(() => {
+                document.getElementById("controlPanel").style.display = "none";
+            }, 10000);
+        }
+
+        function showDescription(file) {
+            const description = document.getElementById('description');
+            description.innerHTML = `<strong>${file.name}</strong><p>${file.description}</p>`;
+            description.style.display = 'block';
+        }
+
+        const controls = {
+            up: false, down: false,
+            left: false, right: false,
+            slideUp: false, slideDown: false,
+            rotateLeft: false, rotateRight: false,
+            showLabels: true,
+        };
+
+        let expansionSpeedMultiplier = 0.4;
+
+        let spaceship = {
+            x: canvas.width / 2,
+            y: canvas.height / 2,
+            z: 1,
+            speed: 0,
+            maxSpeed: 5,
+            rotation: 0,
+        };
+
+        let bubbles = [];
+        for (let i = 0; i < 100; i++) {
+            const file = files[Math.floor(Math.random() * files.length)];
+            bubbles.push({
+                x: Math.random() * canvas.width - spaceship.x,
+                y: Math.random() * canvas.height - spaceship.y,
+                z: Math.random() * canvas.width,
+                size: 3,
+                speed: Math.random() * 0.5 + 0.05,
+                file: file,
+                expandingCircle: {
+                    radius: 0,
+                    expansionSpeed: Math.random() * 0.15 + 0.05,
+                    isVisible: true,
+                    clicked: false,
+                },
+            });
+        }
+
+        function draw() {
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            bubbles.sort((a, b) => b.z - a.z);
+
+            for (let bubble of bubbles) {
+                let scale = canvas.width / bubble.z * spaceship.z;
+                let x = spaceship.x + (bubble.x * Math.cos(spaceship.rotation) - bubble.y * Math.sin(spaceship.rotation)) * scale;
+                let y = spaceship.y + (bubble.x * Math.sin(spaceship.rotation) + bubble.y * Math.cos(spaceship.rotation)) * scale;
+
+                let bubbleOpacity = 1;
+                let fadeFactor = (bubble.expandingCircle.radius * scale) / (Math.max(canvas.width, canvas.height) * 0.75);
+                bubbleOpacity = Math.max(0.2, 1 - fadeFactor);
+
+                context.globalAlpha = bubbleOpacity;
+
+                if (bubble.expandingCircle.isVisible) {
+                    context.strokeStyle = `rgba(255, 255, 255, ${bubbleOpacity * 0.3})`;
+                    context.lineWidth = 2;
+                    context.beginPath();
+                    context.arc(x, y, bubble.expandingCircle.radius * scale, 0, Math.PI * 2);
+                    context.stroke();
+                }
+
+                if (bubble.expandingCircle.clicked) {
+                    context.strokeStyle = `rgba(0, 255, 0, ${bubbleOpacity * 0.4})`;
+                    context.lineWidth = 2;
+                    context.beginPath();
+                    context.arc(x, y, bubble.expandingCircle.radius * scale, 0, Math.PI * 2);
+                    context.stroke();
+                }
+
+                context.fillStyle = `rgba(255, 255, 255, ${bubbleOpacity})`;
+                context.beginPath();
+                context.arc(x, y, bubble.size * scale, 0, Math.PI * 2);
+                context.fill();
+
+                if (scale > 0.1 && controls.showLabels) {
+                    context.fillStyle = `rgba(255, 255, 255, ${bubbleOpacity * 0.8})`;
+                    context.fillText(bubble.file.name, x, y - 10);
+                }
+
+                context.globalAlpha = 1;
+            }
+        }
+
+        function update() {
+            if (controls.up) {
+                spaceship.z *= 1.05;
+            }
+            if (controls.down) {
+                spaceship.z *= 0.95;
+            }
+            if (controls.left) {
+                spaceship.x -= spaceship.maxSpeed;
+            }
+            if (controls.right) {
+                spaceship.x += spaceship.maxSpeed;
+            }
+            if (controls.slideUp) {
+                spaceship.y -= spaceship.maxSpeed;
+            }
+            if (controls.slideDown) {
+                spaceship.y += spaceship.maxSpeed;
+            }
+            if (controls.rotateLeft) {
+                spaceship.rotation -= 0.05;
+            }
+            if (controls.rotateRight) {
+                spaceship.rotation += 0.05;
+            }
+
+            for (let bubble of bubbles) {
+                bubble.z -= spaceship.speed;
+                if (bubble.z < 0.5) {
+                    bubble.z = canvas.width;
+                }
+
+                if (bubble.expandingCircle.isVisible || bubble.expandingCircle.clicked) {
+                    bubble.expandingCircle.radius += bubble.expandingCircle.expansionSpeed * expansionSpeedMultiplier;
+                    if (bubble.expandingCircle.radius > Math.max(canvas.width, canvas.height) * 1.5) {
+                        bubble.expandingCircle.radius = 0;
+                        if(bubble.expandingCircle.clicked){
+                            bubble.expandingCircle.clicked = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        let keysPressed = {};
+        document.addEventListener("keydown", function(event) {
+            keysPressed[event.key] = true;
+
+            switch (event.key) {
+                case 'c':
+                    toggleControlPanel();
+                    resetControlPanelTimeout();
+                    break;
+                case 'w': controls.up = true; break;
+                case 's': controls.down = true; break;
+                case 'a': controls.right = true; break;
+                case 'd': controls.left = true; break;
+                case 'r': controls.slideDown = true; break;
+                case 'f': controls.slideUp = true; break;
+                case 'q': controls.rotateLeft = true; break;
+                case 'e': controls.rotateRight = true; break;
+                case 'x':
+                    controls.showLabels = !controls.showLabels;
+                    if (!controls.showLabels) {
+                        document.getElementById('description').style.display = 'none';
+                    }
+                    break;
+                case 'z':
+                    isUsingCustomFont = !isUsingCustomFont;
+                    if (isUsingCustomFont) {
+                        document.body.classList.add('sga');
+                        document.body.classList.remove('sans-serif');
+                        context.font = "24px 'Sga Regular'";
+                    } else {
+                        document.body.classList.add('sans-serif');
+                        document.body.classList.remove('sga');
+                        context.font = "18px sans-serif";
+                    }
+                    break;
+                case 'g': location.reload(); break;
+                case '+':
+                case '=':
+                    expansionSpeedMultiplier *= 1.1;
+                    break;
+                case '-': expansionSpeedMultiplier *= 0.9;
+                    break;
+            }
+        });
+
+        document.addEventListener("keyup", function(event) {
+            delete keysPressed[event.key];
+            switch (event.key) {
+                case 'w': controls.up = false; break;
+                case 's': controls.down = false; break;
+                case 'a': controls.right = false; break;
+                case 'd': controls.left = false; break;
+                case 'r': controls.slideDown = false; break;
+                case 'f': controls.slideUp = false; break;
+                case 'q': controls.rotateLeft = false; break;
+                case 'e': controls.rotateRight = false; break;
+            }
+        });
+
+        canvas.addEventListener('click', function(event) {
+            const description = document.getElementById('description');
+            if (description.style.display === 'block') {
+                description.style.display = 'none';
+            } else {
+                const rect = canvas.getBoundingClientRect();
+                const clickX = event.clientX - rect.left;
+                const clickY = event.clientY - rect.top;
+
+                for (let bubble of bubbles) {
+                    let scale = canvas.width / bubble.z * spaceship.z;
+                    let x = spaceship.x + (bubble.x * Math.cos(spaceship.rotation) - bubble.y * Math.sin(spaceship.rotation)) * scale;
+                    let y = spaceship.y + (bubble.x * Math.sin(spaceship.rotation) + bubble.y * Math.cos(spaceship.rotation)) * scale;
+                    let radius = bubble.size * scale;
+
+                    if (Math.hypot(clickX - x, clickY - y) <= radius) {
+                        showDescription(bubble.file);
+                        bubble.expandingCircle.clicked = true;
+                        bubble.expandingCircle.radius = 0;
+                        break;
+                    }
+                }
+            }
+        });
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        loop();
+    </script>
+</body>
+</html>
