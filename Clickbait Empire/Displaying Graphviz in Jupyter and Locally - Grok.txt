@@ -1,0 +1,334 @@
+Displaying Graphviz in Jupyter and Locally - Grok
+How do I modify this to output to the screen in jupyter notebook or just use the local directory? from graphviz import Digraph
+
+# Create a mind map-style ontology for Aspect Relegation Theory
+mind_map = Digraph(comment='Aspect Relegation Theory - Mind Map')
+
+# Root node
+mind_map.node('Root', 'Aspect Relegation Theory', shape='ellipse', style='filled', fillcolor='lightblue')
+
+# First layer
+mind_map.node('S2', 'System 2\n(Deliberate Thinking)')
+mind_map.node('S1', 'System 1\n(Intuition/Automaticity)')
+mind_map.edge('Root', 'S2')
+mind_map.edge('Root', 'S1')
+
+# Second layer under System 2
+mind_map.node('Repetition', 'Repetition & Practice')
+mind_map.node('Encoding', 'Multimodal Encoding')
+mind_map.edge('S2', 'Repetition')
+mind_map.edge('S2', 'Encoding')
+
+# Under encoding
+mind_map.node('Context', 'Contextual Feedback')
+mind_map.edge('Encoding', 'Context')
+
+# Transition node
+mind_map.node('Relegation', 'Aspect Relegation\n(Transition Phase)', shape='box', style='filled', fillcolor='lightgray')
+mind_map.edge('Repetition', 'Relegation')
+mind_map.edge('Context', 'Relegation')
+
+# Path to System 1
+mind_map.edge('Relegation', 'S1')
+
+# System 1 branches
+mind_map.node('Skill', 'Skill Fluency')
+mind_map.node('Habits', 'Automated Habits')
+mind_map.edge('S1', 'Skill')
+mind_map.edge('S1', 'Habits')
+
+mind_map.render('/mnt/data/aspect_relegation_mindmap', format='png', cleanup=False)
+'/mnt/data/aspect_relegation_mindmap.png'
+I'll show you two ways to modify this code: one to display directly in Jupyter Notebook and another to save to the local directory.
+For Jupyter Notebook display:
+python
+Collapse
+Wrap
+Copy
+from
+graphviz
+import
+Digraph
+from
+IPython.display
+import
+display, Image
+# Add this import
+# Create a mind map-style ontology for Aspect Relegation Theory
+mind_map = Digraph(comment=
+'Aspect Relegation Theory - Mind Map'
+)
+# [Your existing node and edge definitions remain the same]
+mind_map.node(
+'Root'
+,
+'Aspect Relegation Theory'
+, shape=
+'ellipse'
+, style=
+'filled'
+, fillcolor=
+'lightblue'
+)
+mind_map.node(
+'S2'
+,
+'System 2\n(Deliberate Thinking)'
+)
+mind_map.node(
+'S1'
+,
+'System 1\n(Intuition/Automaticity)'
+)
+mind_map.edge(
+'Root'
+,
+'S2'
+)
+mind_map.edge(
+'Root'
+,
+'S1'
+)
+mind_map.node(
+'Repetition'
+,
+'Repetition & Practice'
+)
+mind_map.node(
+'Encoding'
+,
+'Multimodal Encoding'
+)
+mind_map.edge(
+'S2'
+,
+'Repetition'
+)
+mind_map.edge(
+'S2'
+,
+'Encoding'
+)
+mind_map.node(
+'Context'
+,
+'Contextual Feedback'
+)
+mind_map.edge(
+'Encoding'
+,
+'Context'
+)
+mind_map.node(
+'Relegation'
+,
+'Aspect Relegation\n(Transition Phase)'
+, shape=
+'box'
+, style=
+'filled'
+, fillcolor=
+'lightgray'
+)
+mind_map.edge(
+'Repetition'
+,
+'Relegation'
+)
+mind_map.edge(
+'Context'
+,
+'Relegation'
+)
+mind_map.edge(
+'Relegation'
+,
+'S1'
+)
+mind_map.node(
+'Skill'
+,
+'Skill Fluency'
+)
+mind_map.node(
+'Habits'
+,
+'Automated Habits'
+)
+mind_map.edge(
+'S1'
+,
+'Skill'
+)
+mind_map.edge(
+'S1'
+,
+'Habits'
+)
+# Instead of render to file, use this to display in notebook
+display(Image(mind_map.render(
+format
+=
+'png'
+, cleanup=
+True
+)))
+For saving to local directory (current working directory):
+python
+Collapse
+Wrap
+Copy
+from
+graphviz
+import
+Digraph
+# Create a mind map-style ontology for Aspect Relegation Theory
+mind_map = Digraph(comment=
+'Aspect Relegation Theory - Mind Map'
+)
+# [Your existing node and edge definitions remain the same]
+mind_map.node(
+'Root'
+,
+'Aspect Relegation Theory'
+, shape=
+'ellipse'
+, style=
+'filled'
+, fillcolor=
+'lightblue'
+)
+mind_map.node(
+'S2'
+,
+'System 2\n(Deliberate Thinking)'
+)
+mind_map.node(
+'S1'
+,
+'System 1\n(Intuition/Automaticity)'
+)
+mind_map.edge(
+'Root'
+,
+'S2'
+)
+mind_map.edge(
+'Root'
+,
+'S1'
+)
+mind_map.node(
+'Repetition'
+,
+'Repetition & Practice'
+)
+mind_map.node(
+'Encoding'
+,
+'Multimodal Encoding'
+)
+mind_map.edge(
+'S2'
+,
+'Repetition'
+)
+mind_map.edge(
+'S2'
+,
+'Encoding'
+)
+mind_map.node(
+'Context'
+,
+'Contextual Feedback'
+)
+mind_map.edge(
+'Encoding'
+,
+'Context'
+)
+mind_map.node(
+'Relegation'
+,
+'Aspect Relegation\n(Transition Phase)'
+, shape=
+'box'
+, style=
+'filled'
+, fillcolor=
+'lightgray'
+)
+mind_map.edge(
+'Repetition'
+,
+'Relegation'
+)
+mind_map.edge(
+'Context'
+,
+'Relegation'
+)
+mind_map.edge(
+'Relegation'
+,
+'S1'
+)
+mind_map.node(
+'Skill'
+,
+'Skill Fluency'
+)
+mind_map.node(
+'Habits'
+,
+'Automated Habits'
+)
+mind_map.edge(
+'S1'
+,
+'Skill'
+)
+mind_map.edge(
+'S1'
+,
+'Habits'
+)
+# Save to current working directory
+mind_map.render(
+'aspect_relegation_mindmap'
+,
+format
+=
+'png'
+, cleanup=
+False
+)
+# This will create 'aspect_relegation_mindmap.png' in your current directory
+Key changes explained:
+Jupyter Notebook version:
+Added
+IPython.display
+import
+Used
+display(Image())
+to show the output directly in the notebook
+cleanup=True
+removes temporary files after rendering
+Local directory version:
+Removed the
+/mnt/data/
+path prefix
+File will be saved in your current working directory
+You can check your current directory in Python using
+import os; print(os.getcwd())
+Both versions will work assuming you have Graphviz installed correctly. Choose the one that matches your needs:
+Use the first version if you're working in Jupyter and want to see the output immediately
+Use the second version if you want to save the file locally and access it later
+Note: Make sure you have Graphviz installed on your system (
+pip install graphviz
+and the actual Graphviz software) for either version to work.
+How can Grok help?
+Grok 3
+

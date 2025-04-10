@@ -1,0 +1,4985 @@
+Random Walk Simulation in Blender - Grok
+import bpy
+import random
+import math
+from mathutils import Vector
+
+# ---------- Clear the Scene ----------
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+
+# ---------- Import Your Custom Object ----------
+# Specify the full path to your .obj file.
+obj_path = r"C:\Users\Mechachleopteryx\OneDrive\Documents\GitHub\Centerfuge\tetraorthodrome.obj"
+bpy.ops.import_scene.obj(filepath=obj_path)
+
+# Assume the imported object is the first selected object.
+imported_objs = bpy.context.selected_objects
+base_obj = imported_objs[0]
+base_obj.name = "TetraorthodromeBase"
+# Scale it down for the simulation.
+base_obj.scale = (0.05, 0.05, 0.05)
+# Hide the base so only the copies are visible.
+base_obj.hide_viewport = True
+base_obj.hide_render = True
+
+# ---------- Create Copies and Place Them Randomly ----------
+count = 1000
+bounds = 20  # The range for random positions on each axis.
+copies = []  # We'll store our copies here for easy updating later.
+
+# Use the current scene's main collection.
+scene_collection = bpy.context.scene.collection
+
+for i in range(count):
+    # Create a linked duplicate so that all copies share the same mesh data.
+    new_obj = base_obj.copy()
+    new_obj.data = base_obj.data
+    new_obj.name = f"TetraCopy_{i}"
+    new_obj.location = Vector((random.uniform(-bounds, bounds),
+                               random.uniform(-bounds, bounds),
+                               random.uniform(-bounds, bounds)))
+    new_obj.rotation_euler = (random.random() * 2 * math.pi,
+                              random.random() * 2 * math.pi,
+                              random.random() * 2 * math.pi)
+    # Initialize a custom property to store velocity (as a list of 3 floats).
+    new_obj["vel"] = [random.uniform(-0.1, 0.1) for _ in range(3)]
+    scene_collection.objects.link(new_obj)
+    copies.append(new_obj)
+
+# ---------- Define Global Motion Parameters ----------
+random_factor = 0.05       # Magnitude of random motion added each frame.
+attractor = Vector((0, 0, 0))  # The attractor point (here, the origin).
+attractor_factor = 0.001   # Strength of the attractor force.
+damping = 0.99             # Damping factor to gradually slow down motion.
+dt = 1                     # Time step (per frame).
+
+# ---------- Define a Frame Change Handler ----------
+def update_objects(scene):
+    for obj in copies:
+        # Get the current velocity (stored as a custom property).
+        vel = Vector(obj["vel"])
+        pos = obj.location.copy()
+        
+        # Random walk component.
+        random_delta = Vector((random.uniform(-random_factor, random_factor),
+                               random.uniform(-random_factor, random_factor),
+                               random.uniform(-random_factor, random_factor)))
+        
+        # Compute the attractor force pulling toward the origin.
+        attractor_force = (attractor - pos) * attractor_factor
+        
+        # Update velocity: add random walk and attractor force then apply damping.
+        vel = (vel + random_delta + attractor_force) * damping
+        
+        # Bounce off boundaries: if an axis is beyond the bounds, reverse that velocity component.
+        for i in range(3):
+            if pos[i] < -bounds or pos[i] > bounds:
+                vel[i] = -vel[i]
+        
+        # Update position.
+        obj.location = pos + vel * dt
+        
+        # Add a bit of spin: rotate slightly around the Z axis.
+        obj.rotation_euler.rotate_axis("Z", 0.1)
+        
+        # Store the updated velocity back into the custom property.
+        obj["vel"] = [vel.x, vel.y, vel.z]
+
+# Remove any previously registered handler named 'update_objects' to avoid duplicates.
+for handler in bpy.app.handlers.frame_change_post:
+    if handler.__name__ == "update_objects":
+        bpy.app.handlers.frame_change_post.remove(handler)
+
+# Register our handler so it runs on every frame change.
+bpy.app.handlers.frame_change_post.append(update_objects)
+
+# ---------- Set the Scene Timeline ----------
+scene = bpy.context.scene
+scene.frame_start = 1
+scene.frame_end = 250
+
+print("Setup complete. Press Play to see the random walk simulation!")
+
+let's simplify this since it isn't working. instead of importing an object we will just use a sphere and use that to do the simulation and animation. Add a camera and a flight path
+Here's a simplified version of your Blender script using spheres instead of an imported object, with a camera and a basic flight path added:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+from
+mathutils
+import
+Vector
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Base Sphere ----------
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+0.1
+, location=(
+0
+,
+0
+,
+0
+))
+base_obj = bpy.context.active_object
+base_obj.name =
+"SphereBase"
+base_obj.hide_viewport =
+True
+base_obj.hide_render =
+True
+# ---------- Create Copies and Place Them Randomly ----------
+count =
+500
+# Reduced count for better performance
+bounds =
+10
+# Smaller bounds for visibility
+copies = []
+scene_collection = bpy.context.scene.collection
+for
+i
+in
+range
+(count):
+new_obj = base_obj.copy()
+    new_obj.data = base_obj.data
+new_obj.name =
+f"SphereCopy_
+{i}
+"
+new_obj.location = Vector((random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds)))
+new_obj[
+"vel"
+] = [random.uniform(-
+0.05
+,
+0.05
+)
+for
+_
+in
+range
+(
+3
+)]
+scene_collection.objects.link(new_obj)
+    copies.append(new_obj)
+# ---------- Define Motion Parameters ----------
+random_factor =
+0.02
+attractor = Vector((
+0
+,
+0
+,
+0
+))
+attractor_factor =
+0.002
+damping =
+0.98
+dt =
+1
+# ---------- Frame Change Handler ----------
+def
+update_objects
+(
+scene
+):
+for
+obj
+in
+copies:
+vel = Vector(obj[
+"vel"
+])
+pos = obj.location.copy()
+        
+        random_delta = Vector((random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor)))
+        
+        attractor_force = (attractor - pos) * attractor_factor
+        vel = (vel + random_delta + attractor_force) * damping
+for
+i
+in
+range
+(
+3
+):
+if
+pos[i] < -bounds
+or
+pos[i] > bounds:
+vel[i] = -vel[i]
+        
+        obj.location = pos + vel * dt
+obj[
+"vel"
+] = [vel.x, vel.y, vel.z]
+# Clear and register handler
+for
+handler
+in
+bpy.app.handlers.frame_change_post:
+if
+handler.__name__ ==
+"update_objects"
+:
+bpy.app.handlers.frame_change_post.remove(handler)
+bpy.app.handlers.frame_change_post.append(update_objects)
+# ---------- Add Camera with Simple Flight Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+15
+, -
+15
+,
+10
+))
+camera = bpy.context.active_object
+camera.name =
+"FlightCamera"
+# Point camera towards center
+bpy.ops.
+object
+.empty_add(location=(
+0
+,
+0
+,
+0
+))
+target = bpy.context.active_object
+target.name =
+"CameraTarget"
+constraint = camera.constraints.new(
+type
+=
+'TRACK_TO'
+)
+constraint.target = target
+constraint.track_axis =
+'TRACK_NEGATIVE_Z'
+constraint.up_axis =
+'UP_Y'
+# Animate camera in a circular path
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Keyframe camera animation
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+50
+):
+# Keyframe every 50 frames
+angle = (frame /
+250
+) *
+2
+* math.pi
+camera.location = (math.cos(angle) *
+15
+, math.sin(angle) *
+15
+,
+5
++ math.sin(angle *
+2
+) *
+2
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# ---------- Add Basic Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+10
+))
+light = bpy.context.active_object
+light.data.energy =
+5
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'CYCLES'
+# or 'BLENDER_EEVEE' for faster rendering
+print
+(
+"Setup complete. Press Play to see the simulation with camera flight!"
+)
+Key Changes and Simplifications:
+Sphere Instead of Imported Object
+: Replaced the imported
+.obj
+with a simple UV sphere, scaled down to 0.1 radius.
+Reduced Complexity
+: Lowered the number of copies (
+count = 500
+) and bounds (
+bounds = 10
+) for better performance and visibility.
+Camera Addition
+: Added a camera with a circular flight path around the scene, tracking the origin (using an empty as a target). The camera moves in a circle with slight vertical oscillation.
+Lighting
+: Added a basic sun light for visibility.
+Simplified Motion
+: Kept the random walk and attractor logic but removed rotation to reduce complexity.
+Render Settings
+: Set a basic 1080p resolution and defaulted to Cycles (you can switch to Eevee for faster previews).
+How to Use:
+Paste this into Blender's Text Editor and run the script.
+Press
+Alt + A
+or the Play button in the timeline to see the animation.
+The camera will orbit the swarm of spheres as they move randomly and are gently pulled toward the center.
+Let me know if you'd like to tweak the camera path, add more features, or debug any issues!
+I wonder why I don't see any spheres maybe try 100 instead.
+You're right—sometimes with too many objects or if the scene isn't set up quite right, things might not display as expected. Let's simplify further, reduce the count to 100 spheres, and make a few adjustments to ensure visibility (like increasing the sphere size slightly and double-checking the viewport/render settings). Here's the revised script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+from
+mathutils
+import
+Vector
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Base Sphere ----------
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+0.2
+, location=(
+0
+,
+0
+,
+0
+))
+# Increased radius for visibility
+base_obj = bpy.context.active_object
+base_obj.name =
+"SphereBase"
+base_obj.hide_viewport =
+True
+base_obj.hide_render =
+True
+# ---------- Create Copies and Place Them Randomly ----------
+count =
+100
+# Reduced to 100 as suggested
+bounds =
+10
+copies = []
+scene_collection = bpy.context.scene.collection
+for
+i
+in
+range
+(count):
+new_obj = base_obj.copy()
+    new_obj.data = base_obj.data
+new_obj.name =
+f"SphereCopy_
+{i}
+"
+new_obj.location = Vector((random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds)))
+new_obj[
+"vel"
+] = [random.uniform(-
+0.05
+,
+0.05
+)
+for
+_
+in
+range
+(
+3
+)]
+scene_collection.objects.link(new_obj)
+    copies.append(new_obj)
+# ---------- Define Motion Parameters ----------
+random_factor =
+0.02
+attractor = Vector((
+0
+,
+0
+,
+0
+))
+attractor_factor =
+0.002
+damping =
+0.98
+dt =
+1
+# ---------- Frame Change Handler ----------
+def
+update_objects
+(
+scene
+):
+for
+obj
+in
+copies:
+vel = Vector(obj[
+"vel"
+])
+pos = obj.location.copy()
+        
+        random_delta = Vector((random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor)))
+        
+        attractor_force = (attractor - pos) * attractor_factor
+        vel = (vel + random_delta + attractor_force) * damping
+for
+i
+in
+range
+(
+3
+):
+if
+pos[i] < -bounds
+or
+pos[i] > bounds:
+vel[i] = -vel[i]
+        
+        obj.location = pos + vel * dt
+obj[
+"vel"
+] = [vel.x, vel.y, vel.z]
+# Clear and register handler
+for
+handler
+in
+bpy.app.handlers.frame_change_post:
+if
+handler.__name__ ==
+"update_objects"
+:
+bpy.app.handlers.frame_change_post.remove(handler)
+bpy.app.handlers.frame_change_post.append(update_objects)
+# ---------- Add Camera with Simple Flight Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+15
+, -
+15
+,
+10
+))
+camera = bpy.context.active_object
+camera.name =
+"FlightCamera"
+# Point camera towards center
+bpy.ops.
+object
+.empty_add(location=(
+0
+,
+0
+,
+0
+))
+target = bpy.context.active_object
+target.name =
+"CameraTarget"
+constraint = camera.constraints.new(
+type
+=
+'TRACK_TO'
+)
+constraint.target = target
+constraint.track_axis =
+'TRACK_NEGATIVE_Z'
+constraint.up_axis =
+'UP_Y'
+# Animate camera in a circular path
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+50
+):
+angle = (frame /
+250
+) *
+2
+* math.pi
+camera.location = (math.cos(angle) *
+15
+, math.sin(angle) *
+15
+,
+5
++ math.sin(angle *
+2
+) *
+2
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# ---------- Add Basic Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+10
+))
+light = bpy.context.active_object
+light.data.energy =
+5
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+# Switched to Eevee for faster feedback
+# Ensure viewport is in a visible mode
+bpy.context.scene.camera = camera
+# Set the camera as active
+bpy.ops.view3d.view_camera()
+# Align viewport to camera (run this manually if needed)
+print
+(
+"Setup complete. Press Play (Alt+A) to see the simulation!"
+)
+Changes Made:
+Reduced Count
+: Lowered the number of spheres to 100 as you suggested.
+Increased Sphere Size
+: Bumped the radius from 0.1 to 0.2 so they're easier to see.
+Switched to Eevee
+: Changed the render engine to Eevee for faster viewport feedback (Cycles might hide objects until rendered).
+Camera Setup
+: Ensured the camera is set as the active camera for the scene and added a note about aligning the viewport.
+Viewport Check
+: Added a line to set the scene camera and a suggestion to manually align the viewport if needed (
+bpy.ops.view3d.view_camera()
+might need to be run separately in the 3D Viewport).
+Troubleshooting Tips:
+If You Still Don't See Spheres
+:
+Press
+Alt + A
+to play the animation—sometimes objects don't update until the frame changes.
+In the 3D Viewport, press
+Numpad 0
+to switch to the camera view and ensure you're looking through the camera.
+Check the Outliner (top-right panel) to confirm the
+SphereCopy_*
+objects exist and aren't hidden (eye icon should be open).
+Make sure your viewport shading is set to "Solid," "Material Preview," or "Rendered" mode (top-right icons in the 3D Viewport).
+Manual Viewport Fix
+: If the spheres still don't appear, select the camera in the Outliner, go to the 3D Viewport, and press
+Numpad 0
+to align the view.
+Run this script and let me know if you see the spheres now! If not, we can dig deeper into what might be going wrong.
+OK this works can we try scalling it put to 1000 with a bigger space? import bpy
+import random
+import math
+from mathutils import Vector
+
+# ---------- Clear the Scene ----------
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+
+# ---------- Create a Base Sphere ----------
+bpy.ops.mesh.primitive_uv_sphere_add(radius=0.2, location=(0, 0, 0))  # Increased radius for visibility
+base_obj = bpy.context.active_object
+base_obj.name = "SphereBase"
+# Hide the base object so only the copies are visible.
+base_obj.hide_viewport = True
+base_obj.hide_render = True
+
+# ---------- Create Copies and Place Them Randomly ----------
+count = 100  # Reduced to 100 as suggested
+bounds = 10
+copies = []
+scene_collection = bpy.context.scene.collection
+
+for i in range(count):
+    new_obj = base_obj.copy()
+    new_obj.data = base_obj.data
+    new_obj.name = f"SphereCopy_{i}"
+    new_obj.location = Vector((random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds)))
+    new_obj["vel"] = [random.uniform(-0.05, 0.05) for _ in range(3)]
+    new_obj.hide_viewport = False
+    new_obj.hide_render = False
+    scene_collection.objects.link(new_obj)
+    copies.append(new_obj)
+
+# ---------- Define Motion Parameters ----------
+random_factor = 0.02
+attractor = Vector((0, 0, 0))
+attractor_factor = 0.002
+damping = 0.98
+dt = 1
+
+# ---------- Frame Change Handler ----------
+def update_objects(scene):
+    for obj in copies:
+        vel = Vector(obj["vel"])
+        pos = obj.location.copy()
+        
+        random_delta = Vector((random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor)))
+        
+        attractor_force = (attractor - pos) * attractor_factor
+        vel = (vel + random_delta + attractor_force) * damping
+        
+        for i in range(3):
+            if pos[i] < -bounds or pos[i] > bounds:
+                vel[i] = -vel[i]
+        
+        obj.location = pos + vel * dt
+        obj["vel"] = [vel.x, vel.y, vel.z]
+
+# Clear and register handler
+for handler in bpy.app.handlers.frame_change_post:
+    if handler.__name__ == "update_objects":
+        bpy.app.handlers.frame_change_post.remove(handler)
+bpy.app.handlers.frame_change_post.append(update_objects)
+
+# ---------- Add Camera with Simple Flight Path ----------
+bpy.ops.object.camera_add(location=(15, -15, 10))
+camera = bpy.context.active_object
+camera.name = "FlightCamera"
+
+# Point camera towards center
+bpy.ops.object.empty_add(location=(0, 0, 0))
+target = bpy.context.active_object
+target.name = "CameraTarget"
+constraint = camera.constraints.new(type='TRACK_TO')
+constraint.target = target
+constraint.track_axis = 'TRACK_NEGATIVE_Z'
+constraint.up_axis = 'UP_Y'
+
+# Animate camera in a circular path
+scene = bpy.context.scene
+scene.frame_start = 1
+scene.frame_end = 250
+
+for frame in range(1, 251, 50):
+    angle = (frame / 250) * 2 * math.pi
+    camera.location = (math.cos(angle) * 15, math.sin(angle) * 15, 5 + math.sin(angle * 2) * 2)
+    camera.keyframe_insert(data_path="location", frame=frame)
+
+# ---------- Add Basic Lighting ----------
+bpy.ops.object.light_add(type='SUN', location=(0, 0, 10))
+light = bpy.context.active_object
+light.data.energy = 5
+
+# ---------- Set Render Settings ----------
+scene.render.resolution_x = 1920
+scene.render.resolution_y = 1080
+scene.render.engine = 'BLENDER_EEVEE'  # Switched to Eevee for faster feedback
+
+# Ensure viewport is in a visible mode
+bpy.context.scene.camera = camera  # Set the camera as active
+bpy.ops.view3d.view_camera()  # Align viewport to camera (run this manually if needed)
+
+print("Setup complete. Press Play (Alt+A) to see the simulation!")
+Glad it's working now! Let's scale it up to 1000 spheres with a bigger space. We'll increase the
+bounds
+to 50 (so the space is -50 to 50 on each axis), adjust the camera distance to capture the larger area, and tweak a few parameters to keep it manageable. Here's the updated script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+from
+mathutils
+import
+Vector
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Base Sphere ----------
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+0.2
+, location=(
+0
+,
+0
+,
+0
+))
+base_obj = bpy.context.active_object
+base_obj.name =
+"SphereBase"
+base_obj.hide_viewport =
+True
+base_obj.hide_render =
+True
+# ---------- Create Copies and Place Them Randomly ----------
+count =
+1000
+# Scaled up to 1000
+bounds =
+50
+# Increased bounds for a bigger space
+copies = []
+scene_collection = bpy.context.scene.collection
+for
+i
+in
+range
+(count):
+new_obj = base_obj.copy()
+    new_obj.data = base_obj.data
+new_obj.name =
+f"SphereCopy_
+{i}
+"
+new_obj.location = Vector((random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds),
+                              random.uniform(-bounds, bounds)))
+new_obj[
+"vel"
+] = [random.uniform(-
+0.05
+,
+0.05
+)
+for
+_
+in
+range
+(
+3
+)]
+new_obj.hide_viewport =
+False
+new_obj.hide_render =
+False
+scene_collection.objects.link(new_obj)
+    copies.append(new_obj)
+# ---------- Define Motion Parameters ----------
+random_factor =
+0.02
+attractor = Vector((
+0
+,
+0
+,
+0
+))
+attractor_factor =
+0.002
+damping =
+0.98
+dt =
+1
+# ---------- Frame Change Handler ----------
+def
+update_objects
+(
+scene
+):
+for
+obj
+in
+copies:
+vel = Vector(obj[
+"vel"
+])
+pos = obj.location.copy()
+        
+        random_delta = Vector((random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor),
+                              random.uniform(-random_factor, random_factor)))
+        
+        attractor_force = (attractor - pos) * attractor_factor
+        vel = (vel + random_delta + attractor_force) * damping
+for
+i
+in
+range
+(
+3
+):
+if
+pos[i] < -bounds
+or
+pos[i] > bounds:
+vel[i] = -vel[i]
+        
+        obj.location = pos + vel * dt
+obj[
+"vel"
+] = [vel.x, vel.y, vel.z]
+# Clear and register handler
+for
+handler
+in
+bpy.app.handlers.frame_change_post:
+if
+handler.__name__ ==
+"update_objects"
+:
+bpy.app.handlers.frame_change_post.remove(handler)
+bpy.app.handlers.frame_change_post.append(update_objects)
+# ---------- Add Camera with Adjusted Flight Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+75
+, -
+75
+,
+50
+))
+# Moved farther out
+camera = bpy.context.active_object
+camera.name =
+"FlightCamera"
+# Point camera towards center
+bpy.ops.
+object
+.empty_add(location=(
+0
+,
+0
+,
+0
+))
+target = bpy.context.active_object
+target.name =
+"CameraTarget"
+constraint = camera.constraints.new(
+type
+=
+'TRACK_TO'
+)
+constraint.target = target
+constraint.track_axis =
+'TRACK_NEGATIVE_Z'
+constraint.up_axis =
+'UP_Y'
+# Animate camera in a wider circular path
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+50
+):
+angle = (frame /
+250
+) *
+2
+* math.pi
+camera.location = (math.cos(angle) *
+75
+, math.sin(angle) *
+75
+,
+25
++ math.sin(angle *
+2
+) *
+10
+)
+# Wider orbit
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# ---------- Add Basic Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+# Adjusted light position
+light = bpy.context.active_object
+light.data.energy =
+10
+# Increased energy for larger scene
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+# Ensure viewport is in a visible mode
+bpy.context.scene.camera = camera
+# Note: bpy.ops.view3d.view_camera() may need to be run manually in the 3D Viewport
+print
+(
+"Setup complete. Press Play (Alt+A) to see the scaled-up simulation!"
+)
+Changes Made:
+Increased Sphere Count
+: Set
+count = 1000
+as requested.
+Larger Space
+: Increased
+bounds
+to 50, making the simulation space 100 units wide in each dimension (-50 to 50).
+Adjusted Camera
+: Moved the camera farther out (initial position at
+(75, -75, 50)
+) and widened its orbit radius to 75 units, with a higher vertical range (25 ± 10) to capture the larger scene.
+Lighting
+: Moved the sun to
+(0, 0, 50)
+and increased its energy to 10 to better illuminate the bigger area.
+Kept Sphere Size
+: Left the radius at 0.2 since it was visible before, but you can increase it further (e.g., to 0.5) if they still feel too small.
+Notes:
+Performance
+: With 1000 objects, Blender might slow down, especially in Cycles. Eevee should handle it better for real-time playback.
+Viewport
+: After running the script, press
+Numpad 0
+in the 3D Viewport to switch to the camera view if you don't see the spheres immediately.
+Tweakable Parameters
+: If the spheres feel too sparse or crowded, adjust
+bounds
+or
+count
+. If they're hard to see, try increasing the radius in the
+primitive_uv_sphere_add
+call.
+Run this and let me know how it looks! If you want to adjust the scale further or add more features, just say the word.
+Ok try a different kind of animation altogether. Like a fractal landscape that shifts colors at different spots and height
+Let's switch gears and create a fractal landscape with shifting colors and heights! We'll use Blender's built-in
+Landscape
+generation (via the A.N.T. Landscape add-on, which you'll need to enable), apply a displacement based on a noise texture for fractal-like detail, and animate the colors and heights over time. Here's a script to achieve that:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Enable A.N.T. Landscape Add-on (if not already enabled) ----------
+# Note: You may need to enable this manually in Blender: Edit > Preferences > Add-ons > Search "A.N.T. Landscape"
+try
+:
+bpy.ops.wm.addon_enable(module=
+"add_mesh_landscape"
+)
+except
+:
+print
+(
+"Please enable the 'A.N.T. Landscape' add-on manually in Preferences."
+)
+# ---------- Create a Fractal Landscape ----------
+bpy.ops.mesh.landscape_add(
+hill_factor=
+2.0
+,
+# Base height variation
+roughness=
+0.7
+,
+# Fractal roughness
+size_x=
+50
+,
+# Width
+size_y=
+50
+,
+# Depth
+subdiv_level=
+8
+,
+# Higher subdivision for detail (256x256 grid)
+refresh=
+True
+)
+landscape = bpy.context.active_object
+landscape.name =
+"FractalLandscape"
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+# Clear default nodes
+nodes.clear()
+# Create necessary nodes
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+# Link nodes
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+# Configure noise for fractal-like variation
+noise.noise_dimensions =
+'3D'
+noise.scale =
+5.0
+noise.detail =
+16.0
+noise.roughness =
+0.6
+# Set up color ramp with animated colors
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+# Greenish
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+# Yellow
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+# Assign material to landscape
+landscape.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = landscape.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+# Create a new noise texture for displacement
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+# Animate displacement strength
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.0
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Point camera downward slightly
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+print
+(
+"Fractal landscape setup complete. Press Play (Alt+A) to see the animation!"
+)
+What This Does:
+Fractal Landscape
+: Uses the A.N.T. Landscape tool to generate a base terrain with fractal roughness. You'll need to enable the add-on in Blender's Preferences if it's not already active.
+Color Animation
+: A noise texture drives a color ramp, shifting between purple and orange-red, then to green and yellow, cycling over 250 frames.
+Height Animation
+: A displacement modifier with a noise texture animates the terrain height, rising and falling smoothly.
+Camera Flyover
+: The camera moves diagonally across the landscape from one corner to the opposite, giving a dynamic view.
+Lighting
+: A sun light ensures the scene is well-lit.
+Setup Notes:
+A.N.T. Landscape Add-on
+: If the
+bpy.ops.mesh.landscape_add()
+call fails, go to
+Edit > Preferences > Add-ons
+, search for "A.N.T. Landscape," enable it, and rerun the script.
+Viewport
+: Switch to camera view (
+Numpad 0
+) after running to see the flyover. Use "Material Preview" or "Rendered" shading mode to see the colors.
+Performance
+: The high subdivision (256x256) might slow things down; reduce
+subdiv_level
+to 7 or 6 if needed.
+Run this and let me know how it looks! If you want a different fractal style, color scheme, or camera motion, just tell me what to tweak.
+Please enable the 'A.N.T. Landscape' add-on manually in Preferences.
+Traceback (most recent call last):
+  File "\Text", line 17, in <module>
+  File "C:\Program Files\Blender Foundation\Blender 2.93\2.93\scripts\modules\bpy\ops.py", line 132, in __call__
+    ret = _op_call(self.idname_py(), None, kw)
+TypeError: Converting py args to operator properties: : keyword "hill_factor" unrecognized
+Error: Python script failed, check the message in the system console
+It looks like there's an issue with the
+bpy.ops.mesh.landscape_add()
+call because the parameters I used (like
+hill_factor
+) aren't recognized in your version of Blender (2.93). The A.N.T. Landscape add-on has evolved over time, and the parameters have changed between versions. Let's fix this by:
+Ensuring you enable the A.N.T. Landscape add-on manually (since the script can't do it for you).
+Using the correct parameters for Blender 2.93's version of the add-on.
+Step 1: Enable the Add-on Manually
+Open Blender 2.93.
+Go to
+Edit > Preferences > Add-ons
+.
+Search for "A.N.T. Landscape" (it's officially called "Add Mesh: A.N.T. Landscape").
+Check the box to enable it, then close the Preferences window.
+Step 2: Updated Script for Blender 2.93
+Here's a revised script with parameters compatible with Blender 2.93's A.N.T. Landscape and the same fractal landscape concept:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Fractal Landscape ----------
+# Parameters adjusted for Blender 2.93 A.N.T. Landscape
+bpy.ops.mesh.landscape_add(
+refresh=
+True
+,
+number_x=
+256
+,
+# X subdivisions
+number_y=
+256
+,
+# Y subdivisions
+mesh_size_x=
+50
+,
+# Width
+mesh_size_y=
+50
+,
+# Depth
+height=
+2.0
+,
+# Base height
+noise_type=
+'hetero_terrain'
+,
+# Fractal noise type
+basis_type=
+'PERLIN_ORIGINAL'
+,
+# Noise basis
+random_seed=
+42
+,
+# Consistent randomness
+noise_size=
+0.7
+,
+# Roughness
+subdivide_edges=
+True
+# Higher detail
+)
+landscape = bpy.context.active_object
+landscape.name =
+"FractalLandscape"
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+# Clear default nodes
+nodes.clear()
+# Create necessary nodes
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+# Link nodes
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+# Configure noise
+noise.noise_dimensions =
+'3D'
+noise.scale =
+5.0
+noise.detail =
+16.0
+noise.roughness =
+0.6
+# Set up color ramp with animated colors
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+# Greenish
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+# Yellow
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+# Assign material
+landscape.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = landscape.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+# Create noise texture for displacement
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+# Animate displacement strength
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.0
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Point camera downward slightly
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+print
+(
+"Fractal landscape setup complete for Blender 2.93. Press Play (Alt+A) to see the animation!"
+)
+Changes Made:
+Updated A.N.T. Parameters
+: Replaced
+hill_factor
+,
+roughness
+, etc., with 2.93-compatible options like
+height
+,
+noise_type='hetero_terrain'
+, and
+noise_size
+. These create a fractal-like landscape.
+Kept Core Features
+: The color-shifting material, height animation via displacement, and camera flyover remain intact.
+Version Note
+: This is tailored for Blender 2.93. If you're using a different version, let me know, and I'll adjust further.
+How to Run:
+Enable the A.N.T. Landscape add-on as described above.
+Paste this script into Blender's Text Editor and run it.
+Switch to camera view (
+Numpad 0
+) and press
+Alt + A
+to play the animation.
+Use "Material Preview" or "Rendered" shading mode to see the colors.
+If you still get errors or don't see the landscape, let me know the exact message, and we'll troubleshoot further! How does this look for your fractal vision?
+Traceback (most recent call last):
+  File "\Text", line 11, in <module>
+  File "C:\Program Files\Blender Foundation\Blender 2.93\2.93\scripts\modules\bpy\ops.py", line 132, in __call__
+    ret = _op_call(self.idname_py(), None, kw)
+TypeError: Converting py args to operator properties: : keyword "number_x" unrecognized
+Error: Python script failed, check the message in the system console
+2 / 2
+The error indicates that the
+number_x
+parameter (and likely others) isn't recognized by the A.N.T. Landscape add-on in Blender 2.93. This suggests the add-on's API in that version uses different property names than expected. Let's simplify the landscape creation by using minimal parameters that are more likely to work across versions, then build the rest of the animation on top of that.
+Revised Script for Blender 2.93
+I'll call
+bpy.ops.mesh.landscape_add()
+with fewer, safer parameters and rely on a subdivision modifier and displacement for fractal detail instead of overloading the landscape operator. Here's the updated version:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Basic Landscape ----------
+# Using minimal parameters for compatibility with Blender 2.93
+bpy.ops.mesh.landscape_add(
+noise_type=
+'hetero_terrain'
+,
+# Fractal-like noise
+height=
+2.0
+,
+# Base height
+noise_size=
+0.7
+,
+# Roughness
+random_seed=
+42
+# Consistent randomness
+)
+landscape = bpy.context.active_object
+landscape.name =
+"FractalLandscape"
+# Scale it up
+landscape.scale = (
+25
+,
+25
+,
+1
+)
+# 50x50 units wide, height unchanged
+# Add subdivision for detail
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'SUBSURF'
+)
+subsurf = landscape.modifiers[-
+1
+]
+subsurf.levels =
+6
+# 64x64 grid, adjust if too slow
+subsurf.render_levels =
+6
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+# Clear default nodes
+nodes.clear()
+# Create necessary nodes
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+# Link nodes
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+# Configure noise
+noise.noise_dimensions =
+'3D'
+noise.scale =
+5.0
+noise.detail =
+16.0
+noise.roughness =
+0.6
+# Set up color ramp with animated colors
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+# Greenish
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+# Yellow
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+# Assign material
+landscape.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = landscape.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+# Create noise texture for displacement
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+# Animate displacement strength
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.0
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Point camera downward slightly
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+print
+(
+"Fractal landscape setup complete for Blender 2.93. Press Play (Alt+A) to see the animation!"
+)
+Changes Made:
+Simplified Landscape Creation
+: Used only basic parameters (
+noise_type
+,
+height
+,
+noise_size
+,
+random_seed
+) that are more likely to work in Blender 2.93's A.N.T. Landscape. Removed
+number_x
+,
+mesh_size_x
+, etc., which caused the error.
+Scaling
+: Applied a scale of (25, 25, 1) to make the landscape 50x50 units wide.
+Subdivision Modifier
+: Added a Subdivision Surface modifier (level 6) to increase detail, replacing the need for high subdivisions in the landscape operator.
+Kept Animation
+: The color-shifting material, height displacement, and camera flyover remain unchanged.
+How to Run:
+Ensure the A.N.T. Landscape add-on is enabled (as described previously).
+Paste this script into the Text Editor in Blender 2.93 and run it.
+Switch to camera view (
+Numpad 0
+) and press
+Alt + A
+to see the animation.
+Use "Material Preview" or "Rendered" mode in the viewport to view the colors.
+Troubleshooting:
+If It Still Fails
+: If you get another error, please share the exact message. It's possible the A.N.T. Landscape version in 2.93 doesn't support some of these parameters either, and we might need to fall back to a plane with a noise-based displacement entirely.
+Performance
+: The subdivision level 6 creates a dense mesh; if it's too slow, reduce it to 5 or 4.
+Let me know if this works or if we need to adjust further! How's this fitting your fractal landscape idea so far?
+I didn't see a camera and got this error:
+
+Traceback (most recent call last):
+  File "\Text", line 18, in <module>
+AttributeError: 'NoneType' object has no attribute 'name'
+Error: Python script failed, check the message in the system console
+The error
+AttributeError: 'NoneType' object has no attribute 'name'
+means that
+bpy.context.active_object
+is
+None
+after calling
+bpy.ops.mesh.landscape_add()
+, likely because the A.N.T. Landscape operator didn't successfully create an object or set it as active. This could happen if the add-on isn't properly enabled or if the operator failed silently. Additionally, you mentioned not seeing a camera, which suggests the script might not have completed the camera setup due to this early failure.
+Let's troubleshoot this step-by-step:
+Confirm the landscape is created and fix the object reference.
+Ensure the camera is added and visible.
+Here's a revised script with error handling and explicit object selection to avoid
+NoneType
+issues, plus a check to make the camera prominent:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+random
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Basic Landscape ----------
+try
+:
+bpy.ops.mesh.landscape_add(
+noise_type=
+'hetero_terrain'
+,
+# Fractal-like noise
+height=
+2.0
+,
+# Base height
+noise_size=
+0.7
+,
+# Roughness
+random_seed=
+42
+# Consistent randomness
+)
+# Explicitly select and get the landscape object
+landscape = bpy.context.selected_objects[
+0
+]
+if
+bpy.context.selected_objects
+else
+None
+if
+not
+landscape:
+raise
+ValueError(
+"Landscape creation failed, no object selected."
+)
+landscape.name =
+"FractalLandscape"
+except
+Exception
+as
+e:
+print
+(
+f"Error creating landscape:
+{e}
+"
+)
+# Fallback: Create a plane if landscape fails
+bpy.ops.mesh.primitive_plane_add(size=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+landscape = bpy.context.active_object
+landscape.name =
+"FallbackPlane"
+print
+(
+"Using fallback plane due to landscape failure."
+)
+# Scale it up
+landscape.scale = (
+25
+,
+25
+,
+1
+)
+# 50x50 units wide
+# Add subdivision for detail
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'SUBSURF'
+)
+subsurf = landscape.modifiers[-
+1
+]
+subsurf.levels =
+5
+# Reduced to 5 for performance
+subsurf.render_levels =
+5
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+noise.noise_dimensions =
+'3D'
+noise.scale =
+5.0
+noise.detail =
+16.0
+noise.roughness =
+0.6
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+landscape.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = landscape.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.0
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Make camera visible and obvious
+camera.data.lens =
+35
+# Wider lens for better view
+camera.data.clip_end =
+1000
+# Increase clipping range
+# Point camera downward slightly
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+# Align viewport to camera for immediate visibility
+bpy.context.scene.frame_set(
+1
+)
+# Reset to frame 1
+try
+:
+bpy.ops.view3d.view_camera()
+# May need to run in 3D Viewport context
+except
+:
+print
+(
+"Run 'View > Align View > Align Active Camera to View' manually if needed."
+)
+print
+(
+"Setup complete. Press Play (Alt+A) to see the animation! Switch to camera view with Numpad 0 if needed."
+)
+Fixes and Improvements:
+Landscape Creation
+:
+Added a
+try-except
+block to catch errors from
+bpy.ops.mesh.landscape_add()
+.
+Used
+bpy.context.selected_objects[0]
+instead of
+active_object
+to ensure we get the landscape.
+Added a fallback to a plane if the landscape operator fails entirely.
+Camera Visibility
+:
+Ensured the camera is created and set as the scene's active camera.
+Adjusted the lens to 35mm for a wider view and increased the clipping range to 1000 to avoid cutting off the scene.
+Attempted to align the viewport to the camera automatically (though this might need manual confirmation in Blender 2.93).
+Performance
+: Reduced the subdivision level to 5 to avoid slowdowns.
+Steps to Run:
+Confirm A.N.T. Landscape is Enabled
+: Go to
+Edit > Preferences > Add-ons
+, search "A.N.T. Landscape," and enable it if it's not already.
+Run the Script
+: Paste this into the Text Editor and execute it.
+Check the Viewport
+:
+Press
+Numpad 0
+to switch to camera view.
+If the camera view doesn't align automatically, go to
+View > Align View > Align Active Camera to View
+in the 3D Viewport.
+Switch to "Material Preview" or "Rendered" mode to see the colors.
+Play Animation
+: Press
+Alt + A
+to watch the landscape shift.
+If It Still Fails:
+Error Message
+: Share any new error messages you get.
+No Landscape
+: If no landscape appears but the script runs, the A.N.T. Landscape add-on might still be the issue—let me know, and we'll switch to a pure plane-based approach.
+No Camera
+: If the camera still isn't visible, check the Outliner for "FlyoverCamera" and ensure its eye icon is enabled.
+How does this work for you? Let me know what you see now!
+Ok it made a plane but I didn't see a camera or anything animated
+It sounds like the A.N.T. Landscape add-on still isn't working as expected, so the script fell back to creating a plane, but the animation and camera setup might not be fully registering or visible. This could be due to a few issues:
+The camera might be created but not visible in the viewport (e.g., hidden or out of view).
+The animation keyframes might not be triggering properly.
+The viewport context might not be updating correctly in Blender 2.93.
+Let's simplify further, ditch the A.N.T. Landscape dependency entirely, use a plane with a noise-based displacement for the fractal effect, and ensure the camera and animation are unmistakable. Here's a new script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Plane as the Base Landscape ----------
+bpy.ops.mesh.primitive_plane_add(size=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+plane = bpy.context.active_object
+plane.name =
+"FractalPlane"
+# Subdivide for detail
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+63
+)
+# 64x64 grid
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+noise.noise_dimensions =
+'3D'
+noise.scale =
+5.0
+noise.detail =
+16.0
+noise.roughness =
+0.6
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+plane.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = plane.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.5
+# Bigger change for visibility
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Ensure camera is visible
+camera.data.lens =
+35
+camera.data.clip_end =
+1000
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+scene.frame_set(
+1
+)
+# Start at frame 1
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+# Force viewport update
+bpy.ops.wm.redraw_timer(
+type
+=
+'DRAW_WIN'
+, iterations=
+1
+)
+print
+(
+"Setup complete. Press Numpad 0 to view through camera, then Alt+A to play animation!"
+)
+Key Changes:
+No A.N.T. Dependency
+: Replaced the landscape with a simple plane (50x50 units), subdivided 63 times to create a 64x64 grid for fractal detail.
+Displacement
+: Used a noise texture in the displace modifier to create the fractal height, with a more noticeable strength change (0.5 to 1.5).
+Camera
+: Explicitly added and configured the camera, ensuring it's set as the scene camera. The flyover path is unchanged.
+Animation
+: Keyframes for color and height are set explicitly, and the scene starts at frame 1.
+Viewport Update
+: Added a redraw command to force the viewport to refresh.
+How to Run:
+Paste this into the Text Editor in Blender 2.93 and run it.
+Check the Camera
+:
+Press
+Numpad 0
+to switch to the camera view. You should see the plane from an angle.
+In the Outliner (top-right panel), look for "FlyoverCamera"—ensure its eye icon is enabled.
+View Animation
+:
+Switch to "Material Preview" or "Rendered" mode (top-right viewport icons) to see colors.
+Press
+Alt + A
+to play the animation. The plane should shift in height, and colors should change.
+If Nothing Moves
+:
+Go to the Timeline (bottom panel), ensure the frame range is 1-250, and drag the playhead to see if changes occur.
+Check the Modifiers panel for "FractalHeight" on the plane—verify the keyframes are set.
+Troubleshooting:
+No Camera
+: If "FlyoverCamera" isn't in the Outliner, the script didn't reach that part—let me know any errors.
+No Animation
+: If the plane appears but doesn't move or change color, check the Dope Sheet or Graph Editor for keyframes on the material and modifier.
+Blank Viewport
+: If you see nothing, press
+Home
+(or
+.
+on numpad) to frame all objects, then
+Numpad 0
+again.
+Let me know what you see now—plane, camera, animation, or any new errors! We're getting closer to your fractal landscape vision.
+Info: Deleted 1 object(s)
+Traceback (most recent call last):
+  File "C:\Users\Mechachleopteryx\OneDrive\Documents\GitHub\Centerfuge\Blender Files\fractal-landscape.blend\Text", line 39, in <module>
+AttributeError: 'ShaderNodeTexNoise' object has no attribute 'scale'
+Error: Python script failed, check the message in the system console
+The error
+AttributeError: 'ShaderNodeTexNoise' object has no attribute 'scale'
+indicates that in Blender 2.93, the
+ShaderNodeTexNoise
+(Noise Texture node) doesn't use a
+scale
+property like newer versions. In 2.93, the Noise Texture node has different inputs, and what we want is controlled via the
+Scale
+input rather than a direct attribute. We need to adjust the script to set these properties correctly using the node's inputs.
+Here's the corrected script for Blender 2.93, fixing the Noise Texture node setup and ensuring compatibility:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Plane as the Base Landscape ----------
+bpy.ops.mesh.primitive_plane_add(size=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+plane = bpy.context.active_object
+plane.name =
+"FractalPlane"
+# Subdivide for detail
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+63
+)
+# 64x64 grid
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+# Link nodes
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+# Configure noise using inputs (Blender 2.93 style)
+noise.inputs[
+"Scale"
+].default_value =
+5.0
+noise.inputs[
+"Detail"
+].default_value =
+16.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.6
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+125
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+plane.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = plane.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+125
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Ensure camera is visible
+camera.data.lens =
+35
+camera.data.clip_end =
+1000
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+scene.frame_set(
+1
+)
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+250
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+# Force viewport update
+bpy.ops.wm.redraw_timer(
+type
+=
+'DRAW_WIN'
+, iterations=
+1
+)
+print
+(
+"Setup complete. Press Numpad 0 to view through camera, then Alt+A to play animation!"
+)
+Key Fixes:
+Noise Texture Node
+: Changed
+noise.scale
+,
+noise.detail
+, and
+noise.roughness
+to use
+noise.inputs["Scale"].default_value
+, etc., which is the correct way to set these properties in Blender 2.93. The
+noise_dimensions
+attribute was also removed since it's not needed (defaults to 3D).
+No Changes to Other Sections
+: The plane, displacement, camera, and lighting setup remain intact since they weren't the source of the error.
+How to Run:
+Paste this into the Text Editor in Blender 2.93 and run it.
+Check the Scene
+:
+You should see a subdivided plane in the viewport.
+In the Outliner, look for "FractalPlane," "FlyoverCamera," and a "Sun" light. Ensure their eye icons are enabled.
+View Through Camera
+:
+Press
+Numpad 0
+to switch to the camera view. You should see the plane angled below.
+If not, select "FlyoverCamera" in the Outliner, press
+Ctrl + Numpad 0
+to set it as the active camera, then
+Numpad 0
+again.
+Play Animation
+:
+Switch to "Material Preview" or "Rendered" mode in the viewport (top-right icons).
+Press
+Alt + A
+. The plane should rise and fall (displacement) and shift colors from purple/orange to green/yellow and back.
+Troubleshooting:
+No Camera
+: If "FlyoverCamera" isn't in the Outliner, the script stopped early—check for additional errors in the console.
+No Animation
+: Open the Dope Sheet or Graph Editor, select "FractalPlane," and verify keyframes exist for the material's color ramp and the displace modifier's strength.
+Plane But No Effect
+: Ensure the "FractalHeight" modifier is applied in the Properties panel under Modifiers, and check that the noise texture is linked.
+Viewport Issues
+: If nothing shows, press
+Home
+to frame all objects, then
+Numpad 0
+.
+Let me know what you see now—plane, camera, animation, or any new errors! We're almost there with your fractal landscape.
+Ok the land scape is working but moving too fast. and I don't see any camera being created
+Great to hear the landscape is working! If it's moving too fast, we can slow down the animation by adjusting the keyframes to span more frames or reducing the rate of change in the displacement strength. As for the camera not being created, it's possible the script is running into an issue before reaching that part, or the camera is being created but isn't visible in your viewport. Let's fix both issues:
+Slow Down the Animation
+: We'll extend the frame range to 500 frames and adjust the keyframe timing.
+Ensure Camera Visibility
+: We'll double-check the camera creation, make it more prominent, and force the viewport to focus on it.
+Here's the updated script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Plane as the Base Landscape ----------
+bpy.ops.mesh.primitive_plane_add(size=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+plane = bpy.context.active_object
+plane.name =
+"FractalPlane"
+# Subdivide for detail
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+63
+)
+# 64x64 grid
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Color"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+noise.inputs[
+"Scale"
+].default_value =
+5.0
+noise.inputs[
+"Detail"
+].default_value =
+16.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.6
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift (slower, over 500 frames)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+500
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+250
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+500
+)
+plane.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = plane.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+# Animate displacement (slower, over 500 frames)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+250
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+500
+)
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+camera.name =
+"FlyoverCamera"
+# Ensure camera is visible and prominent
+camera.data.lens =
+35
+camera.data.clip_end =
+1000
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+camera.scale = (
+2
+,
+2
+,
+2
+)
+# Make camera icon larger in viewport
+# Animate camera flyover (slower, over 500 frames)
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+500
+scene.frame_set(
+1
+)
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+500
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+bpy.context.scene.camera = camera
+# Force viewport update and align to camera
+bpy.ops.
+object
+.select_all(action=
+'DESELECT'
+)
+camera.select_set(
+True
+)
+bpy.context.view_layer.objects.active = camera
+bpy.ops.view3d.camera_to_view_selected()
+# Align camera to view
+bpy.ops.wm.redraw_timer(
+type
+=
+'DRAW_WIN'
+, iterations=
+1
+)
+print
+(
+"Setup complete. Press Numpad 0 to view through camera, then Alt+A to play animation!"
+)
+Changes Made:
+Slower Animation
+:
+Extended the frame range to 500 frames (from 250).
+Adjusted keyframes for color and displacement to peak at frame 250 and return by frame 500, doubling the duration and slowing the motion.
+Camera Fixes
+:
+Increased the camera's scale to (2, 2, 2) to make its icon more visible in the viewport.
+Added selection and alignment steps to ensure the camera is active and the viewport focuses on it.
+Kept the flyover path but stretched it over 500 frames to match the slower animation.
+Viewport Update
+: Enhanced the redraw and camera alignment logic to make the camera view more immediate.
+How to Run:
+Paste this into the Text Editor in Blender 2.93 and run it.
+Check the Scene
+:
+Look in the Outliner for "FractalPlane," "FlyoverCamera," and "Sun." All should have their eye icons enabled.
+The plane should be visible with a colorful noise pattern in "Material Preview" or "Rendered" mode.
+View Through Camera
+:
+Press
+Numpad 0
+to switch to the camera view. You should see the plane from an angled perspective.
+If the camera isn't visible, select "FlyoverCamera" in the Outliner, press
+Ctrl + Numpad 0
+to set it as active, then
+Numpad 0
+again.
+Play Animation
+:
+Press
+Alt + A
+. The landscape should rise and fall more slowly, and colors should shift gradually over ~20 seconds (at 24 fps).
+Check the Timeline to ensure the frame range is 1-500.
+Troubleshooting:
+Camera Missing
+: If "FlyoverCamera" isn't in the Outliner, let me know if there's a new error in the console—the script might be stopping early.
+Still Too Fast
+: If the animation still feels rushed, we can extend it further (e.g., to 1000 frames) or reduce the displacement range (e.g., 0.5 to 1.0).
+No Movement
+: Open the Dope Sheet, select "FractalPlane," and confirm keyframes exist for the material's color ramp and displace modifier's strength.
+Viewport Blank
+: Press
+Home
+to frame all objects, then
+Numpad 0
+to recheck the camera view.
+Let me know how this looks—landscape speed, camera visibility, and anything else you notice! We're refining your fractal vision step by step.
+Why is this not adding a camera? import bpy
+import math
+
+# ---------- Clear the Scene ----------
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+
+# ---------- Create a Plane as the Base Landscape ----------
+bpy.ops.mesh.primitive_plane_add(size=50, location=(0, 0, 0))
+plane = bpy.context.active_object
+plane.name = "FractalPlane"
+
+# Subdivide for detail
+bpy.ops.object.mode_set(mode='EDIT')
+bpy.ops.mesh.subdivide(number_cuts=63)  # 64x64 grid
+bpy.ops.object.mode_set(mode='OBJECT')
+
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name="FractalMaterial")
+mat.use_nodes = True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new("ShaderNodeOutputMaterial")
+diffuse = nodes.new("ShaderNodeBsdfDiffuse")
+color_ramp = nodes.new("ShaderNodeValToRGB")
+noise = nodes.new("ShaderNodeTexNoise")
+mapping = nodes.new("ShaderNodeMapping")
+coords = nodes.new("ShaderNodeTexCoord")
+
+links.new(coords.outputs["Object"], mapping.inputs["Vector"])
+links.new(mapping.outputs["Vector"], noise.inputs["Vector"])
+links.new(noise.outputs["Fac"], color_ramp.inputs["Fac"])
+links.new(color_ramp.outputs["Color"], diffuse.inputs["Color"])
+links.new(diffuse.outputs["BSDF"], output.inputs["Surface"])
+
+noise.inputs["Scale"].default_value = 5.0
+noise.inputs["Detail"].default_value = 16.0
+noise.inputs["Roughness"].default_value = 0.6
+
+color_ramp.color_ramp.interpolation = 'B_SPLINE'
+color_ramp.color_ramp.elements[0].position = 0.0
+color_ramp.color_ramp.elements[0].color = (0.1, 0.0, 0.5, 1.0)  # Dark purple
+color_ramp.color_ramp.elements[1].position = 1.0
+color_ramp.color_ramp.elements[1].color = (0.8, 0.2, 0.0, 1.0)  # Orange-red
+
+# Animate color shift (over 1000 frames for slower animation)
+color_ramp.color_ramp.elements[0].color = [0.1, 0.0, 0.5, 1.0]
+color_ramp.color_ramp.elements[0].keyframe_insert(data_path="color", frame=1)
+color_ramp.color_ramp.elements[0].color = [0.0, 0.5, 0.2, 1.0]
+color_ramp.color_ramp.elements[0].keyframe_insert(data_path="color", frame=500)
+color_ramp.color_ramp.elements[0].color = [0.1, 0.0, 0.5, 1.0]
+color_ramp.color_ramp.elements[0].keyframe_insert(data_path="color", frame=1000)
+
+color_ramp.color_ramp.elements[1].color = [0.8, 0.2, 0.0, 1.0]
+color_ramp.color_ramp.elements[1].keyframe_insert(data_path="color", frame=1)
+color_ramp.color_ramp.elements[1].color = [0.9, 0.7, 0.0, 1.0]
+color_ramp.color_ramp.elements[1].keyframe_insert(data_path="color", frame=500)
+color_ramp.color_ramp.elements[1].color = [0.8, 0.2, 0.0, 1.0]
+color_ramp.color_ramp.elements[1].keyframe_insert(data_path="color", frame=1000)
+
+plane.data.materials.append(mat)
+
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.object.modifier_add(type='DISPLACE')
+displace = plane.modifiers[-1]
+displace.name = "FractalHeight"
+
+disp_texture = bpy.data.textures.new("NoiseDisp", type='NOISE')
+displace.texture = disp_texture
+disp_texture.noise_scale = 0.5
+disp_texture.intensity = 2.0
+
+# Animate displacement (over 1000 frames for slower animation)
+displace.strength = 0.5
+displace.keyframe_insert(data_path="strength", frame=1)
+displace.strength = 1.5
+displace.keyframe_insert(data_path="strength", frame=500)
+displace.strength = 0.5
+displace.keyframe_insert(data_path="strength", frame=1000)
+
+# ---------- Add Camera with Flyover Path ----------
+bpy.ops.object.camera_add(location=(25, -25, 20))
+camera = bpy.context.active_object
+camera.name = "FlyoverCamera"
+
+# Ensure camera is visible and prominent
+camera.data.lens = 35
+camera.data.clip_end = 1000
+camera.rotation_euler = (math.radians(60), 0, math.radians(45))
+camera.scale = (2, 2, 2)  # Make camera icon larger in viewport
+
+# Animate camera flyover (over 1000 frames for slower animation)
+scene = bpy.context.scene
+scene.frame_start = 1
+scene.frame_end = 1000
+scene.frame_set(1)
+
+camera.location = (25, -25, 20)
+camera.keyframe_insert(data_path="location", frame=1)
+camera.location = (-25, 25, 15)
+camera.keyframe_insert(data_path="location", frame=1000)
+
+# ---------- Add Lighting ----------
+bpy.ops.object.light_add(type='SUN', location=(0, 0, 50))
+light = bpy.context.active_object
+light.data.energy = 10
+
+# ---------- Set Render Settings ----------
+scene.render.resolution_x = 1920
+scene.render.resolution_y = 1080
+scene.render.engine = 'BLENDER_EEVEE'
+scene.camera = camera  # Set the camera as the active camera
+
+# Force viewport update and align to camera
+bpy.ops.object.select_all(action='DESELECT')
+camera.select_set(True)
+bpy.context.view_layer.objects.active = camera
+bpy.ops.view3d.view_camera()  # Align view to camera
+bpy.ops.wm.redraw_timer(type='DRAW_WIN', iterations=1)
+
+print("Setup complete. Press Numpad 0 to view through camera, then Alt+A to play animation!")
+If the camera isn't appearing despite the code explicitly adding it with
+bpy.ops.object.camera_add()
+, there could be a few reasons why this is happening in Blender 2.93:
+Script Execution Stops Early
+: An error or exception before the camera creation might prevent the script from reaching that section, though your last feedback didn't show an error after the landscape worked.
+Camera Created but Hidden
+: The camera might be created but not visible in the viewport due to layer settings, visibility toggles, or viewport context issues.
+Viewport Context Issue
+: The
+bpy.ops.view3d.view_camera()
+call requires the script to run in the correct context (3D Viewport), and in Blender 2.93, running from the Text Editor might not always switch the view correctly.
+Active Object Overwrite
+: Another object might be overriding the active state, causing confusion in the scene.
+Let's diagnose and fix this by:
+Adding error handling around the camera creation to confirm it's executing.
+Ensuring the camera is explicitly visible and selected.
+Simplifying the viewport alignment to avoid context errors.
+Here's the revised script with these fixes:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# ---------- Clear the Scene ----------
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete(use_global=
+False
+)
+# ---------- Create a Plane as the Base Landscape ----------
+bpy.ops.mesh.primitive_plane_add(size=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+plane = bpy.context.active_object
+plane.name =
+"FractalPlane"
+# Subdivide for detail
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+63
+)
+# 64x64 grid
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# ---------- Add Material with Noise-Based Color Animation ----------
+mat = bpy.data.materials.new(name=
+"FractalMaterial"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+links = mat.node_tree.links
+
+nodes.clear()
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+diffuse = nodes.new(
+"ShaderNodeBsdfDiffuse"
+)
+color_ramp = nodes.new(
+"ShaderNodeValToRGB"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+mapping = nodes.new(
+"ShaderNodeMapping"
+)
+coords = nodes.new(
+"ShaderNodeTexCoord"
+)
+links.new(coords.outputs[
+"Object"
+], mapping.inputs[
+"Vector"
+])
+links.new(mapping.outputs[
+"Vector"
+], noise.inputs[
+"Vector"
+])
+links.new(noise.outputs[
+"Fac"
+], color_ramp.inputs[
+"Fac"
+])
+links.new(color_ramp.outputs[
+"Color"
+], diffuse.inputs[
+"Color"
+])
+links.new(diffuse.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+noise.inputs[
+"Scale"
+].default_value =
+5.0
+noise.inputs[
+"Detail"
+].default_value =
+16.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.6
+color_ramp.color_ramp.interpolation =
+'B_SPLINE'
+color_ramp.color_ramp.elements[
+0
+].position =
+0.0
+color_ramp.color_ramp.elements[
+0
+].color = (
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+)
+# Dark purple
+color_ramp.color_ramp.elements[
+1
+].position =
+1.0
+color_ramp.color_ramp.elements[
+1
+].color = (
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+)
+# Orange-red
+# Animate color shift (over 1000 frames)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.0
+,
+0.5
+,
+0.2
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+500
+)
+color_ramp.color_ramp.elements[
+0
+].color = [
+0.1
+,
+0.0
+,
+0.5
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+0
+].keyframe_insert(data_path=
+"color"
+, frame=
+1000
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.9
+,
+0.7
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+500
+)
+color_ramp.color_ramp.elements[
+1
+].color = [
+0.8
+,
+0.2
+,
+0.0
+,
+1.0
+]
+color_ramp.color_ramp.elements[
+1
+].keyframe_insert(data_path=
+"color"
+, frame=
+1000
+)
+plane.data.materials.append(mat)
+# ---------- Add Displacement for Height Animation ----------
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = plane.modifiers[-
+1
+]
+displace.name =
+"FractalHeight"
+disp_texture = bpy.data.textures.new(
+"NoiseDisp"
+,
+type
+=
+'NOISE'
+)
+displace.texture = disp_texture
+disp_texture.noise_scale =
+0.5
+disp_texture.intensity =
+2.0
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1
+)
+displace.strength =
+1.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+500
+)
+displace.strength =
+0.5
+displace.keyframe_insert(data_path=
+"strength"
+, frame=
+1000
+)
+# ---------- Add Camera with Flyover Path ----------
+try
+:
+bpy.ops.
+object
+.camera_add(location=(
+25
+, -
+25
+,
+20
+))
+camera = bpy.context.active_object
+if
+camera
+is
+None
+:
+raise
+ValueError(
+"Camera creation failed, no active object."
+)
+camera.name =
+"FlyoverCamera"
+print
+(
+"Camera created successfully."
+)
+except
+Exception
+as
+e:
+print
+(
+f"Error creating camera:
+{e}
+"
+)
+# Fallback: Manually create a camera
+camera_data = bpy.data.cameras.new(
+"FlyoverCamera"
+)
+camera = bpy.data.objects.new(
+"FlyoverCamera"
+, camera_data)
+bpy.context.collection.objects.link(camera)
+camera.location = (
+25
+, -
+25
+,
+20
+)
+print
+(
+"Fallback camera created."
+)
+# Configure camera
+camera.data.lens =
+35
+camera.data.clip_end =
+1000
+camera.rotation_euler = (math.radians(
+60
+),
+0
+, math.radians(
+45
+))
+camera.scale = (
+2
+,
+2
+,
+2
+)
+# Larger icon
+# Ensure visibility
+camera.hide_viewport =
+False
+camera.hide_render =
+False
+# Animate camera flyover
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+1000
+scene.frame_set(
+1
+)
+camera.location = (
+25
+, -
+25
+,
+20
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1
+)
+camera.location = (-
+25
+,
+25
+,
+15
+)
+camera.keyframe_insert(data_path=
+"location"
+, frame=
+1000
+)
+# ---------- Add Lighting ----------
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+50
+))
+light = bpy.context.active_object
+light.data.energy =
+10
+# ---------- Set Render Settings ----------
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.camera = camera
+# Set as active camera
+# Force camera visibility and viewport alignment
+bpy.ops.
+object
+.select_all(action=
+'DESELECT'
+)
+camera.select_set(
+True
+)
+bpy.context.view_layer.objects.active = camera
+# Run this manually in 3D Viewport if needed: bpy.ops.view3d.camera_to_view_selected()
+bpy.ops.wm.redraw_timer(
+type
+=
+'DRAW_WIN'
+, iterations=
+1
+)
+print
+(
+"Setup complete. Check Outliner for 'FlyoverCamera'. Press Numpad 0 to view, Alt+A to play!"
+)
+Why the Camera Might Not Be Appearing:
+Execution Halt
+: The script runs sequentially, and since the landscape worked last time, it's likely reaching the camera section. The
+try-except
+block will now confirm this with a print message.
+Visibility
+: Added
+camera.hide_viewport = False
+and
+hide_render = False
+to ensure it's not hidden.
+Context
+: The
+bpy.ops.view3d.view_camera()
+call was replaced with a note to run manually if needed, as it often fails from the Text Editor in older Blender versions like 2.93. Instead, we rely on selection and redraw.
+How to Test:
+Run the script in Blender 2.93's Text Editor.
+Check Output
+:
+Look at the System Console (Window > Toggle System Console on Windows) for messages like "Camera created successfully" or an error.
+In the Outliner, find "FlyoverCamera." If it's there, the camera was created.
+Make Camera Visible
+:
+If "FlyoverCamera" exists but isn't visible, ensure its eye icon is enabled in the Outliner.
+Select it, press
+Ctrl + Numpad 0
+to set it as the active camera, then
+Numpad 0
+to view through it.
+Play Animation
+:
+Switch to "Material Preview" or "Rendered" mode.
+Press
+Alt + A
+to confirm the slower animation (now over 1000 frames, ~41 seconds at 24 fps).
+Next Steps:
+If No Camera
+: If "FlyoverCamera" isn't in the Outliner, check the console for an error message after "Error creating camera:" and let me know.
+If Camera Exists but Invisible
+: Tell me if it's in the Outliner but not showing up, and we'll tweak the viewport settings.
+Speed Feedback
+: Since you extended the animation to 1000 frames, let me know if it's still too fast or just right.
+What do you see after running this? Camera or no camera? Any console messages?
+2 / 2
+How can Grok help?
+Grok 3
+

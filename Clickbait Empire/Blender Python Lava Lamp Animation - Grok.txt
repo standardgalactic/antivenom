@@ -1,0 +1,3802 @@
+Blender Python Lava Lamp Animation - Grok
+I would like to make an animation like a lavalamp you can fly around in using byp blender python.
+Creating an animation of a lava lamp-like environment you can fly around in using Blender and Python is a fun and creative project! Below, I'll outline a basic approach to get you started with Blender's Python API (bpy). This will involve creating a simple lava lamp effect with moving "blobs" and setting up a camera for fly-around animation.
+Steps to Create the Animation
+Set Up the Scene
+: Clear the default scene and add basic objects.
+Create Lava Lamp Blobs
+: Use metaballs or soft bodies for the gooey, flowing effect.
+Animate the Blobs
+: Move them dynamically using Python.
+Add a Camera Fly-Around
+: Animate the camera to circle the scene.
+Render the Animation
+: Set up rendering settings.
+Here's a sample script to get you started. You can paste this into Blender's Text Editor and run it:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+from
+random
+import
+randint
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a glass container (cylinder)
+bpy.ops.mesh.primitive_cylinder_add(radius=
+2
+, depth=
+5
+, location=(
+0
+,
+0
+,
+0
+))
+container = bpy.context.
+object
+container.name =
+"LavaContainer"
+mat = bpy.data.materials.new(name=
+"GlassMat"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.8
+,
+0.9
+,
+1
+,
+0.3
+)
+# Light blue, semi-transparent
+principled.inputs[
+"Roughness"
+].default_value =
+0.1
+principled.inputs[
+"Transmission"
+].default_value =
+1.0
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+container.data.materials.append(mat)
+# Create metaballs for the lava effect
+bpy.ops.
+object
+.metaball_add(
+type
+=
+'BALL'
+, radius=
+0.5
+, location=(
+0
+,
+0
+, -
+2
+))
+lava = bpy.context.
+object
+lava.name =
+"LavaBlob1"
+bpy.ops.
+object
+.metaball_add(
+type
+=
+'BALL'
+, radius=
+0.5
+, location=(
+0
+,
+0
+, -
+1
+))
+lava2 = bpy.context.
+object
+lava2.name =
+"LavaBlob2"
+# Assign a material to the metaballs
+lava_mat = bpy.data.materials.new(name=
+"LavaMat"
+)
+lava_mat.use_nodes =
+True
+lava_nodes = lava_mat.node_tree.nodes
+lava_nodes.clear()
+lava_principled = lava_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+lava_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.2
+,
+0
+,
+1
+)
+# Reddish color
+lava_principled.inputs[
+"Roughness"
+].default_value =
+0.5
+lava_output = lava_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+lava_mat.node_tree.links.new(lava_principled.outputs[
+"BSDF"
+], lava_output.inputs[
+"Surface"
+])
+lava.data.materials.append(lava_mat)
+lava2.data.materials.append(lava_mat)
+# Animate the metaballs
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+lava.location.z = -
+2
++ math.sin(frame *
+0.05
+) *
+2
+# Move up and down
+lava2.location.z = -
+1
++ math.cos(frame *
+0.05
+) *
+2
+lava.keyframe_insert(data_path=
+"location"
+, frame=frame)
+lava2.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Add a camera
+bpy.ops.
+object
+.camera_add(location=(
+10
+, -
+10
+,
+5
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+bpy.context.scene.camera = camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.05
+camera.location.x =
+10
+* math.cos(angle)
+camera.location.y =
+10
+* math.sin(angle)
+camera.location.z =
+5
++ math.sin(angle) *
+2
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Point camera at the center
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = container
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+10
+))
+# Set render settings
+scene.render.engine =
+'CYCLES'
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.filepath =
+"//LavaLampAnimation"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+print
+(
+"Script complete! Adjust and render as needed."
+)
+How to Use This Script
+Open Blender.
+Go to the
+Scripting
+workspace.
+Create a new text file, paste the script, and click
+Run Script
+.
+Check the 3D Viewport to see the result.
+Press
+Ctrl + F12
+to render the animation (it'll save as a video file in your project folder).
+What This Script Does
+Creates a glass cylinder as the "lamp."
+Adds two metaballs that move up and down like lava blobs.
+Sets up a camera that flies around the scene in a circular path.
+Adds basic materials and lighting.
+Configures rendering with Cycles for a decent visual output.
+Customization Tips
+More Blobs
+: Add more metaballs with varied motion (e.g.,
+math.sin(frame * speed + offset)
+).
+Colors
+: Adjust the
+Base Color
+in the materials for different lava hues.
+Camera Path
+: Modify the
+camera.location
+equations for a more complex fly-around.
+Physics
+: Replace metaballs with soft bodies or a fluid simulation for a more realistic effect (requires more setup).
+Let me know if you'd like help refining this further—say, adding more complex motion, tweaking visuals, or integrating physics!
+Ok I see a cylander and a camera that flies around it but if I click render animation it said error cannot open file for editing
+The error "cannot open file for editing" during rendering typically means Blender can't write the output file to the specified location. This could be due to a few common issues with the
+scene.render.filepath
+setting or file permissions. Let's troubleshoot and fix it.
+Why This Happens
+In the script, the render output path is set to
+//LavaLampAnimation
+. In Blender:
+//
+refers to the directory of the current
+.blend
+file.
+If you haven't saved your
+.blend
+file yet, Blender doesn't know where
+//
+is, causing the error.
+Additionally, if the path is invalid or lacks write permissions, rendering will fail.
+Fixing the Issue
+Here's how to resolve it:
+1. Save Your .blend File First
+Go to
+File > Save As
+in Blender.
+Choose a location (e.g., your desktop or a project folder) and name it something like
+LavaLamp.blend
+.
+Save it. This defines the base directory for
+//
+.
+2. Update the Filepath in the Script
+The original filepath
+//LavaLampAnimation
+doesn't specify an extension, and while
+FFMPEG
+is set as the output format, Blender might still struggle if the path isn't explicit. Let's modify it to include the
+.mp4
+extension for clarity.
+Replace this line in the script:
+python
+Collapse
+Wrap
+Copy
+scene.render.filepath =
+"//LavaLampAnimation"
+With:
+python
+Collapse
+Wrap
+Copy
+scene.render.filepath =
+"//LavaLampAnimation.mp4"
+3. Run the Updated Script
+Here's the corrected portion of the script (you can replace just this part or rerun the whole thing):
+python
+Collapse
+Wrap
+Copy
+# Set render settings
+scene.render.engine =
+'CYCLES'
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.filepath =
+"//LavaLampAnimation.mp4"
+# Updated filepath
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+Open Blender's Text Editor, update the script, and click
+Run Script
+again.
+Then press
+Ctrl + F12
+to render the animation.
+4. Alternative: Use an Absolute Path
+If the issue persists, try setting an absolute path instead of a relative one (e.g., a specific folder on your computer). For example:
+python
+Collapse
+Wrap
+Copy
+scene.render.filepath =
+"C:/Users/YourUsername/Desktop/LavaLampAnimation.mp4"
+# Windows
+# or
+scene.render.filepath =
+"/home/yourusername/Desktop/LavaLampAnimation.mp4"
+# Linux/Mac
+Adjust the path to match your system and ensure you have write permissions there.
+5. Check Permissions
+Ensure the folder where you're saving the file (e.g., Desktop or wherever your
+.blend
+file is) allows writing.
+On Windows, right-click the folder > Properties > Security, and confirm your user has write access.
+On Mac/Linux, use
+chmod
+or check folder permissions if needed.
+Verifying the Fix
+After saving the
+.blend
+file and updating the script, try rendering again with
+Ctrl + F12
+.
+You should see the render window open, and once complete, find
+LavaLampAnimation.mp4
+in the same folder as your
+.blend
+file (if using
+//
+) or the specified absolute path.
+If You Still See the Cylinder Without Lava
+You mentioned seeing the cylinder and camera but no lava effect. If the metaballs aren't visible:
+Ensure the script ran fully (check the console for errors—
+Window > Toggle System Console
+on Windows).
+Confirm the metaballs are in the scene: In the Outliner, look for
+LavaBlob1
+and
+LavaBlob2
+.
+Check their visibility: Ensure the eye icon is enabled in the Outliner, and they're not hidden (
+Alt + H
+to unhide all if needed).
+Let me know if the render works after this or if you're still hitting issues—I'll dig deeper with you!
+Write it all out
+Here's the complete, corrected Blender Python script to create a lava lamp-like animation with a fly-around camera, including the fix for the rendering filepath issue. This version assumes you've saved your
+.blend
+file first (to define the
+//
+relative path) and explicitly sets the output to an
+.mp4
+file.
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+from
+random
+import
+randint
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a glass container (cylinder)
+bpy.ops.mesh.primitive_cylinder_add(radius=
+2
+, depth=
+5
+, location=(
+0
+,
+0
+,
+0
+))
+container = bpy.context.
+object
+container.name =
+"LavaContainer"
+mat = bpy.data.materials.new(name=
+"GlassMat"
+)
+mat.use_nodes =
+True
+nodes = mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.8
+,
+0.9
+,
+1
+,
+0.3
+)
+# Light blue, semi-transparent
+principled.inputs[
+"Roughness"
+].default_value =
+0.1
+principled.inputs[
+"Transmission"
+].default_value =
+1.0
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+container.data.materials.append(mat)
+# Create metaballs for the lava effect
+bpy.ops.
+object
+.metaball_add(
+type
+=
+'BALL'
+, radius=
+0.5
+, location=(
+0
+,
+0
+, -
+2
+))
+lava = bpy.context.
+object
+lava.name =
+"LavaBlob1"
+bpy.ops.
+object
+.metaball_add(
+type
+=
+'BALL'
+, radius=
+0.5
+, location=(
+0
+,
+0
+, -
+1
+))
+lava2 = bpy.context.
+object
+lava2.name =
+"LavaBlob2"
+# Assign a material to the metaballs
+lava_mat = bpy.data.materials.new(name=
+"LavaMat"
+)
+lava_mat.use_nodes =
+True
+lava_nodes = lava_mat.node_tree.nodes
+lava_nodes.clear()
+lava_principled = lava_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+lava_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.2
+,
+0
+,
+1
+)
+# Reddish color
+lava_principled.inputs[
+"Roughness"
+].default_value =
+0.5
+lava_output = lava_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+lava_mat.node_tree.links.new(lava_principled.outputs[
+"BSDF"
+], lava_output.inputs[
+"Surface"
+])
+lava.data.materials.append(lava_mat)
+lava2.data.materials.append(lava_mat)
+# Animate the metaballs
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+lava.location.z = -
+2
++ math.sin(frame *
+0.05
+) *
+2
+# Move up and down
+lava2.location.z = -
+1
++ math.cos(frame *
+0.05
+) *
+2
+lava.keyframe_insert(data_path=
+"location"
+, frame=frame)
+lava2.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Add a camera
+bpy.ops.
+object
+.camera_add(location=(
+10
+, -
+10
+,
+5
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+bpy.context.scene.camera = camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.05
+camera.location.x =
+10
+* math.cos(angle)
+camera.location.y =
+10
+* math.sin(angle)
+camera.location.z =
+5
++ math.sin(angle) *
+2
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Point camera at the center (only set constraint once, outside loop)
+if
+frame ==
+1
+:
+# Set constraint only on first frame
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = container
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+10
+))
+# Set render settings
+scene.render.engine =
+'CYCLES'
+scene.render.resolution_x =
+1920
+scene.render.resolution_y =
+1080
+scene.render.filepath =
+"//LavaLampAnimation.mp4"
+# Fixed filepath with .mp4 extension
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+print
+(
+"Script complete! Save your .blend file, then press Ctrl + F12 to render."
+)
+How to Use This Script
+Open Blender
+: Start a new project or use an existing one.
+Save the File
+: Go to
+File > Save As
+, pick a folder (e.g., your Desktop), and name it (e.g.,
+LavaLamp.blend
+). This step is critical for the
+//
+relative path to work.
+Open the Scripting Workspace
+: Switch to the
+Scripting
+tab at the top.
+Paste the Script
+: Click
+New
+in the Text Editor, paste the code above, and click
+Run Script
+.
+Check the Scene
+: Switch to the
+Layout
+workspace to see the cylinder, metaballs, and camera. Use the timeline to scrub through the animation.
+Render the Animation
+: Press
+Ctrl + F12
+. Blender will render the 250 frames and save the output as
+LavaLampAnimation.mp4
+in the same folder as your
+.blend
+file.
+Notes
+Filepath
+: The
+//LavaLampAnimation.mp4
+means the video saves next to your
+.blend
+file. If you prefer a specific location, replace it with an absolute path like
+"C:/Users/YourUsername/Desktop/LavaLampAnimation.mp4"
+(adjust for your OS).
+Metaballs Visibility
+: If the lava blobs aren't showing, ensure they're not hidden (press
+Alt + H
+in the 3D Viewport) and that Cycles is active (the script sets it, but confirm in the render settings).
+Render Time
+: Cycles rendering at 1920x1080 might take a while depending on your hardware. For a quicker test, reduce the resolution (e.g., 960x540) or switch to
+EEVEE
+by changing
+scene.render.engine = 'BLENDER_EEVEE'
+.
+If you run this and still get an error or don't see the lava effect, let me know what you observe (e.g., error messages, what's missing in the viewport), and I'll tweak it further!
+Ok I didn't really need a lava lamp i was think of a lava lamp like world with walls everwhere constantly shiftying and driftinging that I could fly around in during an animation, something less computationally expensive to render and maybe that shows up in the animation and not just the render, more like a sky dome with shifting blobs inside
+Got it! You're envisioning a surreal, lava lamp-inspired world with shifting, drifting walls or blobs inside a sky dome, where you can fly around during the animation—visible in the viewport, not just the render—and optimized to be less computationally expensive. Let's pivot the approach to match that vision using Blender and Python (bpy). We'll use simple planes with a noise-driven displacement for the shifting effect, a sky dome, and a fly-around camera, sticking with the EEVEE engine for real-time viewport feedback and faster rendering.
+Here's the full script tailored to your idea:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a sky dome (hemisphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.bisect(plane_co=(
+0
+,
+0
+,
+0
+), plane_no=(
+0
+,
+0
+,
+1
+), clear_inner=
+True
+)
+# Cut in half
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.1
+,
+0.2
+,
+0.8
+,
+1
+)
+# Bluish sky
+principled.inputs[
+"Roughness"
+].default_value =
+0.8
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting "walls" (planes with displacement)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Add material with slight emissive glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Gradient from orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+0.5
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Add displacement modifier
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUD'
+)
+displace.texture = tex
+displace.strength =
+2.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture for shifting effect
+tex.noise_scale =
+0.5
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+10
+):
+# Keyframe every 10 frames for smoothness
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = frame *
+0.05
++ i
+# Unique drift per blob
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add a camera
+bpy.ops.
+object
+.camera_add(location=(
+20
+, -
+20
+,
+10
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+bpy.context.scene.camera = camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+20
+* math.cos(angle)
+camera.location.y =
+20
+* math.sin(angle)
+camera.location.z =
+10
++ math.sin(angle *
+2
+) *
+5
+# Gentle up-and-down motion
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Point camera toward center
+if
+frame ==
+1
+:
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+0
+]
+# Track the first blob
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE for speed and viewport visibility)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+# Lower resolution for faster rendering
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# Ensure EEVEE settings for real-time displacement
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, then press Ctrl + F12 to render or scrub the timeline to see it live."
+)
+What This Script Does
+Sky Dome
+: A large, halved sphere acts as the world's boundary, tinted blue like a sky.
+Shifting Blobs
+: Five planes stacked vertically, each with a displacement modifier driven by a cloud texture. The texture's
+noise_depth
+animates to create a drifting, wavy effect visible in the viewport with EEVEE.
+Camera
+: Flies in a circular path with a slight vertical bob, always pointing toward the center blob.
+Lighting
+: A simple sun light to illuminate the scene softly.
+Optimization
+: Uses EEVEE instead of Cycles for faster rendering and real-time viewport feedback. Planes with displacement are less taxing than metaballs or physics simulations.
+How to Use It
+Open Blender
+: Start fresh or clear your scene.
+Save the File
+: Go to
+File > Save As
+, save it (e.g.,
+ShiftingWorld.blend
+) to a folder you can write to.
+Switch to Scripting
+: Open the
+Scripting
+workspace, create a new text, paste this script, and click
+Run Script
+.
+View It Live
+: Go to the
+Layout
+workspace, set the viewport shading to
+Rendered
+(top-right corner, pick the sphere icon), and scrub the timeline (drag the blue marker or press play) to see the shifting blobs and flying camera in real-time.
+Render
+: Press
+Ctrl + F12
+to render the animation. The output will be
+ShiftingWorldAnimation.mp4
+in the same folder as your
+.blend
+file.
+Customization Ideas
+More Blobs
+: Increase
+blob_count
+or adjust their
+size
+and
+location
+in the loop.
+Shift Speed
+: Change the
+0.05
+in
+tex.noise_depth = frame * 0.05 + i
+to speed up or slow down the drifting.
+Colors
+: Tweak the
+Base Color
+in the blob materials for different hues.
+Camera Path
+: Modify the
+angle
+or
+z
+equations for a wilder flight path.
+This should give you a trippy, lightweight world you can fly through, visible in the viewport as you animate. Let me know if you want to adjust the vibe or add more features!
+I didn't get any blobs just the giant sphere and a plane below there were no blobs and it said no attached camera when I tried to render
+It sounds like something went wrong with the script execution, causing the blobs (planes) and camera setup to fail. The "no attached camera" error means the camera wasn't properly assigned to the scene, and the missing blobs suggest the plane creation loop or modifiers didn't work as expected. Let's troubleshoot and fix this with a revised script, ensuring everything initializes correctly and the camera links up.
+Here's an updated version with extra checks and clearer setup:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a sky dome (hemisphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+bpy.context.view_layer.objects.active = dome
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.bisect(plane_co=(
+0
+,
+0
+,
+0
+), plane_no=(
+0
+,
+0
+,
+1
+), clear_inner=
+True
+)
+# Cut in half
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.1
+,
+0.2
+,
+0.8
+,
+1
+)
+# Bluish sky
+principled.inputs[
+"Roughness"
+].default_value =
+0.8
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting "walls" (planes with displacement)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Add material with slight emissive glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Gradient from orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+0.5
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Add and configure displacement modifier
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUD'
+)
+displace.texture = tex
+displace.strength =
+2.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture for shifting effect
+tex.noise_scale =
+0.5
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+10
+):
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = frame *
+0.05
++ i
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign a camera
+bpy.ops.
+object
+.camera_add(location=(
+20
+, -
+20
+,
+10
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Explicitly set the scene camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+20
+* math.cos(angle)
+camera.location.y =
+20
+* math.sin(angle)
+camera.location.z =
+10
++ math.sin(angle *
+2
+) *
+5
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Set tracking constraint only once
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+0
+]
+# Track first blob
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings for real-time displacement
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, check the viewport in Rendered mode, then press Ctrl + F12 to render."
+)
+Changes and Fixes
+Camera Assignment
+: Explicitly set
+scene.camera = camera
+to ensure it's linked to the scene, avoiding the "no attached camera" error.
+Blob Creation
+: Added
+bpy.context.view_layer.objects.active = blob
+before adding modifiers to ensure the correct object is targeted, fixing potential blob absence.
+Viewport Context
+: Ensured proper object activation for edit mode and constraints, which might have failed silently in the last script.
+Verification
+: You should see:
+A giant hemisphere (sky dome) at the origin.
+Five planes stacked vertically (the blobs) with a shifting effect from the displacement modifier.
+A camera orbiting the scene.
+Steps to Test
+Start Fresh
+: Open Blender, go to
+File > New > General
+.
+Save First
+: Save the file (e.g.,
+ShiftingWorld.blend
+) to a writable folder via
+File > Save As
+.
+Run the Script
+: Switch to the
+Scripting
+workspace, create a new text, paste the script, and click
+Run Script
+.
+Check the Viewport
+:
+Go to the
+Layout
+workspace.
+Set the viewport shading to
+Rendered
+(top-right, click the sphere icon).
+Scrub the timeline (drag the blue marker or press the play button). You should see the planes shifting and the camera moving.
+Render
+: Press
+Ctrl + F12
+. It should output
+ShiftingWorldAnimation.mp4
+in the same folder as your
+.blend
+file.
+Troubleshooting
+No Blobs
+: If you only see the dome and one plane:
+Check the Outliner (top-right panel) for
+BlobPlane_0
+through
+BlobPlane_4
+. If missing, the loop failed—rerun the script and watch for errors in the
+System Console
+(Window > Toggle System Console on Windows).
+Ensure the displacement modifier is applied: Select a plane, go to the
+Modifiers
+tab (wrench icon), and confirm "Displace" is there with a cloud texture.
+No Shifting
+: In
+Rendered
+viewport mode, the planes should warp. If not, the texture animation might've failed—select a plane, go to
+Texture Properties
+(checkerboard icon), and verify keyframes on
+noise_depth
+.
+Camera Error Persists
+: If
+Ctrl + F12
+still says "no attached camera," manually set it: In the Outliner, right-click
+FlyCamera
+>
+Set Active Camera
+, then retry.
+Let me know what you see after running this—viewport contents, any errors, or render results—and I'll refine it further!
+Traceback (most recent call last):
+  File "\Text", line 57, in <module>
+TypeError: BlendDataTextures.new(): error with keyword argument "type" -  enum "CLOUD" not found in ('NONE', 'BLEND', 'CLOUDS', 'DISTORTED_NOISE', 'IMAGE', 'MAGIC', 'MARBLE', 'MUSGRAVE', 'NOISE', 'STUCCI', 'VORONOI', 'WOOD')
+Error: Python script failed, check the message in the system console
+The error in the system console indicates a typo in the texture type used for the displacement modifier. In the script, I used
+'CLOUD'
+(singular), but Blender's Python API expects
+'CLOUDS'
+(plural) as one of the valid enum values for
+bpy.data.textures.new()
+. This caused the script to fail when creating the displacement texture, which in turn prevented the blobs (planes) from being fully set up. Let's fix that by correcting the texture type to
+'CLOUDS'
+.
+Here's the revised script with the correction and a few additional tweaks to ensure robustness:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a sky dome (hemisphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+bpy.context.view_layer.objects.active = dome
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.bisect(plane_co=(
+0
+,
+0
+,
+0
+), plane_no=(
+0
+,
+0
+,
+1
+), clear_inner=
+True
+)
+# Cut in half
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.1
+,
+0.2
+,
+0.8
+,
+1
+)
+# Bluish sky
+principled.inputs[
+"Roughness"
+].default_value =
+0.8
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting "walls" (planes with displacement)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Add material with slight emissive glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Gradient from orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+0.5
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Add and configure displacement modifier with corrected texture type
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUDS'
+)
+# Fixed from 'CLOUD' to 'CLOUDS'
+displace.texture = tex
+displace.strength =
+2.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture for shifting effect
+tex.noise_scale =
+0.5
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+10
+):
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = frame *
+0.05
++ i
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign a camera
+bpy.ops.
+object
+.camera_add(location=(
+20
+, -
+20
+,
+10
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Explicitly set the scene camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+20
+* math.cos(angle)
+camera.location.y =
+20
+* math.sin(angle)
+camera.location.z =
+10
++ math.sin(angle *
+2
+) *
+5
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+# Set tracking constraint only once
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+0
+]
+# Track first blob
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings for real-time displacement
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, check the viewport in Rendered mode, then press Ctrl + F12 to render."
+)
+What Was Fixed
+Texture Type
+: Changed
+type='CLOUD'
+to
+type='CLOUDS'
+on line 57 (now around line 60 in this version) to match Blender's valid texture enum values. This ensures the displacement texture is created correctly, allowing the blobs to form and animate.
+Steps to Run
+Start Fresh
+: Open Blender, go to
+File > New > General
+.
+Save the File
+: Save it as
+ShiftingWorld.blend
+in a writable folder (
+File > Save As
+).
+Run the Script
+: In the
+Scripting
+workspace, create a new text, paste this code, and click
+Run Script
+.
+Check the Viewport
+:
+Switch to the
+Layout
+workspace.
+Set the viewport to
+Rendered
+mode (top-right, sphere icon).
+Scrub the timeline or press play. You should see:
+A large blue hemisphere (sky dome).
+Five orange-to-red planes stacked vertically, shifting and warping due to the displacement modifier.
+A camera orbiting the scene.
+Render
+: Press
+Ctrl + F12
+to generate
+ShiftingWorldAnimation.mp4
+in the same folder as your
+.blend
+file.
+What You Should See
+Sky Dome
+: A giant blue half-sphere enclosing the scene.
+Blobs
+: Five planes, each 10x10 units, spaced 5 units apart vertically (from z=-10 to z=10), with a wavy, drifting surface.
+Camera
+: Moving in a circular path, looking at the center blob.
+If It Still Fails
+Console Check
+: Open the
+System Console
+(Window > Toggle System Console on Windows) after running the script. If there's another error, paste it here.
+Outliner
+: Look for
+SkyDome
+,
+BlobPlane_0
+to
+BlobPlane_4
+, and
+FlyCamera
+in the Outliner. If any are missing, note which ones.
+Modifiers
+: Select a
+BlobPlane_X
+in the 3D Viewport, go to the
+Modifiers
+tab (wrench icon), and confirm a "Displace" modifier with a "DisplaceTex_X" texture is present.
+Let me know how this runs—what you see in the viewport, if rendering works, or any new errors—and I'll keep refining it with you!
+It started rendering but it is just showing rotating orange to red colored planes they don't look like blobs
+I'm glad it's rendering now! The issue you're describing—orange-to-red planes rotating but not looking like blobs—stems from the displacement effect not creating the gooey, organic look you're after. The planes are flat and likely just shifting position or texture slightly, rather than deforming into blob-like shapes. This is because the displacement modifier needs a denser mesh to deform properly (a default plane has only 4 vertices), and the animation might be too subtle. Let's tweak the script to:
+Subdivide the planes for more vertices, allowing visible blob-like warping.
+Enhance the displacement effect to make it more pronounced and dynamic.
+Ensure the shifting looks organic, not just rotational.
+Here's the updated script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a sky dome (hemisphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+bpy.context.view_layer.objects.active = dome
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.bisect(plane_co=(
+0
+,
+0
+,
+0
+), plane_no=(
+0
+,
+0
+,
+1
+), clear_inner=
+True
+)
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+principled.inputs[
+"Base Color"
+].default_value = (
+0.1
+,
+0.2
+,
+0.8
+,
+1
+)
+# Bluish sky
+principled.inputs[
+"Roughness"
+].default_value =
+0.8
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting "blobs" (subdivided planes with displacement)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Subdivide the plane for more vertices
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+10
+)
+# 10 cuts = 100+ faces for smooth deformation
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# Add material with emissive glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+1.0
+# Brighter glow
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Add and configure displacement modifier
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUDS'
+)
+displace.texture = tex
+displace.strength =
+4.0
+# Increased for more pronounced blobs
+displace.texture_coords =
+'OBJECT'
+# Animate texture for organic shifting
+tex.noise_scale =
+0.3
+# Smaller scale for more detail
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+5
+):
+# Keyframe every 5 frames for smoother motion
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = math.sin(frame *
+0.1
++ i) *
+2
+# Sinusoidal variation for blob-like drift
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign a camera
+bpy.ops.
+object
+.camera_add(location=(
+20
+, -
+20
+,
+10
+))
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Animate the camera to fly around
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+20
+* math.cos(angle)
+camera.location.y =
+20
+* math.sin(angle)
+camera.location.z =
+10
++ math.sin(angle *
+2
+) *
+5
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+0
+]
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add basic lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings for real-time effects
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, view in Rendered mode, then press Ctrl + F12 to render."
+)
+Key Changes
+Subdivision
+: Added
+bpy.ops.mesh.subdivide(number_cuts=10)
+to each plane, giving it 100+ faces. This allows the displacement modifier to create visible, blob-like deformations instead of just flat shifts.
+Displacement Strength
+: Increased
+displace.strength
+to 4.0 for more exaggerated warping.
+Texture Animation
+: Changed
+tex.noise_depth
+to use
+math.sin(frame * 0.1 + i) * 2
+, creating a more organic, pulsating blob effect. Keyframes are now every 5 frames for smoother motion.
+Noise Scale
+: Reduced
+tex.noise_scale
+to 0.3 for finer, more detailed deformations.
+Emission
+: Bumped
+Emission Strength
+to 1.0 for a brighter, glowing blob look.
+How to Test
+New File
+: Open Blender,
+File > New > General
+.
+Save
+: Save as
+ShiftingWorld.blend
+in a writable folder.
+Run Script
+: In
+Scripting
+workspace, paste this into a new text, and click
+Run Script
+.
+Viewport Check
+:
+Go to
+Layout
+workspace.
+Set viewport to
+Rendered
+mode (top-right sphere icon).
+Scrub the timeline. You should see five glowing, orange-to-red planes warping and shifting like blobs inside the blue sky dome, with the camera flying around.
+Render
+: Press
+Ctrl + F12
+to output
+ShiftingWorldAnimation.mp4
+.
+What to Expect
+The planes should now deform into irregular, blob-like shapes, pulsing and drifting due to the animated cloud texture.
+They won't just rotate—they'll morph organically in place, resembling a lava lamp's gooey blobs.
+The camera will fly around, giving you a dynamic view of this surreal world.
+If It's Still Not Blob-Like
+Subdivision
+: If the deformation is too subtle, increase
+number_cuts
+to 20 (more faces = more detail, but slower).
+Displacement
+: Try
+displace.strength = 6.0
+for even wilder shapes.
+Viewport
+: Ensure you're in
+Rendered
+mode—EEVEE needs this to show displacement live.
+Let me know how this looks—describe the blobs' appearance or share any issues—and I'll adjust further to nail that lava lamp world vibe!
+The camera is looking too low and is too close it is looking down at the bottom I just see three crumpled planes and maybe we need a dark mottled surface for the inside of the skydome (background)
+I hear you—the camera's too low and close, focusing on the bottom planes, and you're only seeing three instead of five, which suggests it's not capturing the full scene. Plus, the sky dome's plain blue interior isn't giving that dark, mottled lava lamp vibe you're after. Let's adjust the script to:
+Reposition and widen the camera's orbit for a better view of all five blobs.
+Ensure all five planes are visible and blob-like.
+Add a dark, mottled texture to the sky dome's interior using a noise-driven material.
+Here's the updated script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a sky dome (hemisphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+bpy.context.view_layer.objects.active = dome
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.bisect(plane_co=(
+0
+,
+0
+,
+0
+), plane_no=(
+0
+,
+0
+,
+1
+), clear_inner=
+True
+)
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# Dark mottled material for the dome
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+noise.inputs[
+"Scale"
+].default_value =
+10.0
+noise.inputs[
+"Detail"
+].default_value =
+5.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.8
+mix = nodes.new(
+"ShaderNodeMixRGB"
+)
+mix.blend_type =
+'MULTIPLY'
+mix.inputs[
+"Fac"
+].default_value =
+1.0
+mix.inputs[
+"Color1"
+].default_value = (
+0.05
+,
+0.05
+,
+0.05
+,
+1
+)
+# Dark base
+mix.inputs[
+"Color2"
+].default_value = (
+0.3
+,
+0.2
+,
+0.1
+,
+1
+)
+# Mottled brown
+dome_mat.node_tree.links.new(noise.outputs[
+"Fac"
+], mix.inputs[
+"Color2"
+])
+dome_mat.node_tree.links.new(mix.outputs[
+"Color"
+], principled.inputs[
+"Base Color"
+])
+principled.inputs[
+"Roughness"
+].default_value =
+0.9
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting blobs (subdivided planes)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Subdivide for blob-like deformation
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+10
+)
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# Material with glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+1.0
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Displacement for blob effect
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUDS'
+)
+displace.texture = tex
+displace.strength =
+4.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture
+tex.noise_scale =
+0.3
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+5
+):
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = math.sin(frame *
+0.1
++ i) *
+2
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign camera with wider, higher orbit
+bpy.ops.
+object
+.camera_add(location=(
+30
+, -
+30
+,
+20
+))
+# Higher and farther out
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Animate camera to fly around, centered higher
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+30
+* math.cos(angle)
+# Wider orbit
+camera.location.y =
+30
+* math.sin(angle)
+camera.location.z =
+20
++ math.sin(angle *
+2
+) *
+10
+# Higher base and range
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+2
+]
+# Track middle blob (BlobPlane_2)
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, view in Rendered mode, then press Ctrl + F12 to render."
+)
+Key Changes
+Camera Position
+:
+Moved starting position to
+(30, -30, 20)
+(farther out and higher).
+Widened orbit radius to 30 units (
+30 * math.cos(angle)
+).
+Raised base height to 20 with a larger vertical range (
+20 + math.sin(angle * 2) * 10
+).
+Set tracking to
+blobs[2]
+(middle blob) instead of
+blobs[0]
+(bottom), so it looks at the center of the stack.
+Sky Dome Material
+:
+Replaced plain blue with a dark, mottled texture using a
+Noise Texture
+node.
+Base color is dark gray
+(0.05, 0.05, 0.05)
+, mottled with brownish
+(0.3, 0.2, 0.1)
+for a lava lamp-like background.
+Noise scale is 10.0 with high detail (5.0) for a speckled look.
+Blob Visibility
+:
+The five planes are still at z = -10, -5, 0, 5, 10. The camera's new height and wider orbit should show all five, not just three.
+If fewer than five appear, it might be a viewport clipping issue—check below.
+Testing Steps
+New File
+:
+File > New > General
+in Blender.
+Save
+: Save as
+ShiftingWorld.blend
+somewhere writable.
+Run Script
+: In
+Scripting
+workspace, paste into a new text, click
+Run Script
+.
+Viewport
+:
+Switch to
+Layout
+, set to
+Rendered
+mode (top-right sphere).
+Scrub the timeline. You should see:
+A dark, mottled sky dome interior.
+Five glowing, crumpled orange-to-red blobs shifting organically.
+Camera flying around, showing all blobs from a higher, wider angle.
+Render
+: Press
+Ctrl + F12
+for
+ShiftingWorldAnimation.mp4
+.
+Troubleshooting
+Only Three Blobs
+: If still only three are visible, the camera might still be too low or the viewport clipping distance too short. In the viewport, press
+N
+to open the sidebar, go to
+View
+tab, and set
+Clip End
+to 1000 (default might cut off distant objects).
+Camera Too Low
+: If it's still looking down too much, increase the base z-value (e.g.,
+camera.location.z = 30 + ...
+) and let me know.
+Not Blob-Like
+: If the planes still look flat, increase
+displace.strength
+to 6.0 or
+number_cuts
+to 15 for more deformation.
+Tell me what you see now—how many blobs, the camera's view, and if the sky dome's mottling fits the vibe—and I'll fine-tune it further!
+Ok it's still too close and the sky dome is cut off by the plane underneath so it just looks like grey, it's looking down and seeing only the hole, either make the skydome wrap all the way around, or make the camera look up at them from lower rather than down up. I saw a little peak of the band of the sky dome only once during the animation
+I see the issue: the camera's still too close, looking down into the hole of the half-sphere sky dome, and the bottom plane is blocking most of the mottled interior, making it look like a flat gray background. You're only catching a glimpse of the dome's edge occasionally. Let's fix this by:
+Making the sky dome a full sphere (wrapping all around) so the mottled interior is visible from any angle.
+Adjusting the camera to either look up from below the blobs or orbit farther out, ensuring it sees the full scene without clipping the dome.
+I'll go with a full sphere and reposition the camera lower, looking up, since that fits your idea of flying around in a lava lamp-like world. Here's the revised script:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a full sky dome (complete sphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+# Dark mottled material for the dome
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+noise.inputs[
+"Scale"
+].default_value =
+10.0
+noise.inputs[
+"Detail"
+].default_value =
+5.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.8
+mix = nodes.new(
+"ShaderNodeMixRGB"
+)
+mix.blend_type =
+'MULTIPLY'
+mix.inputs[
+"Fac"
+].default_value =
+1.0
+mix.inputs[
+"Color1"
+].default_value = (
+0.05
+,
+0.05
+,
+0.05
+,
+1
+)
+# Dark base
+mix.inputs[
+"Color2"
+].default_value = (
+0.3
+,
+0.2
+,
+0.1
+,
+1
+)
+# Mottled brown
+dome_mat.node_tree.links.new(noise.outputs[
+"Fac"
+], mix.inputs[
+"Color2"
+])
+dome_mat.node_tree.links.new(mix.outputs[
+"Color"
+], principled.inputs[
+"Base Color"
+])
+principled.inputs[
+"Roughness"
+].default_value =
+0.9
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting blobs (subdivided planes)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Subdivide for blob-like deformation
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+10
+)
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# Material with glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+1.0
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Displacement for blob effect
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUDS'
+)
+displace.texture = tex
+displace.strength =
+4.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture
+tex.noise_scale =
+0.3
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+5
+):
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = math.sin(frame *
+0.1
++ i) *
+2
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign camera, positioned lower and looking up
+bpy.ops.
+object
+.camera_add(location=(
+20
+, -
+20
+, -
+15
+))
+# Below the blobs
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Animate camera to fly around, looking up
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+20
+* math.cos(angle)
+# Moderate orbit radius
+camera.location.y =
+20
+* math.sin(angle)
+camera.location.z = -
+15
++ math.sin(angle *
+2
+) *
+5
+# Stays low, slight up-down motion
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+2
+]
+# Track middle blob
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, view in Rendered mode, then press Ctrl + F12 to render."
+)
+Key Changes
+Full Sky Dome
+:
+Removed the
+bpy.ops.mesh.bisect()
+call, making it a complete sphere instead of a hemisphere. Now the mottled texture wraps all around, visible from below the blobs.
+The dark, speckled interior should be prominent against the glowing blobs.
+Camera Adjustment
+:
+Moved the camera lower to
+(20, -20, -15)
+, placing it below the bottom blob (at z=-10).
+Adjusted orbit to
+z = -15 + math.sin(angle * 2) * 5
+, keeping it low (z ranges from -20 to -10) and looking up.
+Still tracks the middle blob (
+blobs[2]
+), ensuring it views the stack from below rather than above.
+Blob Positioning
+:
+Blobs remain at z = -10, -5, 0, 5, 10. From below, you should see all five, with the camera's upward angle highlighting their crumpled, blob-like shapes against the mottled sphere.
+Testing Steps
+New File
+:
+File > New > General
+.
+Save
+: Save as
+ShiftingWorld.blend
+in a writable folder.
+Run Script
+: In
+Scripting
+workspace, paste into a new text, click
+Run Script
+.
+Viewport
+:
+Go to
+Layout
+, set to
+Rendered
+mode (top-right sphere).
+Scrub the timeline. You should see:
+A full, dark, mottled sphere enclosing the scene.
+Five glowing, crumpled orange-to-red blobs above the camera.
+Camera flying below, looking up at the blobs with the sphere as a dynamic backdrop.
+Render
+: Press
+Ctrl + F12
+for
+ShiftingWorldAnimation.mp4
+.
+What to Expect
+The camera now flies below the blobs, looking up, so you'll see their undersides deforming like glowing, shifting masses.
+The full sphere's mottled interior should be visible all around, not cut off by the bottom plane, giving that lava lamp world feel.
+All five blobs should be in view, not just a few.
+If Issues Persist
+Camera Too Close
+: If it's still too tight, increase the orbit radius (e.g.,
+30 * math.cos(angle)
+instead of 20) and let me know.
+Sky Dome Not Visible
+: If it still looks gray, check the viewport's
+Clip End
+(press
+N
+,
+View
+tab, set to 1000) to ensure the sphere isn't clipped.
+Blob Count
+: Confirm all five
+BlobPlane_X
+objects are in the Outliner.
+Let me know what you see now—the camera's view, the sky dome's appearance, and how the blobs look—and I'll tweak it further if needed!
+Ok everything is sort of ok but can I have the camera back and down further
+I'm glad it's coming together! Since everything is "sort of ok" but you want the camera farther back and lower, I'll adjust its position and orbit to give you a wider, more distant view from below the blobs. This should pull it back from the action and lower its perspective, letting you see more of the shifting blobs and the mottled sky dome. I'll keep the rest of the scene intact since it's working for you.
+Here's the updated script with the camera adjustments:
+python
+Collapse
+Wrap
+Copy
+import
+bpy
+import
+math
+# Clear default scene
+bpy.ops.
+object
+.select_all(action=
+'SELECT'
+)
+bpy.ops.
+object
+.delete()
+# Set frame range
+scene = bpy.context.scene
+scene.frame_start =
+1
+scene.frame_end =
+250
+# Create a full sky dome (complete sphere)
+bpy.ops.mesh.primitive_uv_sphere_add(radius=
+50
+, location=(
+0
+,
+0
+,
+0
+))
+dome = bpy.context.
+object
+dome.name =
+"SkyDome"
+# Dark mottled material for the dome
+dome_mat = bpy.data.materials.new(name=
+"DomeMat"
+)
+dome_mat.use_nodes =
+True
+nodes = dome_mat.node_tree.nodes
+nodes.clear()
+principled = nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+noise = nodes.new(
+"ShaderNodeTexNoise"
+)
+noise.inputs[
+"Scale"
+].default_value =
+10.0
+noise.inputs[
+"Detail"
+].default_value =
+5.0
+noise.inputs[
+"Roughness"
+].default_value =
+0.8
+mix = nodes.new(
+"ShaderNodeMixRGB"
+)
+mix.blend_type =
+'MULTIPLY'
+mix.inputs[
+"Fac"
+].default_value =
+1.0
+mix.inputs[
+"Color1"
+].default_value = (
+0.05
+,
+0.05
+,
+0.05
+,
+1
+)
+# Dark base
+mix.inputs[
+"Color2"
+].default_value = (
+0.3
+,
+0.2
+,
+0.1
+,
+1
+)
+# Mottled brown
+dome_mat.node_tree.links.new(noise.outputs[
+"Fac"
+], mix.inputs[
+"Color2"
+])
+dome_mat.node_tree.links.new(mix.outputs[
+"Color"
+], principled.inputs[
+"Base Color"
+])
+principled.inputs[
+"Roughness"
+].default_value =
+0.9
+output = nodes.new(
+"ShaderNodeOutputMaterial"
+)
+dome_mat.node_tree.links.new(principled.outputs[
+"BSDF"
+], output.inputs[
+"Surface"
+])
+dome.data.materials.append(dome_mat)
+# Create shifting blobs (subdivided planes)
+blob_count =
+5
+blobs = []
+for
+i
+in
+range
+(blob_count):
+bpy.ops.mesh.primitive_plane_add(size=
+10
+, location=(
+0
+,
+0
+, i *
+5
+-
+10
+))
+blob = bpy.context.
+object
+blob.name =
+f"BlobPlane_
+{i}
+"
+blobs.append(blob)
+# Subdivide for blob-like deformation
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.mode_set(mode=
+'EDIT'
+)
+bpy.ops.mesh.subdivide(number_cuts=
+10
+)
+bpy.ops.
+object
+.mode_set(mode=
+'OBJECT'
+)
+# Material with glow
+blob_mat = bpy.data.materials.new(name=
+f"BlobMat_
+{i}
+"
+)
+blob_mat.use_nodes =
+True
+blob_nodes = blob_mat.node_tree.nodes
+    blob_nodes.clear()
+blob_principled = blob_nodes.new(
+"ShaderNodeBsdfPrincipled"
+)
+blob_principled.inputs[
+"Base Color"
+].default_value = (
+1
+,
+0.5
+- i *
+0.1
+,
+0
+,
+1
+)
+# Orange to red
+blob_principled.inputs[
+"Emission Strength"
+].default_value =
+1.0
+blob_output = blob_nodes.new(
+"ShaderNodeOutputMaterial"
+)
+blob_mat.node_tree.links.new(blob_principled.outputs[
+"BSDF"
+], blob_output.inputs[
+"Surface"
+])
+blob.data.materials.append(blob_mat)
+# Displacement for blob effect
+bpy.context.view_layer.objects.active = blob
+bpy.ops.
+object
+.modifier_add(
+type
+=
+'DISPLACE'
+)
+displace = blob.modifiers[
+"Displace"
+]
+tex = bpy.data.textures.new(
+f"DisplaceTex_
+{i}
+"
+,
+type
+=
+'CLOUDS'
+)
+displace.texture = tex
+displace.strength =
+4.0
+displace.texture_coords =
+'OBJECT'
+# Animate texture
+tex.noise_scale =
+0.3
+for
+frame
+in
+range
+(
+1
+,
+251
+,
+5
+):
+bpy.context.scene.frame_set(frame)
+tex.noise_depth = math.sin(frame *
+0.1
++ i) *
+2
+tex.keyframe_insert(data_path=
+"noise_depth"
+, frame=frame)
+# Add and assign camera, positioned lower and farther back
+bpy.ops.
+object
+.camera_add(location=(
+40
+, -
+40
+, -
+25
+))
+# Lower and more distant
+camera = bpy.context.
+object
+camera.name =
+"FlyCamera"
+scene.camera = camera
+# Animate camera to fly around, staying lower and farther
+for
+frame
+in
+range
+(
+1
+,
+251
+):
+bpy.context.scene.frame_set(frame)
+angle = frame *
+0.03
+camera.location.x =
+40
+* math.cos(angle)
+# Wider orbit
+camera.location.y =
+40
+* math.sin(angle)
+camera.location.z = -
+25
++ math.sin(angle *
+2
+) *
+5
+# Lower base, slight motion
+camera.keyframe_insert(data_path=
+"location"
+, frame=frame)
+if
+frame ==
+1
+:
+bpy.context.view_layer.objects.active = camera
+bpy.ops.
+object
+.constraint_add(
+type
+=
+'TRACK_TO'
+)
+camera.constraints[
+"Track To"
+].target = blobs[
+2
+]
+# Track middle blob
+camera.constraints[
+"Track To"
+].track_axis =
+'TRACK_NEGATIVE_Z'
+camera.constraints[
+"Track To"
+].up_axis =
+'UP_Y'
+# Add lighting
+bpy.ops.
+object
+.light_add(
+type
+=
+'SUN'
+, location=(
+0
+,
+0
+,
+20
+))
+light = bpy.context.
+object
+light.data.energy =
+5
+# Set render settings (EEVEE)
+scene.render.engine =
+'BLENDER_EEVEE'
+scene.render.resolution_x =
+960
+scene.render.resolution_y =
+540
+scene.render.filepath =
+"//ShiftingWorldAnimation.mp4"
+scene.render.image_settings.file_format =
+'FFMPEG'
+scene.render.ffmpeg.
+format
+=
+'MPEG4'
+# EEVEE settings
+scene.eevee.use_ssr =
+True
+scene.eevee.use_gtao =
+True
+print
+(
+"Script complete! Save your .blend file, view in Rendered mode, then press Ctrl + F12 to render."
+)
+Changes Made
+Camera Position
+:
+Starting point moved to
+(40, -40, -25)
+—farther back (40 units vs. 20) and lower (-25 vs. -15).
+Orbit radius increased to 40 (
+40 * math.cos(angle)
+), widening the view.
+Vertical range adjusted to
+-25 + math.sin(angle * 2) * 5
+, keeping it low (z from -30 to -20), still looking up at the blobs (lowest blob at z=-10).
+Rest Unchanged
+:
+Sky dome remains a full sphere with the mottled texture.
+Blobs stay at z = -10, -5, 0, 5, 10, with the same shifting effect.
+Testing Steps
+New File
+:
+File > New > General
+.
+Save
+: Save as
+ShiftingWorld.blend
+in a writable folder.
+Run Script
+: In
+Scripting
+workspace, paste into a new text, click
+Run Script
+.
+Viewport
+:
+Go to
+Layout
+, set to
+Rendered
+mode (top-right sphere).
+Scrub the timeline. You should see:
+The camera farther back and lower, looking up at all five glowing, crumpled blobs.
+The full mottled sky dome as a dark, speckled backdrop, wrapping around the scene.
+Render
+: Press
+Ctrl + F12
+for
+ShiftingWorldAnimation.mp4
+.
+What to Expect
+The camera's wider, lower orbit should give a broader view of the blobs, showing all five clearly against the mottled sphere.
+You'll see more of the sky dome's interior, not just a sliver, since it's now fully spherical and the camera's pulled back.
+If It's Still Off
+Too Close
+: If it's still too tight, increase the orbit radius further (e.g.,
+50 * math.cos(angle)
+) and let me know.
+Too High
+: If it's not low enough, drop the base z-value (e.g.,
+-35 + ...
+).
+Sky Dome
+: If the mottling isn't prominent, I can adjust the noise texture's scale or colors.
+Tell me how this looks—camera distance, height, and the overall scene—and I'll keep dialing it in!
+How can Grok help?
+Grok 3
+

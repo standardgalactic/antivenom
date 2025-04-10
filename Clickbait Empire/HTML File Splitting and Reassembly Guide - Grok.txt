@@ -1,0 +1,1504 @@
+HTML File Splitting and Reassembly Guide - Grok
+Could you reformat this as a html file it is called chat.html replacing the file I split: Note on Split Files: `chat.html` and `conversation.json`
+
+The original `chat.html` and `conversation.json` files were too large (approximately 200 MB each) to upload directly to GitHub, exceeding the free Git LFS storage limit and causing upload issues. To resolve this, we split both files into smaller chunks of approximately 5 MB each using a Bash script. These chunks are stored in the `chunks/` directory with prefixes `chat_part_` and `conversation_part_` (e.g., `chunks/chat_part_aa`, `chunks/conversation_part_ab`, etc.).
+
+#### Why We Did This
+- GitHub imposes limits on file sizes and LFS quotas (1 GB free storage). Splitting the files allowed us to upload them within these constraints while utilizing Git LFS for efficient tracking of large files.
+- Smaller chunks are easier to manage, especially on systems with limited resources.
+
+#### How to Reassemble the Original Files
+To restore the original `chat.html` or `conversation.json` files from their chunks, use the provided Bash script `split.sh` with the `-r` flag. Follow these steps:
+
+1. **Ensure You Have the Chunks**: Clone the repository or download the `chunks/` directory containing all `chat_part_*` and `conversation_part_*` files.
+2. **Run the Script**:
+   - For `chat.html`: `./split_or_join.sh -r chat.html`
+     - Output: `chat.reassembled` (the restored original `chat.html`).
+   - For `conversation.json`: `./split_or_join.sh -r conversation.json`
+     - Output: `conversation.reassembled` (the restored original `conversation.json`).
+3. **Verify**: The reassembled files should match the originals exactly.
+
+#### Script Details
+- The script is included in the repository as `split_or_join.sh`. It splits files into 5 MB chunks by default or reassembles them when the `-r` flag is used.
+- Requirements: Bash (available on Linux, macOS, or WSL on Windows).
+Below is the reformatted content as an HTML file named
+chat.html
+. I've structured it with basic HTML formatting, incorporating the provided text and ensuring it's clean and readable. Since this replaces the original
+chat.html
+, I've assumed the content you provided is the full intended body of the file.
+html
+Preview
+Collapse
+Wrap
+Copy
+<!DOCTYPE
+html
+>
+<
+html
+lang
+=
+"en"
+>
+<
+head
+>
+<
+meta
+charset
+=
+"UTF-8"
+>
+<
+meta
+name
+=
+"viewport"
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+<
+title
+>
+Chat Documentation
+</
+title
+>
+<
+style
+>
+body
+{
+font-family
+: Arial, sans-serif;
+line-height
+:
+1.6
+;
+margin
+:
+20px
+;
+max-width
+:
+800px
+;
+}
+h1
+,
+h2
+,
+h3
+{
+color
+:
+#333
+;
+}
+code
+{
+background-color
+:
+#f4f4f4
+;
+padding
+:
+2px
+5px
+;
+border-radius
+:
+3px
+;
+}
+pre {
+background-color
+:
+#f4f4f4
+;
+padding
+:
+10px
+;
+border-radius
+:
+5px
+;
+overflow-x
+: auto;
+}
+</
+style
+>
+</
+head
+>
+<
+body
+>
+<
+h1
+>
+Note on Split Files:
+<
+code
+>
+chat.html
+</
+code
+>
+and
+<
+code
+>
+conversation.json
+</
+code
+>
+</
+h1
+>
+<
+p
+>
+The original
+<
+code
+>
+chat.html
+</
+code
+>
+and
+<
+code
+>
+conversation.json
+</
+code
+>
+files were too large (approximately 200 MB each) to upload directly to GitHub, exceeding the free Git LFS storage limit and causing upload issues. To resolve this, we split both files into smaller chunks of approximately 5 MB each using a Bash script. These chunks are stored in the
+<
+code
+>
+chunks/
+</
+code
+>
+directory with prefixes
+<
+code
+>
+chat_part_
+</
+code
+>
+and
+<
+code
+>
+conversation_part_
+</
+code
+>
+(e.g.,
+<
+code
+>
+chunks/chat_part_aa
+</
+code
+>
+,
+<
+code
+>
+chunks/conversation_part_ab
+</
+code
+>
+, etc.).
+</
+p
+>
+<
+h2
+>
+Why We Did This
+</
+h2
+>
+<
+ul
+>
+<
+li
+>
+GitHub imposes limits on file sizes and LFS quotas (1 GB free storage). Splitting the files allowed us to upload them within these constraints while utilizing Git LFS for efficient tracking of large files.
+</
+li
+>
+<
+li
+>
+Smaller chunks are easier to manage, especially on systems with limited resources.
+</
+li
+>
+</
+ul
+>
+<
+h2
+>
+How to Reassemble the Original Files
+</
+h2
+>
+<
+p
+>
+To restore the original
+<
+code
+>
+chat.html
+</
+code
+>
+or
+<
+code
+>
+conversation.json
+</
+code
+>
+files from their chunks, use the provided Bash script
+<
+code
+>
+split.sh
+</
+code
+>
+with the
+<
+code
+>
+-r
+</
+code
+>
+flag. Follow these steps:
+</
+p
+>
+<
+ol
+>
+<
+li
+>
+<
+strong
+>
+Ensure You Have the Chunks
+</
+strong
+>
+: Clone the repository or download the
+<
+code
+>
+chunks/
+</
+code
+>
+directory containing all
+<
+code
+>
+chat_part_*
+</
+code
+>
+and
+<
+code
+>
+conversation_part_*
+</
+code
+>
+files.
+</
+li
+>
+<
+li
+>
+<
+strong
+>
+Run the Script
+</
+strong
+>
+:
+<
+ul
+>
+<
+li
+>
+For
+<
+code
+>
+chat.html
+</
+code
+>
+:
+<
+pre
+>
+./split_or_join.sh -r chat.html
+</
+pre
+>
+Output:
+<
+code
+>
+chat.reassembled
+</
+code
+>
+(the restored original
+<
+code
+>
+chat.html
+</
+code
+>
+).
+</
+li
+>
+<
+li
+>
+For
+<
+code
+>
+conversation.json
+</
+code
+>
+:
+<
+pre
+>
+./split_or_join.sh -r conversation.json
+</
+pre
+>
+Output:
+<
+code
+>
+conversation.reassembled
+</
+code
+>
+(the restored original
+<
+code
+>
+conversation.json
+</
+code
+>
+).
+</
+li
+>
+</
+ul
+>
+</
+li
+>
+<
+li
+>
+<
+strong
+>
+Verify
+</
+strong
+>
+: The reassembled files should match the originals exactly.
+</
+li
+>
+</
+ol
+>
+<
+h2
+>
+Script Details
+</
+h2
+>
+<
+ul
+>
+<
+li
+>
+The script is included in the repository as
+<
+code
+>
+split_or_join.sh
+</
+code
+>
+. It splits files into 5 MB chunks by default or reassembles them when the
+<
+code
+>
+-r
+</
+code
+>
+flag is used.
+</
+li
+>
+<
+li
+>
+<
+strong
+>
+Requirements
+</
+strong
+>
+: Bash (available on Linux, macOS, or WSL on Windows).
+</
+li
+>
+</
+ul
+>
+</
+body
+>
+</
+html
+>
+Notes:
+Structure
+: The HTML includes a basic structure with a header, body, and some inline CSS for readability (e.g., font styling, code blocks, and spacing).
+Content
+: The text you provided is fully incorporated, with Markdown-like elements (e.g., headings, lists, code) converted to appropriate HTML tags.
+Assumption
+: Since you mentioned replacing the original
+chat.html
+, I've treated this as the complete content. If the original
+chat.html
+had additional content (e.g., a chat interface), let me know, and I can adjust accordingly.
+File Name
+: This is formatted as
+chat.html
+as requested.
+You can save this as
+chat.html
+and open it in a browser to view the formatted documentation. Let me know if you need further modifications!
+It is supposed to look more like this after being displayed (Although this is in Markdown): 
+
+
+### Note on Split Files: `chat.html` and `conversation.json`
+
+The original `chat.html` and `conversation.json` files were too large (approximately 200 MB each) to upload directly to GitHub, exceeding the free Git LFS storage limit and causing upload issues. To resolve this, we split both files into smaller chunks of approximately 5 MB each using a Bash script. These chunks are stored in the `chunks/` directory with prefixes `chat_part_` and `conversation_part_` (e.g., `chunks/chat_part_aa`, `chunks/conversation_part_ab`, etc.).
+
+#### Why We Did This
+- GitHub imposes limits on file sizes and LFS quotas (1 GB free storage). Splitting the files allowed us to upload them within these constraints while utilizing Git LFS for efficient tracking of large files.
+- Smaller chunks are easier to manage, especially on systems with limited resources.
+
+#### How to Reassemble the Original Files
+To restore the original `chat.html` or `conversation.json` files from their chunks, use the provided Bash script `split_or_join.sh` with the `-r` flag. Follow these steps:
+
+1. **Ensure You Have the Chunks**: Clone the repository or download the `chunks/` directory containing all `chat_part_*` and `conversation_part_*` files.
+2. **Run the Script**:
+   - For `chat.html`: `./split.sh -r chat.html`
+     - Output: `chat.reassembled` (the restored original `chat.html`).
+   - For `conversation.json`: `./split.sh -r conversation.json`
+     - Output: `conversation.reassembled` (the restored original `conversation.json`).
+3. **Verify**: The reassembled files should match the originals exactly.
+
+#### Script Details
+- The script is included in the repository as `split.sh`. It splits files into 5 MB chunks by default or reassembles them when the `-r` flag is used.
+- Requirements: Bash (available on Linux, macOS, or WSL on Windows).
+Below is an updated version of
+chat.html
+that more closely mimics the Markdown structure and appearance you provided, while still being valid HTML. I've adjusted the formatting to align with the Markdown example, including the exact phrasing and layout (e.g., using
+<h3>
+for the top heading to match the
+###
+level, consistent code formatting, and preserving the script name as
+split.sh
+where specified).
+html
+Preview
+Collapse
+Wrap
+Copy
+<!DOCTYPE
+html
+>
+<
+html
+lang
+=
+"en"
+>
+<
+head
+>
+<
+meta
+charset
+=
+"UTF-8"
+>
+<
+meta
+name
+=
+"viewport"
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+<
+title
+>
+Chat Documentation
+</
+title
+>
+<
+style
+>
+body
+{
+font-family
+: Arial, sans-serif;
+line-height
+:
+1.6
+;
+margin
+:
+20px
+;
+max-width
+:
+800px
+;
+}
+h3
+,
+h4
+{
+color
+:
+#333
+;
+}
+code
+{
+background-color
+:
+#f4f4f4
+;
+padding
+:
+2px
+5px
+;
+border-radius
+:
+3px
+;
+}
+pre {
+background-color
+:
+#f4f4f4
+;
+padding
+:
+10px
+;
+border-radius
+:
+5px
+;
+overflow-x
+: auto;
+margin
+:
+0
+;
+}
+ul
+,
+ol
+{
+margin
+:
+10px
+0
+;
+padding-left
+:
+20px
+;
+}
+li
+{
+margin
+:
+5px
+0
+;
+}
+</
+style
+>
+</
+head
+>
+<
+body
+>
+<
+h3
+>
+Note on Split Files:
+<
+code
+>
+chat.html
+</
+code
+>
+and
+<
+code
+>
+conversation.json
+</
+code
+>
+</
+h3
+>
+<
+p
+>
+The original
+<
+code
+>
+chat.html
+</
+code
+>
+and
+<
+code
+>
+conversation.json
+</
+code
+>
+files were too large (approximately 200 MB each) to upload directly to GitHub, exceeding the free Git LFS storage limit and causing upload issues. To resolve this, we split both files into smaller chunks of approximately 5 MB each using a Bash script. These chunks are stored in the
+<
+code
+>
+chunks/
+</
+code
+>
+directory with prefixes
+<
+code
+>
+chat_part_
+</
+code
+>
+and
+<
+code
+>
+conversation_part_
+</
+code
+>
+(e.g.,
+<
+code
+>
+chunks/chat_part_aa
+</
+code
+>
+,
+<
+code
+>
+chunks/conversation_part_ab
+</
+code
+>
+, etc.).
+</
+p
+>
+<
+h4
+>
+Why We Did This
+</
+h4
+>
+<
+ul
+>
+<
+li
+>
+GitHub imposes limits on file sizes and LFS quotas (1 GB free storage). Splitting the files allowed us to upload them within these constraints while utilizing Git LFS for efficient tracking of large files.
+</
+li
+>
+<
+li
+>
+Smaller chunks are easier to manage, especially on systems with limited resources.
+</
+li
+>
+</
+ul
+>
+<
+h4
+>
+How to Reassemble the Original Files
+</
+h4
+>
+<
+p
+>
+To restore the original
+<
+code
+>
+chat.html
+</
+code
+>
+or
+<
+code
+>
+conversation.json
+</
+code
+>
+files from their chunks, use the provided Bash script
+<
+code
+>
+split_or_join.sh
+</
+code
+>
+with the
+<
+code
+>
+-r
+</
+code
+>
+flag. Follow these steps:
+</
+p
+>
+<
+ol
+>
+<
+li
+>
+<
+strong
+>
+Ensure You Have the Chunks
+</
+strong
+>
+: Clone the repository or download the
+<
+code
+>
+chunks/
+</
+code
+>
+directory containing all
+<
+code
+>
+chat_part_*
+</
+code
+>
+and
+<
+code
+>
+conversation_part_*
+</
+code
+>
+files.
+</
+li
+>
+<
+li
+>
+<
+strong
+>
+Run the Script
+</
+strong
+>
+:
+<
+ul
+>
+<
+li
+>
+For
+<
+code
+>
+chat.html
+</
+code
+>
+:
+<
+pre
+>
+./split.sh -r chat.html
+</
+pre
+>
+Output:
+<
+code
+>
+chat.reassembled
+</
+code
+>
+(the restored original
+<
+code
+>
+chat.html
+</
+code
+>
+).
+</
+li
+>
+<
+li
+>
+For
+<
+code
+>
+conversation.json
+</
+code
+>
+:
+<
+pre
+>
+./split.sh -r conversation.json
+</
+pre
+>
+Output:
+<
+code
+>
+conversation.reassembled
+</
+code
+>
+(the restored original
+<
+code
+>
+conversation.json
+</
+code
+>
+).
+</
+li
+>
+</
+ul
+>
+</
+li
+>
+<
+li
+>
+<
+strong
+>
+Verify
+</
+strong
+>
+: The reassembled files should match the originals exactly.
+</
+li
+>
+</
+ol
+>
+<
+h4
+>
+Script Details
+</
+h4
+>
+<
+ul
+>
+<
+li
+>
+The script is included in the repository as
+<
+code
+>
+split.sh
+</
+code
+>
+. It splits files into 5 MB chunks by default or reassembles them when the
+<
+code
+>
+-r
+</
+code
+>
+flag is used.
+</
+li
+>
+<
+li
+>
+Requirements: Bash (available on Linux, macOS, or WSL on Windows).
+</
+li
+>
+</
+ul
+>
+</
+body
+>
+</
+html
+>
+Changes Made:
+Heading Levels
+: Used
+<h3>
+for the main title (
+###
+in Markdown) and
+<h4>
+for subsections (
+####
+in Markdown) to match the structure.
+Script Name
+: Adjusted the script name to
+split.sh
+where specified in the Markdown example, but kept
+split_or_join.sh
+in the "How to Reassemble" section to match your initial input (assuming this might reflect the actual script name in your repo).
+Formatting
+:
+Kept inline
+<code>
+tags for file names and commands, mimicking Markdown backticks.
+Used
+<pre>
+for command examples to preserve their preformatted look.
+Adjusted list spacing and styling to resemble Markdown rendering.
+CSS
+: Tweaked the styles slightly to ensure a clean, Markdown-like appearance (e.g., tighter margins for
+<pre>
+blocks, consistent list indentation).
+Notes:
+If the script name should be consistently
+split.sh
+or
+split_or_join.sh
+throughout, let me know, and I'll unify it.
+This HTML file will display in a browser with a look very close to the rendered Markdown you provided, while remaining functional and lightweight.
+Save this as
+chat.html
+, and it should meet your expectations. Let me know if you need further refinements!
+I would like to be able to pass one file in as a parameter, and if run without parameters, it should ask do you want to process all of the files in the directory: #!/usr/bin/env python3
+"""
+A script to extract plain text from all MHTML files in the current directory.
+It parses each MHTML file as a MIME message, extracts text from its HTML (or plain text) parts,
+removes tags using BeautifulSoup, and writes the results to separate .txt files.
+
+Usage: 
+    python extract_mhtml_text.py
+
+Ensure you have installed BeautifulSoup (e.g., pip install beautifulsoup4)
+"""
+
+import glob
+import os
+from email import policy
+from email.parser import BytesParser
+from bs4 import BeautifulSoup
+
+def extract_text_from_mhtml(file_path):
+    """
+    Extract plain text from an MHTML file by parsing its MIME structure.
+    It processes both HTML parts (removing tags) and plain text parts.
+    """
+    with open(file_path, 'rb') as f:
+        msg = BytesParser(policy=policy.default).parse(f)
+    
+    text_parts = []
+
+    if msg.is_multipart():
+        for part in msg.walk():
+            content_type = part.get_content_type()
+            # Process HTML content by removing HTML tags
+            if content_type == 'text/html':
+                html_content = part.get_content()
+                soup = BeautifulSoup(html_content, 'html.parser')
+                text_parts.append(soup.get_text(separator="\n", strip=True))
+            # If plain text is available, extract it as well
+            elif content_type == 'text/plain':
+                text_parts.append(part.get_content())
+    else:
+        content_type = msg.get_content_type()
+        if content_type == 'text/html':
+            soup = BeautifulSoup(msg.get_content(), 'html.parser')
+            text_parts.append(soup.get_text(separator="\n", strip=True))
+        else:
+            text_parts.append(msg.get_content())
+    
+    return "\n\n".join(text_parts)
+
+def main():
+    # Find all .mhtml files in the current directory
+    mhtml_files = glob.glob("*.mhtml")
+    if not mhtml_files:
+        print("No MHTML files found in the current directory.")
+        return
+    
+    for file_path in mhtml_files:
+        print(f'Processing {file_path} ...')
+        extracted_text = extract_text_from_mhtml(file_path)
+        output_file = os.path.splitext(file_path)[0] + ".txt"
+        with open(output_file, "w", encoding="utf-8") as out:
+            out.write(extracted_text)
+        print(f"Extracted text written to {output_file}")
+
+if __name__ == "__main__":
+    main()
+Here's an updated version of your Python script that allows you to pass a single MHTML file as a parameter and, if run without parameters, prompts the user to choose whether to process all MHTML files in the current directory. I've kept the core functionality intact and added argument parsing using
+argparse
+along with an interactive prompt when no arguments are provided.
+python
+Collapse
+Wrap
+Copy
+#!/usr/bin/env python3
+"""
+A script to extract plain text from MHTML files. It can process a single file passed as an argument
+or all MHTML files in the current directory if no argument is provided (with user confirmation).
+It parses each MHTML file as a MIME message, extracts text from its HTML (or plain text) parts,
+removes tags using BeautifulSoup, and writes the results to separate .txt files.
+Usage:
+python extract_mhtml_text.py [file.mhtml]  # Process a specific file
+python extract_mhtml_text.py               # Prompt to process all files in directory
+Ensure you have installed BeautifulSoup (e.g., pip install beautifulsoup4)
+"""
+import
+glob
+import
+os
+import
+sys
+import
+argparse
+from
+email
+import
+policy
+from
+email.parser
+import
+BytesParser
+from
+bs4
+import
+BeautifulSoup
+def
+extract_text_from_mhtml
+(
+file_path
+):
+"""
+Extract plain text from an MHTML file by parsing its MIME structure.
+It processes both HTML parts (removing tags) and plain text parts.
+"""
+with
+open
+(file_path,
+'rb'
+)
+as
+f:
+msg = BytesParser(policy=policy.default).parse(f)
+    
+    text_parts = []
+if
+msg.is_multipart():
+for
+part
+in
+msg.walk():
+content_type = part.get_content_type()
+# Process HTML content by removing HTML tags
+if
+content_type ==
+'text/html'
+:
+html_content = part.get_content()
+soup = BeautifulSoup(html_content,
+'html.parser'
+)
+text_parts.append(soup.get_text(separator=
+"\n"
+, strip=
+True
+))
+# If plain text is available, extract it as well
+elif
+content_type ==
+'text/plain'
+:
+text_parts.append(part.get_content())
+else
+:
+content_type = msg.get_content_type()
+if
+content_type ==
+'text/html'
+:
+soup = BeautifulSoup(msg.get_content(),
+'html.parser'
+)
+text_parts.append(soup.get_text(separator=
+"\n"
+, strip=
+True
+))
+else
+:
+text_parts.append(msg.get_content())
+return
+"\n\n"
+.join(text_parts)
+def
+process_file
+(
+file_path
+):
+"""Process a single MHTML file and write the extracted text to a .txt file."""
+if
+not
+os.path.exists(file_path):
+print
+(
+f"Error: File '
+{file_path}
+' does not exist."
+)
+return
+if
+not
+file_path.endswith(
+'.mhtml'
+):
+print
+(
+f"Error: '
+{file_path}
+' is not an MHTML file."
+)
+return
+print
+(
+f'Processing
+{file_path}
+...'
+)
+extracted_text = extract_text_from_mhtml(file_path)
+output_file = os.path.splitext(file_path)[
+0
+] +
+".txt"
+with
+open
+(output_file,
+"w"
+, encoding=
+"utf-8"
+)
+as
+out:
+out.write(extracted_text)
+print
+(
+f"Extracted text written to
+{output_file}
+"
+)
+def
+main
+():
+# Set up argument parser
+parser = argparse.ArgumentParser(
+description=
+"Extract plain text from MHTML files."
+)
+    parser.add_argument(
+"file"
+,
+nargs=
+"?"
+,
+help
+=
+"Path to a specific MHTML file to process (optional)"
+)
+    args = parser.parse_args()
+# If a file is provided as an argument, process only that file
+if
+args.file:
+process_file(args.file)
+return
+# If no argument is provided, look for MHTML files in the current directory
+mhtml_files = glob.glob(
+"*.mhtml"
+)
+if
+not
+mhtml_files:
+print
+(
+"No MHTML files found in the current directory."
+)
+return
+# Prompt the user to process all files
+print
+(
+f"Found
+{
+len
+(mhtml_files)}
+MHTML files in the current directory:"
+)
+for
+f
+in
+mhtml_files:
+print
+(
+f" -
+{f}
+"
+)
+response =
+input
+(
+"Do you want to process all of these files? (yes/no): "
+).strip().lower()
+if
+response
+in
+(
+'yes'
+,
+'y'
+):
+for
+file_path
+in
+mhtml_files:
+process_file(file_path)
+else
+:
+print
+(
+"No files were processed."
+)
+if
+__name__ ==
+"__main__"
+:
+main()
+Key Changes:
+Argument Parsing with
+argparse
+:
+Added
+argparse
+to handle an optional file argument (
+file
+).
+Usage examples are updated in the docstring: run with a specific file (
+python extract_mhtml_text.py file.mhtml
+) or without arguments (
+python extract_mhtml_text.py
+).
+Single File Processing
+:
+The
+process_file
+function handles processing a single MHTML file, including error checks for file existence and type.
+If a file is passed as an argument, only that file is processed, and the script exits.
+Interactive Prompt
+:
+If no argument is provided, the script finds all
+.mhtml
+files in the current directory using
+glob
+.
+It lists the files and prompts the user with "Do you want to process all of these files? (yes/no)".
+If the user responds with "yes" or "y" (case-insensitive), all files are processed; otherwise, the script exits without processing.
+Error Handling
+:
+Added checks to ensure the specified file exists and is an
+.mhtml
+file when a single file is provided.
+Usage Examples:
+Process a single file
+:
+bash
+Collapse
+Wrap
+Copy
+python extract_mhtml_text.py example.mhtml
+Output:
+text
+Collapse
+Wrap
+Copy
+Processing example.mhtml ...
+Extracted text written to example.txt
+Run without arguments (with files present)
+:
+bash
+Collapse
+Wrap
+Copy
+python extract_mhtml_text.py
+Output (example):
+text
+Collapse
+Wrap
+Copy
+Found 3 MHTML files in the current directory:
+- file1.mhtml
+ - file2.mhtml
+ - file3.mhtml
+Do you want to process all of these files? (yes/no): yes
+Processing file1.mhtml ...
+Extracted text written to file1.txt
+Processing file2.mhtml ...
+Extracted text written to file2.txt
+Processing file3.mhtml ...
+Extracted text written to file3.txt
+Run without arguments (say no)
+:
+text
+Collapse
+Wrap
+Copy
+Found 3 MHTML files in the current directory:
+- file1.mhtml
+ - file2.mhtml
+ - file3.mhtml
+Do you want to process all of these files? (yes/no): no
+No files were processed.
+Run in an empty directory
+:
+text
+Collapse
+Wrap
+Copy
+No MHTML files found in the current directory.
+This script now meets your requirements while maintaining the original functionality. Let me know if you need further adjustments!
+How can Grok help?
+Grok 3
+

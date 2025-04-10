@@ -1,0 +1,2447 @@
+Interactive Parsing Tree Visualizer - Grok
+Help me complete this I am renaming it "Quadrivium": <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Parsing Tree Visualizer</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #container {
+            width: 80vw;
+            height: 80vh;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #input-section {
+            margin-bottom: 20px;
+        }
+
+        #input-section input {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+
+        #input-section button {
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #output {
+            width: 100%;
+            height: calc(100% - 60px);
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <div id="input-section">
+        <input type="text" id="grammar-input" placeholder="Enter grammar expression here">
+        <button onclick="generateTree()">Visualize</button>
+    </div>
+    <div id="output"></div>
+</div>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    async function generateTree() {
+        const input = document.getElementById("grammar-input").value;
+        if (!input) {
+            alert("Please enter a grammar expression.");
+            return;
+        }
+
+        const data = parseGrammar(input);
+        renderTree(data);
+    }
+
+    function parseGrammar(input) {
+        // This is a placeholder. You need to implement the actual parsing logic.
+        return {
+            name: "root",
+            children: [
+                { name: "child1" },
+                { name: "child2", children: [
+                    { name: "grandchild1" },
+                    { name: "grandchild2" }
+                ]}
+            ]
+        };
+    }
+
+    function renderTree(data) {
+        const output = document.getElementById("output");
+        output.innerHTML = "";
+
+        const width = output.clientWidth;
+        const height = output.clientHeight;
+
+        const svg = d3.select("#output")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(40,0)");
+
+        const tree = d3.tree().size([height, width - 160]);
+        const root = d3.hierarchy(data);
+
+        tree(root);
+
+        const link = svg.selectAll(".link")
+            .data(root.descendants().slice(1))
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", d => `
+                M${d.y},${d.x}
+                C${(d.y + d.parent.y) / 2},${d.x}
+                 ${(d.y + d.parent.y) / 2},${d.parent.x}
+                 ${d.parent.y},${d.parent.x}
+            `);
+
+        const node = svg.selectAll(".node")
+            .data(root.descendants())
+            .enter().append("g")
+            .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+            .attr("transform", d => `translate(${d.y},${d.x})`);
+
+        node.append("circle")
+            .attr("r", 10);
+
+        node.append("text")
+            .attr("dy", 3)
+            .attr("x", d => d.children ? -12 : 12)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name);
+    }
+</script>
+
+</body>
+</html>
+ Public code references from 5 repositories
+This updated index.html provides a basic interactive parsing tree visualizer. You will need to implement the actual parsing logic in the parseGrammar function to suit your specific parsing requirements.
+Let's rename this to "Quadrivium" and enhance it a bit. Here's the updated version with a proper title and some improvements:
+html
+Preview
+Collapse
+Wrap
+Copy
+<!DOCTYPE
+html
+>
+<
+html
+lang
+=
+"en"
+>
+<
+head
+>
+<
+meta
+charset
+=
+"UTF-8"
+>
+<
+meta
+name
+=
+"viewport"
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+<
+title
+>
+Quadrivium - Interactive Parsing Tree Visualizer
+</
+title
+>
+<
+style
+>
+body
+,
+html
+{
+height
+:
+100%
+;
+margin
+:
+0
+;
+font-family
+: Arial, sans-serif;
+background-color
+:
+#f4f4f4
+;
+display
+: flex;
+justify-content
+: center;
+align-items
+: center;
+flex-direction
+: column;
+}
+#container
+{
+width
+:
+80vw
+;
+height
+:
+80vh
+;
+background
+: white;
+border
+:
+2px
+solid
+#333
+;
+border-radius
+:
+8px
+;
+padding
+:
+20px
+;
+box-shadow
+:
+0
+0
+10px
+rgba
+(
+0
+,
+0
+,
+0
+,
+0.1
+);
+}
+#input-section
+{
+margin-bottom
+:
+20px
+;
+display
+: flex;
+gap:
+10px
+;
+}
+#grammar-input
+{
+padding
+:
+10px
+;
+flex-grow
+:
+1
+;
+border
+:
+1px
+solid
+#ccc
+;
+border-radius
+:
+4px
+;
+}
+#visualize-btn
+{
+padding
+:
+10px
+20px
+;
+background
+:
+#333
+;
+color
+: white;
+border
+: none;
+cursor
+: pointer;
+border-radius
+:
+5px
+;
+transition
+: background
+0.3s
+;
+}
+#visualize-btn
+:hover
+{
+background
+:
+#555
+;
+}
+#output
+{
+width
+:
+100%
+;
+height
+:
+calc
+(
+100%
+-
+60px
+);
+overflow
+: auto;
+}
+.link
+{
+fill: none;
+stroke:
+#555
+;
+stroke-
+width
+:
+2px
+;
+}
+.node
+circle {
+fill:
+#fff
+;
+stroke:
+#333
+;
+stroke-
+width
+:
+2px
+;
+}
+.node
+text {
+font-size
+:
+12px
+;
+}
+</
+style
+>
+</
+head
+>
+<
+body
+>
+<
+div
+id
+=
+"container"
+>
+<
+div
+id
+=
+"input-section"
+>
+<
+input
+type
+=
+"text"
+id
+=
+"grammar-input"
+placeholder
+=
+"Enter grammar expression (e.g., S -> NP VP)"
+>
+<
+button
+id
+=
+"visualize-btn"
+onclick
+=
+"generateTree()"
+>
+Visualize
+</
+button
+>
+</
+div
+>
+<
+div
+id
+=
+"output"
+>
+</
+div
+>
+</
+div
+>
+<
+script
+src
+=
+"https://d3js.org/d3.v6.min.js"
+>
+</
+script
+>
+<
+script
+>
+async
+function
+generateTree
+(
+)
+{
+const
+input =
+document
+.getElementById(
+"grammar-input"
+).value.trim();
+if
+(!input) {
+alert(
+"Please enter a grammar expression."
+);
+return
+;
+}
+const
+data = parseGrammar(input);
+renderTree(data);
+}
+function
+parseGrammar
+(
+input
+)
+{
+// Basic parsing logic for context-free grammar rules
+try
+{
+// Split rules by semicolon if multiple rules are provided
+const
+rules = input.split(
+';'
+).map(
+rule
+=>
+rule.trim());
+const
+root = {
+name
+:
+"Root"
+,
+children
+: [] };
+rules.forEach(
+rule
+=>
+{
+const
+[left, right] = rule.split(
+'->'
+).map(
+s
+=>
+s.trim());
+if
+(left && right) {
+const
+node = {
+name
+: left,
+children
+: [] };
+const
+productions = right.split(
+'|'
+).map(
+p
+=>
+p.trim());
+productions.forEach(
+prod
+=>
+{
+prod.split(
+' '
+).forEach(
+symbol
+=>
+{
+if
+(symbol) {
+node.children.push({
+name
+: symbol });
+}
+});
+});
+root.children.push(node);
+}
+});
+return
+root.children.length >
+0
+? root : {
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Invalid grammar format"
+}]
+};
+}
+catch
+(e) {
+return
+{
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Parsing failed"
+}]
+};
+}
+}
+function
+renderTree
+(
+data
+)
+{
+const
+output =
+document
+.getElementById(
+"output"
+);
+output.innerHTML =
+""
+;
+const
+width = output.clientWidth;
+const
+height = output.clientHeight;
+const
+svg = d3.select(
+"#output"
+)
+.append(
+"svg"
+)
+.attr(
+"width"
+, width)
+.attr(
+"height"
+, height)
+.append(
+"g"
+)
+.attr(
+"transform"
+,
+"translate(50,50)"
+);
+const
+tree = d3.tree().size([height -
+100
+, width -
+200
+]);
+const
+root = d3.hierarchy(data);
+tree(root);
+const
+link = svg.selectAll(
+".link"
+)
+.data(root.descendants().slice(
+1
+))
+.enter().append(
+"path"
+)
+.attr(
+"class"
+,
+"link"
+)
+.attr(
+"d"
+,
+d
+=>
+`
+M
+${d.y}
+,
+${d.x}
+C
+${(d.y + d.parent.y) /
+2
+}
+,
+${d.x}
+${(d.y + d.parent.y) /
+2
+}
+,
+${d.parent.x}
+${d.parent.y}
+,
+${d.parent.x}
+`
+);
+const
+node = svg.selectAll(
+".node"
+)
+.data(root.descendants())
+.enter().append(
+"g"
+)
+.attr(
+"class"
+,
+d
+=>
+"node"
++ (d.children ?
+" node--internal"
+:
+" node--leaf"
+))
+.attr(
+"transform"
+,
+d
+=>
+`translate(
+${d.y}
+,
+${d.x}
+)`
+);
+node.append(
+"circle"
+)
+.attr(
+"r"
+,
+10
+)
+.attr(
+"fill"
+,
+d
+=>
+d.data.name ===
+"Error"
+?
+"#ff4444"
+:
+"#fff"
+);
+node.append(
+"text"
+)
+.attr(
+"dy"
+,
+3
+)
+.attr(
+"x"
+,
+d
+=>
+d.children ? -
+15
+:
+15
+)
+.style(
+"text-anchor"
+,
+d
+=>
+d.children ?
+"end"
+:
+"start"
+)
+.text(
+d
+=>
+d.data.name);
+}
+</
+script
+>
+</
+body
+>
+</
+html
+>
+Key improvements made:
+Changed the title to "Quadrivium - Interactive Parsing Tree Visualizer"
+Enhanced the styling:
+Better input section layout with flexbox
+Added hover effect for the button
+Styled the tree links and nodes
+Improved spacing and responsiveness
+Improved the
+parseGrammar
+function to:
+Handle basic context-free grammar notation (e.g., "S -> NP VP")
+Support multiple rules separated by semicolons
+Handle productions with alternatives (using |)
+Include basic error handling
+Enhanced the visualization:
+Adjusted margins for better spacing
+Added color coding for error nodes
+Improved text positioning
+To use Quadrivium, you can enter grammar rules like:
+"S -> NP VP"
+"S -> NP VP; NP -> Det N"
+"S -> NP VP | Aux NP"
+The parser is still basic and could be expanded to handle more complex grammar rules depending on your needs. Would you like me to add more specific parsing capabilities or features to Quadrivium?
+I just want to take sententences and make them into a pseudocode like abstract syntax tree.
+Let's modify Quadrivium to create abstract syntax trees (ASTs) from sentences by breaking them into a pseudocode-like structure. We'll keep it simple and focus on basic sentence components (subject, verb, object, etc.). Here's the updated version:
+html
+Preview
+Collapse
+Wrap
+Copy
+<!DOCTYPE
+html
+>
+<
+html
+lang
+=
+"en"
+>
+<
+head
+>
+<
+meta
+charset
+=
+"UTF-8"
+>
+<
+meta
+name
+=
+"viewport"
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+<
+title
+>
+Quadrivium - Sentence AST Visualizer
+</
+title
+>
+<
+style
+>
+body
+,
+html
+{
+height
+:
+100%
+;
+margin
+:
+0
+;
+font-family
+: Arial, sans-serif;
+background-color
+:
+#f4f4f4
+;
+display
+: flex;
+justify-content
+: center;
+align-items
+: center;
+flex-direction
+: column;
+}
+#container
+{
+width
+:
+80vw
+;
+height
+:
+80vh
+;
+background
+: white;
+border
+:
+2px
+solid
+#333
+;
+border-radius
+:
+8px
+;
+padding
+:
+20px
+;
+box-shadow
+:
+0
+0
+10px
+rgba
+(
+0
+,
+0
+,
+0
+,
+0.1
+);
+}
+#input-section
+{
+margin-bottom
+:
+20px
+;
+display
+: flex;
+gap:
+10px
+;
+}
+#sentence-input
+{
+padding
+:
+10px
+;
+flex-grow
+:
+1
+;
+border
+:
+1px
+solid
+#ccc
+;
+border-radius
+:
+4px
+;
+}
+#visualize-btn
+{
+padding
+:
+10px
+20px
+;
+background
+:
+#333
+;
+color
+: white;
+border
+: none;
+cursor
+: pointer;
+border-radius
+:
+5px
+;
+transition
+: background
+0.3s
+;
+}
+#visualize-btn
+:hover
+{
+background
+:
+#555
+;
+}
+#output
+{
+width
+:
+100%
+;
+height
+:
+calc
+(
+100%
+-
+60px
+);
+overflow
+: auto;
+}
+.link
+{
+fill: none;
+stroke:
+#555
+;
+stroke-
+width
+:
+2px
+;
+}
+.node
+circle {
+fill:
+#fff
+;
+stroke:
+#333
+;
+stroke-
+width
+:
+2px
+;
+}
+.node
+text {
+font-size
+:
+12px
+;
+}
+</
+style
+>
+</
+head
+>
+<
+body
+>
+<
+div
+id
+=
+"container"
+>
+<
+div
+id
+=
+"input-section"
+>
+<
+input
+type
+=
+"text"
+id
+=
+"sentence-input"
+placeholder
+=
+"Enter a sentence (e.g., The cat chased the mouse)"
+>
+<
+button
+id
+=
+"visualize-btn"
+onclick
+=
+"generateTree()"
+>
+Visualize
+</
+button
+>
+</
+div
+>
+<
+div
+id
+=
+"output"
+>
+</
+div
+>
+</
+div
+>
+<
+script
+src
+=
+"https://d3js.org/d3.v6.min.js"
+>
+</
+script
+>
+<
+script
+>
+async
+function
+generateTree
+(
+)
+{
+const
+input =
+document
+.getElementById(
+"sentence-input"
+).value.trim();
+if
+(!input) {
+alert(
+"Please enter a sentence."
+);
+return
+;
+}
+const
+data = parseSentenceToAST(input);
+renderTree(data);
+}
+function
+parseSentenceToAST
+(
+sentence
+)
+{
+// Simple sentence parser for demonstration
+// Creates a pseudocode-like AST structure
+try
+{
+const
+words = sentence.split(
+/\s+/
+);
+const
+ast = {
+name
+:
+"Statement"
+,
+children
+: []
+};
+// Basic heuristic parsing
+let
+currentNode = ast;
+let
+hasSubject =
+false
+;
+let
+hasVerb =
+false
+;
+words.forEach(
+(
+word, index
+) =>
+{
+const
+lowerWord = word.toLowerCase();
+// Handle articles/determiners
+if
+([
+"the"
+,
+"a"
+,
+"an"
+].includes(lowerWord) && !hasSubject) {
+currentNode.children.push({
+name
+:
+"Determiner"
+,
+children
+: [{
+name
+: word }]
+});
+}
+// Assume first non-article is subject
+else
+if
+(!hasSubject && ![
+"is"
+,
+"was"
+,
+"were"
+].includes(lowerWord)) {
+currentNode.children.push({
+name
+:
+"Subject"
+,
+children
+: [{
+name
+:
+"NounPhrase"
+,
+children
+: [{
+name
+: word }] }]
+});
+hasSubject =
+true
+;
+}
+// Assume next word after subject is verb
+else
+if
+(hasSubject && !hasVerb) {
+currentNode.children.push({
+name
+:
+"Predicate"
+,
+children
+: [{
+name
+:
+"Verb"
+,
+children
+: [{
+name
+: word }] }]
+});
+hasVerb =
+true
+;
+}
+// Remaining words as object or complements
+else
+if
+(hasVerb) {
+const
+lastPredicate = currentNode.children.find(
+c
+=>
+c.name ===
+"Predicate"
+);
+if
+(!lastPredicate.children.some(
+c
+=>
+c.name ===
+"Object"
+)) {
+lastPredicate.children.push({
+name
+:
+"Object"
+,
+children
+: [{
+name
+:
+"NounPhrase"
+,
+children
+: [{
+name
+: word }] }]
+});
+}
+else
+{
+lastPredicate.children.find(
+c
+=>
+c.name ===
+"Object"
+)
+.children[
+0
+].children.push({
+name
+: word });
+}
+}
+});
+return
+ast.children.length >
+0
+? ast : {
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Empty sentence"
+}]
+};
+}
+catch
+(e) {
+return
+{
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Parsing failed"
+}]
+};
+}
+}
+function
+renderTree
+(
+data
+)
+{
+const
+output =
+document
+.getElementById(
+"output"
+);
+output.innerHTML =
+""
+;
+const
+width = output.clientWidth;
+const
+height = output.clientHeight;
+const
+svg = d3.select(
+"#output"
+)
+.append(
+"svg"
+)
+.attr(
+"width"
+, width)
+.attr(
+"height"
+, height)
+.append(
+"g"
+)
+.attr(
+"transform"
+,
+"translate(50,50)"
+);
+const
+tree = d3.tree().size([height -
+100
+, width -
+200
+]);
+const
+root = d3.hierarchy(data);
+tree(root);
+const
+link = svg.selectAll(
+".link"
+)
+.data(root.descendants().slice(
+1
+))
+.enter().append(
+"path"
+)
+.attr(
+"class"
+,
+"link"
+)
+.attr(
+"d"
+,
+d
+=>
+`
+M
+${d.y}
+,
+${d.x}
+C
+${(d.y + d.parent.y) /
+2
+}
+,
+${d.x}
+${(d.y + d.parent.y) /
+2
+}
+,
+${d.parent.x}
+${d.parent.y}
+,
+${d.parent.x}
+`
+);
+const
+node = svg.selectAll(
+".node"
+)
+.data(root.descendants())
+.enter().append(
+"g"
+)
+.attr(
+"class"
+,
+d
+=>
+"node"
++ (d.children ?
+" node--internal"
+:
+" node--leaf"
+))
+.attr(
+"transform"
+,
+d
+=>
+`translate(
+${d.y}
+,
+${d.x}
+)`
+);
+node.append(
+"circle"
+)
+.attr(
+"r"
+,
+10
+)
+.attr(
+"fill"
+,
+d
+=>
+d.data.name ===
+"Error"
+?
+"#ff4444"
+:
+"#fff"
+);
+node.append(
+"text"
+)
+.attr(
+"dy"
+,
+3
+)
+.attr(
+"x"
+,
+d
+=>
+d.children ? -
+15
+:
+15
+)
+.style(
+"text-anchor"
+,
+d
+=>
+d.children ?
+"end"
+:
+"start"
+)
+.text(
+d
+=>
+d.data.name);
+}
+</
+script
+>
+</
+body
+>
+</
+html
+>
+Changes Made:
+Renamed Input
+: Changed
+grammar-input
+to
+sentence-input
+to reflect the new purpose.
+Updated Parser
+: The
+parseSentenceToAST
+function now:
+Breaks a sentence into a pseudocode-like AST structure.
+Identifies basic components: Determiner, Subject (NounPhrase), Predicate (Verb), and Object (NounPhrase).
+Uses simple heuristics (e.g., first non-article word is subject, next is verb, rest is object).
+AST Structure
+: Creates a tree resembling pseudocode:
+Root: "Statement"
+Children: "Determiner", "Subject", "Predicate", "Object" as applicable.
+Nested levels for NounPhrases and Verbs.
+How It Works:
+Input a sentence like "The cat chased the mouse":
+"Statement"
+"Determiner: The"
+"Subject"
+"NounPhrase: cat"
+"Predicate"
+"Verb: chased"
+"Object"
+"NounPhrase: the mouse"
+The tree visualizes this structure hierarchically.
+Limitations:
+This is a basic parser using heuristics, not a full natural language processor.
+It assumes simple sentence structures (e.g., subject-verb-object).
+It doesn't handle complex sentences, conjunctions, or advanced grammar well.
+Example Usage:
+Try these:
+"The dog barks"
+"A bird flies high"
+"The cat chased the mouse quickly"
+If you want a more sophisticated parser (e.g., handling complex sentences or using a real NLP library), let me know, and I can integrate something like a simple dependency parser or adjust the logic further!
+Ok it looks awesome but the lines in the ast visual look like twisted thick ribbons they are too long and elaborate. I thought it was better before I just want plain lines: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Parsing Tree Visualizer</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        #container {
+            width: 70vw;
+            height: 70vh;
+            background: white;
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        #input-section {
+            margin-bottom: 20px;
+        }
+
+        #input-section input {
+            padding: 10px;
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+
+        #input-section button {
+            padding: 10px 20px;
+            background: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #output {
+            width: 100%;
+            height: calc(100% - 60px);
+            overflow: auto;
+        }
+
+        #footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+
+        #footer a {
+            color: #333;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+  <header>
+    <h1>Quadrivium</h1>
+  </header>
+
+<div id="container">
+    <div id="title">Interactive Parsing Tree Visualizer</div>
+    <div id="input-section">
+        <input type="text" id="grammar-input" placeholder="Enter grammar expression here">
+        <button onclick="generateTree()">Visualize</button>
+    </div>
+    <div id="output"></div>
+</div>
+<div id="footer">
+    This page is open source and can be edited <a href="https://github.com/standardgalactic/quadrivium/blob/main/index.html">here</a>.
+</div>
+
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script>
+    async function generateTree() {
+        const input = document.getElementById("grammar-input").value;
+        if (!input) {
+            alert("Please enter a grammar expression.");
+            return;
+        }
+
+        const data = parseGrammar(input);
+        renderTree(data);
+    }
+
+    function parseGrammar(input) {
+        // This is a placeholder. You need to implement the actual parsing logic.
+        return {
+            name: "root",
+            children: [
+                { name: "child1" },
+                { name: "child2", children: [
+                    { name: "grandchild1" },
+                    { name: "grandchild2" }
+                ]}
+            ]
+        };
+    }
+
+    function renderTree(data) {
+        const output = document.getElementById("output");
+        output.innerHTML = "";
+
+        const width = output.clientWidth;
+        const height = output.clientHeight;
+
+        const svg = d3.select("#output")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(40,0)");
+
+        const tree = d3.tree().size([height, width - 160]);
+        const root = d3.hierarchy(data);
+
+        tree(root);
+
+        const link = svg.selectAll(".link")
+            .data(root.descendants().slice(1))
+            .enter().append("path")
+            .attr("class", "link")
+            .attr("d", d => `
+                M${d.y},${d.x}
+                C${(d.y + d.parent.y) / 2},${d.x}
+                 ${(d.y + d.parent.y) / 2},${d.parent.x}
+                 ${d.parent.y},${d.parent.x}
+            `);
+
+        const node = svg.selectAll(".node")
+            .data(root.descendants())
+            .enter().append("g")
+            .attr("class", d => "node" + (d.children ? " node--internal" : " node--leaf"))
+            .attr("transform", d => `translate(${d.y},${d.x})`);
+
+        node.append("circle")
+            .attr("r", 10);
+
+        node.append("text")
+            .attr("dy", 3)
+            .attr("x", d => d.children ? -12 : 12)
+            .style("text-anchor", d => d.children ? "end" : "start")
+            .text(d => d.data.name);
+    }
+</script>
+
+</body>
+</html>
+I understand you want simpler, straight lines instead of the curved "twisted thick ribbons" in the AST visualization. Let's modify the latest sentence AST version to use plain straight lines while keeping your sentence-to-AST functionality. Here's the updated code:
+html
+Preview
+Collapse
+Wrap
+Copy
+<!DOCTYPE
+html
+>
+<
+html
+lang
+=
+"en"
+>
+<
+head
+>
+<
+meta
+charset
+=
+"UTF-8"
+>
+<
+meta
+name
+=
+"viewport"
+content
+=
+"width=device-width, initial-scale=1.0"
+>
+<
+title
+>
+Quadrivium - Sentence AST Visualizer
+</
+title
+>
+<
+style
+>
+body
+,
+html
+{
+height
+:
+100%
+;
+margin
+:
+0
+;
+font-family
+: Arial, sans-serif;
+background-color
+:
+#f4f4f4
+;
+display
+: flex;
+justify-content
+: center;
+align-items
+: center;
+flex-direction
+: column;
+}
+#container
+{
+width
+:
+70vw
+;
+height
+:
+70vh
+;
+background
+: white;
+border
+:
+2px
+solid
+#333
+;
+border-radius
+:
+8px
+;
+padding
+:
+20px
+;
+box-shadow
+:
+0
+0
+10px
+rgba
+(
+0
+,
+0
+,
+0
+,
+0.1
+);
+display
+: flex;
+flex-direction
+: column;
+align-items
+: center;
+}
+#title
+{
+font-size
+:
+1.5em
+;
+margin-bottom
+:
+20px
+;
+}
+#input-section
+{
+margin-bottom
+:
+20px
+;
+display
+: flex;
+gap:
+10px
+;
+}
+#sentence-input
+{
+padding
+:
+10px
+;
+flex-grow
+:
+1
+;
+border
+:
+1px
+solid
+#ccc
+;
+border-radius
+:
+4px
+;
+}
+#visualize-btn
+{
+padding
+:
+10px
+20px
+;
+background
+:
+#333
+;
+color
+: white;
+border
+: none;
+cursor
+: pointer;
+border-radius
+:
+5px
+;
+transition
+: background
+0.3s
+;
+}
+#visualize-btn
+:hover
+{
+background
+:
+#555
+;
+}
+#output
+{
+width
+:
+100%
+;
+height
+:
+calc
+(
+100%
+-
+60px
+);
+overflow
+: auto;
+}
+.link
+{
+fill: none;
+stroke:
+#555
+;
+stroke-
+width
+:
+1.5px
+;
+}
+.node
+circle {
+fill:
+#fff
+;
+stroke:
+#333
+;
+stroke-
+width
+:
+1.5px
+;
+}
+.node
+text {
+font-size
+:
+12px
+;
+}
+</
+style
+>
+</
+head
+>
+<
+body
+>
+<
+div
+id
+=
+"container"
+>
+<
+div
+id
+=
+"title"
+>
+Quadrivium - Sentence AST Visualizer
+</
+div
+>
+<
+div
+id
+=
+"input-section"
+>
+<
+input
+type
+=
+"text"
+id
+=
+"sentence-input"
+placeholder
+=
+"Enter a sentence (e.g., The cat chased the mouse)"
+>
+<
+button
+id
+=
+"visualize-btn"
+onclick
+=
+"generateTree()"
+>
+Visualize
+</
+button
+>
+</
+div
+>
+<
+div
+id
+=
+"output"
+>
+</
+div
+>
+</
+div
+>
+<
+script
+src
+=
+"https://d3js.org/d3.v6.min.js"
+>
+</
+script
+>
+<
+script
+>
+async
+function
+generateTree
+(
+)
+{
+const
+input =
+document
+.getElementById(
+"sentence-input"
+).value.trim();
+if
+(!input) {
+alert(
+"Please enter a sentence."
+);
+return
+;
+}
+const
+data = parseSentenceToAST(input);
+renderTree(data);
+}
+function
+parseSentenceToAST
+(
+sentence
+)
+{
+try
+{
+const
+words = sentence.split(
+/\s+/
+);
+const
+ast = {
+name
+:
+"Statement"
+,
+children
+: []
+};
+let
+currentNode = ast;
+let
+hasSubject =
+false
+;
+let
+hasVerb =
+false
+;
+words.forEach(
+(
+word, index
+) =>
+{
+const
+lowerWord = word.toLowerCase();
+if
+([
+"the"
+,
+"a"
+,
+"an"
+].includes(lowerWord) && !hasSubject) {
+currentNode.children.push({
+name
+:
+"Determiner"
+,
+children
+: [{
+name
+: word }]
+});
+}
+else
+if
+(!hasSubject && ![
+"is"
+,
+"was"
+,
+"were"
+].includes(lowerWord)) {
+currentNode.children.push({
+name
+:
+"Subject"
+,
+children
+: [{
+name
+:
+"NounPhrase"
+,
+children
+: [{
+name
+: word }] }]
+});
+hasSubject =
+true
+;
+}
+else
+if
+(hasSubject && !hasVerb) {
+currentNode.children.push({
+name
+:
+"Predicate"
+,
+children
+: [{
+name
+:
+"Verb"
+,
+children
+: [{
+name
+: word }] }]
+});
+hasVerb =
+true
+;
+}
+else
+if
+(hasVerb) {
+const
+lastPredicate = currentNode.children.find(
+c
+=>
+c.name ===
+"Predicate"
+);
+if
+(!lastPredicate.children.some(
+c
+=>
+c.name ===
+"Object"
+)) {
+lastPredicate.children.push({
+name
+:
+"Object"
+,
+children
+: [{
+name
+:
+"NounPhrase"
+,
+children
+: [{
+name
+: word }] }]
+});
+}
+else
+{
+lastPredicate.children.find(
+c
+=>
+c.name ===
+"Object"
+)
+.children[
+0
+].children.push({
+name
+: word });
+}
+}
+});
+return
+ast.children.length >
+0
+? ast : {
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Empty sentence"
+}]
+};
+}
+catch
+(e) {
+return
+{
+name
+:
+"Error"
+,
+children
+: [{
+name
+:
+"Parsing failed"
+}]
+};
+}
+}
+function
+renderTree
+(
+data
+)
+{
+const
+output =
+document
+.getElementById(
+"output"
+);
+output.innerHTML =
+""
+;
+const
+width = output.clientWidth;
+const
+height = output.clientHeight;
+const
+svg = d3.select(
+"#output"
+)
+.append(
+"svg"
+)
+.attr(
+"width"
+, width)
+.attr(
+"height"
+, height)
+.append(
+"g"
+)
+.attr(
+"transform"
+,
+"translate(50,50)"
+);
+const
+tree = d3.tree().size([height -
+100
+, width -
+200
+]);
+const
+root = d3.hierarchy(data);
+tree(root);
+// Use straight lines instead of curves
+const
+link = svg.selectAll(
+".link"
+)
+.data(root.descendants().slice(
+1
+))
+.enter().append(
+"line"
+)
+.attr(
+"class"
+,
+"link"
+)
+.attr(
+"x1"
+,
+d
+=>
+d.y)
+.attr(
+"y1"
+,
+d
+=>
+d.x)
+.attr(
+"x2"
+,
+d
+=>
+d.parent.y)
+.attr(
+"y2"
+,
+d
+=>
+d.parent.x);
+const
+node = svg.selectAll(
+".node"
+)
+.data(root.descendants())
+.enter().append(
+"g"
+)
+.attr(
+"class"
+,
+d
+=>
+"node"
++ (d.children ?
+" node--internal"
+:
+" node--leaf"
+))
+.attr(
+"transform"
+,
+d
+=>
+`translate(
+${d.y}
+,
+${d.x}
+)`
+);
+node.append(
+"circle"
+)
+.attr(
+"r"
+,
+10
+)
+.attr(
+"fill"
+,
+d
+=>
+d.data.name ===
+"Error"
+?
+"#ff4444"
+:
+"#fff"
+);
+node.append(
+"text"
+)
+.attr(
+"dy"
+,
+3
+)
+.attr(
+"x"
+,
+d
+=>
+d.children ? -
+15
+:
+15
+)
+.style(
+"text-anchor"
+,
+d
+=>
+d.children ?
+"end"
+:
+"start"
+)
+.text(
+d
+=>
+d.data.name);
+}
+</
+script
+>
+</
+body
+>
+</
+html
+>
+Key Changes:
+Straight Lines
+: In the
+renderTree
+function, I replaced the curved
+path
+elements with simple
+line
+elements using
+x1, y1
+(child position) and
+x2, y2
+(parent position). This gives you plain, straight lines connecting nodes, similar to your original preference.
+Styling
+: Adjusted
+.link
+in CSS to ensure the lines are thin and clean (1.5px stroke width).
+Layout
+: Kept your sentence AST parsing logic intact but used your preferred container sizing (70vw × 70vh) and added the title inside the container.
+Removed Footer/Header
+: Omitted the footer and external header since they weren't in your latest request, but I can add them back if you want!
+Result:
+The AST now uses straight lines instead of curves, making it look cleaner and more like a traditional tree diagram.
+Try sentences like "The cat chased the mouse" or "A bird flies high" to see the structure.
+Let me know if you'd like to tweak the line thickness, node spacing, or anything else!
+How can Grok help?
+Grok 3
+

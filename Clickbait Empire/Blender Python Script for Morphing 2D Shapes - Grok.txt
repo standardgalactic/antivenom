@@ -1,0 +1,730 @@
+Blender Python Script for Morphing 2D Shapes - Grok
+Could you explain how everything is working and what it is doing? import bpy
+import math
+import mathutils
+
+# -----------------------
+# UTILITY FUNCTIONS
+# -----------------------
+
+def sample_polygon(vertices, n_samples):
+    """
+    Given a list of 2D vertices (ordered, forming a closed polygon),
+    return n_samples points uniformly sampled along its perimeter.
+    """
+    # Compute edge lengths and total perimeter.
+    distances = []
+    total = 0
+    N = len(vertices)
+    for i in range(N):
+        v1 = vertices[i]
+        v2 = vertices[(i+1) % N]
+        d = math.hypot(v2[0]-v1[0], v2[1]-v1[1])
+        distances.append(d)
+        total += d
+
+    sample_points = []
+    spacing = total / n_samples
+    for i in range(n_samples):
+        target = i * spacing
+        cum = 0
+        for j, d in enumerate(distances):
+            if cum + d >= target:
+                frac = (target - cum) / d if d != 0 else 0
+                v1 = vertices[j]
+                v2 = vertices[(j+1) % N]
+                x = v1[0] + frac * (v2[0] - v1[0])
+                y = v1[1] + frac * (v2[1] - v1[1])
+                sample_points.append((x, y))
+                break
+            cum += d
+    return sample_points
+
+def get_circle_points(n, radius=1.0):
+    """Return n uniformly sampled points on a circle of given radius."""
+    return [(radius * math.cos(2 * math.pi * i / n), radius * math.sin(2 * math.pi * i / n)) for i in range(n)]
+
+def get_square_points(n, half_side=1.0):
+    """Return n points sampled along the perimeter of a square centered at the origin."""
+    vertices = [
+        ( half_side,  half_side),
+        ( half_side, -half_side),
+        (-half_side, -half_side),
+        (-half_side,  half_side)
+    ]
+    return sample_polygon(vertices, n)
+
+def get_triangle_points(n):
+    """Return n points sampled along the perimeter of an equilateral triangle centered at the origin."""
+    # Use an equilateral triangle with vertices chosen to roughly fit in a unit circle.
+    v0 = (0, 1)
+    v1 = ( math.sqrt(3)/2, -0.5)
+    v2 = (-math.sqrt(3)/2, -0.5)
+    vertices = [v0, v1, v2]
+    return sample_polygon(vertices, n)
+
+def get_plus_points(n):
+    """
+    Return n points sampled along the perimeter of a plus sign.
+    The plus sign is defined by the union of two rectangles.
+    Coordinates below are chosen so that the overall shape fits roughly in a circle of radius 1.
+    """
+    vertices = [
+        (-0.2,  1.0), (0.2,  1.0), 
+        (0.2,  0.2), (1.0,  0.2), 
+        (1.0, -0.2), (0.2, -0.2), 
+        (0.2, -1.0), (-0.2, -1.0), 
+        (-0.2, -0.2), (-1.0, -0.2), 
+        (-1.0,  0.2), (-0.2,  0.2)
+    ]
+    return sample_polygon(vertices, n)
+
+def create_filled_curve(points, name="MorphCurve"):
+    """
+    Create a new 2D curve object from a list of 2D points.
+    The curve is closed and its fill_mode is set to 'BOTH' (filled).
+    """
+    curve_data = bpy.data.curves.new(name=name, type='CURVE')
+    curve_data.dimensions = '2D'
+    curve_data.fill_mode = 'BOTH'
+    spline = curve_data.splines.new('POLY')
+    spline.points.add(len(points) - 1)
+    for i, (x, y) in enumerate(points):
+        spline.points[i].co = (x, y, 0, 1)
+    spline.use_cyclic_u = True  # close the curve
+    curve_obj = bpy.data.objects.new(name, curve_data)
+    bpy.context.scene.collection.objects.link(curve_obj)
+    return curve_obj
+
+# -----------------------
+# PARAMETERS & TARGET SHAPES
+# -----------------------
+
+n_points = 64  # number of points per shape (all target shapes will use the same number)
+# Generate the target shapes:
+shape_A = get_circle_points(n_points, radius=1.0)         # Top-Left: Circle
+shape_B = get_square_points(n_points, half_side=1.0)        # Top-Right: Square
+shape_C = get_triangle_points(n_points)                     # Bottom-Left: Triangle
+shape_D = get_plus_points(n_points)                         # Bottom-Right: Plus sign
+
+# -----------------------
+# GRID SETTINGS FOR THE KITBASH SHEET
+# -----------------------
+
+columns = 12  # number of interpolation steps along u
+rows = 12     # number of interpolation steps along v
+spacing_x = 4.0  # horizontal spacing between shapes
+spacing_y = 4.0  # vertical spacing between shapes
+
+# Create (or get) a collection for the kitbash shapes.
+collection_name = "MorphKitbash_Filled"
+if collection_name in bpy.data.collections:
+    kitbash_coll = bpy.data.collections[collection_name]
+    # Remove previous objects.
+    for obj in list(kitbash_coll.objects):
+        bpy.data.objects.remove(obj, do_unlink=True)
+else:
+    kitbash_coll = bpy.data.collections.new(collection_name)
+    bpy.context.scene.collection.children.link(kitbash_coll)
+
+# -----------------------
+# CREATE THE KITBASH GRID OF INTERPOLATED FILLED SHAPES
+# -----------------------
+
+for row_idx in range(rows):
+    # v parameter: 0 at bottom, 1 at top.
+    v = row_idx / (rows - 1) if rows > 1 else 0
+    for col_idx in range(columns):
+        # u parameter: 0 at left, 1 at right.
+        u = col_idx / (columns - 1) if columns > 1 else 0
+
+        # For each point index, compute bilinear interpolation:
+        interp_points = []
+        for i in range(n_points):
+            # Each target shape provides a 2D point.
+            Ax, Ay = shape_A[i]
+            Bx, By = shape_B[i]
+            Cx, Cy = shape_C[i]
+            Dx, Dy = shape_D[i]
+            # Bilinear interpolation:
+            x = (1-u)*(1-v)*Ax + u*(1-v)*Bx + (1-u)*v*Cx + u*v*Dx
+            y = (1-u)*(1-v)*Ay + u*(1-v)*By + (1-u)*v*Cy + u*v*Dy
+            interp_points.append((x, y))
+        
+        # Create the filled 2D curve from the interpolated points.
+        obj_name = f"Morph_r{row_idx:02d}_c{col_idx:02d}"
+        curve_obj = create_filled_curve(interp_points, name=obj_name)
+        # Position the shape in the grid.
+        curve_obj.location = (col_idx * spacing_x, row_idx * spacing_y, 0)
+        kitbash_coll.objects.link(curve_obj)
+        bpy.context.scene.collection.objects.unlink(curve_obj)
+
+print(f"Created a kitbash sheet of {rows*columns} filled morphing shapes in collection '{collection_name}'.")
+This Python script uses Blender's Python API (bpy) to create a grid of 2D filled shapes that morph between four target shapes: a circle, square, triangle, and plus sign. Let's break down how it works step by step.
+Overview
+The script generates a "kitbash sheet" (a grid of shapes) by interpolating between four predefined shapes using bilinear interpolation. Each shape is a closed 2D curve with a consistent number of points, and the result is a smooth transition across the grid:
+Circle
+(top-left corner)
+Square
+(top-right corner)
+Triangle
+(bottom-left corner)
+Plus sign
+(bottom-right corner)
+The grid is organized with:
+Rows controlling vertical interpolation (e.g., triangle to circle).
+Columns controlling horizontal interpolation (e.g., circle to square).
+Key Components
+1. Utility Functions
+These functions help define and sample the shapes:
+sample_polygon(vertices, n_samples)
+:
+Takes a list of 2D vertices forming a closed polygon and returns
+n_samples
+points evenly spaced along its perimeter.
+How it works:
+Computes the length of each edge and the total perimeter.
+Divides the perimeter into
+n_samples
+equal segments.
+For each segment, calculates the corresponding point by interpolating between vertices.
+Used for sampling the square, triangle, and plus sign.
+get_circle_points(n, radius)
+:
+Generates
+n
+points evenly spaced around a circle using parametric equations (
+cos
+and
+sin
+).
+Returns a list of (x, y) coordinates.
+get_square_points(n, half_side)
+:
+Defines a square with four vertices (e.g., (±1, ±1) if
+half_side=1
+).
+Uses
+sample_polygon
+to sample
+n
+points along the perimeter.
+get_triangle_points(n)
+:
+Defines an equilateral triangle with vertices at (0, 1), (√3/2, -0.5), and (-√3/2, -0.5).
+Uses
+sample_polygon
+to sample
+n
+points.
+get_plus_points(n)
+:
+Defines a plus sign as a polygon with 12 vertices (two overlapping rectangles).
+Uses
+sample_polygon
+to sample
+n
+points along its perimeter.
+create_filled_curve(points, name)
+:
+Creates a 2D curve object in Blender from a list of 2D points.
+How it works:
+Creates a new curve data block with
+fill_mode='BOTH'
+(filled shape).
+Adds a poly spline and sets its points to the input coordinates (z=0).
+Closes the curve (
+use_cyclic_u = True
+).
+Links the curve object to the scene and returns it.
+2. Parameters & Target Shapes
+n_points = 64
+:
+All shapes use 64 points for consistency in interpolation.
+Four target shapes are defined:
+shape_A
+: Circle (top-left).
+shape_B
+: Square (top-right).
+shape_C
+: Triangle (bottom-left).
+shape_D
+: Plus sign (bottom-right).
+3. Grid Settings
+columns = 12
+,
+rows = 12
+:
+Defines a 12x12 grid (144 shapes total).
+spacing_x = 4.0
+,
+spacing_y = 4.0
+:
+Sets the distance between shapes in the grid (4 Blender units).
+A collection named
+"MorphKitbash_Filled"
+is created or reused to hold the shapes. If it exists, old objects are cleared.
+4. Creating the Kitbash Grid
+This is the main logic:
+Outer Loops
+:
+Iterates over
+rows
+and
+columns
+to position each shape.
+v = row_idx / (rows - 1)
+: Vertical interpolation factor (0 at bottom, 1 at top).
+u = col_idx / (columns - 1)
+: Horizontal interpolation factor (0 at left, 1 at right).
+Bilinear Interpolation
+:
+For each of the 64 points:
+Takes the corresponding point from all four target shapes (e.g.,
+shape_A[i]
+,
+shape_B[i]
+, etc.).
+Computes a weighted average using the formula:
+text
+Collapse
+Wrap
+Copy
+x = (1-u)*(1-v)*Ax + u*(1-v)*Bx + (1-u)*v*Cx + u*v*Dx
+y = (1-u)*(1-v)*Ay + u*(1-v)*By + (1-u)*v*Cy + u*v*Dy
+When
+u=0, v=0
+: Purely
+shape_A
+(circle).
+When
+u=1, v=0
+: Purely
+shape_B
+(square).
+When
+u=0, v=1
+: Purely
+shape_C
+(triangle).
+When
+u=1, v=1
+: Purely
+shape_D
+(plus).
+Intermediate values blend between these shapes.
+Shape Creation
+:
+Uses
+create_filled_curve
+to turn the interpolated points into a filled 2D curve.
+Names each object (e.g.,
+"Morph_r05_c07"
+) based on its row and column.
+Positions it in the grid:
+x = col_idx * spacing_x
+,
+y = row_idx * spacing_y
+.
+Collection Management
+:
+Links each curve to the
+"MorphKitbash_Filled"
+collection and unlinks it from the main scene collection to keep things organized.
+5. Output
+Prints a confirmation:
+"Created a kitbash sheet of 144 filled morphing shapes in collection 'MorphKitbash_Filled'."
+What It Does
+When you run this script in Blender's Python console or script editor:
+It generates a 12x12 grid of 2D filled curves.
+The shapes morph smoothly:
+Bottom-left (0,0): Triangle.
+Top-left (0,11): Circle.
+Bottom-right (11,0): Square.
+Top-right (11,11): Plus sign.
+Everywhere else: A blend of these shapes.
+Each shape is placed in a grid with 4-unit spacing and stored in a collection named
+"MorphKitbash_Filled"
+.
+Visual Result
+In Blender:
+Open the 3D Viewport and switch to Top View (
+NumPad 7
+) to see the grid.
+The shapes are 2D curves with filled interiors, arranged in a 48x48 unit grid (12 rows/columns × 4 units spacing).
+Zoom out if needed to view the entire grid.
+Why It's Useful
+This could be used for:
+Kitbashing
+: Creating a library of morphing shapes for design or modeling.
+Animation
+: Keyframing the points to animate shape transitions.
+Procedural Art
+: Generating varied 2D patterns programmatically.
+Let me know if you'd like to tweak it or explore specific parts further!
+I'm going to use it to create interpolated fonts transitioning from one font or cipher to another.
+That's a fantastic idea! Using this script to interpolate between fonts or ciphers opens up a lot of creative possibilities, like generating smooth transitions for typography animations, designing hybrid glyphs, or even creating entirely new font styles. Let's explore how you can adapt this script for that purpose.
+Adapting the Script for Font Interpolation
+The script already handles interpolating between 2D shapes, so the core concept aligns perfectly with fonts or ciphers, which are essentially 2D glyphs. Here's how you can modify it to transition between font characters:
+1. Define Font Glyphs as Input Shapes
+Instead of using predefined shapes (circle, square, triangle, plus), you'll need to extract the 2D outlines of font glyphs. In Blender, text objects can be converted to curves, and you can sample points from those curves.
+Steps to Get Glyph Outlines
+:
+Create a text object in Blender for each character (e.g., "A" in Font 1, "A" in Font 2).
+Convert each text object to a curve (
+Object > Convert > Curve
+in the UI, or
+bpy.ops.object.convert(target='CURVE')
+in Python).
+Extract the 2D points from the curve's splines.
+Here's a helper function to convert a character to sampled points:
+python
+Collapse
+Wrap
+Copy
+def
+get_glyph_points
+(
+character, font_name, n_points, size=
+1.0
+):
+# Create a temporary text object
+bpy.ops.
+object
+.text_add()
+text_obj = bpy.context.active_object
+    text_obj.data.body = character
+    text_obj.data.size = size
+# Set font (optional, requires loading a font file)
+if
+font_name
+and
+font_name
+in
+bpy.data.fonts:
+text_obj.data.font = bpy.data.fonts[font_name]
+# Convert to curve
+bpy.ops.
+object
+.convert(target=
+'CURVE'
+)
+curve_data = text_obj.data
+curve_data.dimensions =
+'2D'
+# Sample points from the curve
+points = []
+for
+spline
+in
+curve_data.splines:
+if
+spline.
+type
+==
+'POLY'
+:
+spline_points = [(p.co[
+0
+], p.co[
+1
+])
+for
+p
+in
+spline.points]
+points.extend(sample_polygon(spline_points, n_points //
+len
+(curve_data.splines)))
+# Clean up
+bpy.data.objects.remove(text_obj)
+return
+points[:n_points]
+# Ensure exactly n_points
+Notes
+:
+Fonts must be loaded into Blender (
+bpy.data.fonts.load('path/to/font.ttf')
+) if you want custom fonts.
+If a glyph has multiple contours (e.g., "O" with inner and outer rings), you'll need to decide whether to sample all contours or just the outer one.
+Adjust
+size
+to scale the glyphs consistently.
+2. Replace Target Shapes with Glyphs
+Modify the script's "Parameters & Target Shapes" section to use glyphs instead of geometric shapes:
+python
+Collapse
+Wrap
+Copy
+n_points =
+64
+# Consistent number of points per glyph
+# Example: Interpolating "A" between two fonts
+shape_A = get_glyph_points(
+"A"
+,
+"Font1"
+, n_points)
+# e.g., Arial "A"
+shape_B = get_glyph_points(
+"A"
+,
+"Font2"
+, n_points)
+# e.g., Times "A"
+shape_C = get_glyph_points(
+"B"
+,
+"Font1"
+, n_points)
+# e.g., Arial "B"
+shape_D = get_glyph_points(
+"B"
+,
+"Font2"
+, n_points)
+# e.g., Times "B"
+Variation Ideas
+:
+Transition between two fonts for the same character (e.g., "A" in Arial to "A" in Times).
+Transition between different characters in the same font (e.g., "A" to "B" in Arial).
+Mix fonts and ciphers (e.g., "A" in a standard font to a symbol in Wingdings).
+3. Handle Multiple Contours (Optional)
+Fonts like "O" or "8" have multiple splines (inner and outer loops). The current
+sample_polygon
+function assumes a single closed loop. To handle multi-contour glyphs:
+Modify
+get_glyph_points
+to detect and sample each spline separately.
+Store points as a list of lists (one per contour) and interpolate each contour independently.
+Example adjustment:
+python
+Collapse
+Wrap
+Copy
+def
+get_glyph_points_multi
+(
+character, font_name, n_points_per_contour
+):
+bpy.ops.
+object
+.text_add()
+text_obj = bpy.context.active_object
+    text_obj.data.body = character
+if
+font_name
+in
+bpy.data.fonts:
+text_obj.data.font = bpy.data.fonts[font_name]
+bpy.ops.
+object
+.convert(target=
+'CURVE'
+)
+curve_data = text_obj.data
+curve_data.dimensions =
+'2D'
+all_contours = []
+for
+spline
+in
+curve_data.splines:
+if
+spline.
+type
+==
+'POLY'
+:
+points = [(p.co[
+0
+], p.co[
+1
+])
+for
+p
+in
+spline.points]
+sampled = sample_polygon(points, n_points_per_contour)
+            all_contours.append(sampled)
+    
+    bpy.data.objects.remove(text_obj)
+return
+all_contours
+# Update create_filled_curve for multiple contours
+def
+create_filled_curve_multi
+(
+contours, name=
+"GlyphCurve"
+):
+curve_data = bpy.data.curves.new(name=name,
+type
+=
+'CURVE'
+)
+curve_data.dimensions =
+'2D'
+curve_data.fill_mode =
+'BOTH'
+for
+contour
+in
+contours:
+spline = curve_data.splines.new(
+'POLY'
+)
+spline.points.add(
+len
+(contour) -
+1
+)
+for
+i, (x, y)
+in
+enumerate
+(contour):
+spline.points[i].co = (x, y,
+0
+,
+1
+)
+spline.use_cyclic_u =
+True
+curve_obj = bpy.data.objects.new(name, curve_data)
+    bpy.context.scene.collection.objects.link(curve_obj)
+return
+curve_obj
+Then interpolate each contour separately in the grid loop.
+4. Adjust the Grid
+Single Character Transition
+:
+Use a 1D grid (e.g.,
+rows=1
+,
+columns=12
+) for a linear transition between two glyphs.
+Font-to-Font Map
+:
+Keep the 2D grid to map between multiple characters or styles.
+Spacing
+: Adjust
+spacing_x
+and
+spacing_y
+to fit your glyph sizes (e.g.,
+2.0
+instead of
+4.0
+).
+5. Example Modified Script
+Here's how the main section might look for transitioning "A" between two fonts:
+python
+Collapse
+Wrap
+Copy
+n_points =
+64
+columns =
+12
+rows =
+1
+# Linear transition
+spacing_x =
+2.0
+spacing_y =
+2.0
+# Load fonts (optional)
+# bpy.data.fonts.load('/path/to/arial.ttf')
+# bpy.data.fonts.load('/path/to/times.ttf')
+shape_A = get_glyph_points(
+"A"
+,
+"Arial"
+, n_points)
+# Starting glyph
+shape_B = get_glyph_points(
+"A"
+,
+"Times New Roman"
+, n_points)
+# Ending glyph
+kitbash_coll = bpy.data.collections.new(
+"FontTransition"
+)
+bpy.context.scene.collection.children.link(kitbash_coll)
+for
+col_idx
+in
+range
+(columns):
+u = col_idx / (columns -
+1
+)
+if
+columns >
+1
+else
+0
+interp_points = []
+for
+i
+in
+range
+(n_points):
+Ax, Ay = shape_A[i]
+        Bx, By = shape_B[i]
+x = (
+1
+- u) * Ax + u * Bx
+# Linear interpolation
+y = (
+1
+- u) * Ay + u * By
+interp_points.append((x, y))
+obj_name =
+f"Glyph_c
+{col_idx:02d}
+"
+curve_obj = create_filled_curve(interp_points, name=obj_name)
+curve_obj.location = (col_idx * spacing_x,
+0
+,
+0
+)
+kitbash_coll.objects.link(curve_obj)
+    bpy.context.scene.collection.objects.unlink(curve_obj)
+print
+(
+f"Created a transition of
+{columns}
+glyphs in collection 'FontTransition'."
+)
+Tips for Success
+Font Loading
+: If you're using custom fonts, load them into Blender first. Default fonts like "Bfont" work without loading.
+Point Alignment
+: Ensure the starting points of each glyph align (e.g., both start at the bottom-left). You may need to manually adjust the vertex order or use a more sophisticated point-matching algorithm.
+Animation
+: Keyframe the
+u
+value (or
+u
+and
+v
+) to animate the transition in Blender.
+Ciphers
+: For ciphers (e.g., runes, symbols), treat them as glyphs and follow the same process.
+Potential Challenges
+Complex Glyphs
+: Letters with multiple parts (e.g., "i" with a dot) may require separate handling for each component.
+Point Count Mismatch
+: If glyphs have different numbers of vertices, the interpolation might look wonky. Stick to a fixed
+n_points
+.
+Performance
+: Generating many glyphs in a large grid could slow Blender down—test with smaller grids first.
+Would you like help with a specific font transition example, or do you have a particular cipher or character set in mind? I can refine the code further based on your needs!
+How can Grok help?
+Grok 3
+
