@@ -1,0 +1,375 @@
+Reinforcement Learning in Reasoning
+Saltar al contenido
+Abrir barra lateral
+ChatGPT
+ChatGPT
+Compartir
+Dijiste:
+The State of Reinforcement Learning for LLM Reasoning
+Understanding GRPO and New Insights from Reasoning Model Papers
+Sebastian Raschka, PhD
+Apr 19, 2025
+115
+7
+13
+A lot has happened this month, especially with the releases of new flagship models like GPT-4.5 and Llama 4. But you might have noticed that reactions to these releases were relatively muted. Why? One reason could be that GPT-4.5 and Llama 4 remain conventional models, which means they were trained without explicit reinforcement learning for reasoning.
+
+Meanwhile, competitors such as xAI and Anthropic have added more reasoning capabilities and features into their models. For instance, both the xAI Grok and Anthropic Claude interfaces now include a "thinking" (or "extended thinking") button for certain models that explicitly toggles reasoning capabilities.
+
+In any case, the muted response to GPT-4.5 and Llama 4 (non-reasoning) models suggests we are approaching the limits of what scaling model size and data alone can achieve.
+
+However, OpenAI's recent release of the o3 reasoning model demonstrates there is still considerable room for improvement when investing compute strategically, specifically via reinforcement learning methods tailored for reasoning tasks. (According to OpenAI staff during the recent livestream, o3 used 10× more training compute compared to o1.)
+
+
+Source: OpenAI livestream (https://openai.com/live/) on April 16, 2025
+While reasoning alone isn't a silver bullet, it reliably improves model accuracy and problem-solving capabilities on challenging tasks (so far). And I expect reasoning-focused post-training to become standard practice in future LLM pipelines.
+
+So, in this article, let's explore the latest developments in reasoning via reinforcement learning.
+
+
+This article focuses on reinforcement learning training methods used to develop and improve reasoning models
+Because it is a relatively long article, I am providing a Table of Contents overview below. To navigate the table of contents, please use the slider on the left-hand side in the web view.
+
+Understanding reasoning models
+
+RLHF basics: where it all started
+
+A brief introduction to PPO: RL's workhorse algorithm
+
+RL algorithms: from PPO to GRPO
+
+RL reward modeling: from RLHF to RLVR
+
+How the DeepSeek-R1 reasoning models were trained
+
+Lessons from recent RL papers on training reasoning models
+
+Noteworthy research papers on training reasoning models
+
+Tip: If you are already familiar with reasoning basics, RL, PPO, and GRPO, please feel free to directly jump ahead to the "Lessons from recent RL papers on training reasoning models" section, which contains summaries of interesting insights from recent reasoning research papers.
+
+Understanding reasoning models
+The big elephant in the room is, of course, the definition of reasoning. In short, reasoning is about inference and training techniques that make LLMs better at handling complex tasks.
+
+To provide a bit more detail on how this is achieved (so far), I'd like to define reasoning as follows:
+
+Reasoning, in the context of LLMs, refers to the model's ability to produce intermediate steps before providing a final answer. This is a process that is often described as chain-of-thought (CoT) reasoning. In CoT reasoning, the LLM explicitly generates a structured sequence of statements or computations that illustrate how it arrives at its conclusion.
+
+And below is a figure along with the definition.
+
+
+A simplified illustration of how an LLM might tackle a multi-step reasoning task. Rather than just recalling a fact, the model needs to combine several intermediate reasoning steps to arrive at the correct conclusion. The intermediate reasoning steps may or may not be shown to the user, depending on the implementation.
+If you are new to reasoning models and would like a more comprehensive introduction, I recommend my previous articles:
+
+First Look at Reasoning From Scratch: Chapter 1
+First Look at Reasoning From Scratch: Chapter 1
+Sebastian Raschka, PhD
+·
+Mar 29
+Read full story
+Understanding Reasoning LLMs
+Understanding Reasoning LLMs
+Sebastian Raschka, PhD
+·
+Feb 5
+Read full story
+Now, as hinted at the beginning of this section, the reasoning abilities of LLMs can be improved in two ways, as nicely illustrated in a figure from an OpenAI blog post:
+
+
+Accuracy improvements can be achieved through increased training or test-time compute, where test-time compute is synonymous with inference-time compute and inference-time scaling. Source: Annotated figure from https://openai.com/index/learning-to-reason-with-llms/
+In my previous article:
+
+The State of LLM Reasoning Model Inference
+The State of LLM Reasoning Model Inference
+Sebastian Raschka, PhD
+·
+Mar 8
+Read full story
+I solely focused on the test-time compute methods. In this article, I finally want to take a closer look at the training methods.
+
+RLHF basics: where it all started
+The reinforcement learning (RL) training methods used to build and improve reasoning models are more or less related to the reinforcement learning with human feedback (RLHF) methodology that is used to develop and align conventional LLMs. So, I want to start with a small recap of how RLHF works before discussing reasoning-specific modification based on RL-based training.
+
+Conventional LLMs typically undergo a 3-step training procedure:
+
+Pre-training
+
+Supervised fine-tuning
+
+Alignment (typically via RLHF)
+
+The "original" LLM alignment method is RLHF, which is part of the standard repertoire when developing LLMs following the InstructGPT paper, which described the recipe that was used to develop the first ChatGPT model.
+
+The original goal of RLHF is to align LLMs with human preferences. For instance, suppose you use an LLM multiple times where the LLM generates multiple answers for a given prompt. RLHF guides the LLM towards generating more of the style of answer that you prefer. (Often, RLHF is also used to safety-tune LLMs: to avoid sharing sensitive information, using swear words, and so on.)
+
+If you are new to RLHF, here is an excerpt from a talk I gave a few years ago that explains RLHF in less than 5 minutes:
+
+
+Alternatively, the paragraphs below describe RLHF in text form.
+
+The RLHF pipeline takes a pre-trained model and fine-tunes it in a supervised fashion. This fine-tuning is not the RL part yet but is mainly a prerequisite.
+
+Then, RLHF further aligns the LLM using an algorithm called proximal policy optimization (PPO). (Note that there are other algorithms that can be used instead of PPO; I was specifically saying PPO because that's what was originally used in RLHF and is still the most popular one today.)
+
+For simplicity, we will look at the RLHF pipeline in three separate steps:
+
+RLHF Step 1 (prerequisite): Supervised fine-tuning (SFT) of the pre-trained model
+
+RLHF Step 2: Creating a reward model
+
+RLHF Step 3: Fine-tuning via proximal policy optimization (PPO)
+
+RLHF Step 1, shown below, is a supervised fine-tuning step to create the base model for further RLHF fine-tuning.
+ChatGPT dijo:
+Thanks for sharing this! It's a solid overview of the current state of reinforcement learning applied to reasoning in large language models. Sebastian Raschka does a great job outlining the evolution from standard RLHF to more advanced techniques like GRPO (Guided Reward Policy Optimization) and RLVR (Reinforcement Learning with Verifier Rewards), especially in how they're tailored to enhance reasoning.
+Key takeaways so far:
+GPT-4.5 and Llama 4 didn't make a splash because they stuck to traditional training methods.
+Competitors like xAI and Anthropic are pushing reasoning more aggressively with UI features and backend training strategies.
+Reasoning = structured intermediate steps (Chain-of-Thought), not just final answers.
+OpenAI's o3 model shows that increased compute + smarter RL (not just bigger models) leads to better reasoning.
+Raschka positions GRPO as a next-gen evolution beyond PPO for more nuanced control over reasoning tasks.
+Do you want a summary of the GRPO method or the insights from the latest RL papers he mentions?
+Dijiste:
+Try to explain it more simply using Robinson Crusoe analogies
+ChatGPT dijo:
+Love that idea—let's go full
+Robinson Crusoe
+mode to explain reinforcement learning and reasoning models!
+Imagine Robinson Crusoe is learning to survive on his island.
+At first, he just
+tries random things
+—eating berries, climbing trees, building shelters. Some things work, others don't. Over time, he learns from
+trial and error
+. That's the essence of
+reinforcement learning (RL)
+.
+Basic LLM Training = Reading a Survival Manual
+Before Crusoe is shipwrecked, imagine he read a massive manual about how to survive in the wild. This is like
+pre-training
+a language model on tons of internet text. Crusoe has a ton of knowledge—but he hasn't actually
+done
+anything yet.
+Then maybe he watches a few survival YouTube tutorials before the shipwreck. That's
+supervised fine-tuning
+—learning from labeled examples.
+RLHF = Crusoe Gets Feedback from Friday
+Now, Crusoe meets Friday. Every time Crusoe makes a fire, builds shelter, or cooks something, Friday gives a
+thumbs-up or thumbs-down
+. Crusoe starts adjusting his behavior to match what Friday likes.
+That's
+Reinforcement Learning with Human Feedback (RLHF)
+:
+The model (Crusoe) tries something.
+The human (Friday) gives a rating.
+The model learns to act in ways that get better ratings.
+PPO (Proximal Policy Optimization) is just the math/strategy Crusoe uses to safely update his habits without totally forgetting what he learned.
+Reasoning = Crusoe Thinking Before Acting
+Let's say Crusoe starts writing out plans before doing stuff:
+"If I chop down this tree and dry the wood, then build a tripod, I can hang fish to dry."
+This is
+chain-of-thought (CoT)
+reasoning: laying out
+intermediate steps
+before reaching a conclusion.
+A regular model might skip to the answer ("dry fish like this"), but a
+reasoning model
+shows its work, step-by-step—like Crusoe thinking aloud.
+GRPO = Friday Teaches Crusoe to Plan Better
+Now imagine Friday isn't just rating Crusoe's
+actions
+, but also his
+plans
+. If Crusoe says:
+"I'll run into the ocean and try to catch a shark with my bare hands,"
+Friday can say: "That plan's dumb, try again."
+GRPO (Guided Reward Policy Optimization) is like giving feedback not just on the end result but
+on the thinking process itself
+.
+So Crusoe starts to learn:
+Think first.
+Plan smarter.
+Get rewarded for better reasoning, not just better results.
+RLVR = Crusoe Uses a Smart Checklist
+Now Crusoe has a checklist that verifies whether his plans make sense. If they pass the checklist, he gets extra rewards. That's
+RLVR
+(Reinforcement Learning with Verifier Rewards).
+The "verifier" helps guide him to create more
+logical, well-thought-out
+steps.
+So in short:
+LLM Term
+Robinson Crusoe Analogy
+Pre-training
+Reading survival books
+Supervised fine-tuning
+Watching tutorials
+RLHF
+Learning from Friday's feedback
+PPO
+Safely updating habits
+Reasoning
+Thinking before acting
+GRPO
+Getting feedback on your plans, not just actions
+RLVR
+Using a smart checklist to guide thinking
+Want me to keep going with the Crusoe analogy for other RL methods or specific papers from Raschka's article?
+Dijiste:
+I'm pretty sure he did not watch YouTube videos but he had gone on other sailing expeditions and learned sailor slang as he was seeking his fortune.
+ChatGPT dijo:
+Haha, fair point—you're totally right. Crusoe wasn't chilling with YouTube in 1719. Let's fix that analogy and stay true to his character:
+Updated Analogy: Robinson Crusoe the Aspiring Adventurer
+Before the shipwreck, Crusoe
+went on other sailing expeditions
+, picked up skills from seasoned sailors, learned how to read tides, tie knots, and navigate by stars. He also picked up
+sailor slang and sea stories
+—a kind of informal training.
+That's like the
+supervised fine-tuning
+phase for LLMs:
+learning from specific, real-world examples
+, but not yet being tested in survival mode.
+So now the full journey looks more like this:
+LLM Training Phase
+Robinson Crusoe Equivalent
+Pre-training
+Reading books, hearing stories, learning sailor talk on ships—broad exposure to knowledge
+Supervised fine-tuning
+Gaining hands-on experience during earlier voyages—learning practical skills under guidance
+RLHF
+After shipwreck, Friday watches Crusoe and gives feedback: "This is smart," or "Don't do that!" Crusoe adapts.
+Reasoning (Chain-of-Thought)
+Crusoe starts thinking aloud: "If I build a raft, I need logs, rope, and calm tides."
+GRPO
+Friday not only rates the final result but helps Crusoe think through better plans upfront
+RLVR
+Crusoe gets a checklist (maybe from old sailor wisdom or written notes) to verify his thinking before acting
+Crusoe becomes a
+better survivor not just by trial and error
+, but by
+reflecting on his choices
+, getting
+targeted feedback
+, and following
+a structured reasoning process
+—just like how modern LLMs are being trained to reason.
+Want to adapt this into a full illustrated story or use it as a teaching aid?
+Dijiste:
+Reading 1,400-plus editions of "Robinson Crusoe" in one summer is impossible. So one team of students tried to train computers to do it for them.
+Reading 1,400-plus editions of "Robinson Crusoe" in one summer is impossible. So one team of students tried to train computers to do it for them.
+
+Since Daniel Defoe's shipwreck tale "Robinson Crusoe" was first published nearly 300 years ago, thousands of editions and spinoff versions have been published, in hundreds of languages.
+
+A research team led by Grant Glass, a Ph.D. student in English and comparative literature at the University of North Carolina at Chapel Hill, wanted to know how the story changed as it went through various editions, imitations and translations, and to see which parts stood the test of time.
+
+Reading through them all at a pace of one a day would take years. Instead, the researchers are training computers to do it for them.
+
+This summer, Glass' team in the Data+ summer research program used computer algorithms and machine learning techniques to sift through 1,482 full-text versions of Robinson Crusoe, compiled from online archives.
+
+"A lot of times we think of a book as set in stone," Glass said. "But a project like this shows you it's messy. There's a lot of variance to it."
+
+"When you pick up a book it's important to know what copy it is, because that can affect the way you think about the story," Glass said.
+
+Just getting the texts into a form that a computer could process proved half the battle, said undergraduate team member Orgil Batzaya, a Duke double major in math and computer science.
+
+The books were already scanned and posted online, so the students used software to download the scans from the internet, via a process called "scraping." But processing the scanned pages of old printed books, some of which had smudges, specks or worn type, and converting them to a machine-readable format proved trickier than they thought.
+
+The software struggled to decode the strange spellings ("deliver'd," "wish'd," "perswasions," "shore" versus "shoar"), different typefaces between editions, and other quirks.
+
+Special characters unique to 18th century fonts, such as the curious f-shaped version of the letter "s," make even humans read "diftance" and "poffible" with a mental lisp.
+
+Their first attempts came up with gobbledygook. "The resulting optical character recognition was completely unusable," said team member and Duke senior Gabriel Guedes.
+
+
+
+At a Data+ poster session in August, Guedes, Batzaya and history and computer science double major Lucian Li presented their initial results: a collection of colorful scatter plots, maps, flowcharts and line graphs.
+
+Guedes pointed to clusters of dots on a network graph. "Here, the red editions are American, the blue editions are from the U.K.," Guedes said. "The network graph recognizes the similarity between all these editions and clumps them together."
+
+Once they turned the scanned pages into machine-readable texts, the team fed them into a machine learning algorithm that measures the similarity between documents.
+
+The algorithm takes in chunks of texts — sentences, paragraphs, even entire novels — and converts them to high-dimensional vectors.
+
+Creating this numeric representation of each book, Guedes said, made it possible to perform mathematical operations on them. They added up the vectors for each book to find their sum, calculated the mean, and looked to see which edition was closest to the "average" edition. It turned out to be a version of Robinson Crusoe published in Glasgow in 1875.
+
+They also analyzed the importance of specific plot points in determining a given edition's closeness to the "average" edition: what about the moment when Crusoe spots a footprint in the sand and realizes that he's not alone? Or the time when Crusoe and Friday, after leaving the island, battle hungry wolves in the Pyrenees?
+
+
+
+The team's results might be jarring to those unaccustomed to seeing 300 years of publishing reduced to a bar chart. But by using computers to compare thousands of books at a time, "digital humanities" scholars say it's possible to trace large-scale patterns and trends that humans poring over individual books can't.
+
+"This is really something only a computer can do," Guedes said, pointing to a time-lapse map showing how the Crusoe story spread across the globe, built from data on the place and date of publication for 15,000 editions.
+
+"It's a form of 'distant reading'," Guedes said. "You use this massive amount of information to help draw conclusions about publication history, the movement of ideas, and knowledge in general across time."
+ChatGPT dijo:
+This is such a fascinating mash-up of literature and machine learning—like
+Robinson Crusoe meets Transformers
+(the model kind, not the robot kind).
+Here's a simplified breakdown of what Glass's team did, using a Crusoe-themed analogy:
+The Challenge: Reading 1,400+ Crusoes
+Imagine Crusoe is stuck on an island with 1,482 versions of his own diary, written by imitators, translators, and fan-fiction authors across centuries and continents.
+He wants to know:
+What parts of his story people changed?
+Which scenes stayed the same?
+How his tale evolved as it washed ashore in different cultures?
+But reading them all himself would take decades—so he trains a
+crew of thinking parrots (a.k.a. machine learning models)
+to read them for him.
+Step 1: Making the Books Legible to Parrots
+Problem: Many books are
+smudged, old, and weirdly spelled
+. Crusoe's parrots try to read:
+"He deliver'd himself from the Shoar with all poffible Diftance."
+They squawk: "Gobbledygook!"
+So the team had to:
+Scrape
+the books from online archives
+Use
+OCR (optical character recognition)
+to convert scanned images into text
+Deal with quirks like old-timey "ſ" (long s), strange spellings, and damaged pages
+It's like
+translating pirate journals into modern English
+just so the parrots can understand.
+Step 2: Teaching the Parrots to Compare Stories
+Once the texts are cleaned up, the parrots don't just read them—they
+turn each story into a mathematical fingerprint
+: a high-dimensional vector.
+Now Crusoe can:
+Plot all editions on a map
+to see which ones are similar
+Group editions by country
+, like a social network of books
+Find the "average Crusoe" edition
+(Glasgow, 1875—who knew?)
+They even analyzed key scenes—like the famous
+footprint in the sand
+—to see which editions emphasized it and which didn't.
+What They Discovered
+Crusoe's story
+mutates
+over time and space—different cultures highlight different themes.
+Certain editions
+clustered together
+by language, country, or era.
+Some plot points
+held steady
+(like meeting Friday), while others (like the Pyrenees wolf battle) were
+more variable
+.
+The Bigger Picture: Distant Reading
+Instead of reading one book closely (
+"close reading"
+), they read
+1,400 books at once from a distance
+—a method called
+"distant reading"
+.
+It's like Crusoe climbing a cliff to get a bird's-eye view of the entire island—spotting
+patterns in the jungle
+that he couldn't see while stuck under the trees.
+Would you like a visual or infographic-style breakdown of this process? Or maybe a Crusoe-style letter explaining it like a 1700s journal entry?
+Buscar
+Razona
+ChatGPT puede cometer errores. Comprueba la información importante.
+?
