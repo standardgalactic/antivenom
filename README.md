@@ -14,9 +14,14 @@ Meanwhile, AI researchers are out here building robots that “play” so they c
 
 So, what have we learned? Your brain is an anxious little prediction engine, constantly tweaking its world model to avoid existential dread. And play? Play is just evolution’s way of making sure you don’t completely fall apart the first time life throws a curveball.
 
+![](ankara-01.webp)
+![](ankara-02.webp)
+![](ankara-03.webp)
+![](ankara-04.webp)
+
+<!--
 Click [here](https://standardgalactic.github.io/antivenom/notes-on-active-inference) to find out if YOU are a victim of surprise-induced existential meltdown!
 
-<!-- 
 # Conceptual Map
 
 ![](mindmap.webp)
