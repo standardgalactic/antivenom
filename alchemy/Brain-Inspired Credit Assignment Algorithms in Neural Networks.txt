@@ -1,0 +1,312 @@
+Brain-Inspired Credit Assignment Algorithms in Neural Networks - Claude
+New chat
+Chats
+Recents
+AI-Generated Secular Religions Experiment
+Nihilistic Anxiety and Technological Restlessness
+Epistemic Alchemy: Hacking Reality
+Critique of AI Deployment and Control
+Neighbor Lockout Rescue Mission
+Oscillatory Semantics and Embodied Cognition in the TARTAN Framework
+Arxula adeninivorans: Versatile Yeast for Biotechnology
+Time Spent Updating GitHub README Over a Year
+Brain-Inspired Credit Assignment Algorithms in Neural Networks
+18-Year Calendar with Elemental Animals
+Mapping Emotion Semantics Across 2,500 Languages
+Critical Cultural Analyses in "We're In Hell" Podcast
+Escape from Gethsemane
+The Drying Paint Saga
+Alphabetized List of Obscure Terms
+Words Between "Virtual" and "Visual"
+Exploring the Meaning of the Chinese Name 路晏
+The Process of Creative Destruction in Economics
+Crumpled Planet Blender Script
+Nietzsche's Genealogy of Morals
+Key Propositional Calculus Concepts
+Comprehensive Guide to Logical Symbols
+NG
+Nate Guimond
+Free plan
+Brain-Inspired Credit Assignment Algorithms in Neural Networks
+Share
+NG
+BRAIN-INSPIREDMACHINEINTELLIGENCE: A SURVEY OF 
+NEUROBIOLOGICALLY-PLAUSIBLECREDITASSIGNMENT 
+Alexander Ororbia 
+Rochester Institute of Technology 
+Rochester, NY 14623 
+ago@cs.rit.edu 
+ABSTRACT 
+In this survey, we examine algorithms for conducting credit assignment in artif i cial neural net- 
+works that are inspired or motivated by neurobiology. These processes are unif i ed under one 
+possible taxonomy, which is constructed based on how a learning algorithm answers a central 
+question underpinning the mechanisms of synaptic plasticity in complex adaptive neuronal sys- 
+tems: where do the signals that drive the learning in individual elements of a network come from 
+and how are they produced? In this unif i ed treatment, we organize the ever-growing set of brain- 
+inspired learning schemes into six general families and consider these in the context of backprop- 
+agation of errors and its known criticisms. The results of this review are meant to encourage 
+future developments in neuro-mimetic systems and their constituent learning processes, wherein 
+lies an important opportunity to build a strong bridge between machine learning, computational 
+neuroscience, and cognitive science. 
+Keywords Credit assignment · Brain-inspired computing · Neuro-mimetic learning · Synaptic plasticity 
+1Introduction 
+One of the central goals that underpins research in biologically-inspired, or neuro-mimetic, machine intelligence 
+is to create a complete theory of inference and learning that emulates how the brain can learn complex functions 
+from the environment. Such a theory would be one that is not only biologically-plausible but also one that makes 
+sense from a machine learning point-of-view [38]. Consequentially, this theory would be credible from both neuro- 
+science and statistical perspectives on learning, and as a result, could be empirically tested and validated from both 
+perspectives. Furthermore, progress in this burgeoning line of scientif i c inquiry could serve as a central basis for 
+the grander goals of neuro-mimetic cognitive architectures [90, 330, 362, 315, 380, 42] and the type of embodied 
+brain-inspired machine intelligence behind the more recently cast "NeuroAI" initiative [359, 337, 470, 288]. 
+A challenging aspect in constructing the aforementioned theory centers around the development of a plausible 
+mechanism for conducting credit assignment - in support of optimizing a behavioral scoring function(s) - within 
+computational neural systems. Credit assignment itself refers to the act of assigning "credit" and/or "blame" to 
+individual processing elements, e.g., neuronal units, within a complex adaptive system based on their contribution 
+to i nal behavioral output(s). With respect to networks of neurons, credit assignment is particularly diff i cult given 
+that the impact or effect of early-stage neurons depends on downstream synaptic connections and neural activities. 
+This challenge has also been referred to as the credit assignment problem [34]. 
+Although strong criticism of its biological plausibility has existed for several decades [141, 479, 73, 311, 154, 438], 
+the algorithm known as backpropagation of errors [248, 372], or backprop, has been almost exclusively used to 
+train modern-day, state-of-the-art artif i cial neural networks (ANNs) in supervised, unsupervised, and reinforcement 
+learning tasks/problems. Though elegant and powerful in its own right, as well as one of the driving forces behind 
+the "deep learning revolution" [229], it is one of the aspects of artif i cial neural computation that is the most diff i cult 
+to reconcile with the current insights and i ndings that we have from cognitive neuroscience. Furthermore, many 
+mechanisms and elements used to construct the computational architectures of current ANNs, such as normalization 
+operations including batch and layer normalization [186, 17], have been largely designed to address issues in credit 
+assignment rather than acting as architectural features in service of solving the task at hand [323, 326]. As we will 
+arXiv:2312.09257v2 
+[cs.NE] 
+23 
+Dec 
+2023 
+Preprint 
+see throughout in our treatment of various alternative algorithms, although initially inspired by properties/behaviors 
+of real neurons in the brain [273], even the processing elements that constitute deep neural networks (DNNs) omit 
+many of the details that characterize actual neurobiological mechanisms and dynamics. Ultimately, considering the 
+formalization and integration of other mechanisms and elements of computation that underlie biological neurons 
+[210,211]mightproveimportantincreatingmorepowerfulformsofcreditassignmentandfacilitatingmorehuman- 
+like generalization abilities in DNNs, addressing issues such as reliability/model calibration, robustness, and sample 
+ineff i ciency. It is the view of this work that biological plausibility in the learning, inference, and design of artif i cial 
+neural systems is not solely a (niche) property of interest to neuroscientists and cognitive scientists; it will play 
+critical a role in the future of machine intelligence, such in efforts that seek implementation on low-energy analog 
+and neuromorphic chips [75, 138, 217, 466]. Furthermore, these biologically-inspired computational frameworks 
+will need to complemented with examination and evaluation from a behavioral point-of-view [24, 326, 247], either 
+considering how approaches to credit assignment scale to higher-dimensional, complex tasks [24] or investigating 
+how particular algorithms generalize in the context of modular cognitive architectures [315, 322]. As a result, new 
+forms of analysis and benchmarking, enriched by ideas and concepts from computer science, cognitive science, 
+and computational neuroscience [249, 263, 359, 60], will be needed to make consistent progress as well as new 
+breakthroughs that advance the current state of research towards l exible, robust brain-inspired intelligent systems. 
+Concretely, this review will focus on algorithms that have been proposed over the past several decades to train 
+ANNs without backprop; these methodological frameworks have sometimes referred to as "backprop-free" or 
+"biologically-inspired" learning algorithms. In order to better compare and organize the ever-growing plethora 
+of approaches, we construct a taxonomy based on answering one of the key questions that centrally motivates the 
+development of biologically-plausible forms of credit assignment: Where do the driving forces, or signals, behind 
+the synaptic plasticity needed for adapting a network's processing elements come from and how are they produced? 
+The way that backprop answers this question, as we will shall soon examine, is what stands in contrast to many the- 
+ories of the brain [140, 354, 181, 67]. In this survey, algorithm clusters/families ("themes") will be formulated with 
+respect to how various schemes attempt to answer this question; in the scope of this work, this yields six different 
+families. Along the way, we will consider how, and the extent to which, different biological algorithms address or 
+resolve the neurophysiological and engineering criticisms of backprop. It is hoped that the taxonomy and unif i ed 
+treatment that we present of extant algorithmic proposals for biologically-motivated credit assignment will inform, 
+inspire, and aid the i eld in generating new ideas that extend, combine, or even supplant current methods.
+Edit
+This appears to be an academic survey paper about brain-inspired machine intelligence and credit assignment algorithms in artificial neural networks. The paper is authored by Alexander Ororbia from the Rochester Institute of Technology and was posted on arXiv in December 2023.
+Here are the key points from the abstract and introduction:
+Main Research Focus
+The paper surveys algorithms for credit assignment in artificial neural networks that are inspired by neurobiology. Credit assignment refers to the process of determining how individual processing elements (neurons) contribute to the overall behavioral output of a neural network.
+Key Motivations
+Create a comprehensive theory of learning that:
+Emulates brain learning processes
+Is biologically plausible
+Makes sense from a machine learning perspective
+Can be empirically tested from neuroscience and statistical perspectives
+Address limitations of current neural network approaches, particularly backpropagation (backprop)
+Criticisms of Current Approaches
+Backpropagation, while powerful, is not biologically plausible
+Many neural network architectures use normalization techniques to address credit assignment issues
+Current neural network elements lack many details of real neurobiological mechanisms
+Research Approach
+Develop a taxonomy of credit assignment algorithms
+Organize algorithms into six families based on how they answer the question: "Where do the signals driving synaptic plasticity come from and how are they produced?"
+Future Implications
+The author believes that biological plausibility will be critical for:
+Future machine intelligence
+Low-energy analog and neuromorphic chip implementations
+Developing more flexible and robust intelligent systems
+The paper aims to inspire new research in neuro-mimetic systems by providing a unified framework for understanding brain-inspired learning algorithms.
+Would you like me to elaborate on any specific aspect of the paper's introduction?
+Retry
+NG
+Not yet, but I wonder if we could experiment with something like this analyzing Wikipedia by removing certain users and not allowing any pages that point to that page.
+Edit
+That's an intriguing research idea! It sounds like you're proposing a network analysis experiment on Wikipedia where you would:
+Select specific users to "remove"
+Prevent any pages that those users created from being linked to
+Analyze the resulting network structure and information flow
+This could be an interesting way to explore:
+The resilience of Wikipedia's knowledge network
+The impact of individual contributors on information propagation
+How knowledge interconnectedness changes when certain users are excluded
+To implement this, you'd need to:
+Access Wikipedia's user contribution and page linking data
+Develop an algorithm to:
+Identify pages created by specific users
+Remove those pages from the linking structure
+Recalculate network metrics like connectivity, centrality, etc.
+Some potential research questions might include:
+How much does the total accessible knowledge change?
+Which topics or knowledge domains are most/least affected?
+Are there "critical" users whose removal significantly disrupts information networks?
+Would you like me to sketch out a potential Python script to simulate this kind of network analysis? Or would you prefer to discuss the methodological approach first?
+Retry
+NG
+Give some methodological options
+Edit
+Here are several methodological approaches to explore your Wikipedia network analysis concept:
+Graph Theoretical Approach
+Represent Wikipedia as a directed graph
+Nodes = Wikipedia pages
+Edges = Hyperlinks between pages
+Metrics to analyze:
+Connectivity
+Centrality measures
+Network diameter
+Clustering coefficient
+Computational tools: NetworkX (Python), graph databases
+User Impact Quantification
+Categorize users by:
+Number of pages created
+Total page edits
+Domains of expertise
+Longevity of contributions
+Develop a "user importance" score
+Simulate network changes by removing users with different importance levels
+Information Cascade Simulation
+Model knowledge propagation
+Track how removing users affects:
+Information reachability
+Knowledge transmission paths
+Potential information "deserts" created
+Machine Learning Network Reconstruction
+Use ML algorithms to predict:
+How network structure changes
+Likelihood of information loss
+Potential alternative linking strategies
+Comparative Historical Analysis
+Compare network states:
+Before user removal
+Immediately after removal
+Long-term network evolution
+Stochastic Removal Strategies
+Random user removal
+Targeted removal based on:
+Most connected users
+Users in specific knowledge domains
+Users with controversial contributions
+Each approach offers different insights into network resilience and knowledge distribution.
+Would you like me to elaborate on any of these methodological options?
+Retry
+NG
+Wikipedia
+Search
+Alerts (0)
+User menu
+Homeorhesis
+Article Talk
+Language
+Unwatch
+View history
+Edit
+More
+Learn more
+This article needs additional citations for verification. (October 2015)
+Homeorhesis, derived from the Greek for "similar flow", is a concept encompassing dynamical systems which return to a trajectory, as opposed to systems which return to a particular state, which is termed homeostasis.
+Biology
+edit
+Homeorhesis is steady flow. Often biological systems are inaccurately described as homeostatic, being in a steady state. Steady state implies equilibrium which is never reached, nor are organisms and ecosystems in a closed environment. During his tenure at the State University of New York at Oneonta, Dr William Butts[1] correctly applied the term homeorhesis to biological organisms. The term was created by C.H. Waddington and first used in biology in his book Strategy of the Genes (1957), where he described the tendency of developing or changing organisms to continue development or adapting to their environment and changing towards a given state.
+Gaia hypothesis
+edit
+In ecology the concept is important as an element of the Gaia hypothesis, where the system under consideration is the ecological balance of different forms of life on the planet. James Lovelock and Lynn Margulis, coauthors of Gaia hypothesis, wrote in particular that only homeorhetic, and not homeostatic, balances are involved in the theory.[2] That is, the composition of Earth's atmosphere, hydrosphere, and lithosphere are regulated around "set points" as in homeostasis, but those set points change with time
+Edit
+This looks like a Wikipedia article about "Homeorhesis", a scientific concept related to dynamic systems. Let me break down the key points from the text:
+Definition
+Homeorhesis is derived from Greek, meaning "similar flow". It describes dynamical systems that return to a trajectory, in contrast to homeostasis, which refers to systems returning to a specific state.
+Biological Context
+Often biological systems are incorrectly described as homeostatic
+Steady state implies equilibrium, which:
+Is never actually reached
+Does not accurately describe organisms or ecosystems
+Historical Development
+Term created by C.H. Waddington in his 1957 book "Strategy of the Genes"
+Applied to biological organisms by Dr. William Butts at SUNY Oneonta
+Describes organisms' tendency to:
+Continue developing
+Adapt to their environment
+Change towards a given state
+Gaia Hypothesis Connection
+In ecology, homeorhesis is crucial to the Gaia hypothesis:
+Proposed by James Lovelock and Lynn Margulis
+Focuses on ecological balance of life on Earth
+Emphasizes that Earth's systems (atmosphere, hydrosphere, lithosphere) are regulated around changing "set points"
+Only homeorhetic (not homeostatic) balances are involved
+Would you like me to elaborate on any aspect of this concept?
+Retry
+NG
+A summary of the conversation as an acrostic spelling out homeorhesis
+Edit
+Here's an acrostic summary of our conversation spelling out HOMEORHESIS:
+H
+ypothetical Wikipedia network analysis sparked our dialogue
+O
+ptions for studying network resilience emerged
+M
+ethodological approaches ranged from graph theory to stochastic modeling
+E
+xploring how user removals might impact knowledge networks
+O
+riginal research concept took shape
+R
+esilience of information systems under investigation
+H
+euristic strategies for network mapping discussed
+E
+xamining potential computational approaches
+S
+ystematic exploration of knowledge propagation
+I
+nnovative research methodology proposed
+S
+tructuring complex information networks through targeted analysis
+Retry
+Claude can make mistakes.
+Please double-check responses.
+Sonnet 4
+Copy
+Publish
+Chat controls
+Sonnet 4
+Smart, efficient model for everyday use
+Learn more
+Content
+No content added yet
+Add images, PDFs, docs, spreadsheets, and more to summarize, analyze, and query content with Claude.
+
+
+
+reCAPTCHA
+Recaptcha requires verification.
+Privacy
+-
+Terms
+protected by
+reCAPTCHA
+Privacy
+-
+Terms
+
+
+
+
+
+
+
