@@ -1,0 +1,170 @@
+Howdy, my name is Daniel Van Zandt. I'm a computational neuroscientist working at Florida
+Atlantic University. I have a startup that I'm trying to get funded. I really enjoy drift racing,
+the sport, so I watch a lot of formula drift. And something I've been thinking a lot about lately
+is limitations of retrieval augmented generation, and in particular ways that I think
+performance with retrieval augmented generation systems is going to hit a hidden ceiling.
+Similar to the way that large language models are kind of hitting a hidden ceiling now, and
+progress is really slowing down in a big way. I think we're headed for the same thing with
+retrieval augmented generation. So let me explain that a little bit more. There are two flavors of
+retrieval augmented generation. There is something called embeddings, and so what you do with
+embeddings is you take a bunch of chunks of text, you throw them all into a hyperdimensional space,
+and that's a little bit less specific. So let me show you something to show you a little bit more
+what I'm talking about. So I'm just going to imagine a two dimensional space. And we have four
+points on it, like you can see here. So we have four points on this space that you can see here. And we
+sort of have scales. So we can think of this as dogness going up and catness going to the side. And
+this sort of communicates what the text is about. So we might imagine this bit up here as the cat and
+the dog fought together. So it's about cats and dogs. This bit here as the dog caught the ball.
+This bit here as the cat played with a piece of yarn. And then this bit here is neither about cats nor
+dogs. And so it's something like the man had a beer. So we can imagine these are the sentences and
+these are where they would be in this two dimensional embedding space. So what embedding
+space for retrieval augmented generation is, is they do that with like 1000 dimensional embedding
+space. And what I called catness or dogness are what is called features. And those features are a lot
+more fuzzy. They're kind of defined by the artificial intelligence, but you can think of it along the
+lines of the same idea. So in some sense, where this is in the hyperdimensional space,
+is communicating what the chunk of text is about. And if it's close to other chunks of text,
+they're kind of sort of about the same thing. So what you do for retrieval augmented generation and,
+and just so people know what I mean by that, a lot of people have experienced it, it's where you have
+a document or some set of documents, you ask artificial intelligence a question and it answers your
+question and with the question, it has some sources for the answer. So it's going and looking at those
+documents and giving you an answer to your question. With embeddings and retrieval augmented
+generation, the way it works is that you embed the question in space. So you say, for our example,
+we'll say, how much is this question about cats or dogs, and we'll embed it in our two dimensional
+space, or you can embed it in your several million dimensional space or whatever you're using
+for regular embeddings. It's usually not that high at all. But this is maybe future embeddings.
+And when you do that, hopefully, you kind of cross your fingers and hope that your question
+is close to the chunks of text that you're interested in. And then you retrieve the closest chunks of text
+to your question. And you give those back to the large language model and the large language model
+uses that to generate its answer. There are quite a few issues with this. There's something called
+isotropy, I believe there's something called centered collapse, there's the fact that chunks of text can get
+lost in the center of hyperdimensional clusters. But there's this paper I was just reading. And I think
+they have a quote that is really good and explains the issue I'm talking about really well. Let me
+find it here. Introduction of the paper has two lines. Line one, reasoning failures, LLM struggle
+to accurately interpret user queries and leverage contextual information, resulting in a misalignment
+between retrieved knowledge and query intent. And two, structural limitations, these failures
+primarily arise from insufficient attention to the structure of knowledge sources such as knowledge
+graphs and the use of inappropriate evaluation metrics. So what this means is that
+any source of knowledge in any document has a kind of internal structure. And when we throw that
+document with its own internal structure into embedding space, so we chop it up into chunks,
+and we throw it into embedding space, and we say, Well, here's the features, we get something useful,
+but we also kind of shred whatever internal structure it had. So like a story has a structure
+where you have this character, and then they have this event happening to them. And it's in this location,
+and then later, these characters come to this location. And so they see the after effects of this event.
+Scientific paper has a structure, it has methods and a conclusion and results and introduction,
+these kinds of things. So every document has some kind of internal structure.
+And what you're doing with embeddings is essentially shredding that structure. And that means that
+no matter how good we get embeddings, which there's even limitations to getting longer embeddings that
+are effective, but no matter how good our embeddings get, we still have the fundamental issue that we're
+shredding that structure and throwing everything into hyperdimensional space. And that means that
+we're going to have reasoning issues with our embeddings, especially on advanced reasoning or
+retrieving exactly what you're looking for. So there's another approach to embeddings called
+long context. And so long context is in some ways simpler. So if you don't know how a large language
+model works, you give it a bunch of text, you say, come up with an answer that finishes this text,
+you compare it to real text, and you try to lower the degree of error between what the large language
+model gives you and what the real text would be. And so if you do this a lot, you get something like
+chat GPT. And long context is where you do this, but with longer pieces of text. And so essentially,
+you can just give your AI some amount of documents directly in what's called a context window, or you
+can imagine in a chat if you're chatting with it. And then it can talk to you about these documents,
+because it just has a very long context window. The issue with that is that as you get to longer
+and longer and longer context, there's less and less documents available that are above that context.
+So you can imagine if I go to a library and I say, I want all of your books that have more than 100 words
+in them, that's going to be almost the whole library. If I say 1000, I might leave out a few books,
+like children's books, but that's still going to be almost the whole library. If I say 100,000, all of a
+sudden, I'm narrowing it down. And if I say over a million, then maybe I'm just left with like a couple
+encyclopedias or something. And so there's the same problem with training data. And this problem with
+training data is really important, because there's these things called the neural scaling laws,
+which essentially say that as long as you run out of if you run out of parameters, training time,
+or training data, you hit a bottleneck that stops your large language model from getting any smarter.
+And we can see that the large language models that are long context run into this issue.
+For instance, even though we have people saying, Hey, we have this long context model that works up to
+2 million tokens, the performance degrades as the context gets longer and longer and longer.
+And for most of them above about 256,000 tokens, the performance on most benchmarks is below 50%. And
+on the same benchmarks at low token levels, the performance is something like over 90%. This is
+really important for long context, because for the two other bottlenecks, which are parameters and
+training time, you can throw money at it and solve the problem. And there's lots of people that are
+very willing to throw money at AI right now. But for training data, at the point we're at the current
+crop of models has ingested almost the entire internet. And so they've ingested almost all knowledge
+humans have ever produced. If you're very clever, you might be saying why can't the AI's produce more data
+for the AI is there's some very complex reasons why that doesn't work. If you someone solves that
+problem, you'll create the next AI revolution, that would be as big as chat GPT coming out. But there's
+a lot of reasons why people think we won't be solving that problem anytime soon. And so there's not a way to
+create more training data out of thin air by throwing money at the problem, especially not with long context
+training data. So for for short context training data, you can have pay a human some low amount of
+money to talk with AI back and forth. And then you have more training data from a real human.
+For long context, though, it's much more challenging to pay a human to write like a scientific thesis,
+especially at the kind of scale that you need for training data. There's two things like I mentioned,
+there's embeddings, and there's long context. And these are the two ways we approach retrieval
+augmented generation. And there's kind of a trade off here. And the trade off is, I'm going to say,
+along one axis, and I'm about to show this, it's creativity. So it's the large language model's
+ability to reason, come up with creative output. Along the other axis, I'm going to put documents.
+So this is the number of documents that you can feed into your large language model.
+And you've got a really important trade off that you have to choose between here.
+And so we have, so here I can show this real quick here.
+My handwriting is awful, but you can see there's sort of the long context axis. So you can say,
+or you can say there's the creativity axis. And so if you want documents that are very creative and use
+high reasoning skills, but you don't have to feed a lot of documents into your large language model,
+then you would want to use a long context model. If you want a lot of documents, but you're okay if
+the AI is a little bit dumb, and honestly, you're almost using a glorified search engine,
+then you would want embeddings based rag. And I think I just wrote rag there.
+Yeah, I'm going to rewrite that card real quick and just show it to the camera so you can throw it
+into the video there. So you can see there's two axes here. There is a sort of creative,
+high reasoning, things like this, but you have low. And then there's the number of documents you have.
+And there's a trade off you have to think about here with retrieval augmented generation,
+which is that if you want things with really good reasoning capabilities,
+then you have to have only a small number of documents and you have to use long context.
+And like I said, there's fundamental limitations, why the context can't get larger.
+If you want a lot of documents, then you have to settle for very low reasoning capabilities. And
+honestly, you're kind of using a glorified search engine and you would want to use embeddings.
+This is a really important issue because there's a lot of work that happens at this corner up here,
+which is you need really high reasoning capabilities and you want lots and lots of documents.
+And so I've actually been working for a while on a solution for that particular box.
+And I call it a living knowledge engine. And so over here, you have high numbers of documents,
+you have lots and lots of reasoning capabilities. And the way you do this with a living knowledge engine
+is you create almost like a custom encyclopedia or custom wiki from the documents based around the
+questions that a person is asking. And it's a fundamentally different algorithm than either
+of these things. It was actually inspired a lot by plants because a lot of people don't realize this,
+but plants have their own kind of intelligence and they can communicate enormous amounts of information
+to each other. If you ever look at the top of a forest, the trees just narrowly avoid each other
+and form these really cool fractal patterns. Even fungus are crazy intelligent, even though that
+wouldn't technically be considered plants. And so plants are extremely intelligent in their own ways.
+They're really good at building a structure. And so I mentioned that paper before that has that little
+quote about how embeddings can't work and can't have high reasoning capabilities because they can't
+structure the knowledge. You shred whatever structure of the knowledge is in the document.
+But what the living knowledge engine does is it not only keeps the structure of the document,
+it also forms a metastructure. So if you think about anyone that's ever had a knowledge base or even
+Wikipedia is a sort of metastructure over a very large number of documents. So it says,
+here's this article on philosophy and here's this subject. And then it relates to
+deontologicalism versus utilitarianism. And it relates to free will. And then free will relates
+to artificial intelligence. And none of these articles in here are the actual documents that
+they're based on. They have those in the references at the bottom. They're a metastructure between all of
+the documents. And we found that creating this metastructure is really the answer to this
+this issue between all right, you can only have high reasoning or you can only have large amounts
+of documents and you can't have both of those at the same time. So in the spirit of honesty,
+I get really suspicious when someone says that their solution is just better with no trade-offs
+whatsoever because that's almost never true. There are no free lunches. And so in the spirit of honesty,
+what is the trade-off for our solution? The trade-off for our solution
+is it takes up more memory than embeddings or long context. But the nice things is it doesn't
+take up more RAM or more memory on a GPU. It takes up like static memory on a HDD or SSD to have that
+metastructure. And then there's ways you can sort of query that metastructure and go through it.
+Um, those ways are actually faster than embeddings are, uh, high number of documents, uh, north of
+around 200,000 documents, something like that. But it has a trade-off. It's a trade-off that we're
+very okay with because, uh, long-term storage like HDDs and SDDs is ridiculously cheap and it's only
+getting cheaper, especially if you're looking at the cost for like server space for these types of
+things. So I'm not going to lie to you and say, there isn't a trade-off. There is a trade-off.
+It's a trade-off that we're extremely okay with. It's a really cheap trade-off and the trade-off
+isn't anything that would be important to somebody like the number of documents you can import or your
+reasoning capability. So we can sort of make the trade-off along this third axis that nobody cares
+about and solve the problem really nicely that way. I'm really excited about this. I'm also not going to
+pretend that this is a completely original idea. This idea of sort of a hypertext notebook
+as a way to form a metastructure over information is as old as the internet. Ted Nilsson came up with
+a lot of these early ideas. Wikipedia is a version of this idea even before the internet. Encyclopedias
+are a version of this idea. We've just taken this idea and integrated large language models with it
+and gotten those large language models to be extremely hallucination-free and come up with a
+new algorithm to integrate large language models with it so that the metastructure grows itself.
+And I say grows itself because like I said it's much more similar to a plant than it is to any other
+type of intelligence and a plant sort of the cool thing about it is they grow themselves. There isn't
+any central process. So I really enjoyed getting a chance to talk about this and everyone here should
+like and subscribe. This is an awesome channel. There's lots of people smarter than me on here talking
+about lots of things more interesting than what I've just talked about so you should definitely like and
+subscribe so you can see more of that. You can find me on Twitter, you can find my website, you can find
+my sub stack that I want to start posting on very soon and I'm going to ask for all of those to be in
+the description so I'm going to assume they're in there.

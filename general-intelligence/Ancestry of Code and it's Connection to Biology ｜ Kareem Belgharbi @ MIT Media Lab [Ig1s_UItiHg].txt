@@ -1,0 +1,81 @@
+So my topic is going to be exploring the relatedness of code using abstract syntax trees.
+My name is Karim. I came here from Orlando.
+Before I actually get into what it is, I'm going to explain basically what the utility is and what the point, what the future hope is.
+In software, in computer science, and really just about any field, I think that there are those ideas that sort of stand out from all of the noise, if you will.
+I mean, there are some ideas like, for example, PageRank that enabled real search engines that had done searching like Google.
+There is also the, for example, things like multi-head attention, which allowed the large language model that we have today, certain ideas that really change things.
+I think it would be interesting to see people that trace histories of ideas and understand where these things were inspired from, what was going on at the time, understanding what led up to it.
+One of the ways, one of the things that is necessary for this is good metrics on understanding how code evolves and what it's similar to.
+When a computer program is being compiled, when it's being mentioned to machine code, one of the things that needs to be done first is there needs to be some kind of abstract representation.
+What we can see here is an abstract syntax tree, which will include things like, for example, you have a function, it'll have nodes for its parameters, and whatever those parameters are calculated from, and so on, until you get down to the basic atomic components.
+Oftentimes, for example, code editors will use these in order to understand where functions are, jumping between them, syntax highlighting, and whatnot.
+GitHub, I think it's one of the best places to try some of this out, because essentially, it gives us the best way to visualize changes in code, branches from them, and whatnot.
+The idea can be loosely thought of as something like, in evolution, when you have speciation, when you have different branches of life,
+you can see, you need a metric to see what is related to what, in order to understand where things come from.
+So, my approach here was to extract the abstract syntax trees of various files that are ancestrally or indirectly related.
+I chose to operate on the file level right now.
+But before we can do anything with those trees, there's a lot of noise that needs to be filtered out, because things like comments, for example,
+don't do anything or give us any useful information, something, some of these programs also include things like parentheses,
+which are part of the grammar and syntax of the language, but don't offer us any insight into its structure.
+Then we get metric to compare these graphs that we've extracted.
+So what I've used is the graph edit distance.
+Essentially, when we have two graphs,
+what kind of changes do we need to make on one of them, in order to make it into the other.
+You can see some examples of the code that I've run this on.
+This is a very simple change.
+Right here, we have two that are part of the same change, which is a bit more.
+And then right here, we can see some simplification.
+The result of that,
+I can actually, before I do that, I can pull up some of the graphs of these.
+This is what they look like.
+So once we have those trees, we can compare them using our selected metric.
+And what I found was, for this particular example,
+when you compare the same file, obviously there's zero difference.
+And the small change that I showed in the beginning,
+the one at number one,
+that one actually had a 300 jump, which is a lot bigger than I expected.
+The next one, which looked very large, was, as expected, about a 300 jump.
+And then the last one, as a simplification, it jumped it down.
+Some of the tools, some of the tools I used here, in making this program,
+were, of course, it's in a Jupyter notebook.
+TreeSitter was used to extract the syntax trees.
+For example, Misha mentioned that it's used in Visual Studio code internally.
+NetworkX to do all of the graph functions.
+And then graph is for the visualization.
+This is the notebook itself.
+What I've basically done is I have a function here that
+allows us to specify certain locations of files,
+and then compare them sequentially.
+Each one to the first one.
+I did that for a few different files here,
+that I just manually got from GitHub.
+And I did also try visualizing them,
+although I don't think that this is the best way to do that.
+I think in a table it's much more clear, like I had in the presentation.
+The way that this, that I wish that this would be scaled up,
+is if we were to go from the file level into, let's say, a repository level,
+a project directory level,
+or even like most companies nowadays won't even have just one repository.
+There'll be several different microservices,
+it'll be a separate project on the front-end and back-end and whatnot.
+So I think that by scaling this up, we could see relatedness of code,
+and perhaps even the genealogy of code.
+Thank you.
+One, maybe two if they're quick.
+Yes, just a question, quick.
+Anyone?
+There?
+What other domains outside of code you can apply, please?
+I did mention biology because I think it's analogous to that,
+in the sense that we do compare like, for example, genome to see what is,
+what organisms are similar and what they descended from.
+Other than that, I mean, maybe if somebody created a way to compare music this way,
+we could see what music is inspired by what,
+because like I said in the beginning, there's great ideas in every field,
+not just software.
+Yeah, there's music, which I just thought of right now.
+Perhaps even literature, if you look at like poetry throughout history,
+who knows?
+All right.
+Awesome.
+You want to go?

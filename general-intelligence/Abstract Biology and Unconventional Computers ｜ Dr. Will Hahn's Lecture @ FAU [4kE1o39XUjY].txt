@@ -1,0 +1,377 @@
+Okay, so we're going to have a fun lecture today, a little bit ad hoc, but it shows some
+of the tools that we've been using and how you can bring these to some really interesting
+areas of science, in particular, complex systems, which is trying to understand how nature does
+the kind of information processing it does, how we see emergent behavior, how we get things
+like ants, where each individual ant has no idea what your picnic is or how to get bits
+of it back home, but somehow it accomplishes that task.
+Things like termites, where one individual termite has no idea how to build this sort of chimney-like
+structure, which amazingly has air conditioning in it, but it's able to do that when it works
+together.
+And so this idea of emergent behavior, and this is very related to the idea of sort of unconventional
+computing.
+So things we've hinted at about how you get other kinds of systems, whether it's just
+inspiration for an algorithm, or you want to actually use the technology to maybe make
+a biological computer, a computer out of chemistry, and so on.
+And so this leads directly from the code that we've been running, what you're working on with
+your convolutional networks.
+And so I want to show you how powerful this idea of convolution is.
+And so I've got a notebook here I'm going to post on the GitHub.
+And the first thing I want you to do is check out this documentary tonight.
+It's actually from like, I think the early 70s, maybe even late 60s.
+And it's about two researchers, Belusov and Zabitsky, and they were in the Soviet Union.
+And they developed a new chemistry experiment.
+And if you've ever taken chemistry lab, a lot of times what you do is you take two chemicals,
+you mix them together and it changes colors.
+Right?
+And you put stuff together and it turns blue.
+And maybe the original stuff was yellow.
+But what typically doesn't happen is it never sort of undoes the chemical reaction.
+Typically chemical reactions go one way.
+We think of them as dynamical systems and we watch what happens over time when the chemicals
+come together, they mix and they stay mixed.
+And these two guys discovered something called the BZ reaction, which was the first time in
+the history where they discovered an oscillating chemical reaction.
+Where the two chemicals start out through the yellow and then it turned blue, and then
+it turned yellow again, and then it turned blue again, then it turned yellow again, then
+it turned blue again.
+And it went back and forth, kind of like a pendulum on a clock, or a kid on a swing, that we saw
+the behavior move back and forth.
+And so they wrote this up and they sent this to the National Academy of Sciences, and their
+paper was rejected.
+The editors said, this sort of thing does not happen in nature, you must have done something
+wrong.
+But it turns out they had discovered a whole new area of science.
+And so I want you to watch that documentary, and it will go over some of the stuff that we're
+going to look at today.
+So we had in our notebook to remind you this idea of convolution.
+And we loaded in simple images like this, and we ran this sort of filter, this little
+tiny matrix, and we moved it across the image.
+And that filtered our image.
+That if we run a little feature detector of horizontal lines, then that's the only thing
+that survives that filter.
+If we run our feature as a vertical line, then that would be the only thing that survives
+the image.
+And so we can think of these like we call them now with our smartphone apps, they really
+are filters, and that they're filtering the data, and only letting some of it go through.
+And then we looked at what random filters would do, they would just kind of scramble up the
+data, and make it blurry.
+And it kind of looks like a lens out of focus.
+And that's not an accident or coincidence.
+It turns out we can actually do convolution with optics.
+And I think that's a really cool area, if you're interested in physics, that you can
+take a look at, is how do we take things like a lens out of focus and have it do convolution.
+And how would we build a neural network with something like that.
+And then we built our homemade double for loop, where we saw that we go through each pixel
+and wait with its neighbors, and we get the new value, and that's this thing we call convolution.
+And so we saw with things like self-driving car, this can highlight certain roadways.
+And in your case, in your project, you can help exaggerate or diminish certain features
+that you might be looking for or trying to ignore.
+So what I want to show you now is how that same technique that we use for image processing
+can be used to create some really interesting convolution.
+Other models, particularly this idea of cellular automata, where we think of the world made
+like graph paper, where every little rule is kind of like a little square, and each square
+has sort of a simulated atom or a simulated tree or an ant or whatever our metaphor might
+be at the time, and then we let it run like a petri dish, and then we look at what happens.
+And to remind you why this is possible now, and why this is exciting for your career, is
+because the computing power has enabled us to do this at scale.
+A few decades ago, it was very expensive, it took forever to do these kinds of experiments.
+And now, we saw with our convolution, they can do the whole thing in just seven seconds.
+That would take a long time before, but if we run this with a built-in code, this takes
+0.08 seconds.
+So we can use the modern tools that come with Python, and then amazingly, if we use our GPU,
+we can get this thing to run really fast.
+So that number is off there, I've got to rerun this.
+But you can run this, this one is 96 times, and it will go even faster than that one.
+Okay, so what we can do is we can filter different images, and that kind of counts the neighbors.
+And so let me show you now what we can do.
+We did this with a feature map, this is all like we looked at last time, where we can think
+of the thing as actually looking for something like a coin, and it gives us a map, like a treasure
+map of where that feature can be found.
+And so now what we're going to look at is how we can use this to look for other things,
+not just in images, but in certain patterns.
+So a few decades ago, there was a mathematician named Conway, and he made this game on graph
+paper called the Game of Life.
+And it started as just a simple math experiment, and it's developed into a very rich area of
+research.
+And he said, let's make a simulation of living things, where each little square can be either
+alive or not alive.
+And we're going to flip through evolution time, kind of one time step at a go.
+And in every time step, we're going to decide for each little square, should this one be
+alive or should it die?
+And he said, well, how does life work?
+And he said, well, if you're by yourself, you're probably going to die, because there's
+nothing there.
+If you are overcrowded, if every square around you is turned on, then you're probably going
+to die from overcrowding.
+But if exactly two or three of your neighbors are turned on, then you'll turn on.
+And if there's only two, then yours will get turned on, as if by reproduction.
+And so you can change the rules a little bit and get different results.
+But what I want to show you is how we can use convolution to do the exact same thing.
+So remember, with convolution, we look at our neighbors.
+And so what we're going to do is we're going to take a filter that weights all of our neighbors
+by one and ourself by zero.
+And we're going to use this to calculate a count so that when you run the convolution
+filter at every square, the result will be how many of your neighbors are alive at that
+time step.
+And so this was just a simple rule that he proposed called the game of life.
+And we'll show this running in just a second.
+Here's how it starts.
+You just flip a coin for every square randomly.
+And then we run the filter, our convolution.
+So we start this thing out with a bunch of zeros that we're going to restore every frame.
+And then we go through each step.
+And we say, take the world as it exists now, this W, and filter it with our neighbor filter.
+And the filter F is just going to count the neighbors.
+And so it's just one in every square, except for the middle is a zero.
+And that acts as a counting of your neighbors.
+And then it says, if you were already there, which means that the W was a one, and your
+neighbors is exactly two, then you'll be turned on.
+You'll stay alive.
+Or if you were already zero and you had exactly three neighbors, then you would turn on as
+alive.
+Otherwise, you're going to disappear.
+And so this formula encodes this game of life.
+And then we can look at what happens, and we can save each frame as an animation.
+And we can animate that.
+And we have this here.
+Let's see if we can open this in a new tab.
+And what's really interesting is from that very simple rule.
+We get what's called emergent behavior.
+Very sophisticated patterns start to happen here.
+And we get the emergence of like little critters.
+Now, we never asked for these patterns.
+We just gave it a simple rule, only looking at this basic neighbors.
+But what you end up seeing is things like gliders.
+You get stationary patterns, like if you get certain patterns, it will just stay that way.
+Other patterns will just sort of ripple.
+Other patterns move along.
+And you get all kinds of interesting things.
+Let me show you some other examples.
+This one's called the glider gun.
+And this will create these little critters that just walk down the boardwalk here.
+Right?
+Now, in the rules, it never says make a critter and have it walk across the screen.
+And so this is emergent behavior.
+That it's not obvious when you look at the rules that you would get something interesting
+coming out of it.
+And if you look, there's all kinds of interesting patterns here that do really interesting things.
+This one's called a spaceship because the whole thing kind of just walks down like a whole
+unit and keeps itself stable.
+It's a stable pattern.
+And that's what you are.
+You're a stable pattern.
+As you go through life, you know, from Monday to Tuesday to Wednesday and so on, you maintain
+that pattern even though all kinds of different things are happening to you.
+And so this is sort of a mathematical approximation for life and dynamics.
+So I'll post this link.
+I want you to go through and take a look at some of these interesting patterns.
+There's tons of them that you can look at.
+And what's interesting is all the different things that you can build from this.
+So what's fascinating about computers is they can simulate things.
+And one of the most interesting things you can simulate with a computer is another computer.
+And so we can take this game of life.
+We're still just running this very simple convolution.
+It's a very simple filter.
+It's only looking at one square at a time or just one square out in terms of your neighbors.
+But if we set up the pattern, we can build these entire worlds.
+And this one's set up in a very particular way that it's going to simulate something at
+a different scale.
+And so we're going to see the emergence of another system that's made out of these.
+So just like atoms have these very simple rules from the periodic table, and then if you get
+enough of them together, you know, they have sports games and picnics and stuff.
+Here if we get enough of this simple rule and we configure it in just the right way, we
+can get it to simulate something.
+What is it that it's simulating here?
+It's simulating itself.
+So we have this game of life built out of game of life, right?
+It's like a fractal.
+And then if you zoom in on it, you get back to the same thing.
+And so this was the very first critter that we saw.
+And so you could run that again and again.
+And so the idea is this is sort of a model of maybe the universe is built out of things
+like this.
+Maybe this is what atoms are doing.
+This is what space time is doing.
+These very kind of simple patterns.
+So take a look at this lexicon.
+There's one really interesting called the acorn.
+Let me see if I can find that one.
+Right?
+A very simple pattern.
+Just a few squares.
+The same rule.
+The rule never changes.
+And if we just run this, it will just go.
+It will make all of this kind of complexity.
+Then it will be very difficult to predict the state of this pattern without actually just
+running it.
+The only practical way of knowing what this will look like 100 steps later is to just
+run it.
+There's no short cutting it.
+So the guy who developed a lot of this, Wolfram, he talks about computational irreducibility.
+That you can't shortcut it.
+And a lot of times in nature, the only way to know what's going to happen is to actually
+just run it.
+And so this is called the game of life.
+And I encourage you to take a look at that.
+Okay.
+So now let's take that same system and do it again.
+Except now we are going to count ourselves in the rule.
+So we're going to take almost the exact same filter.
+Except we're going to put a one in the middle.
+So now we have a filter of all ones.
+And then we have a very similar rule that says if you're less than 4 or equal to 5 and
+then take the opposite of that.
+And so you can imagine trying all different kinds of possibilities and you can go through
+later and try to understand why this is working in terms of the matrix math and rewrite it.
+You can ask ChatGPT to rewrite that into if then statements if you want.
+But writing it this way makes it go really fast.
+And so this is just a slightly different rule.
+And now we're not simulating the game of life.
+We're simulating surface tension.
+And so this is kind of like if you have a drop of water on your desk.
+It kind of beads up and then it will evaporate.
+And so we get a completely different area of physics, something like evaporation.
+Out of almost exactly the same kind of simulation framework, we just change the settings just
+a little bit.
+But maybe this would be good for drug design, drug discovery.
+You want to figure out how things actually kind of diffuse through your system.
+Or how the different chemicals interact as they evaporate.
+Or maybe you just want to know things like water loss in the desert.
+And so again the same convolution is building a very different model again.
+So now we can take another one and we can say well now the squares have three different settings.
+We can say they're empty, they're a green tree, or they're on fire.
+And what we can do is we can have a simple rule where we every so often the rare chance
+we set the thing on fire with lightning and then every so often we grow a new tree.
+So we'll take almost the same filter, we won't include our center square.
+And then we'll have the rule that basically says if one of your neighbors is on fire, you're
+on fire.
+If you get a seed by some chance, you will turn into a tree.
+Otherwise you'll just continue the way you are.
+And so this rule encodes a simulation of a forest fire where we can see the trees here
+in beige, they sort of start to grow and then every once in a while we get a lightning strike
+and then that will take off across the forest as a whole wave.
+And so this is why it's actually sometimes better to harvest some of the trees in the forest.
+Because if you get too many trees, then there's a chance that the forest fire will wipe out
+the whole thing.
+If the density is relatively low, the forest fire doesn't go that far.
+It sort of goes for a little bit and then it hits an area with no trees and it sort of
+burns itself out.
+But if it gets too thick and too dense, then you get these massive fires that sweep across
+the whole thing.
+Right?
+So now we've got abstract biology, we've got the physics of water drops, and we've
+got forest fires all with this same convolution math.
+So let's change the rules one more time.
+In this case it's almost the same thing except we're going to add lots of different states.
+We're going to say that each little square can exist in state 1 through 9.
+And basically if you're in state 2 you go to 3, if you're in 3 you go to 4, if you're
+in 4 you go to 5.
+So it just kind of ticks along.
+And then once you get to 9 you reset back to 0.
+Right?
+And so this is called a non-linear wave.
+Right?
+We can do one right now.
+I'm going to do like the stadium.
+Right?
+Go ahead.
+Go.
+Yep.
+Go.
+And over here.
+Come on.
+Now to the back.
+Right?
+That's a non-linear wave.
+You're waiting for your neighbor and you see your neighbor with your hands up, then you put
+your hands up, then you put them back down.
+You think of the stadium with the wave, nobody's moving.
+Right?
+There's no people actually moving.
+It's just sort of that activation.
+And it turns out that that's how your heart synchronizes.
+It's beating.
+And you have these pacemaker cells that are trying to send out these ripples.
+And if you've ever seen in the medical shows when they have the paddles and they go clear.
+Right?
+And what they're trying to do is to reset these oscillation waves because they can get
+out of balance.
+And we can get these patterns where we can think of each little square as a person standing
+in the stadium.
+And when the neighbor gets to them, they raise their hand.
+And then when the wave goes by, they put their hands back down.
+And so we can kind of see this both in your heart and also in morphogenesis, how your body
+decided to be the pattern that you are.
+And so the idea is that we get all of these very different patterns from this same kind
+of system, the same idea of convolution that's very fundamental in physics and in this kind
+of non-linear chemistry and complex systems.
+If we smooth that out a little bit and we change this operator just a little bit, we can
+get patterns like this, which kind of look like zebra stripes, kind of look like fish.
+You know, if you imagine, you know, on your arm or on your head, you've got, you know, your
+hair, there's a spot that has hair, a spot that doesn't have hair.
+And then on zebra stripes, you've got a spot that's a zebra that's striped and a spot that's
+not a stripe.
+How does each individual patch of skin know to be a stripe or not?
+And you think, oh, well, it's in the DNA.
+But every cell gets the exact same code.
+Every cell has the exact same DNA.
+And so we need another system that emerges during development, and that's this reaction
+diffusion called morphogenesis.
+This is what Alan Turing worked on late in his life because he wanted, he felt this was
+an important area to build future computers.
+They needed to evolve and build and construct themselves, and we had to use recipes like
+nature to do that.
+And so we get to sort of very different patterns depending on how this thing starts out in the
+beginning.
+And then the last one here I want to show you is one called Wire World, which is really interesting.
+It's a lot like the others, but what you do is you simulate electricity.
+And so it's kind of a digital electronics, where each little square, it can be sort of
+black, round, empty.
+Nothing's there.
+You can have a wire.
+And then we have electrons.
+But in this case, the electron has a head and a tail.
+And we represent the head with a one and the tail with a two.
+And so they each get their own color.
+And just like the forest fire, we sort of have a rule that if your neighbor was turned
+on and you weren't, then you turn on if you were a conductor.
+And if you were a head, you turn into a tail.
+And if you were a tail, you turn back into a conductor.
+And you think, well, what in the world would that do?
+And it actually simulates electricity sort of going down the wire, that if we start this
+thing out with a head and a tail at one end, it will just scoot automatically.
+But it's important to remember, this is just the same loop, right?
+It's like in the matrix, there is no spoon.
+There is no little critter here, right?
+Just like you didn't move out of your seat.
+Nothing is moving down the screen except for the pattern.
+And we didn't ask, normally in other computer languages, you'd say I want a little critter
+and it has this position and I have an update rule and I'm going to animate it moving across.
+No, we're just applying the same kind of physics on a loop.
+And what emerges is that.
+And what's fascinating by this is the different things that you can build.
+That we can build things like a clock.
+That if we put a loop pattern and then a tail there, that this thing will go in circles
+and every time it gets to that junction it will kick off.
+Like the gliders, it will kick off a new one of these simulated electrons.
+And so depending on how we set this loop will depend how often these spikes go out.
+And that kind of looks like neuron spikes that you could use for signaling.
+And so what's extraordinary is if we put this together, we can make wires, there's our oscillator patterns.
+And then what we can do is we can build that into an actual computer.
+Here we have a pattern that we can actually draw a computer out of these grids.
+And then if we set this thing in motion, then what this is going to do is actually run this computer.
+So I'll pull that up in a second with the animation.
+What this will actually do is count out the prime numbers.
+And so at every square, we're applying the exact same rule.
+The squares have no idea they're participating in a circuit.
+They're only looking at one neighbor away.
+And in here, we have things like bus and register and flip flops.
+And we actually can build a processor.
+And then this calculates the prime numbers as it runs.
+And what's interesting is when astrobiologists go out and they try to look for life across
+the universe, they say if we find prime numbers, then we'll have found something alive or intelligent.
+But this is a very simple recipe that calculates the prime numbers.
+So that's what I wanted to kind of show you as a teaser for complex systems research that
+you can get involved in and how you can take the tools that you're using in this course
+and bring them to all kinds of other areas of science.

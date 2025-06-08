@@ -1,0 +1,191 @@
+Hi, my name is Andy. I'm an independent researcher in Cambridge. I'm here to present our work, Three Sigma.
+So, I didn't know you were going to be here, or else I would have taken that off, but I track a lot of things by myself, but not nearly as many as you.
+I'm also a top 1% Tetris player globally. That becomes relevant in a second.
+I used to be a kid, and I was on Facebook, and I found this great game, it's called Tetris Friends.
+It's sort of like normal Tetris, but you fight each other, so whenever you clear lines, it gets sent to the other person, and you're trying to destroy them.
+At the time I was playing this, there were a lot of people that I considered bots, because they were really good at this.
+It wasn't until I got older and got better reflexes and stuff that I also got really good at this.
+For instance, here's my improvement graph. This was the journey to getting to 1%, and this represents 10,000 games of Tetris that I've played.
+Probably at 20th by now, because the last day I've come in here for like a year and a half ago.
+So, the really cool thing about this is that I got good at this in college, and they give you a bunch of stats, right?
+Like how fast you complete it, how efficient you are when you play, all this stuff.
+And at the same time I was playing Tetris, I was also doing homework and stuff, I was in college.
+So this is a common graphic, right? And I think most people just fuck the sleep.
+And my mom was like, you know, you should sleep more.
+Obviously, she's going to say that because she doesn't have fun with friends or get good grades.
+She's suffering, whatever.
+But, you know, I was like, nobody ever questions that, right?
+Your mom tells you stuff, you're just like, I guess so, right?
+But I actually had my sleep data from my Fitbit, and I had all the Tetris data from the website, right?
+So I got on my computer, I put all some notebooks, and then I was like, boom, big correlation.
+Absolutely nothing.
+I was like, this is like super no correlation.
+It was really disappointing.
+But actually, this was great because it meant I could be like, hey mom, obviously, if I'm going to be a pro Tetris player, it doesn't matter how much I sleep.
+You perform the same in Tetris, pretty good.
+About two years later, I got an Apple Watch.
+You know, time passed.
+I slept several nights during this time.
+And I was like, okay, let's do this again.
+So this time, I was like, no more random association.
+I want to see some real numbers.
+So one thing I looked at is how does my Tetris performance change as I sleep differently?
+Like when I wake up, how does it change throughout the day?
+And so actually, this reflects like sort of your energy cycle throughout the day, right?
+So over here is like when I just woke up, I'm kind of groggy for a couple hours.
+You see that?
+And towards the end of the day, you see there's a drop off.
+And then somewhere in the middle, there's like, you know, a decrease in energy.
+I'm sure we've all experienced like post-lunch coma.
+But what I really was curious about was, is my sleep, does my sleep affect this curve?
+And so I split it by a rolling average of how much I slept in the past week.
+I found something pretty sad.
+Turns out you do need to sleep more to do well in Tetris.
+So over here, the orange line is, sorry, the y-axis here is how fast I'm playing.
+This is a piece per second.
+So it's, you know, pretty much how fast you're going.
+And this is like a good measure to form it.
+And so the higher is better on here.
+And you see the orange line, obviously, you do much better if you sleep more.
+You know, everyone kind of knows that.
+But what I really learned about this was that like, you know, to prove your mom wrong, you need data.
+And not only do you need data, you kind of need a lot of data.
+Like almost no one else I know plays Tetris.
+So no one has like a cognitive proxy with which to repeat their mother, right?
+But I collect like all this data.
+Like I have my location.
+I used to take my grip strength.
+I track when I take medication.
+I have my air quality.
+I have Spotify.
+And even if you're not going to analyze this data, like it's nice to collect it.
+Because at some point, you're going to have like God AI and they're going to go on and look at your data.
+Be like, you should eat more potatoes if you want to get stronger or something.
+Oh, yeah.
+So Tetris versus sleep requires like a bit of analysis.
+Like this took me maybe like three or four hours of coding just because like the data is in a weird format.
+You got to like call it correctly.
+You got to make sure the numbers aren't like fake.
+If you do everything, like it's going to take a ton of analysis.
+And so I just didn't want to do that anymore.
+So my project for this hackathon is called Three Sigma.
+Basically, it's a black box.
+You take all your data.
+You shove it in this thing and it automatically puts out all the analyses for this thing.
+So we haven't written like the entire suite of statistical tests.
+Obviously, there's like all sorts of things you could do.
+I'm just doing simple correlation and correlation condition on something.
+These are the two things that I'm doing.
+And to avoid inundating you because you have like n cross n data points, right?
+We're only taking the statistically significant ones and then showing you like,
+oh, maybe this will be interesting for you.
+So the way this works is you can take all your data from these services.
+Fantastic. You download them.
+You know, thanks to Europe, you can like access your data and it's easy to download.
+One nice thing they've done.
+But the issue is that they're all like different formats.
+Like my Tetris, I scrape manually so it's in a text file.
+Apple Health gives it in JSON.
+Spotify gives it in JSON.
+All this stuff is different.
+The headers are different.
+So the first thing you do is standardize all the file formats.
+They're all CSVs now.
+Now, when you look at them, the machine has no clue what these are.
+For instance, like the type here is always data.
+So they don't actually, we don't actually care about that one, right?
+So what I have is for each of your data sources, you label the column with like an X.
+That's a thing that you can change.
+Or you label it with a Y.
+This is a thing that is a result of your environment changing.
+And then you take your magical black box and you shove all your data into it.
+So I've only done a bit of my data because I didn't.
+There's some parsing format like problems with the other data, which I didn't get to handle.
+We just tested on a small amount of my data.
+So the first, like some of the interesting outcomes, for instance, is glucose versus heart rate.
+So when you eat like your body has to work to digest it, right?
+So this correlates and the p-value is pretty good on here.
+Another interesting thing was I found that like my Ritalin blood concentration correlated with my Tetris performance,
+which is good evidence that it does something.
+The blood concentration here is taken from my dosing time.
+And then like there's an exponential up and exponential down depending on the drug half-life, which you can use to calculate that.
+And so these are some interesting outcomes.
+So the point of this is not that like I can analyze my data, right?
+Like the outcomes of this like to me are just really cool.
+But what we're really optimizing for are like things like people with debilitating allergies that they don't know about.
+Like I saw on Twitter recently some guy was like, oh, I discovered I was allergic to potatoes, but only a little bit.
+So whenever he ate potatoes the next day, it would be like awful.
+And he'd be like, what is happening?
+And then over time, he would track himself on this stuff and then he would find this allergy form.
+And other stuff is like, you know, these people recommend you all sorts of supplements and things like magnesium or B12.
+Like nobody checks and then they take 50 of them.
+And like, it's just like the worst science I've ever seen.
+And it really reminds me of like back in the day, they're just like this stuff really, really works.
+This guy's like a real doctor and he'd sell you some like made up stuff.
+And I want to know what actually works, like what actually works.
+So by making this analysis really easy, I want to make it possible for us to actually grab a lot of people's data about what kind of supplements they're taking.
+And then try to isolate the effects of each of those.
+And the last thing is like, you know, health is actually not super solved.
+For instance, here's my mom.
+She had some heart palpitation problems.
+She went to the doctor and they're like, oh, okay, we'll take an EKG.
+Took an EKG, looked normal.
+And the doctor was like, yeah, looks normal.
+But she still has heart palpitations, right?
+Like what is causing this?
+Is it the sodium?
+Is it the way you sleep?
+Is it the things you do as exercise?
+Like we actually do not have this data.
+And even in clinical trials, you cannot access this data at such a granular level that you really want to.
+For instance, like here's the best like wearable EKG.
+It's like a sticker.
+It lasts I think a day or two.
+And it gives you like nice data, like every minute or something.
+But you know, you have to charge it.
+You have to replace it.
+It's sticky.
+Like it's in the way.
+So one way I think that we can go towards a better, like a better way of measuring this data.
+So we can have some reproducible interventions is implantable devices.
+So I've been working on medical implants for a while now.
+This is one of the projects I worked on was transferring power through the body.
+And another one is like, I want to hack a CGM to power it using solar.
+Like power is like the main problem for implantable devices because you need to put the device in a place which is big enough to accommodate a battery.
+But if you can give power to the device or the device can harvest its own energy, then you don't have to worry about that.
+Now your problems are chemical and biological.
+But I don't know anything about those.
+I'm just an electrical engineer.
+So I'm working on really long term energy harvesting sensing implants in order to collect this data.
+And so what I want to do with this is I want to prevent bad surprises and enable more good ones.
+And that's the goal of this analysis.
+John has questions.
+John has questions?
+That was great.
+No questions.
+It was great.
+How feasible is it to make a solar power CGM?
+And could you use any other, like even biological power source?
+So there's like glucose based solar sources, like glucose based power sources which draw from blood sugar.
+They're not as good.
+Solar is definitely sufficient on like a one centimeter by one centimeter to power CGM.
+The question is more like does the glucose oxidase break down?
+But definitely like electrically we can do it.
+Just no one has.
+Cool.
+Why not focus on urine and poop?
+So non-invasive, don't have to worry about.
+So, you know, I'm self-financed.
+So I don't have like a ton of like free income to do like stuff regularly.
+I would love to actually do it.
+But mainly it's a question of money.
+But yeah, definitely, definitely interesting.
+I mean ideally if Theranos wasn't like fake we could have this every day.
+But you know, unfortunate.
+All right.
+That's it.
+Can I hold your questions?
+Good.
+Thank you.
+Thank you.
+Thank you.
