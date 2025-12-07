@@ -1,0 +1,2192 @@
+Go ahead.
+>> Okay. Um, hi all. Um I'm Mikuel Vanucci
+and I'm
+um yeah presenting today uh this
+research that I I I'm doing with with my
+with my supervisor Peter Bloom at the
+the V University here in Amsterdam
+and u feel free to interrupt me at any
+moment if you have any question because
+we
+um will go through a lot of math. So,
+you can interrupt me anytime.
+And um to introduce me to introduce
+myself a bit,
+I'm uh I'm from Italy, but I'm now
+living in um in the Netherlands for for
+my studies.
+And um
+yeah, that's it about myself. Um I I
+initially drafted a research proposal
+for the for the master thesis that was
+on a slightly different um topic. Um
+it had uh to do with uh placing a
+discrete model as a seller automata in a
+in the classic uh reinforcement learning
+uh feedback loop or also the the setting
+that is
+uh used for all the
+free energy related research where you
+have
+a system that is interacted with the
+environment. So that system in that case
+would have been a cellular automata.
+But then we with my supervisor we
+pivoted that uh research
+quite a lot.
+Um
+the
+the main thing that uh these two uh
+ideas
+um share between each other is that uh
+the the model that we use for the
+environment is discrete because as we'll
+see here we
+we use a touring machine to model the
+the environment
+and Um
+yeah also this is u kind of similar to a
+cellar automatter because it it was
+demonstrated that some types of cellar
+automata are um
+touring um they are they can simulate a
+universal touring machine
+and also the the the other
+uh key idea that um
+I share uh like that this research
+shares with the with the original idea.
+Sorry, I said idea three times. Uh is
+that we we analyze uh this um agent
+through the lens of uh surprise
+minimization
+which is um prescribed by the free
+energy principle
+and uh yeah I think we can
+get into it.
+Uh so this is the outline.
+I
+I will first explain how this uh
+this research connects to the free
+energy principle
+because uh here uh
+we are basically uh
+assuming that the agent um has a perfect
+uh can calculate a perfect posterior on
+the
+on the possible models of the
+environment which is uh
+something that is um not usually assumed
+in the free energy literature where the
+the external world is modeled uh with
+um with an internal state that cannot
+represent fully the
+external environment of course
+and uh
+so Yeah, this is how uh we can uh
+decompose the surf price term as um the
+free energy term here in blue
+and the the kayak divergence between the
+the posterior given by the internal
+model and the the true posterior P.
+And we we can see here that if uh this
+divergence is zero uh we are uh left
+with u basically with surprise. So the
+the free energy term equals surprise is
+this why we say that uh we want to
+minimize surprise
+and yeah here I de compose it further I
+I developed the formula further just to
+show that we
+uh this is the regular uh definition of
+free energy but here instead of a
+continuous
+a continuous uh model class. We have a a
+discrete
+uh model class um that we will uh
+describe uh later more. So we don't have
+the
+yeah the expectation is can be written
+as a summation over all
+um over all models over all possible
+models of the environment. Yeah. And
+this is how it's uh usually
+I mean this is how it can be
+uh written um
+the the free energy and uh we we
+slightly change the notation even
+further
+uh
+but we will see this later and uh yeah
+we we assume that the
+the hidden states of the of the word are
+included in our model class and they are
+um static in a sense. Uh in fact the
+the agent uh
+will um will try to model the the
+entirety of the word not just a part of
+it. And um yeah we we'll see later how
+this is uh made possible. and and and
+yeah and again the
+the posterior uh of the agent and the
+true posterior are equal.
+Um so we we assume that the agent can do
+perfect uh basian um inference which is
+of course uh intractable in in the
+practical sense. Uh but um
+but um yeah we here we stick to the
+theoretical part and see what it means
+um for this kind of agent to minimize
+surprise.
+In fact, we will we will be using as
+our predictor the Solomon of predictor
+which is uh used in the
+exec setting.
+Um
+yeah, maybe I should have introduced
+that um
+what we are trying to do in in summary
+here is that uh we we give to an AXC
+agent
+that is an agent that can uh that has
+basically unlimited computational
+resources
+the goal of surprise minimization and u
+we see what this means for this agent.
+And the the motivation behind this is
+that u
+it allow us to disentangle the goal of
+the agent from uh its limitations
+because here we assume that the agent
+has no computational limitations and see
+what this kind of code would mean for
+such an agent.
+And uh now uh I I mentioned that the
+exec agent uses the Solomon of predictor
+to model the to predict the next
+observation
+and um
+I'm asking the audience if anyone has
+heard about this um
+about the Solomon of induction
+and how much in detail do I have to go
+into it to
+>> Ma usually our Um our setup is that you
+are presenting and then the audience
+contributes towards the end.
+>> Okay.
+>> And you can I suppose assume
+um to give us just the minimal we need
+to understand this and you respecting
+the the time limits.
+>> Okay. Okay.
+>> Estimation is yours.
+>> Okay.
+Uh so yeah I I assume that um
+few people already
+know about this so I will give a brief
+explanation about the Solomon of U
+predictor.
+So uh here is a bit of notation. Uh we
+we rewrite the prior uh with a w uh
+which means a weight and our model um
+new is just one of the possible models
+in the class. We um
+yeah we we already saw this uh new here
+in the summation.
+And uh can you see my pointer?
+Yes, we can.
+>> Okay.
+And uh
+and yeah, we have the this prior is um
+is based on the col of complexity of the
+of the model. So simpler models will
+have a
+bigger prior. Uh in fact if this uh
+k term here would be one the the prior
+weight of such of an an environment with
+only
+uh one bit of description length would
+be 1/2 of the total prior which sums to
+one.
+And here we define the history as um a
+sequence of actions and observations
+in um in different interaction cycles.
+And the posterior is rewritten um as
+this. Similarly to the prior we we use
+the W letter. And here I
+just use this notation to be consistent
+with literature.
+And uh the likelihood of uh a given
+model is written
+in a slightly more compact way like
+this.
+And then we have that uh solomon of
+predictor defined uh as such. It's
+basically a baian mixture of all
+possible
+uh models uh weighted by their
+posterior. of course how how how
+one would expect and uh the key aspect
+is that these models that the the
+Solomon of predictor considers are
+machines
+uh that we can uh represent in this
+fashion with an output tape and a head
+uh which um writes the new observation
+based on um on a program
+um
+that is also the the program that gives
+us the colog of complexity of the
+of the model. In fact, the length of
+this program uh will be um basically the
+the complexity of our model. So if we
+have um a longer program that model will
+be weight will be weighted uh much less
+as as we see here from the prior which
+is exponential meaning that
+um it decreases by a factor of two uh
+for every um additional bit in the
+description length.
+And um yeah here here the program uses
+the the next action to generate the next
+observation and it writes that on a on a
+tape and this tour machine has also
+additional work tapes but I don't uh I
+didn't draw them here to
+so I didn't clutter the slide too much
+and so yeah here the model class is all
+computable environments so the the key
+assumption is that the environment is uh
+can be computed by battery machine,
+which means uh
+there exist a program that can uh
+simulate the environment.
+And this is a
+pretty weak assumption, let's say. And
+it's also the the main assumption of um
+artificial intelligence in general
+because we we assume that uh
+the environment can be modeled with uh
+with a program in uh in short. and
+and yeah
+the the motivation behind uh this prior
+is uh Oxam's razor principle uh which
+which uh in short uh states that uh the
+theories with the shorter description
+should be preferred. Um
+usually uh this is uh
+used in the context of um
+science when when you have to
+considering two different theories that
+can explain the same phenomenon. But if
+one is much simpler then you would of
+course prefer the one that is simpler.
+And uh at the same time uh since we are
+considering all possible true machines
+we are not excluding
+any possibility let's say so we also
+uh this is also coherent with the
+pigurus principle of indifference which
+means that all consistent uh hypothesis
+should be considered
+at least even though a very long program
+would uh have a little weight
+and uh yeah then what does um
+it's um
+it uses this uh predictor uh to
+to predict the next observation and uh
+and it this is then used to basically
+consider every possible action sequence
+in um
+in a brute force manner.
+And once every action sequence is uh
+considered uh then the one that leads to
+highest reward in expectations
+will uh
+will be taken
+and uh then this um this expectation is
+updated with every new observation
+because the the sol predictor gets a new
+um gets new information. So
+also in this sense this model is uncut
+uncomputable because it considers uh
+every possible uh action sequence and
+every possible future and every possible
+model.
+So this uh but this uh gives us um
+very important bounds
+which I won't go over go over here but
+they
+they prove us that this um
+this model can maximize the
+the reward with the
+with the little information that he
+and uh can do that in a
+um parto optimal way with respect to any
+other possible policy.
+So how uh
+how is the previous uh research in
+with uh increasing motivation as reward?
+You might ask and uh my answer is that
+there is little uh research in uh
+in this field. In fact, the the only
+agent that uh
+that was considered
+is the knowledge seeking agent
+which is uh basically the opposite of um
+the kind of agent that we will be
+talking about today. In fact, this agent
+u has us go to maximize information gain
+in the stoastic uh setting
+or to maximize um
+surprise or shaman entropy in the
+in the deterministic setting.
+And uh the reasoning behind this agent
+is that uh it uh would eventually
+allow the
+the Solomon of predictor to learn
+anything about the true environment as
+we'll see. So here reward is defined as
+information gain over the next
+uh interaction cycle
+and uh yeah information gazes is defined
+as the Kyle divergence
+of the past posterior
+with the with respect to the future
+posterior updated with the new uh
+interaction cycle that is uh noted
+uh with uh HD.
+And um yeah this gives uh some strong
+results um
+for the
+for this agent. In fact this the main
+finding of uh the knowledge seeking
+agent literature is that
+this formula try to sum to summarize it.
+This formula tries to summarize it, but
+uh
+it basically says that the
+the agent will eventually uh learn
+anything about the true environment
+which is here um noted with mu. And if
+we simplify it uh bit further, we see
+that uh yeah this is the we consider a
+history of increasing length
+and we take the limit of that. So we can
+account for more information that the
+the agent could squeeze out of the
+environment with time.
+And uh the history is also sampled
+from the from the true environment of
+course.
+And uh with pi star we we we
+refer to the the policy of the knowledge
+seeking agent.
+And this is the
+off policy divergence
+uh of the solment of predictor and the
+the true environment under any policy
+that could be different from the from
+the
+from the one that the KSA agent has
+followed so far.
+Which this this means that uh the agent
+could uh consider any possible other
+policy and would still uh predict
+perfectly uh the
+the outcome because it will have a
+perfect knowledge of the true
+environment.
+And uh this is possible because what
+this agent does is um
+it's uh it tries uh everything.
+It tries every possible combination of
+actions basically to
+uh to induce the surprising information
+and uh which in turns increases the the
+knowledge of the
+of the true environment
+and um
+yeah
+so it will squeeze any information out
+of the environment that uh
+it can
+but uh yeah here I yeah specify what
+this P means but if you have any
+question I can later.
+So now I
+we we might have a question. So what's
+the problem with this agent? Like this
+seems uh already
+perfectly working. this agent can learn
+the true environment.
+And uh
+the the author also um
+conjectures that it would uh learn it in
+the fastest way possible
+even though I don't really agree. But
+the main problem is that the
+the agent would surely die if that is a
+possible event in u in its environment.
+This was proven with this paper and um
+it basically demonstrates that since the
+agent tries everything and uh
+with each uh new action
+cannot uh know with certainty like of
+course the the outcome even even if he
+has a perfect predictor
+because uh
+it wouldn't have gathered enough
+knowledge to know that outcome. And so
+at some point it would encounter um a
+situation in which not knowing the
+outcome
+uh would result in death.
+And um this is also um incentivized by
+the fact that uh the agent seeks
+surprising for information. So it would
+uh
+it would try uh
+also the the most extreme actions uh
+just to get some
+um
+new new information out of it. And it it
+would also be uh
+yeah it would also be uh overly
+optimistic for this reason.
+So uh what we do is that we we basically
+define the symmetric with respect to
+this agent while this uh while the
+knowledge seeking agent was maximizing
+surprise.
+Uh
+for for this agent we try to minimize
+it. Uh and this is of course uh inspired
+by
+the free energy literature and um
+and other few researchers in u in
+reinforcement learning
+uh which um
+which talk about surprise minimization
+even though it's not really
+uh explored that much in the in the
+reinforcement learning literature.
+And uh so I we thought that it could be
+interesting to to explore it in this uh
+setting which is still reinforcement
+learning uh setting but we
+we use the exe agent with which doesn't
+have any
+uh computational bounds. This is just a
+theoretical
+um concept
+and uh for now we'll consider reward as
+a quantity to be minimized
+just for simplicity and uh
+we we define it as um like this as the
+negative log of the
+of the
+prediction on the new new observation.
+at time t.
+Alternatively, we can also include the
+uncertaintity over actions
+which is uh something that is u usually
+done in
+in free energy literature u meaning that
+we we also consider the free energy of
+actions
+but uh within this research um I found
+that this doesn't change the
+the the behavior of the agent um
+that much when we use uh
+these uh touring machines as our models
+and uh so the value then which is again
+minimized becomes the expected surprise
+over future trajectories.
+So here we have the the policy and uh
+here we specify the environment that we
+are currently in on the left and the
+predictor used that will uh give us the
+the surprise um of the next observation.
+And uh yeah this uh yeah here I pointed
+at it and yeah we have the discounting
+part in the in the formula because we we
+can also introduce discounting if we if
+we want to give a certain horizon to our
+agent which is uh
+usually uh
+fundamental inexcation
+part we are just uh summing the
+probability of uh
+all possible features. And here's the
+surprise for us.
+And uh this uh
+expected surprise can be uh decomposed
+with um
+with information gain and risk.
+And uh yeah with this formula we already
+see that if we are minimizing surprise
+we are also uh
+in a sense minimizing information gain
+and uh risk. But uh since we assume
+deterministic machines, this risk term
+uh will be zero.
+And uh
+this uh entails that our agent is
+minimizing information gain
+which is uh exactly the opposite of what
+a knowledge seeking agent uh would do.
+Furthermore, if we instead of a fixed uh
+instead of a discount um yeah we we we
+set a fixed uh discount of one up to
+horizon m and we
+we use the same predictor as the
+environment. Then we have that uh the
+expected surprise is uh just the entropy
+over future trajectories.
+I mean this is already
+um yeah this is already known fact and
+um and we we get a cross entropy if
+those are different and this is just
+useful to
+to rewrite um the value in a more
+compact manner. And um
+yeah here we
+we uh we see it again. And um
+this is different from the from the
+value function that we saw before
+because we have the the surprise is
+taken over the
+the whole trajectories the whole
+trajectory. Here with O we consider all
+the observations up to time t and with O
+prime we consider the future
+observations
+and uh yeah H prime is the
+the future history
+and uh yeah if we if we change the the
+reward uh
+to also consider the uncertaintity of
+our action this only this lock term
+would change of
+And uh here the this conditional
+distribution is defined uh like this.
+So this uh
+>> I feel like
+>> this um
+formula can be written in this fashion
+by aggregating all the surprises of all
+the observation because of the
+properties of the logarithm that allows
+us to multiplicate together the terms
+that are summed.
+And so since in we in the
+in the regular uh definition of the
+value we we take the surprise over only
+the single information. When we sum up
+all the all the the contribution of all
+time steps then this
+these terms can be aggregated in this
+this model
+and uh
+yeah this is again what we earlier.
+So under the true environment and
+deterministic policy we can also rewrite
+value
+um like this. Here we we just uh we just
+have rewritten uh the value as um
+cross entropy that we talked about
+earlier.
+Here we we then um decompose the solvent
+of predictor
+uh as uh using the definition which is a
+basian mixture over different models
+weighted by their prior
+and uh and then since the body
+environment and the policy are
+deterministic
+from uh this summation only one um
+possible future we'll have a
+contribution of uh one which means we'll
+have the this p uh this probability
+value at one while all the other
+possible future will be at zero since
+the both the policy and the
+environment here are deterministic. So
+we we will only select the the futures
+um
+that are
+possible under the true environment and
+the the given policy
+and at the same time uh this um will
+select all the
+all the models that are consistent with
+that future. So we could have different
+models that uh under the same policy
+have give the same observations.
+So um yeah this then can be rewritten
+as a summation over the priors of all
+consistent models
+and uh with the with a given uh policy
+and true environment over on horizon m
+and yeah we just write it um in this
+manner to
+to make it more compact.
+And uh
+yeah, this gives us a precise ordering
+of different policies. Uh which means
+that uh the agent will try to
+to
+keep the biggest part of the environment
+that has already in in its prior
+consistent with the new observations.
+And uh the these environments are of
+course weighted by by their complexity.
+And uh
+and so for example if uh
+if there is a single environment who who
+has um
+who's very simple and can fit with the
+policy then and all the other
+environments are which are far
+are way more complex.
+Also do fit with another policy. We will
+give priority to the simple environment
+because it has a much uh bigger
+contribution to the final
+uh value
+of our uh
+our agent.
+And uh another uh key definition that we
+will use is of a
+of a niche which is uh just defined of
+of of as of as of as of as of as of as
+of as of as of as of as of as a as an
+environment that has a smaller
+complexity than the true one but still
+it can uh
+it can model uh all its observations
+with a given policy.
+Uh so we say that a deterministic
+environment is uh a pine niche of uh of
+an environment of the true environment
+mu if it has a lower complexity than mu
+and gives the same observation under
+this uh policy pi. Yeah, this is the
+formal definition but
+maybe you understood the sense of it
+and to give some more intuition uh we
+can
+look at this uh drawing we have that
+here the true environment is uh
+has been drawn uh in green and uh
+we see that also these two environments
+in yellow and blue,
+mu and mu prime and mu second. They also
+fit with the true environment at least
+in this section.
+And uh
+so that the agent would uh
+would likely try to stay in this part of
+the environment
+and would uh go in a circle. let's say
+to
+to maintain consistency between all
+these environments and we can uh assume
+that for example this uh environment mu
+prime has a smaller complexity and this
+uh muc has a higher complexity
+and um
+yeah since we want to keep mu prime in
+our prior we would Never the agent would
+never explore and go for example this
+way even though it could
+uh
+because it uh it would uh like to
+maintain
+uh this uh
+this simpler environment in its uh
+yeah it's in in model it's in in its
+model
+And uh yeah, but one important things to
+know is to note is that simple
+environments are aren't necessarily
+simple.
+This means that uh even though they have
+a low commer complexity,
+they
+they could also still be quite uh
+complicated. And this is
+oversimplification
+first of all because uh the environments
+aren't uh
+um marov or or they're not representable
+as a grid word because they're machines
+of course. So they can be the
+environments can be
+any type of environment that you could
+think of.
+And uh
+we could also have a simple environment
+like we could have the this blue
+environment that
+uh would actually could actually entail
+exploration if
+if it would match with the true
+environment. Let's say but in general
+let's say that uh this agent would seek
+u some kind of um subsection of its
+environment that it can
+in which it can like um yeah it would
+seek a certain comfort zone let's say in
+which that uh is consistent with the the
+most number of models in uh in its prior
+but at the same time also going in a
+circle is discarding those environments
+where the circle is let's say closed at
+some point in time
+but uh this have punishing weight if the
+if their complexities is higher than the
+environment which is some simply
+represented as this uh circle.
+Um yeah in so in in which case would the
+agent uh leave this uh niche and go
+explore more?
+Uh in in the case where
+this exploration would mean um
+having more environments that fit with
+uh another uh
+a bigger subsection of this environment,
+let's say.
+And um
+yeah, it's uh
+this is quite um improbable, let's say,
+uh because we would uh we would need to
+have
+more environments with
+with a bigger complexity and therefore
+uh lower weight,
+which all fit to fit together and they
+all uh jointly have a bigger weight than
+the than the policy
+than the complex environments kept by
+the policy which says in this circle.
+So here I try to um
+to explain this uh formally. So if we
+have a policy uh that we call pi
+uh which discards the
+this uh which is the the simplest model
+we could technically uh fit the
+environment under any given policy and
+we have pi prime that um that doesn't
+uh
+then
+Uh
+then by
+the the total sum of the weights of the
+of the models
+kept consistent to pi should be bigger
+than the than the sum of the weights of
+the of the models kept consistent by pi
+prime.
+And uh
+this is uh improbable because uh this
+term has uh
+has both can
+uh can consider both the more complex
+model but also the the models that are
+simple as k prime.
+And uh this uh happens with decreasing
+probability with smaller
+uh with smaller k prime uh which is the
+yeah the complexity of the simple
+simplest niche for me to mention
+and uh yeah so this is just to say that
+uh
+this agent would rarely
+go
+on a tangent let's say but yeah also
+Um yeah, this is a oversimplification
+because again uh
+also simpler environment can't
+can force uh
+can force the the agent to
+go in in some other uh direction. If if
+this environment uh has a
+has a a changing structure let's say so
+since it's a machine it could uh at some
+point decide that it will not give the
+same observations if the agent keeps
+going in this direction but
+uh
+it would for example open this uh wall
+and so also under that environment the
+agent would go in some
+direction
+and um yeah and yet we have that uh
+that uh the value uh given by the
+optimal policy is um
+considering model u
+the model as the sol predictor as the
+predictor as a solon predictor
+And uh yeah, we we will still have that
+um
+the information gain on every
+environment is uh weighted by either
+prior and this has a big influence
+especially because the prior is
+exponential. Uh meaning that um
+yeah we meaning that uh simpler
+environments have much a bigger role in
+in the total uh
+result of the expected uh surprise.
+And uh they are even though they are
+limited by the complexity of the
+environment like the information gain
+that you could get in that single
+environment
+uh we yeah here again we we see the
+prior is exponential
+and uh
+we also take into account that the
+history is still sampled from mu. So
+this is the this will actually be the
+expected value at
+time t here. Here here is the expected
+value at time zero. This epsilon is just
+a um a way to say that the history is
+empty.
+And uh if it's not and we have a we have
+a history up to time t then then the
+history is sample from the environment
+but the future is uh
+is predicted uh by the s of predictor
+and u
+in this case the simpler environments
+will have
+a bigger weight because the the sol
+predictor doesn't know the true
+environment and uh
+it it only knows uh that some of the
+simpler environments are still
+consistent with the true environment
+which means that they haven't been
+discarded by the history
+and um
+and so it will use those to
+to assume that uh it's uh in a simple
+environment and uh
+in that simple environment which we we
+call we call U prime. Again we
+we have that the
+the value given by this uh environment
+the contribution to the value is
+it's always uh bigger than the
+contribution to the value given by all
+the other uh more complex environments.
+But still the the jointly contribution
+of all the comp the more complex
+environment you knew second could be
+bigger but uh again this is improbable
+because they would also have to
+fit with each other
+and u
+yeah so in short what this agent would
+do is uh if it had knowledge of the true
+environment it just uh yeah find a niche
+that um fits with the simple environment
+it's prior
+and uh
+how how hard is it to do uh it depends
+on the complexity of the three
+environment
+and for example we could have an
+environment that is not u
+compressible by a simple simpler
+environment under any policy See?
+And uh
+this is uh
+possible if
+for example we have um a small action
+space so that the policy cannot cannot
+compress the environment that much and a
+small uh
+and also a small observation space
+and uh yeah so the we could say that the
+the dimensionality of the observation
+space and the
+and um and the action space uh as deeply
+tied to
+the the the possibility of the
+the agent to actually find a more simple
+environment than the true environment.
+You say because if it if it cannot find
+a simpler environment then it would uh
+yeah it would eventually also get to
+know the true environment.
+Um as um
+not exactly as the technology seeking
+agent would do but still the biggest
+weight would be on the true environment
+and uh it would still have some weight
+on more complex environments.
+and that cannot be discarded and the
+noning agent maybe would discard them
+but u
+I don't think this makes a big
+difference if the biggest weight is
+still on the true environment
+so so yeah here uh here I just wanted to
+say that if we if we consider this
+ordering of complexities
+meaning uh mu prime is simpler let's say
+than the true environment and the new
+second is more complex then yeah their
+contribution is ordered uh in this
+fashion with any possible
+history
+and yeah here we are left with some
+discussion which is uh
+mentioning the dark room problem
+um which
+which means yeah we we could have in
+fact that The agent goes
+as we've seen in a in a circle where it
+and this could be interpreted as
+unintelligent behavior.
+But uh at the same time it would be the
+best behavior for the agent if uh to
+stay in this dark room. If this uh
+this area like if this external part of
+the world contains uh uncertaintities
+and possibility of uh death
+and uh
+the
+agent would have to experience some kind
+of um issue of some kind of uh
+new observation from possible uh harms
+to to go out of this uh circle.
+We could say that we could think of as a
+as a human as a primitive human that
+learns how to
+and and wants to explore how fire works,
+for example, only when it gets hurt from
+fire. And before uh he wouldn't uh
+really consider fire as something useful
+and uh if it doesn't receive any signal
+from the fire that it could be useful of
+course
+and um
+so yeah uh I think uh
+then we could also
+say that we could change the prior to
+encourage explor exploration
+and uh yeah this could be could be
+something for example we could uh give
+bigger prior to more complex
+environments and uh
+we could uh then want our agent to
+um to make those consistent with the
+true environment and therefore explore
+more
+to
+um
+to discard um simpler environments and
+keep those more complex consistent. But
+also at the same time, this
+uh wouldn't uh
+wouldn't really work because it could
+also find a simpler niche of those more
+complex environments that have a bigger
+weight
+and uh stay in that. if uh if that niche
+is uh consistent with old the more
+complex environments
+and also changing the prior would kind
+of uh defeat the whole purpose of the
+uh Solomon of uh no sorry the yeah the
+sol of prior which uh follows out a
+principle
+and yeah I would maybe interact with the
+capabilities of the sol of predictors to
+learn quickly
+and um
+yeah also we can't uh really increase
+the prior on certain information for
+example to model hunger because uh
+here the the prior is only on models
+rather than
+observations or actions.
+Yeah, maybe we could introduce it by
+making the model more complex.
+We could also think of uh giving a
+bigger prior to those environments where
+the the agent uh gets to have food or do
+all the necessary things to survive.
+Uh but also those environments would uh
+immediately be discarded if
+if the agent for example doesn't uh
+doesn't eat once and or
+because it would make those those
+environments where the agent does it eat
+and and stuff uh inconsistently.
+Another u
+thing that we could uh
+mention to address the dark room problem
+is the
+that we could um assume that the word is
+uh interesting in a sense that it cannot
+uh be modeled by a simpler
+environment.
+This would mean that uh our board is not
+uh static that
+uh you couldn't really have
+this kind of niche.
+And uh we already mentioned that this uh
+is also made possible by changing the
+the dimensionality of the action
+observation space.
+And um so yeah that could be could be
+one way of uh solving the problem. We
+could uh we could say that uh this
+uh this environment which here is
+present as as a grid word but in uh in
+reality it could be more complex and
+could be always evolving and then and
+therefore that could not be a static
+niche that could uh model it.
+Maybe you could find one that you could
+model it at least temporarily.
+But uh
+as soon as the agent receives a signal
+that that niche is about to be
+disrupted, then it would uh
+look for new information to
+to find a new and maybe a bigger niche
+that could be modeled in a similar
+fashion.
+And uh yeah also one u advantage of this
+model is that it's parsimmonious in a
+sense that u
+it um
+it discards the least amount of uh
+environment as possible. This could mean
+in a bounded approximation also
+uh having to compute
+less and to
+update the posterior less which is the
+main source of computational burden for
+u
+agentic models in general
+you're approaching one hour just letting
+you know. Oh,
+>> okay. And also we one thing is that
+learning is more stable because the if
+if the knowleding agent were to be uh
+implemented in practice
+it would uh
+it would discard the most probable
+models first with the biggest prior
+as opposite to what the surprise
+investigation would do.
+And uh this would uh dabilize the
+learning
+uh a lot since the simpler models have a
+have the biggest contribution to the to
+the predictive um distribution.
+So yeah, this is uh some research from
+future work considering how u this uh
+this exec agent with this uh reward can
+be
+made uh computable which is already done
+in general for the exec agent. There has
+been already some literature on
+uh computable approximation on it but
+not in the in the context of uh
+intrinsic motivations as reward as a
+surprise minimizations of or knowledge
+maxim maximization.
+Yeah, thank you.
+This is my email
+and uh
+yeah, that's it.
+Thank you Mikuela. Let's all of us give
+Mikuel a round of applause for this very
+comprehensive presentation.
+>> Thank you.
+>> Now we open the floor for questions from
+our audience.
+Please raise your hand if you are any
+questions.
+If not, maybe I can answer some
+questions until people collect their
+thoughts. Um I think uh my questions
+mostly pertain to the first part of the
+presentation and if I'm not mistaken I
+think it's slide the slides just before
+the solon of induction which slide seven
+I think
+which that one yeah the this this
+progression so I have mostly
+clarificatory questions as some things
+are not clear to me First maybe I I
+recall badly that the first equation is
+actually not a plus sign but a minus
+sign between the two
+though I'm yeah I I might be wrong on
+that but what I'm I'm more most curious
+on on understanding is
+what's the move how can you justify
+equating the approximate posterior with
+the the true posterior given that you
+are interested Ed in in then later on
+playing with the the the free energy
+bounds and estimations. So I have like
+the moment you do this you don't do
+variational inference anymore.
+Uh
+yeah yeah yeah here we
+>> more that just
+>> yeah there is there is no uh
+yeah because the the re the reasoning
+behind varational inference is usually
+that there is a latent uh factor that uh
+that can uh change its value in time
+right like a hidden close but here We
+this latent is not modeled uh directly
+because we
+we want to model the the whole
+environment itself like like the whole
+uh program that defines the environment.
+So in that program there is already how
+the dynamics of the environment work
+like there there is already the
+and so u
+the
+posterior also is also calculated like
+introducing a latent factor when when
+you cannot
+uh
+where you can when you cannot
+do the exact basis inference
+and uh this is usually due to
+computational constraints but here we
+don't have uh computational constraints
+so we
+um
+we can indeed uh compute the posterior
+that's that's what the
+what the Solomon of um mixture does
+>> I see
+yes this is outside my expertise so
+probably I don't I don't get it because
+of that and maybe my last question would
+be can you explain once again why
+equating evidence here with a solomon of
+posterior or what's what's this log side
+mean
+uh work
+and Why?
+>> Yeah. Also one one way to to think about
+it is that uh here we are not um
+exploring um
+like uh what what it how how this could
+be implemented with variational
+inference. Uh the important fact is that
+the in variational uh inference what
+what we want to minimize or like in the
+energy setting what we want to minimize
+in the end is surprise and so that's the
+goal of the agent and then this is done
+uh using the solomon of predictor uh to
+calculate the surprise. So the the next
+observation is predicted with the
+Solomon of predictor and u
+yeah that's it
+uh also yeah usually the this uh
+variational posterior is uh
+is computed when you have some
+parameters that you can uh tweak to to
+learn the posterior in a approximate
+way. But uh in this case uh
+we don't have uh let's say in internal
+states rather than the only uh states
+are the the weights of different
+environments
+and uh
+also one thing is that there is a direct
+um
+there is a direct link between
+Um,
+no.
+All right.
+Fine. Thank you. So, yeah. Um, are there
+any other questions from from the
+audience?
+If not,
+one call, second call, third call,
+then I suspect it's Carl's turn.
+Is it my turn now?
+>> Surprisingly, this time, yes.
+>> Thank you and thank you for a very a
+very deep uh presentation. Um, so
+just standing back from the
+presentation. Um,
+I I think that the um the best way that
+we can help is to encourage you to
+pursue this idea of joining the dots or
+linking the universal computational sol
+um um
+induction uh perspective to uh the free
+energy principle. I think that's a you
+that's a really interesting thing to do.
+It hasn't been done completely or
+properly previously and I think if you
+can um establish
+uh a formal link between Solomon
+induction and the free energy principle
+that will be really useful. Um one has
+to acknowledge that there are different
+uh there are fundamental differences
+between the starting points of soloff
+induction and the fenia principle. One
+obvious one of course is that um so off
+induction starts with algorithmic
+complexity um and has certain
+commitments in terms of um you know
+unlimited computing resources and
+discrete world states and discrete
+policies. Whereas the origins of the
+free energy principle are much more um
+aligned with Fman's path integral
+formulation on continuous state spaces
+with random fluctuations. So they have a
+very different lineage. Um and that
+sometimes um causes difficulty in
+understanding
+uh one lineage understanding the
+nmanllete and the terms the notation of
+the other uh the other lineage. But if
+you can put them together in some way
+that would be excellent. Um I don't
+fully I I did not fully um understand
+the derivations because there are too
+many um substitution of variables and
+simplifications. There are too many
+moving parts for me to to follow. Um the
+frame principle is much much simpler
+than um than than um the you know the
+the notational complexity ironically
+associated with um the uh some of
+induction but I did recognize a number
+of key ideas um which makes me hopeful
+that you may be in a position to link
+and relate the two fields um but I think
+you're going to have to do that u
+because you know I'm too old to
+understand uh this algorithmic
+complexity approach um and um I don't
+have time to do it but you do have time
+uh but it will require I think you
+having the same depth of understanding
+of the free energy principle as you
+clearly do of the um uh ex the you salon
+um approach and when you do I think you
+can very gracefully move between the two
+and show how you could um um leverage
+one in terms of the other. And I think
+one nice example of that is what you've
+tried to do here, which is to take from
+the free energy principle the imperative
+of surprise minimization
+and then apply it in the context of
+algorithmic complexity or the
+formulations uh that you get from this
+kind of um universal computation. Um so
+that's a you know one one very nice
+illustration of being able to to to link
+the two fields. Um, another obvious link
+here is the emphasis on information gain
+um inherent in the knowledge seeking
+formulations in the uh in the um
+universal computation domain and the um
+the importance of information gain in
+describing uh self-organization in
+continuous uh in continuous systems. Um,
+as an overall comment, it seems to me
+that you, and I may be wrong, so correct
+me if I'm wrong, but it seems to me that
+you've you've described to us um the
+sort of um state-of-the-art universal
+computation uh under this sort of uh XI
+AI formulation is it Marcus Hutter um uh
+formulation
+um and then taken us into the world of
+knowledge seeking where you make the
+reward function the information gain and
+then say that that doesn't work very
+well um and then say why don't we try
+surprise minimization so we make the
+reward um the or the negative reward the
+um the self-information or the surprise
+and then see what happens and then what
+you found is you have a dark room
+problem um that the agent will um seek
+out um you know comfortable able simple
+minimally complex um parts of the
+environment. So then you have to ask
+well how can I put the exploration back
+in again uh and then we get to the um
+the solutions that you listed in on the
+final slide such as equipping the agent
+with certain prior but we can't do that
+because that violates the comm um prize.
+uh we could have an interesting world um
+um prior um and other devices that would
+basically put the information game back
+in. Um so my uh my intuition is in fact
+you need both
+and you need both the information gain
+and the surprise minimizing parts. Um,
+and if you have both of those parts in
+that would be formally isomorphic with
+the free energy principle. So the
+expected surprise you're talking about
+is the the homalogue of that in the free
+energy principle which would be the sort
+of I repeat the continuous state space
+formulation that you can also um write
+down for discrete state space models of
+the kind that you're dealing with uh
+should you want to um would replace
+expected surprise with expected free
+energy and the expected free energy is
+basically your uh the expected
+information gain um well sorry the
+negative expected free energy is the
+expected information gain minus the
+expected surprise where surprise is just
+simply the negative log probability of
+an outcome. Um and I think that that you
+the resolution of the dark room problem
+is actually um having a mixture of your
+of your surprise minimizing uh scheme
+with the information with the knowledge
+seeking scheme and mathematically I
+think that will actually be a proper
+surprise minimizing scheme. I may be
+wrong, but what I think you've done is
+um you've um over interpreted surprise.
+First of all, as uh noted by Robert,
+you've associated the um the
+self-information or the negative log
+probability of an outcome with a
+solomonoff predictor. So that's actually
+a um a a probability of a random
+variable. It's not it's not the actual
+observation. Um and then later on when
+you were taking us through the
+construction of the surprise minimizing
+agent um it seemed as if you were try
+you were equating the surprise with the
+predicted posterior of an observation
+given h or given the history of the
+actions and observations.
+um that's not the surprise that the free
+energy principle minimizes. Um that's
+that would be uh in expectation an
+ambiguity. Um, so I think that the
+resolution to your problem, the dark
+room problem that you presented at the
+end and all the worries about the little
+agent going around in circles and not
+exploring in the natural kind of way um
+could be resolved by um by thinking
+carefully what what what what surprise
+are you trying to minimize? And then if
+you unpack that expected surprise, you
+should get back the um the information
+gain which at the moment you're
+minimizing which is which is you know I
+think why you have a dark room problem.
+Um um and the um the constraints that um
+basically stop the agent being burned.
+You know, if you remember that nice that
+nice notion of curiosity killed the cat.
+Um, so that that particular problem is
+resolved
+by the expected free energy
+having two parts. It's got the
+information gain part, but it's also got
+the cost part, which is a negative
+reward, which stops you getting burned.
+So that's the kind of surprise that is
+referred to in the free energy
+principle. It's just how unlikely is it
+that I will be burned. So if I get a
+burning outcome, that to me is just very
+surprising. So it's nothing to do with
+prediction. It's just the surprise of
+being burned. And that's a constraint
+that gets is added to the or a log
+constraint that is added to the expected
+information gain. And then those two
+together now become the expected um free
+energy which I think is your expected
+surprise. Um this I I appreciate this
+may make no sense to you whatsoever. Uh
+but I am aware it's being recorded. I
+fondly hope. Um so that you can go back
+and think, "Oh, I I understand. Oh, I
+think that's rubbish. Uh but I'll just
+make sure." Um, I'll try and take you
+through um what I mean by these things
+and if you can make sense of what I'm
+saying, I think that you could tell a
+very compelling and important story
+about the links between
+um augmented
+solomoff induction schemes that have
+knowledge seeking in them under
+constraints and the free energy
+principle which be much more
+straightforward and would also
+um on the one hand resolve your problem
+um the dark room problem um but also
+interesting the on the other hand I'm
+just mindful that you started um
+motivating this universal computation
+style of theorizing by noting that
+although it is incomputable and it's
+intractable I appreciate that there are
+approximating software environments that
+you can you you can use but
+mathematically it it cannot not been
+realized because it's all incompu you
+know it's not tractable because of the
+uh universal computation uh assumption
+but what you also say is um but there
+are some really interesting bounds or or
+limit cases that come out of the
+analysis and that's um that would be
+really interesting from the point of
+view of the free energy principle if you
+could write down the free energy
+principle in this calculus and then
+rederive the uh the bounds that would
+now apply to the free energy principle.
+That would also be I think a very useful
+uh useful contribution. Um if you'll if
+you'll indulge me um I'm going to share
+my screen now and just take you through
+a couple of papers that that I um
+occurred to me uh during uh during your
+presentation that um you may you your
+thesis uh may uh usefully um may
+usefully um reference if you know uh
+just for
+>> Yeah.
+That would be nice. Thank you.
+>> Good.
+Now, where are we? Oh, look. There we
+are.
+>> Yeah. Also, I think you summarized the
+like the content of my presentation
+pretty well.
+and um
+yeah maybe I don't understand uh
+fully um
+how the free energy uh minimization can
+introduce the information gain.
+>> Yes, it it is not simple. Um and yeah
+that was my
+>> sorry
+>> carry on. I
+I looked at like the the free energy
+term from the lens of variational
+inference
+>> like the the elbow and um
+and so I I didn't uh
+uh really
+yeah I I read uh some free energy uh
+literature but then
+I yeah I stick to the variational uh
+inference uh perspective
+uh which is um
+yeah which is basically like the
+the evidence lower bound is like
+providing a b a bound on surprise and uh
+it it is done because
+um
+well we cannot compute the posterior
+perfectly
+but yeah the I mean in this case we
+don't we don't have any uh computational
+bound so I I just thought that I could
+just use the what the elbow is trying to
+bound which is surprise
+>> yes and actually I think you you you can
+do that so just speaking to to to
+Robert's question I think you can ignore
+that variational gap although
+variational bound in your analysis
+because you're looking at an idealized
+case where you're trying to derive
+>> you're trying to derive um your limits
+and and and um and and bounds under
+idealized assumptions. Um so um it's
+glad that I'm glad that you said that
+you sort of adopted the sort of
+variational bay perspective on the free
+ownership principle um because I think
+that's possibly the wrong focus um and I
+think that if you just stand back and um
+understand the simplicity of the free
+energy principle a lot of your
+assumptions will make much more sense.
+So for example um the free energy
+principle um as derived under a
+pathogical formulation in continuous
+state spaces it's got nothing to do with
+Shannon stuff it's got nothing to do
+with um comov complexity it's got
+nothing to do with Turing machines it
+now deals with um the um random
+dynamical systems where the randomness
+is given by random fluctuations so it's
+now all dealing with probability
+densities not probability distributions
+over discrete things. If you start from
+there then um you can make the
+assumption for example and so this is
+the most recent description which I
+think you will enjoy reading because it
+it will I think help organize um the
+motivation for various kinds of surprise
+minimization and explain where the
+information gain comes from. Um the key
+there are two key points to be made um
+in this paper. uh or sorry two key
+points I want to make to you uh that I'm
+using this paper to remind myself to
+make those points. Um one is that if you
+um um start from the physics of random
+dynamical systems
+then you can assume that the internal
+states are performing exact basin
+inference which is exactly what you
+assumed on your first or your seventh
+slide and that's perfectly okay. uh all
+you are saying is in an idealized world
+under idealized assumptions I can
+associate by definition the internal
+states of any uh agent um with the
+sufficient statistics over the posterior
+over the latent causes of my observable
+outcomes. That's exactly what is done um
+in the physics version of the free
+energy uh principle.
+The second point is that all of the
+interesting stuff is about the agency.
+So all of your interesting observations
+are about the policies and policy
+optimization. And you know that means
+that what you're really talking about is
+not the variational free energy which
+has the bound elbow aspect to it. You
+can ignore that. The really interesting
+part is the expected free energy and
+that's your expected surprise. So what
+this paper does the second reason I'm
+putting this paper up is that it deres
+the expected your expected surprise
+um my or the free energy principles
+expected free energy um from first
+principles. So this is not like um it
+doesn't make any assumptions like you
+know the the uh the prior over the
+complexity or um it it deres
+what would have to be the case in terms
+of sequential policy selection
+if something was self-organizing to a
+particular set of states. In this
+literature, this is called a pullback
+attractor. And the shape of this
+attractor is simply scored by the um the
+self information or the negative lock
+probability of any particular um point
+in state space and specifically the um
+the observation space um being occupied.
+So this this is something that's missing
+from um universal computation. Um if you
+don't have reward there is nothing to
+tell you about what are the
+characteristic states to which this
+agent will um work towards. Um so if you
+put rewards in that's one way of saying
+oh it's more likely that these agents
+will work towards these states or these
+outcomes or will adopt these policies
+that lead to these outcomes that have a
+high probability or a low surprise. In
+the free energy principle, we don't use
+the word reward. Um all we talk about is
+um the surprisal or the self-information
+or the um uh the um negative log
+evidence of an outcome. So also known as
+a marginal likelihood because it's not
+conditioned upon the past or the future.
+Um it's not conditioned upon knowing the
+hidden states. It's just the the
+marginal likelihood marginalizing over
+everything. just saying if I'm this kind
+of agent then this outcome is very very
+probable and this outcome is very
+improbable and has a high surprise. So
+that's a surprise that's minimized in
+the free energy principle. How do you do
+that? Well, you behave in a way to
+minimize your expected free energy that
+has your kind of surprise surprise or b
+technically in the in the visual search
+literature it's called a basian surprise
+which is the information game but also
+the expected surprise
+um which is to stop you getting burned.
+So you basically have to specify the
+kind of agent you want in terms of the
+constraints on the on the states or the
+outcomes that that kind of agent would
+expect to encounter. So if you want to
+write down the mechanics of an agent
+that doesn't burn itself, you simply
+have to say that being burned is very is
+very surprising. And then you select
+your policies in order to that the cross
+entropy or the expected surprise under
+some future or predictive posterior
+um is now um um very costly and that's
+the expected cost or the expected
+surprise. uh and that in combination
+with the expected information gain is
+the expected free energy and anything
+that minimizes its surprise on average
+will minimize its expected free energy.
+So that that's the basic story that I
+think you it would be really useful if
+you could um see the simplicity of that
+story and then you can sort of choose or
+rename what you're talking about as
+expected surprise as expected free
+energy and work out what's missing and
+what's missing is two terms. won the
+actual expected surprise and an entropy
+term and together um you will what
+you'll get back is something that has
+both the expected reward and the
+expected uh information gain where now
+the expected reward is a free energy
+expected surprise uh I'll try and
+explain how that goes but um as the
+reason I put this paper here is that
+there are no choices here there are no
+assumptions what I've just said um is
+just a natural consequence of any system
+that self-organizes to an attracting set
+where the attracting set is just scored
+in terms of um the surprisal or the
+self-information or the surprise
+associated with each um um state of
+being uh or each each member of that
+state set whether it's continuous or
+discreet. Um you can go uh through this
+at leisure but the you know the key
+result you're looking for is this result
+here which is expect is your expected
+surprise uh free energy principle
+expected free energy that has all of
+these things in including the risk
+ambiguity uh this is the expected
+surprise where I'm now using surprise in
+a free energy sense it's just uh the
+lrangeian the self-information of some
+sensory observation that would be very
+surprising uh if I was the kind of thing
+that didn't get burnt. And then we have
+our expected information game. Um that
+yeah I'm showing this first is to show
+just to to to reiterate the free energy
+principle is not an axiatic theory. It's
+a first principles theory where you
+derive these expressions. You don't
+guess or choose. You're you are you are
+effectively just implementing it. But a
+description of what it is to um to
+effectively go around in circles like
+your little agent in the sense that
+you're occupying a particular set of
+states and that characterizes the kind
+of agent uh the kind of agent that you
+are. But I repeat from your point of
+view the actual variational free energy
+band you can ignore which is good for
+you because you want to ignore it
+because you want to work with universal
+computation. Um all the interesting
+stuff uh is in the expected surprise and
+the expected free energy which is this
+here. uh and you know this just assumes
+that the um the agent has an exact
+posterior over the current states which
+means it can do its predictions into the
+future actions to get the history in the
+past and the future and exactly the way
+that you uh that you had. Um so that's
+that one. But what I I just very quickly
+um yeah um by coincidence we had a
+presentation from a Japanese colleague
+uh yesterday who did a wonderful
+presentation um linking the free energy
+principle to things like rate distortion
+theory and uh with a nod to uh
+compression and algorithmic complexity.
+Um and I was reminded of Jurgen Schmidt
+who was so I think he was worked with um
+um the some of the originators of of um
+Xi I AI um uh and has always impressed
+upon me anyway that the this deep link
+between curiosity and compression and al
+algorithmic complexity. So complexity
+minimization is compression and he
+always has maintained that this is
+curiosity and this is just uh
+information seeking or knowledge seeking
+uh at some fundamental level. Um so I
+and he likes to tell people this. Do do
+you know Jurgen Spituba? Have you heard
+of him?
+Yeah, I I read a paper from him about uh
+yeah, curiosity and also he would like
+motivate the interest in arts also.
+>> All right. Yes. Yes.
+>> Fun having fun in creativity. Yes.
+>> Yeah. Uh but you know I mean he's been
+telling this story since 1990. um uh you
+know there's a a deep link between I
+repeat algorithmic complexity
+minimization
+compression and curiosity which I I
+think is quite nice you got the three
+C's there it's just something that you
+might want to slip into the introduction
+of your thesis just to say that there's
+an interesting you know deep link
+between these uh between these these
+things um the the other the other paper
+that I recovered for um our colleague
+yesterday um
+was that people have noticed these links
+in the past between algorithmic
+complexity and variational free energy
+minimization reading variational free
+energy in a sort of Helmholtz or Fineman
+sense um and this was one example very
+early on by David McKay who's quite a
+famous person in um in statistics and
+and machine learning uh just casting uh
+cryp analysis under an algorithmic
+complexity um frame uh as free energy
+minimization. So this is another little
+historical link uh between these two
+lineages or or or or lines of thought
+that you know hopefully converge upon
+the same conclusion. But the um the what
+I wanted to do was I'm sure you've read
+this because I think this is probably
+the the most relevant for your thesis um
+because it's it's all about basically
+expected free energy on discrete state
+spaces which in the limit will be um um
+deterministic um but should for uh
+should comply with the same rules um or
+assump assumptions that your work is
+about. And the reason I wanted to show
+was just to um unpack the the the the
+moving parts
+um or the terms in the expected surprise
+um just um just make just to see if
+these ring a bell with you. Um because
+when I went through your presentation, I
+was I saw little bits of the expression
+saying, "Oh, yes, that's right. Oh yes,
+that that that's very similar to the
+expected free energy in the free energy
+principle." Um, so I'm not expecting you
+to give me an answer now, but I'm hoping
+that you'll be able to go through this
+uh these decompositions of the expected
+free energy and say, "Oh, yes, I was
+using that. Oh, yes, that's what you
+know, I can replace that with a, you
+know, some predictor. Oh, that's a a
+conditional entropy or an ambiguity
+term. Oh, that's what I meant by the
+expected surprise." And if you can do
+that, I think you can then draw the
+lines between or the links between the
+free principle um um as in the
+literature and the uh the universal
+computation perspective or idealization
+uh of these things. So this is this this
+is your um traditional elbow like um um
+formulation of the free energy which is
+used to update your beliefs. You don't
+need to worry about that. you can assume
+that the agent has perfect beliefs um or
+you know an exact posterior but if you
+didn't want to this would be uh the
+mechanics of how do you get the closest
+approximation to the to the posterior um
+and the elbow perspective just to
+clarify um for those people watching
+recording uh s here are um states
+they're latent states which are not
+directly observable but they are the uh
+the structure of the cause effect
+structure in the environment um that
+could correspond to your mu to to the
+the the you know the the things that are
+sampled from the space of models for
+example. But in this formulation it's
+slightly simpler. We're going to assume
+a particular um model um and uh just
+worry about making inferences about
+states of the world. You can apply the
+same mechanics to the model itself if
+you want to. But for the the actual
+structure of the problem, I'm just going
+to focus just on inferring the states of
+the world. Um because you haven't got
+complete observation of the world. Uh so
+this is why you have partially observed
+uh problems. Um but I don't think it I
+don't think it has any greater
+implications for for the expected
+surprise or free energy up here. But for
+completeness, these are states. The pi
+is a policy, sequential policy, a
+sequence of actions or a combination of
+actions um in the future. Um and here is
+my elbow. So I can write this down as
+either a KL divergence between my
+approximate posterior and the true
+posterior um plus a surprise term where
+the surprise here is being conditioned
+upon policies. But normally you don't
+need to you wouldn't need to do that.
+Um,
+and I can rearrange these terms into
+complexity and accuracy. And I think
+that's interesting for you because now
+you've got an alternative way of
+thinking about complexity. At the
+moment, you've been thinking about it in
+terms of algorithmic complexity.
+However, the same if you like um aspect
+of any given
+basian belief or um parameterized
+posterior distribution.
+um can be expressed in terms of the KL
+divergence between your prior belief and
+your posterior belief. So it measures so
+now we're talking about not the
+complexity of the model as such but the
+complexity of your sense making of your
+belief updating in the sense that the
+more degrees of freedom you use up in
+providing an accurate account of the
+observations the more complex. So the
+minimization of complexity
+um that you were talking about or the if
+you like the um the prior that the um
+you talked about Okam's principle and
+principles of indifference that that is
+an emergent property of free energy
+minimization in fact surprisal uh
+minimization generally um in the sense
+that if you interpret complexity as the
+degree to which I have to change my mind
+in order to provide an accurate account
+of the data. So accuracy is just the log
+probability of the observable O
+given um um I knew what caused it
+averaged under my beliefs about the
+causes. So the log evidence or the yeah
+the log evidence is equal to accuracy
+minus complexity or the negative log
+evidence um namely the variational free
+energy um bound uh is equal to
+complexity minus accuracy. So that that
+may or may not be a useful footnote to
+your thesis because it just provides
+another view of complexity
+that complements that has the same if
+you like um implies the same imperatives
+as the um carograph complexity or uh you
+know the the the prior over um models or
+latent states um that um penalize large
+degrees of freedom.
+or or or big models or or models that
+you know that have too many parameters.
+Um you can score it in terms of a KL
+divergence. Um however that's not
+terribly relevant for your thesis. You
+you're much more interested in the
+expected surprise. Um and it turns out
+that if we take the expectation of these
+things,
+what we end up with um is the expected
+complexity
+read as a KL divergence between a prior
+and a posterior
+becomes risk. where risk now is just the
+difference between um what I a priority
+prefer in terms of my hidden states and
+um what I think will happen if I pursue
+the policy. So again it's a cha
+divergence that measures how far away am
+I from my preferred states and my
+preferred states are simply not being
+burned. So I have to write down the
+reward in terms of a prior surprisal in
+this instance over the states but it can
+also be over the outcomes um uh and then
+the expected accuracy becomes the
+ambiguity and I think that's the kind of
+surprise that you were dealing with um
+and that's a very important kind of um
+um imp kind of um surprise to minimize
+you want to disambiguate. You want to
+move to parts of the environment where
+there's a lawful and ambiguous mapping
+between the states of the environment
+and your observations in this partially
+observed context. Um, and furthermore,
+the ambiguity term, which I think is
+what you were um you were associating
+with surprise, is a key component of the
+um the expected information gain. Here
+it's labeled intrinsic value but it's
+just uh the in the expected information
+gain or ba sometimes called basian
+surprise um um um uh sometimes called
+intrinsic motivation. Um but you can see
+that um if I now take this term and put
+it um put it into put it over here and
+then rearrange the ambiguity is an
+important part of this expected
+information gain. So what I'm saying is
+that the expected accuracy or inaccuracy
+becomes ambiguity. But interestingly the
+expected surprise
+the expected ne negative log evidence
+now becomes an expected value or a
+negative expected value or an expected
+cost. And this is the cost of being
+burned. This is the thing that killed
+the cat. It's not the curiosity. It's
+the um acting in a way, choosing a
+policy that doesn't render very
+surprising outcomes um um highly
+unlikely
+and then the the bound term um now
+becomes the information gain um and that
+is the um the that is the expected
+information gain. basically the
+difference in my beliefs about the
+states uh of the world with um and
+without the observations that I would
+get if I pursued policy pi. Um and then
+you can sort of rewrite that as as a
+mutual information. So my um my
+>> this
+value is minimized or maximize this.
+>> No, this is maximize. Yeah, it's really
+interesting. But notice that because and
+I'll come to that in a second. But um ju
+just say this is basically what I wanted
+to convey to you because I think if you
+can go through this formalism and
+related formalisms so you understand it
+in the same depth that you understand
+the soloff induction I think you'll be
+in a very good position now to make them
+meet uh meet in the middle and derive
+your bounds and inequalities that then
+you could apply to the to the expected
+free energy and furthermore you can tell
+um Hutter and friends um that a
+knowledge seeking agent is not enough
+that it's you you know you you can't
+reward is not enough and knowledge
+seeking is not enough you have to have
+knowledge seeking under constraints to
+actually account for um um
+self-organized behavior real agents uh
+and from your point of view that means
+that you now um you you you now have
+your expected surprise oh no sorry
+expected surprise read as a free energy
+um and the information gained as part of
+your overall expected uh surprise. At
+the moment you've just been dealing with
+this term I think which is which is good
+uh and just to say that this term is
+usually motivated by uh the street lamp
+effect which is the effect you see in
+psychology um where you only look look
+for your lost keys underneath a street
+lamp because it's dark everywhere else.
+Uh so the response to the dark room
+problem is to switch on the light
+because that now maximize minimizes the
+ambiguity or um minimizes the
+conditional entropy of the observables
+given their causes. Um so it's a really
+important term but alone it won't do
+anything. You know it can either be um
+added to the risk so you avoid risk um
+or it can be absorbed into the
+information gain. But your question was
+really important. Yeah, this KL
+divergence now is maximized. So this KL
+divergence is minimized. So you're
+minimizing the um the the KL divergence
+between states of the world under a
+particular policy and those states that
+are characteristic of you that you're
+basically the your rewarding states. Um
+and that would be the risk term. You're
+minimizing that, but you're maximizing
+because I'd have to switch to make this
+into a KL divergence. I have to have to
+switch. Yeah,
+>> exactly. Uh and therefore the sign
+changes um which should be evident in
+this expression here. So you know it's
+this when
+when the signs change now becomes a cha
+divergence between um well it becomes a
+mutual information or it becomes the
+information gained afforded by the
+policy um um that leads to these
+predicted outcomes. So this is the thing
+that I think you would use your uh
+solomoff uh predictor to predict and
+then under that prediction you can work
+out the information gain um but also um
+you got you're you're also going to be
+predicting the outcome that will have a
+surprise which will be the cost which
+will stop the agent being burned. Um so
+if it likes to be uh running around in
+that circle that's fine uh because it
+expects itself to run around in that
+part of the environment but it will also
+explore um if you you relax those
+constraints by an imprecise prior over
+the the soloff uh predictor um in in
+this um in this um world um that that's
+usually referred to as a sort of a
+posterior predict uh predicted density
+over or or distribution over
+observations um entailed by these uh by
+these cues here. Um but another
+interesting response to your question,
+the signs flip so that now you're
+maximizing this KL divergence. So you're
+maximizing information gained that
+happens
+simply because the outcomes in the
+future become random variables and
+outcomes in the future now that become
+random variables now form the support of
+the predictor of the posterior predicted
+density. And so suddenly now this term
+jumps to the to to to the front and the
+sign switches simply because now unlike
+here where the observations weren't
+random variables, we didn't have to
+infer them. Uh now they're random
+variables because they haven't occurred
+yet. So this comes back to Robert's
+original question. You know what how why
+are we associating the actual outcomes
+with the prediction of the outcomes
+which is going to be you know a
+prediction over a rand a random
+variable. And it is that very prediction
+here of things in the future that does
+switch the side and then you get the
+information gain. So if you if you can
+tell that story uh as I say I think it
+would be um I think it would be really
+useful on both sides of of of the
+theoretical approaches uh to these
+things. Um um
+>> yeah definitely now now I'm using uh
+yeah you you mentioned that uh my the
+surprise I define is a prediction but I
+think I'm using like the exact surprise
+experienced by the Solomon of predictor
+when uh a new experience occurs and only
+yeah it becomes an expectation when yeah
+when you take the value like the when
+you take the the fact that that is in
+the future and you don't know the future
+observation but once that happens then
+then that is the reward that the agent
+considers like the actual surprise given
+by the observation
+>> right in my
+>> it could be very close to this anyway I
+I'll I will let you um think about it
+because you as I say I'm I'm too old to
+understand the the algorithmic
+complexity side of it but hopefully
+you're young enough to understand uh
+this kind of formulation um which will
+require a bit of mental agility because
+the notion of complexity is completely
+different in in this world but it serves
+the same purpose I think or hopefully
+I'll stop sharing my screen now because
+I've exhausted everything useful that I
+have to say
+thank you very much for all the
+suggestions I will definitely uh read
+through through the papers you you
+suggested
+>> and thank Thank you, Mikuel, once again
+with a physical round of applause
+hopefully for your fantastic
+presentation.
+>> Thank you.
+>> And and we definitely encourage you to
+check back with the link once you get
+the YouTube link and and and follow the
+conversation, the exposition by Carl and
+and the papers because that's how we all
+learn here. And um yeah, we will uh uh
+keep you connected with the the people
+in the extended group if you have any
+other questions. And that should be it.
+>> Yeah, on my side. I will let you know
+when uh I finish my thesis and I have a
+final uh paper that I can share with
+you.
+>> That would be most welcome.
+>> Thank you everyone. So with that being
+said, we join the meeting and see you at
+the next TMBB session next week. Bye.
+Thank you.

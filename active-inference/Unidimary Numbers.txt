@@ -1,0 +1,243 @@
+Unidimary Numbers and the Base 3
+2 System:
+Exploding Dots, The 3 →2 Box, Decimal Interpretation,
+Beta Expansions, Arithmetic, and Conceptual Connections
+Flyxion
+December 7, 2025
+Contents
+1
+Introduction
+2
+2
+What Are Unidimary Numbers?
+2
+3
+The 3 →2 Exploding Box Rule
+2
+4
+Powers of 3
+2
+3
+5
+Example: Representing 10
+3
+6
+Example: Representing 14
+3
+7
+Decimal Interpretation and Integer Preservation
+4
+8
+Another Example: (2120)3/2 = 12
+4
+9
+Arithmetic in Unidimary Notation
+4
+10 Beta Expansions and Irrational Bases
+4
+11 Conceptual Connections to RSVP and Field Theory
+4
+1
+
+1
+Introduction
+Unidimary numbers form a positional numeral system based on the noninteger base 3/2, often
+called base one and a half. Although unconventional, this system exhibits deep structural properties
+linking discrete combinatorics, number representation, rescaling symmetry, beta expansions, and
+computational models such as the exploding dots paradigm.
+In this essay I present a uniﬁed exposition combining all sketches, drafts, illustrations, examples,
+and conceptual interpretations, including decimal veriﬁcation, symbolic arithmetic, lookup tables,
+and a Python script for conversion. I also explore conceptual analogies with lamphrodynamic ﬂow
+and ﬁeld-theoretic recursion in my larger frameworks (RSVP, TARTAN, semantic recursion, etc.).
+2
+What Are Unidimary Numbers?
+In ordinary positional notation, we choose an integer base b and write every nonnegative integer N
+in the form
+N =
+m
+X
+k=0
+dkbk,
+where the digits dk are integers in {0, 1, . . . , b −1}.
+Unidimary numbers are the same idea carried over to a non-integer base. Here the base is
+b = 3
+2,
+so we are working in "base one and a half." Remarkably, every nonnegative integer still has a ﬁnite
+positional representation, but now the digits are restricted to {0, 1, 2}:
+N =
+m
+X
+k=0
+dk
+3
+2
+k
+,
+dk ∈{0, 1, 2}.
+When we write the number in base 3/2, the leftmost digit is the coeﬃcient of the highest power of
+3/2, just as in base 10 or base 2.
+3
+The 3 →2 Exploding Box Rule
+The most intuitive way to generate unidimary representations is the "exploding dots" or 3 →2 box
+rule.
+Imagine an inﬁnite row of boxes extending to the left. We place dots in the rightmost box to
+represent an integer N. The rule is:
+Whenever a box contains 3 dots, we remove those 3 dots and add 2 dots to the next
+box on the left.
+2
+
+We repeatedly apply this rule until every box contains at most 2 dots. At that point, the conﬁgu-
+ration is stable.
+This matches the identity
+3 ·
+3
+2
+k
+= 2 ·
+3
+2
+k+1
+.
+4
+Powers of 3
+2
+3
+2
+0
+= 1
+3
+2
+1
+= 1.5
+3
+2
+2
+= 2.25
+3
+2
+3
+= 3.375
+3
+2
+4
+= 5.0625
+3
+2
+5
+= 7.59375
+3
+2
+6
+= 11.390625
+5
+Example: Representing 10
+Through explosions we obtain:
+(2101)3/2
+Check:
+2 · 3.375 + 1 · 2.25 + 0 + 1 = 10
+6
+Example: Representing 14
+Explode and obtain
+(2122)3/2
+Check:
+2 · 3.375 + 1 · 2.25 + 2 · 1.5 + 2 = 14.
+3
+
+7
+Decimal Interpretation and Integer Preservation
+Each digit is multiplied by fractional powers of (3/2), but the total always sums to an integer
+because the 3 →2 rule enforces the identity
+3 · (3/2)k = 2 · (3/2)k+1.
+8
+Another Example: (2120)3/2 = 12
+(2120)3/2 = 2 · 3.375 + 1 · 2.25 + 2 · 1.5 = 12.
+9
+Arithmetic in Unidimary Notation
+Adding (2101)3/2 and (2)3/2:
+(2101)3/2 + (2)3/2 = (2120)3/2.
+Explosions occur whenever a digit reaches 3.
+10
+Beta Expansions and Irrational Bases
+Base-3/2 belongs to the broader theory of β-expansions:
+representations in non-integer bases
+(Rényi, Parry). Famous examples include base φ (golden ratio). These systems bridge discrete
+and continuous representations, symbolic dynamics, and number theory.
+11
+Conceptual Connections to RSVP and Field Theory
+Although unidimary numbers arise from a simple combinatorial rule, they illustrate several themes
+from the RSVP framework and lamphrodynamic ﬁeld theory:
+1. Nonlinear ﬂow with a preserved quantity. The 3 →2 rule deﬁnes a dynamics preserving
+total value. This mirrors lamphrodynamic ﬂows which preserve an information-like invariant
+while redistributing structure.
+2. Multiscale recursion. Moving one box left multiplies by (3/2), creating a recursive multi-
+scale decomposition analogous to semantic recursion in TARTAN or lamphrodynamic scaling.
+3. Complexity minimization. Explosions stabilize digits into {0, 1, 2}, compressing a large
+integer into a stable symbolic form. This resembles curvature-minimizing ﬂows.
+4. Discrete / Continuous Correspondence. The exploding-box picture is discrete and com-
+binatorial, while the analytic expansion uses continuous fractional powers. Their equivalence
+mirrors discrete PDE approximations and CA/PDE correspondences in RSVP models.
+4
+
+Appendix A: Lookup Table for 0-20
+Decimal
+Unidimary
+0
+0
+1
+1
+2
+2
+3
+210
+4
+211
+5
+212
+6
+2100
+7
+2101
+8
+2102
+9
+2120
+10
+2101
+11
+2121
+12
+2120
+13
+21010
+14
+2122
+15
+21011
+16
+21012
+17
+21200
+18
+21201
+19
+21202
+20
+21210
+Appendix B: Python Conversion Script
+def to_unidimary(n):
+# Converts a non-negative integer to base 3/2 using 32 explosions
+boxes = [0] * 32
+boxes[0] = n
+for i in range(len(boxes)):
+while boxes[i] >= 3:
+boxes[i] -= 3
+boxes[i+1] += 2
+digits = boxes[:]
+while digits and digits[-1] == 0:
+digits.pop()
+return ''.join(str(d) for d in reversed(digits)) or '0'
+for i in range(21):
+print(f"{i}
+{to_unidimary(i)}")
+5
+

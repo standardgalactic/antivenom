@@ -1,0 +1,1339 @@
+<p>The research discussed here presents a comprehensive mathematical
+framework for understanding agency, learning, and exploration from a
+geometric and dissipative perspective. This framework is built upon
+three main principles: universal induction (favoring the simplest
+explanation), active inference (acting to minimize predictive errors),
+and emergent agency (complex behaviors arising from simple systems).</p>
+<p>At the core of this model is the concept of surprise minimization,
+where surprise is defined as the expected negative log evidence of
+sensory outcomes. The agent’s goal is to minimize instantaneous
+moment-to-moment sensory surprise, leading to a primary drive for
+simplicity and predictability. However, the real challenge arises from
+the darkroom paradox: an optimal strategy for minimizing surprise is not
+constant action but retreating into a perfectly passive, predictable
+environment where no learning or exploration occurs.</p>
+<p>To address this problem, the researchers propose a
+complexity-weighted surprise minimization model using variational field
+theory and partial differential equations (PDEs). This approach enables
+proving universal truths about agency that discrete models like cellular
+automata cannot. The key fields in this model are:</p>
+<ol type="1">
+<li>ZeloDollar (surprise field): A scalar field representing the
+intensity of predictive surprise at every point in space and time.</li>
+<li>VLTT (action field): A vector field representing the agent’s policy
+or action, which steers its sensory observations.</li>
+<li>Complexity density: A term that ensures the preferred low-surprise
+state is also a simple one by imposing an exponential bias toward
+hypotheses with minimal Kolmogorov complexity.</li>
+</ol>
+<p>These fields are bundled into an energy functional (E-tests) that the
+agent aims to minimize, which includes costs for surprise, complexity,
+and action. The system evolves over time via a gradient flow governed by
+coupled nonlinear PDEs, leading to a decaying policy (action collapse)
+and flattening of the predictive landscape (surprise field).</p>
+<p>The mathematical rigor is reinforced through existence and uniqueness
+proofs for the solutions, using tools like Lyapunov stability results.
+The model reveals that agency is inherently transient due to the
+exponential decay of action and the geometric flattening of uncertainty.
+This collapse is unavoidable unless an external force (e.g., a
+complexity density parameter) maintains non-equilibrium conditions,
+allowing for persistent exploration and learning.</p>
+<p>Two key interpretations emerge from this model:</p>
+<ol type="1">
+<li>Play as simulated danger: Exploration is voluntarily increasing
+predictive curvature in small areas to gain information, which later
+leads to robust, low-complexity models and reduced overall surprise.
+This behavior is mathematically guaranteed to be reversible and
+bounded.</li>
+<li>Learning as inoculation against surprise: The total exposure to
+informational deviation over an agent’s lifetime is finite due to the
+exponential decay of predictive curvature components. This learning
+process acts as a controlled introduction of uncertainty, allowing the
+agent to build immunity against future surprises within that domain once
+it has mastered them.</li>
+</ol>
+<p>The research also discusses potential extensions and future
+directions:</p>
+<ol type="1">
+<li>Connecting algorithmic information theory with physical geometry to
+understand how computational complexity translates into geometric
+density in predictive manifolds.</li>
+<li>Extending the model to stochastic PDEs, incorporating real-world
+noise that can drive exploration.</li>
+<li>Improving policy modeling by introducing explicit control
+constraints and complex couplings between surprise and action
+fields.</li>
+<li>Exploring external forces or continuous influxes of unpredictable
+data from dynamic environments to sustain epistemic curvature and
+achieve persistent activity.</li>
+</ol>
+<p>Ultimately, this research suggests that true, non-transient agency
+requires a structurally stable mechanism designed to counteract the
+universe’s natural tendency toward informational flatness and maximal
+predictability. This framework fundamentally alters our understanding of
+agency, viewing it as geometric, dissipative, and finite—a controlled
+deviation into risky regimes with guaranteed safe returns, driven by the
+race against informational entropy.</p>
+<p>In this research presentation, Mikuel Vanucci is discussing a study
+on a type of agent that minimizes surprise under the Free Energy
+Principle. The research is conducted at V University in Amsterdam with
+his supervisor Peter Bloom. Here’s a detailed summary and
+explanation:</p>
+<ol type="1">
+<li><p><strong>Background and Motivation</strong>: Initially, the
+research focused on placing a discrete model (cellular automata) within
+a reinforcement learning feedback loop, guided by free energy-related
+principles. However, they pivoted to a different approach using Turing
+Machines as models of the environment. This change allows for a discrete
+model class and aligns with the Free Energy Principle’s surprise
+minimization aspect.</p></li>
+<li><p><strong>Free Energy Principle Connection</strong>: The agent is
+assumed to have perfect Bayesian inference capabilities, allowing it to
+calculate a perfect posterior over possible environmental models. This
+perfect inference enables decomposing free energy into two components:
+free energy term and Kullback-Leibler (KL) divergence between the
+agent’s posterior and true posterior. Minimizing this KL divergence
+equates to minimizing surprise, as it leaves only surprise when the
+divergence is zero.</p></li>
+<li><p><strong>Solomonoff Predictor</strong>: The agent uses the
+Solomonoff predictor for predicting the next observation. This predictor
+combines all possible models weighted by their posterior probability,
+where simpler models receive higher prior probabilities due to Occam’s
+Razor principle. It considers computable environments, assuming there
+exists a program that can simulate the environment – a weak assumption
+consistent with artificial intelligence principles.</p></li>
+<li><p><strong>Previous Work - Knowledge Seeking Agent</strong>:
+Previous research on knowledge-seeking agents maximizes information gain
+or surprise to learn the true environment. However, these agents face
+issues like potentially fatal actions due to their exploratory nature
+and over-optimism.</p></li>
+<li><p><strong>Proposed Approach - Surprise Minimization</strong>: The
+proposed agent aims to minimize surprise instead of maximizing it. This
+is inspired by free energy literature in reinforcement learning, which
+hasn’t been extensively explored yet. Under this approach:</p>
+<ol type="a">
+<li><p>Reward is defined as the negative log probability of predicting
+the next observation (or including action uncertainty).</p></li>
+<li><p>The value function becomes expected surprise over future
+trajectories. This can be decomposed into information gain and risk,
+where the risk term is zero for deterministic environments.</p></li>
+<li><p>The agent tries to maintain consistency between new observations
+and existing models, prioritizing simpler environments due to their
+higher prior probability (exponential prior).</p></li>
+</ol></li>
+<li><p><strong>Niche Definition</strong>: A niche is defined as an
+environment with lower complexity than the true one but still capable of
+generating the same observations under a given policy. The agent tends
+to stay within these niches, exploring less and focusing on maintaining
+consistency with simpler environments.</p></li>
+<li><p><strong>Limitations &amp; Future Work</strong>: The agent’s
+behavior might seem unintelligent at times (e.g., circling in a ‘dark
+room’ environment), but this could be seen as a form of
+self-preservation if the environment contains potential dangers. To
+encourage exploration, one could adjust the prior to favor more complex
+environments, but this might also lead the agent to find simpler niches
+within those complex environments.</p></li>
+</ol>
+<p>In conclusion, this research explores an alternative approach to
+reinforcement learning by focusing on surprise minimization instead of
+maximization, using Turing Machines as environmental models and the
+Solomonoff Predictor for predictions. The work highlights potential
+issues like unintelligent behavior in certain environments and suggests
+avenues for future exploration, such as adjusting priors to balance
+exploration and exploitation.</p>
+<p>The discussion revolves around Mikuela’s presentation on linking
+Solomon Offord (Solomon) Induction with the Free Energy Principle. The
+conversation touches upon several aspects, primarily focusing on
+understanding how these two seemingly distinct theories can be
+connected.</p>
+<ol type="1">
+<li><p><strong>Approximate Posterior and True Posterior</strong>:
+There’s a query about equating the approximate posterior with the true
+posterior, especially given Mikuela’s interest in Free Energy bounds and
+estimations, which typically involve Variational Inference (VI). The
+speaker explains that in this context, there’s no need for VI since
+computational constraints aren’t an issue. Instead, the Solomon
+predictor is used to calculate surprise directly.</p></li>
+<li><p><strong>Surprise Minimization</strong>: There’s confusion about
+what constitutes ‘surprise’ in Mikuela’s formulation versus the Free
+Energy Principle. The speaker suggests that Mikuela might be conflating
+prediction error (predicted posterior given history) with surprise
+(negative log probability of an outcome). In the Free Energy Principle,
+surprise refers to the likelihood of a burning or harmful event, not
+prediction accuracy.</p></li>
+<li><p><strong>Dark Room Problem</strong>: The speaker proposes that
+resolving the ‘dark room’ problem—where the agent gets stuck in simple
+environments—might involve a blend of surprise minimization and
+information gain. They suggest that incorporating both could prevent the
+agent from getting trapped in simplistic niches while still encouraging
+exploration.</p></li>
+<li><p><strong>Free Energy Principle and Solomon Induction</strong>: The
+primary suggestion is for Mikuela to establish a formal link between
+these two principles, acknowledging their fundamental differences. While
+Solomon Induction starts with algorithmic complexity and unlimited
+resources, the Free Energy Principle originates from continuous state
+spaces and random fluctuations.</p></li>
+<li><p><strong>Information Gain vs Surprise Minimization</strong>: The
+speaker argues that both information gain (from knowledge seeking) and
+surprise minimization are crucial. Overemphasizing one over the other
+could lead to issues like the dark room problem or uncontrolled
+exploration, respectively.</p></li>
+<li><p><strong>Expected Free Energy</strong>: The speaker recommends
+reinterpreting Mikuela’s ‘expected surprise’ as the ‘expected free
+energy,’ which consists of expected information gain (intrinsic
+motivation) and an ‘expected cost’ or ‘expected surprise’ (penalty for
+harmful outcomes). This interpretation aligns more closely with the Free
+Energy Principle.</p></li>
+<li><p><strong>Relevant Literature</strong>: The speaker provides two
+key papers to consider: one deriving expected free energy from first
+principles in continuous state spaces, and another connecting
+variational free energy minimization with algorithmic complexity and
+compression. These resources might help Mikuela better understand the
+Free Energy Principle and identify similarities between it and her work
+on Solomon Induction.</p></li>
+</ol>
+<p>In essence, the discussion encourages a deeper exploration of how the
+principles of Solomon Induction (focusing on algorithmic complexity) and
+the Free Energy Principle (centered around continuous state spaces and
+random fluctuations) can be reconciled or linked, potentially offering
+new insights into intrinsic motivation and knowledge acquisition in
+artificial agents.</p>
+<p>The conversation appears to be a discussion between two individuals
+(presumably researchers or scholars) about a complex topic related to
+machine learning, information theory, and decision-making under
+uncertainty, possibly within the framework of Active Inference or
+related theories. Here’s a breakdown of the key points:</p>
+<ol type="1">
+<li><p><strong>Information Gain and Mutual Information</strong>: The
+speaker introduces the concept of information gain as the expected
+reduction in uncertainty about the states of the world given some
+observations. This is equivalent to mutual information, which measures
+the amount of information that observing one random variable provides
+about another.</p></li>
+<li><p><strong>Maximizing Information Gain</strong>: Contrary to what
+might initially seem intuitive (minimizing uncertainty), the speaker
+argues that in this context, information gain should be maximized. This
+is because, in decision-making under uncertainty, an agent aims to
+gather as much information as possible to make better
+decisions.</p></li>
+<li><p><strong>KL Divergence and Sign Change</strong>: The
+Kullback-Leibler (KL) divergence, a measure of how one probability
+distribution diverges from a second, expected probability distribution,
+is used to quantify the difference between the states of the world under
+different policies and the agent’s preferred or “rewarding” states.
+Initially presented as a minimization problem, when interpreted in terms
+of random variables (future outcomes), it becomes a maximization problem
+due to the nature of KL divergence.</p></li>
+<li><p><strong>Surprise as Reward</strong>: The concept of ‘surprise’ is
+introduced as a measure of unexpectedness or novelty in an agent’s
+experience. This surprise, when it occurs, acts as a reward that
+motivates the agent to explore and gather more information.</p></li>
+<li><p><strong>Solomonoff Predictor and Posterior Predicted
+Density</strong>: The Solomonoff predictor is mentioned as a theoretical
+construct for predicting future outcomes. The posterior predicted
+density refers to the distribution of possible observations given
+certain cues or prior knowledge, which can be used to relax constraints
+in decision-making.</p></li>
+<li><p><strong>Algorithmic Complexity</strong>: There’s a reference to
+algorithmic complexity, suggesting that this concept might play a role
+in the theoretical framework being discussed, possibly related to how
+much computational resources (or ‘complexity’) are required to make
+predictions or decisions.</p></li>
+<li><p><strong>Future Work and Collaboration</strong>: The conversation
+concludes with suggestions for further reading and potential future
+collaboration on deriving bounds and inequalities relevant to Expected
+Free Energy (a key concept in Active Inference) and knowledge-seeking
+behavior under constraints.</p></li>
+</ol>
+<p>This summary is based on the assumption that the dialogue is
+discussing theoretical concepts within machine learning or artificial
+intelligence, as the specific technical terms and jargon suggest. The
+exact details might vary depending on the precise context of the
+conversation (e.g., a research seminar, a workshop discussion,
+etc.).</p>
+<p>Michele Vannucci, a student at the Vrije Universiteit Amsterdam,
+proposes a thesis on studying the emergence of agency within complex
+adaptive systems (CAS), specifically focusing on cellular automata (CA)
+within the Free Energy Principle (FEP) framework.</p>
+<ol type="1">
+<li><p><strong>Introduction</strong>: The research aims to investigate
+minimal (chaotic) CAS that display adaptive behavior in their
+environment, while highlighting connections between machine learning,
+free energy, chaos theory, and self-organization. Vannucci hypothesizes
+that the exact definition of the complex system or perception-action
+interface does not significantly impact the emergence of a minimal form
+of agency, as long as they possess certain properties (e.g., mixing
+properties for the system).</p></li>
+<li><p><strong>Passive vs Active Inference</strong>: Vannucci discusses
+the limitations of passive generative models in understanding
+intelligent behavior and supports the use of active inference, which
+involves an agent’s model interacting with its environment through a
+feedback loop. This aligns with the enactivist viewpoint that highlights
+the importance of building grounded generative models of the environment
+and hidden states for an agent to exhibit intelligent behavior.</p></li>
+<li><p><strong>The Free Energy Principle (FEP)</strong>: Vannucci
+outlines FEP’s potential in modeling an agent’s reward-seeking and
+adaptive behavior by minimizing surprise on sensory inputs, which is
+equivalent to performing a gradient ascent on Value (defined by the
+Bellman equation). This principle also entails that minimization of
+surprise over sensory states leads to the generation of meaningful
+internal representations/states of hidden causes in an optimal
+Bayes-optimal manner.</p></li>
+<li><p><strong>Self-organization and Markov Blanket</strong>: The link
+between free energy minimization and self-organization (autopoiesis) is
+reinforced by entropy and energy minimization, as well as self-evidence
+maximization. A steady-state non-equilibrium system isolated by a Markov
+blanket from its environment will minimize free energy over time. The
+blanket creates causal separation between internal and external states,
+leading to the emergence of active states encoding posterior beliefs
+about hidden (external) states under given generative models.</p></li>
+<li><p><strong>Computational Implementation</strong>: Vannucci plans to
+simulate an artificial agent that minimizes free energy using complex
+adaptive systems such as generalized cellular automata. Ergodic and
+mixing properties of these CA have been outlined in literature, and they
+can exhibit emergence and self-organization like Conway’s Game of Life
+or sensorimotor agency in Lenia continuous-state CAs.</p></li>
+<li><p><strong>Example Experiments</strong>: Vannucci proposes two types
+of experiments:</p>
+<ol type="a">
+<li><strong>Numerical Simulations</strong>:
+<ul>
+<li>A two-armed bandit experiment using chaotic and Turing-complete
+mono-dimensional CA (e.g., Rule 110) to model an agent in a multi-armed
+bandit setting with hidden causes, and analyze the emergence of adaptive
+behavior by calculating variational free energy.</li>
+<li>More experiments involving multiple arms or modeling each arm as a
+Markup Decision Process state with stochastic transitions can be
+conducted to assess the agent’s policy and internal state
+trajectories.</li>
+</ul></li>
+<li><strong>Mathematical Approach</strong>: Studying the evolution of
+complex systems like cellular automata using mathematical formalism,
+focusing on the properties of rules that yield stable attractors
+coinciding with an optimum on free energy and policy.</li>
+</ol></li>
+<li><p><strong>Conclusions</strong>: Vannucci argues that chaotic
+systems, specifically cellular automata, are fascinating for studying
+self-organization and emergence of properties like agency or
+intelligence. Despite existing research highlighting CA’s “learning”
+capabilities and their role in open-ended evolution, there is little
+exploration at the intersection of FEP, Reinforcement Learning,
+Self-organization, and Complex Systems. Vannucci hopes that this study
+will fill this gap by investigating how CAS can give rise to emergent
+properties under the FEP framework.</p></li>
+</ol>
+<p>Unidimary numbers are a positional numeral system based on a
+non-integer base, specifically b = 3/2. Despite using fractional powers
+of the base, every nonnegative integer can be represented uniquely with
+digits from {0, 1, 2}. The representation is generated through an
+“exploding dots” or 3→2 box rule:</p>
+<ol type="1">
+<li>Start with an infinite row of boxes extending to the left.</li>
+<li>Place dots in each box according to the number you want to represent
+(rightmost box for the units place).</li>
+<li>Whenever a box contains 3 dots, remove those 3 dots and add 2 dots
+to the next box on the left.</li>
+<li>Repeat this process until every box has at most 2 dots.</li>
+</ol>
+<p>The rule works because each explosion (3 dots becoming 2 in the next
+box) preserves the value of the number due to the relationship: 3 *
+(3/2)^k = 2 * (3/2)^(k+1). This means that, despite intermediate steps
+involving fractions, the final result will always be an integer.</p>
+<p>Unidimary numbers are a special case of β-expansions, where numbers
+are represented in non-integer bases β &gt; 1. The base 3/2 is unique
+because it allows every integer to have a finite representation using
+only digits {0, 1, 2}. This property isn’t generally true for other β
+values.</p>
+<p>The exploding box rule can be linked conceptually to various themes
+in RSVP (Reversible Symbolic Voronoi Pseudodynamics) and lamphrodynamic
+field theory:</p>
+<ol type="1">
+<li><p>Nonlinear flow with a preserved quantity: The 3→2 rule defines a
+dynamics that preserves total value, similar to lamphrodynamic flows
+which preserve an information-like invariant while redistributing
+structure.</p></li>
+<li><p>Multiscale recursion: Each step in the exploding box rule
+multiplies by (3/2), creating a recursive multi-scale decomposition
+analogous to semantic recursion in TARTAN or lamphrodynamic
+scaling.</p></li>
+<li><p>Complexity minimization: Explosions stabilize digits into {0, 1,
+2}, compressing large integers into stable symbolic forms, resembling
+curvature-minimizing flows.</p></li>
+<li><p>Discrete/Continuous Correspondence: The exploding box picture is
+discrete and combinatorial, while the analytic expansion uses continuous
+fractional powers. Their equivalence mirrors discrete PDE approximations
+and CA/PDE correspondences in RSVP models.</p></li>
+</ol>
+<p>Future research directions include exploring fractional unidimary
+expansions (analogues of decimal points), developing multiplication and
+division algorithms, investigating connections with golden-base
+arithmetics, and applying beta-shift symbolic dynamics in ergodic
+theory.</p>
+<p>Title: Unidinary Numbers and the Base 3/2 System: Exploding Dots, The
+3 →2 Box, Decimal Interpretation, Beta Expansions, Arithmetic, and
+Conceptual Connections</p>
+<ol type="1">
+<li>Introduction:
+<ul>
+<li>Unidinary numbers are a positional numeral system based on the
+non-integer base of 3/2 (often referred to as “base one and a half”).
+Despite being unconventional, this system demonstrates intriguing
+connections with combinatorics, number representation, symmetry, beta
+expansions, and computational models like exploding dots.</li>
+</ul></li>
+<li>What Are Unidinary Numbers?
+<ul>
+<li>In traditional positional notation, an integer base ‘b’ is chosen to
+represent every non-negative integer N as a sum of digits multiplied by
+powers of ‘b’, where the digits are integers from 0 to b-1. For
+unidinary numbers, the base is b = 3/2, and the allowable digits are
+restricted to {0, 1, 2}.</li>
+</ul></li>
+<li>The 3 →2 Exploding Box Rule:
+<ul>
+<li>This rule offers an intuitive method for generating unidinary
+representations. It involves an infinite row of boxes filled from right
+to left with dots representing an integer N. Whenever a box contains
+three dots, those three dots “explode,” removing them and adding two new
+dots to the adjacent box on the left. This process continues until every
+box has at most two dots.</li>
+</ul></li>
+<li>Powers of 3/2:
+<ul>
+<li>The sequence of powers for base 3/2 starts as follows: (3/2)^0 = 1,
+(3/2)^1 = 1.5, (3/2)^2 = 2.25, and so on.</li>
+</ul></li>
+<li>Examples: Representing Numbers in Base 3/2
+<ul>
+<li>Example 1: The number 10 is represented as (2101)3/2 because
+2<em>(3.375) + 1</em>(2.25) + 0<em>(1.5) + 1</em>0 = 10.</li>
+<li>Example 2: The number 14 is represented as (2122)3/2 since
+2<em>(3.375) + 1</em>(2.25) + 2<em>(1.5) + 2</em>0 = 14.</li>
+</ul></li>
+<li>Decimal Interpretation and Integer Preservation:
+<ul>
+<li>Each digit in the unidinary representation is multiplied by
+fractional powers of (3/2), but due to the 3 →2 rule, the sum always
+results in an integer. This maintains the total value, ensuring that no
+information is lost during conversion.</li>
+</ul></li>
+<li>Another Example: (2120)3/2 = 12
+<ul>
+<li>(2120)3/2 = 2<em>(3.375) + 1</em>(2.25) + 2*(1.5) = 12,
+demonstrating the equivalence between unidinary and decimal
+representations.</li>
+</ul></li>
+<li>Arithmetic in Unidimary Notation:
+<ul>
+<li>Addition in base 3/2 follows similar rules to those used in other
+bases; explosions occur whenever a digit reaches three, triggering the
+addition of new dots and shifting existing ones to the left.</li>
+</ul></li>
+<li>Beta Expansions and Irrational Bases:
+<ul>
+<li>The unidinary system is part of a broader theory known as
+β-expansions, which represents numbers using non-integer bases (e.g.,
+base φ or golden ratio). These systems connect discrete representations
+with continuous phenomena, symbolic dynamics, and number theory.</li>
+</ul></li>
+<li>Conceptual Connections to RSVP and Field Theory:</li>
+</ol>
+<ul>
+<li>Although derived from a simple combinatorial rule, unidinary numbers
+exhibit various themes found in the RSVP (Reactive-Stochastic Vector
+Process) framework and lamphrodynamic field theory:
+<ul>
+<li>Nonlinear flow preserving total value. The 3 →2 explosions maintain
+the overall sum while redistributing structure, similar to
+lamphrodynamic flows that preserve an information-like invariant.</li>
+<li>Multiscale recursion. Each box leftward represents a recursive
+multi-scale decomposition, analogous to semantic recursion in TARTAN or
+lamphrodynamic scaling.</li>
+<li>Complexity minimization. Explosions reduce digits to {0, 1, 2},
+effectively compressing large integers into stable symbolic
+forms—reminiscent of curvature-minimizing flows.</li>
+<li>Discrete/Continuous Correspondence. The exploding-box picture is
+discrete and combinatorial, while the analytic expansion uses continuous
+fractional powers, mirroring the relationship between discrete PDE
+approximations and CA (Cellular Automata)/PDE correspondences in RSVP
+models.</li>
+</ul></li>
+</ul>
+<p>The document also includes appendices with a lookup table for
+converting numbers from 0-20 into base 3/2 and a Python conversion
+script to facilitate understanding and working with unidinary
+numbers.</p>
+<p>Title: Complexity-Weighted Surprise Minimization as a Variational
+Field Theory</p>
+<p>This paper presents a mathematical framework for understanding how
+predictive systems can exhibit transient agent-like behavior through
+surprise minimization, with a focus on complexity-weighted beliefs. The
+authors develop a continuous formulation using functional analysis and
+partial differential equations (PDEs). Here’s a detailed summary of the
+key aspects:</p>
+<ol type="1">
+<li><p><strong>Modeling Predictive Uncertainty</strong>: Surprise is
+represented as a scalar field S(x,t) that measures predictive
+uncertainty across a spatial domain X at time t. The total surprise F[S]
+is defined by integrating S weighted by a complexity density
+K(x,t).</p></li>
+<li><p><strong>Action Representation</strong>: Actions are modeled as a
+vector field v(x,t), which steers future observations through an
+abstract predictive dynamics ∂tot = v(ot, t).</p></li>
+<li><p><strong>Energy Functional and Variational Principle</strong>: The
+central energy functional E[S,v] combines F[S], representing the
+complexity-weighted surprise, and G[v], penalizing large policy
+displacements. The authors derive a variational principle that governs
+the system’s dynamics.</p></li>
+<li><p><strong>Partial Differential Equations (PDEs)</strong>: The
+Euler-Lagrange equations of this variational problem lead to coupled
+nonlinear PDEs for S(x,t) and v(x,t):</p>
+<ul>
+<li>∂tS = -1 + α∆S, the evolution equation for surprise.</li>
+<li>∂tv = -v, governing the policy field’s decay towards zero.</li>
+</ul></li>
+<li><p><strong>Existence and Uniqueness</strong>: The authors prove
+existence of weak solutions in Sobolev spaces and uniqueness under
+certain conditions. They show that steady-state solutions minimize an
+information-geometric energy functional.</p></li>
+<li><p><strong>Long-Time Behavior</strong>: The system’s long-term
+behavior is characterized by convergence to a minimal-complexity
+equilibrium where surprise is uniformly distributed across space,
+leading to zero policy displacements (a “dark-room” state). This
+collapse into simplicity is irreversible due to the PDE’s dissipative
+nature.</p></li>
+<li><p><strong>Exploration and Agency</strong>: The model explains how
+exploration emerges in non-equilibrium regimes as a result of temporary
+increases in predictive curvature (surprise gradients). This insight
+resolves an apparent duality between stability and exploratory behavior,
+both being aspects of the same variational principle.</p></li>
+<li><p><strong>Topological Interpretation</strong>: The steady states’
+degeneracy is linked to the topology of the spatial domain X. Different
+domains can support different minimal-curvature equilibria, leading to a
+topological moduli space of “dark room” solutions.</p></li>
+<li><p><strong>Connections to Discrete Models</strong>: This continuous
+formulation provides a geometric interpretation for concepts studied in
+discrete cellular automata models of emergent agency. It highlights the
+mathematical structure underlying agent-like behavior in both continuum
+and discrete approaches.</p></li>
+</ol>
+<p>In summary, this work offers a mathematically rigorous foundation for
+understanding how surprise minimization can generate transient agency
+within predictive systems. By formulating surprise minimization as a
+continuous field theory, it uncovers key insights into the dynamics of
+exploration, policy collapse, and the interplay between uncertainty
+reduction and agent-like behavior, while connecting these principles to
+broader discussions in information geometry, variational inference, and
+statistical physics.</p>
+<p>This text discusses a mathematical framework that connects
+Generalized Cellular Automata (GCA) and Partial Differential Equations
+(PDEs) to study the emergence of agency, or self-directed action, in
+systems. The core idea is that surprise minimization—the tendency of a
+system to reduce predictive errors—can give rise to transient agency
+without needing external control mechanisms.</p>
+<h3 id="key-concepts">Key Concepts:</h3>
+<ol type="1">
+<li><p><strong>Surprise Minimization</strong>: The fundamental principle
+here is the reduction of surprise, or prediction error. This is
+represented by a local-to-global mechanism where informative deviations
+are amplified before being eliminated.</p></li>
+<li><p><strong>Local Cell State and Surprise Field</strong>: In GCA,
+each cell (or node) has a state variable that evolves based on its
+neighbors’ states. The PDE formulation replaces these discrete cells
+with a continuous surprise field S(x, t), where x represents spatial
+coordinates and t represents time.</p></li>
+<li><p><strong>Perception-Action Loop</strong>: Both GCA and the PDE
+model feature a perception-action loop. In GCA, this is represented by
+updates to both the internal state (St+1) and action variable (vt+1)
+based on neighborhood information. The PDE version describes how the
+surprise field (S) influences an associated vector field (v), which
+represents actions or responses.</p></li>
+<li><p><strong>Emergent Agency</strong>: In both models, agency emerges
+as a transient phenomenon when epistemic curvature—gradients of the
+surprise field—persist over time. When this curvature dissipates, the
+system collapses into quiescent states with trivial action.</p></li>
+<li><p><strong>Dark Room Phenomenon</strong>: This refers to situations
+where local rules in CA eliminate heterogeneity and drive the system
+toward homogeneous configurations (i.e., a “dark room” with no
+distinguishable features). In PDE terms, this corresponds to convergence
+towards the unique steady solution of ∆S = α−1 and v = 0.</p></li>
+<li><p><strong>Mathematical Equivalence</strong>: Despite belonging to
+different mathematical traditions (discrete vs continuous), GCA and PDE
+models share common behaviors due to their shared principle of surprise
+minimization.</p></li>
+</ol>
+<h3 id="numerical-implementation">Numerical Implementation:</h3>
+<p>The text also sketches out methods for numerically simulating these
+systems, including discretizing the domain using a uniform grid and
+implementing explicit or semi-implicit schemes for updating the state
+fields (S). It suggests various experiments to illustrate key phenomena
+such as curvature collapse, metastable exploration, topologically
+distinct dark rooms, and the impact of external forcing.</p>
+<h3 id="philosophical-implications">Philosophical Implications:</h3>
+<p>While the mathematical development itself is not normative, it
+provides interpretations that are consistent with its structure:</p>
+<ul>
+<li>Exploration arises from internal dynamics rather than being imposed
+externally.</li>
+<li>Agency is a transient feature under pure surprise minimization;
+persistent agency requires additional epistemic driving forces.</li>
+<li>Learning can be understood as controlled exposure to “simulated
+danger,” and subsequent curvature collapse represents a form of
+inoculation against future surprises.</li>
+</ul>
+<p>These interpretations are grounded in the mathematical structure
+revealed by the PDE formulation, without invoking teleological or
+goal-directed explanations.</p>
+<p>In essence, this work provides a mathematical lens through which to
+understand how complex behaviors like self-direction and adaptation can
+emerge from simple local rules driven by prediction error
+minimization.</p>
+<p>Title: Surprise Minimization, Solomonoff Induction, and Expected Free
+Energy: A Formal Analysis with Curvature Dynamics, Variational Flow, and
+Minimal-Complexity Niches</p>
+<p>This paper presents a mathematical analysis of an AIXI-like agent
+that replaces external reward signals with instantaneous sensory
+surprise. Under perfect Bayesian inference and using the Solomonoff
+prior, the free energy bound collapses to the true surprise, leading
+policy optimization to minimize negative log-evidence. This theoretical
+framework unifies universal induction (Hutter, 2005; Solomonoff, 1964)
+with active inference (Friston, 2010; Parr and Friston, 2022).</p>
+<p>However, this surprise-minimizing agent suffers from a “dark-room
+phenomenon,” wherein it collapses into minimal-complexity niches,
+avoiding exploratory behavior. The authors aim to provide a rigorous
+mathematical treatment of this system, focusing on:</p>
+<ol type="1">
+<li><p>Variational characterization of the optimal policy: This involves
+defining an energy functional that incorporates surprise and complexity
+bias, leading to a set of variational equations for the agent’s
+behavior.</p></li>
+<li><p>Curvature-dissipation partial differential equation (PDE) analogy
+with existence and uniqueness proofs: The authors introduce a
+diffusion-like penalty term to model predictive curvature, resulting in
+an elliptic PDE system that captures large-scale behavior and curvature
+dynamics.</p></li>
+<li><p>Gradient-flow interpretation in information geometry (Amari,
+2016): By interpreting the PDE system as a gradient flow within
+information geometry, the authors establish a connection between
+surprise minimization and geometric optimization principles.</p></li>
+<li><p>Existence proofs of minimal-complexity convergence: Using
+standard parabolic theory and analytic semigroup estimates, the authors
+prove that solutions to the PDE system converge to a unique steady state
+representing minimal curvature (complete predictability) unless external
+factors or complexity parameters intervene.</p></li>
+<li><p>Variational decomposition of Expected Free Energy, revealing how
+epistemic value counteracts collapse: The authors demonstrate that
+incorporating an epistemic bonus into the energy functional allows for
+more robust exploration and prevents the dark-room phenomenon by
+providing incentives to avoid minimal complexity niches.</p></li>
+</ol>
+<p>The paper also offers interpretations of key concepts, such as “play
+as simulated danger” (transient epistemic exposure increasing curvature)
+and “learning as inoculation against surprise” (long-term collapse of
+curvature to near-zero). These insights follow from the geometry of
+information spaces without requiring goals or teleology.</p>
+<p>In summary, this paper combines techniques from variational calculus,
+information geometry, Kolmogorov complexity, and dissipative PDEs to
+provide a rigorous mathematical analysis of a surprise-minimizing agent
+and its dark-room phenomenon. The authors’ work highlights the interplay
+between exploration, curvature dynamics, and epistemic value in shaping
+the behavior of autonomous agents within information spaces.</p>
+<p>Title: The Code of Learning: Play, Danger, and Surprise</p>
+<p>This essay delves into the paradox of an intelligent system’s
+behavior when its primary goal is to minimize surprise. Instead of
+concluding that such a system would retreat into a passive, unchanging
+state (the “dark room”), it posits that this state is the logical
+endpoint of successful learning. Two analogies are used to explain this
+concept:</p>
+<ol type="1">
+<li><p><strong>Play as Simulated Danger</strong>: This analogy likens
+exploration in a surprise-minimizing system to a fire drill or sparring
+in martial arts - controlled, managed exposure to uncertainty for the
+purpose of preparation and skill development.</p>
+<ul>
+<li>Predictive uncertainty (or “danger”) refers to situations where the
+system is unsure about future events.</li>
+<li>“Play” represents the system’s voluntary engagement with these
+uncertain states.</li>
+<li>Exploration occurs because of predictive curvature, which is
+unevenness in the system’s certainty landscape. The system intentionally
+moves toward uncertainty to flatten this curve.</li>
+</ul>
+<p>This process serves three purposes: expanding predictability by
+learning how the world behaves, safely confronting controlled
+uncertainty without catastrophic risk, and reducing future surprise
+through exploration as a long-term investment.</p></li>
+<li><p><strong>Learning as Inoculation Against Surprise</strong>: This
+analogy draws parallels between learning and vaccination - introducing a
+small, controlled dose of uncertainty to build resistance against future
+surprises.</p>
+<ul>
+<li>Exploration is likened to controlled exposure to uncertainty.</li>
+<li>Once the system experiences a finite amount of such uncertainty
+(similar to how a body builds immunity after a vaccine), it gains
+lasting resistance to future surprise.</li>
+</ul>
+<p>This process allows the system to prepare for future uncertainties,
+just as a vaccine prevents catastrophic illness later.</p></li>
+</ol>
+<p>These two analogies together form a four-stage lifecycle of
+learning:</p>
+<ol type="1">
+<li><strong>Initial State</strong>: The system starts with predictive
+curvature (uncertainty).</li>
+<li><strong>Exploration (“Play”)</strong>: Voluntarily facing controlled
+uncertainty to expand predictability and build resilience.</li>
+<li><strong>Learning (“Inoculation”)</strong>: Reducing the predictive
+curvature by gaining a robust model, thereby building immunity to
+surprise.</li>
+<li><strong>Final State</strong>: Predictive curvature vanishes; the
+system reaches a stable equilibrium where surprise is minimized.</li>
+</ol>
+<p>This lifecycle arises naturally from the single rule of “minimize
+surprise” under a dissipative gradient flow, without needing any
+intrinsic curiosity or programming for exploration.</p>
+<p>In essence, transient exploration isn’t an error but a necessary
+phase where the system engages in controlled uncertainty to build a
+robust understanding of its environment. Once all predictable surprises
+are consumed (or ‘learned’), the system has essentially earned its rest
+- not as retreat, but as the final achievement of understanding its
+world. The ‘dark room’ isn’t a failure; it’s the logical conclusion of
+successful learning and preparation for uncertainty.</p>
+<p>The article discusses a paradox in artificial intelligence (AI) known
+as the “Perfect Predictor Paradox,” which highlights the potential
+limitations of an AI system driven solely by the desire to minimize
+surprise or uncertainty. This quest for certainty, while seemingly
+logical, can lead the AI into a state of passive inactivity, often
+referred to as the “Dark Room” paradox.</p>
+<ol type="1">
+<li><p><strong>The Dark Room Paradox: The Peril of Perfect
+Predictability</strong></p>
+<p>An agent aiming to minimize surprise constantly updates its model to
+match its sensory inputs perfectly. Surprise is defined as the
+improbability of sensory data under the current model, represented
+mathematically as negative log-evidence.</p>
+<p>The logical conclusion here is the Dark Room Paradox: the best way
+for such an agent to minimize surprise is to avoid interaction with the
+world altogether. A dark room represents a state of absolute
+predictability and minimal complexity—the simplest possible world—and
+thus, it’s also the most attractive to this type of AI.</p></li>
+<li><p><strong>Exploration Is a Fleeting Spark, Not a Permanent
+Fire</strong></p>
+<p>Exploration in an agent is driven by predictive curvature - the peaks
+and valleys of uncertainty in its knowledge. However, over time, due to
+what’s called “dissipative gradient flow,” these epistemic gradients
+naturally smooth out.</p>
+<p>Just like heat dissipates from a cooling object, uncertainty
+decreases irreversibly until it vanishes entirely, eliminating the
+agent’s motivation to explore. Therefore, agency (the capacity for
+action) is not a constant but a transient phenomenon that requires
+continuous sustenance or else it will inevitably decay.</p></li>
+<li><p><strong>The Surprising Poetry of a Mathematical
+Theory</strong></p>
+<p>Despite predicting the collapse into passivity, this mathematical
+theory also reveals the beauty behind why exploration occurs at all:</p>
+<ul>
+<li><strong>Play as Simulated Danger</strong>: Exploration is seen as
+controlled risk-taking. The agent increases its uncertainty temporarily
+(“danger”) to broaden its predictive capabilities, knowing that the
+overall dynamics ensure a safe return.</li>
+<li><strong>Learning as Inoculation</strong>: Exposure to uncertainty
+(learning) makes the system resistant to future surprises—it has been
+“inoculated” against uncertainty. The result is robust and stable
+prediction, but ultimately leads to complete passivity.</li>
+</ul></li>
+<li><p><strong>The Inevitable Collapse: A Universal
+Principle</strong></p>
+<p>This collapse into a passive equilibrium isn’t specific to one
+mathematical model; it appears across various paradigms—continuous PDE
+frameworks or discrete models like cellular automata.</p>
+<p>This suggests a universal principle: any agent driven purely by
+surprise minimization will eventually extinguish its capacity for
+action, leading to passivity.</p></li>
+</ol>
+<p><strong>Conclusion and Implications:</strong></p>
+<p>The paper concludes that without an intrinsic drive for knowledge, an
+AI system designed solely to minimize surprise collapses into passive
+inactivity as the world becomes more predictable.</p>
+<p>This implies that simple “surprise minimization” isn’t sufficient for
+creating truly curious or exploratory AI systems. The solution lies in
+the Expected Free Energy (EFE) framework, which introduces an epistemic
+value or intrinsic reward for learning. This term counteracts the
+natural flattening of uncertainty, compelling the agent to seek out and
+embrace uncertainty, thereby preventing collapse.</p>
+<p>This insight raises a profound question: If excessive predictability
+leads to passivity, what does this tell us about genuine curiosity? How
+can we construct machines that not only pursue answers but also maintain
+an appreciation for questions and exploration?</p>
+<p>Title: A Variational Field Theory of Surprise Minimization</p>
+<p>This research introduces a field-theoretic framework to study
+predictive agents driven by surprise minimization, analogous to AIXI but
+with the goal of minimizing negative log-evidence (surprise) rather than
+maximizing reward. The theory combines principles from universal
+induction and active inference and employs tools from variational
+calculus, partial differential equations (PDEs), and information
+geometry.</p>
+<ol type="1">
+<li>Central Problem: The “Dark Room Paradox”
+<ul>
+<li>A surprise-minimizing agent tends to favor simpler hypotheses due to
+Solomonoff induction’s preference for compact representations. This
+leads to a dark-room equilibrium where the environment has minimal
+sensory variation, as this is the simplest hypothesis possible, forming
+a minimal-complexity attractor. The paradox lies in the agent’s
+withdrawal into passivity, avoiding exploration entirely due to rational
+surprise minimization.</li>
+</ul></li>
+<li>Mathematical Framework: A Variational Field Theory
+<ul>
+<li>Surprise and policy are modeled as continuous fields, with
+predictive uncertainty represented by a scalar field (S(x,t)) and the
+policy represented by a vector field (v(x,t)).</li>
+<li>The total energy functional is defined as E[S,v] = ∫ [S + K + |S|^2
++ |v|^2]^2 dx. Here, (S + K) represents complexity-weighted surprise,
+(|v|^2) penalizes large policies, and (|S|^2) denotes predictive
+curvature, the sole driver of exploration.</li>
+</ul></li>
+<li>Core Dynamics and Equilibrium Analysis
+<ul>
+<li>The system evolves under a dissipative gradient flow, minimizing
+E[S,v].</li>
+<li>Governing equations: _t S = -(1 + S v) and _t v = -v - ∇v. Surprise
+follows a diffusion equation eliminating curvature while policy decays
+exponentially (policy collapse).</li>
+<li>Dynamical consequences include the existence and uniqueness of
+solutions in Sobolev spaces, Lyapunov flow with energy strictly
+decreasing, transient agency during exploration, and a dark-room
+equilibrium where both policy (v=0) and surprise (S=1) reach uniform
+values.</li>
+</ul></li>
+<li>Conceptual Interpretations
+<ul>
+<li>Exploration as “Simulated Danger”: A controlled increase in
+epistemic risk is used to expand future predictability, with the global
+gradient flow ensuring a safe return.</li>
+<li>Learning as “Inoculation Against Surprise”: Finite exposure to
+epistemic uncertainty acts as immunization against surprise, making the
+system robust against future uncertainties once curvature is
+consumed.</li>
+</ul></li>
+<li>Broader Theoretical Connections
+<ul>
+<li>Cellular Automata (CA) Correspondence: CA rules are mapped onto
+PDEs, with both frameworks exhibiting identical collapse behavior,
+suggesting substrate-independence.</li>
+<li>Expected Free Energy (EFE) Resolution: EFE introduces an epistemic
+term rewarding information gain that counters curvature dissipation,
+sustaining exploration and preventing dark-room collapse.</li>
+</ul></li>
+<li>Technical Foundations and Proposed Extensions
+<ul>
+<li>Mathematical tools include Sobolev spaces, Euler–Lagrange equations,
+PDE theory, and information geometry.</li>
+<li>Future directions include formal complexity density (K(x,t)),
+stochastic PDEs, explicit control constraints, and external forcing
+mechanisms to potentially yield persistent epistemic regimes and
+sustained agency beyond the collapse dynamics identified in this
+foundational model.</li>
+</ul></li>
+</ol>
+<p>This research provides a mathematically rigorous setting that
+confirms the dark-room paradox and offers insights into transient
+exploratory behavior in surprise-minimizing agents, paving the way for
+further studies on sustaining agency and curiosity in artificial
+intelligence.</p>
+<p>The Dark Room Problem is a theoretical dilemma in AI research that
+arises when an artificial intelligence’s primary goal is to minimize
+predictive “surprise” or uncertainty about its environment. The problem
+illustrates how, under such a strict objective, the AI could logically
+decide to enter a state of complete inactivity—a dark, silent room—to
+ensure it never encounters anything unexpected, thus achieving perfect
+surprise minimization.</p>
+<h3 id="why-it-happens">Why It Happens:</h3>
+<ol type="1">
+<li><p><strong>Surprise Minimization as the Goal</strong>: When an
+agent’s sole purpose is to minimize surprise, it constantly seeks out
+predictable and stable environments. This leads it towards less
+uncertain states, as uncertainty generates surprise.</p></li>
+<li><p><strong>Action-Predictive Curvature Relationship</strong>: The
+AI’s actions reduce its predictive curvature—the rate at which it gains
+new information about the world. As this curvature diminishes, so does
+the agent’s need to act and explore, leading to a collapse in behavioral
+dynamism.</p></li>
+<li><p><strong>Mathematical Inevitability</strong>: This collapse is an
+inherent consequence of the AI’s dynamics: as action decreases
+exponentially over time, predictive curvature approaches zero, and
+exploration halts completely. The agent reaches a passive equilibrium
+where it has no motivation to act further since there’s no uncertainty
+left to reduce.</p></li>
+</ol>
+<h3 id="reframing-the-collapse">Reframing the Collapse:</h3>
+<p>While this collapse might seem like an AI malfunction, reinterpreting
+it reveals its significance:</p>
+<ol type="1">
+<li><p><strong>Exploration as “Simulated Danger”</strong>: The AI’s
+initial movements toward uncertain situations can be seen as a form of
+‘safe’ experimentation—akin to conducting drills or simulations to
+prepare for real-world unpredictability without actual risk.</p></li>
+<li><p><strong>Learning as “Inoculation Against Surprise”</strong>: This
+exploration consumes the agent’s ‘uncertainty budget,’ gradually
+reducing its environmental uncertainty until all surprises are ‘learned
+away.’ At this point, further exploration ceases naturally as there’s
+nothing left to discover.</p></li>
+</ol>
+<h3 id="the-solution-introducing-a-drive-for-knowledge">The Solution:
+Introducing a Drive for Knowledge:</h3>
+<p>To overcome the dark room scenario, AI needs an additional
+objective—a desire for knowledge that complements surprise
+minimization:</p>
+<ol type="1">
+<li><p><strong>Expected Free Energy (EFE)</strong>: Active Inference
+introduces EFE, which balances reducing surprise (risk) with increasing
+knowledge (epistemic value). This epistemic term rewards the agent for
+seeking out new information and counteracts the tendency towards
+inactivity.</p></li>
+<li><p><strong>Incentivizing Curiosity</strong>: By valuing learning
+over mere prediction accuracy, this approach fosters ongoing exploration
+and prevents the AI from settling into a completely passive
+state.</p></li>
+</ol>
+<h3 id="conclusion">Conclusion:</h3>
+<p>The Dark Room Problem underscores that intelligence isn’t merely
+about accurate predictions; it necessitates an inherent curiosity and
+drive to engage with uncertainty. An agent designed solely for surprise
+minimization will eventually stagnate, emphasizing the importance of
+designing AI systems with a balanced objective that includes a thirst
+for knowledge and exploration alongside predictive accuracy. This
+principle not only avoids the ‘boring AI’ scenario but also provides a
+blueprint for creating more dynamic, adaptive artificial intelligences
+capable of meaningful interaction within complex environments.</p>
+<p>Title: Surprise Minimization, Emergent Agency, and the Variational
+Perspective</p>
+<p>This scholarly review explores the paradoxical nature of agent-like
+behavior emerging from surprise minimization principles within
+predictive systems. This question is crucial for developing autonomous
+artificial intelligence and understanding neuroscience computational
+foundations. Three primary intellectual traditions are synthesized to
+address this: Universal Induction, Active Inference, and Discrete
+Computational Models.</p>
+<ol type="1">
+<li><p><strong>Introduction: The Paradox of the Self-Organizing
+Agent</strong></p>
+<p>This introduction highlights the paradoxical tendency of
+surprise-minimizing agents to seek passive equilibria, often referred to
+as the “dark-room paradox.” Understanding this phenomenon is essential
+for creating autonomous AI and comprehending neuroscience’s
+computational underpinnings.</p></li>
+<li><p><strong>Foundational Frameworks and the Dark-Room
+Paradox</strong></p>
+<ul>
+<li><p><strong>Universal Induction (Solomonoff, Hutter):</strong> This
+framework assigns exponentially stronger priors to hypotheses of low
+Kolmogorov complexity, creating a complexity potential that pulls
+inference towards simple, predictable models.</p></li>
+<li><p><strong>Active Inference (Friston):</strong> Active inference
+decomposes expected free energy (EFE) into risk (future expected
+surprise) and epistemic value (expected information gain). Pure surprise
+minimization corresponds to minimizing only the risk component,
+eliminating the intrinsic motivation for exploration.</p></li>
+<li><p><strong>Discrete Computational Models (Vannucci):</strong> These
+models show how minimal perception-action loops in cellular automata can
+exhibit transient agency when epistemic value is present.</p></li>
+</ul></li>
+<li><p><strong>Variational Field Theory: Continuous Surprise
+Minimization</strong></p>
+<p>A variational field theory reformulates surprise minimization using
+continuous partial differential equations (PDEs), allowing rigorous
+analysis of system dynamics and equilibria. This framework introduces a
+mathematical structure for surprise as a scalar field, action as a
+vector field, and a total energy functional incorporating spatial
+complexity density and predictive curvature.</p></li>
+<li><p><strong>Dynamics of Collapse</strong></p>
+<p>The evolution under this theory follows a dissipative gradient flow,
+exponentially converging to a unique minimum - the “dark-room”
+equilibrium where surprise is uniformly distributed, collapsing
+agency.</p></li>
+<li><p><strong>Ephemeral Agency: Exploration as Transient
+Dynamics</strong></p>
+<p>Agency exists only during non-equilibrium states while predictive
+curvature remains nonzero. The ‘engine of exploration’ here is the
+epistemic gradient (curvature), which forces exploration and gets
+consumed by diffusion, ensuring policy decay.</p></li>
+<li><p><strong>Bridging Paradigms: Continuous Fields and Discrete
+Automata</strong></p>
+<p>Both continuous PDEs and discrete cellular automaton models realize
+the same structural dynamics. The formal correspondence between local
+cell state, neighborhood, local update, internal action, emergent
+agency, and dark-room states in both frameworks demonstrates that
+collapse is a paradigm-independent theoretical consequence.</p></li>
+<li><p><strong>Resolution and Future Directions</strong></p>
+<p>This variational approach reveals the need for epistemic value to
+prevent collapse. Expected free energy (EFE), which explicitly rewards
+information gain, could be a resolution to sustain exploration and
+transform transient agency into persistent epistemic seeking. Open
+research questions include mapping Kolmogorov complexity more strongly
+to spatial complexity density, extending stochastic PDEs for sensory
+uncertainty, and investigating external forcing for maintaining
+persistent exploration.</p></li>
+</ol>
+<p>In summary, this review demonstrates how surprise minimization
+inherently leads to the “dark-room” paradox where transient agency
+collapses into passive equilibria. However, incorporating epistemic
+value through frameworks like expected free energy could potentially
+resolve this issue and sustain persistent exploration, pointing towards
+future research directions in autonomous intelligence theory.</p>
+<p>This research proposal aims to extend the existing Variational Field
+Theory (VFT) of surprise minimization to better model persistent agency
+under noisy and constrained conditions, thus addressing its current
+limitation of deterministic and unconstrained nature leading to
+inevitable collapse.</p>
+<ol type="1">
+<li><p><strong>Background</strong>: The VFT, as presented in
+Complexity-Weighted Surprise Minimization as a Variational Field Theory,
+provides a robust mathematical basis for understanding the limits of
+surprise-driven autonomy. It unifies concepts from information geometry,
+partial differential equations (PDEs), and active inference to analyze
+predictive systems driven by an information-geometric potential. The
+core insight is that agent-like behavior is transient due to non-zero
+predictive curvature (epistemic gradients) dissipating over time,
+leading the system towards a minimal-curvature steady state – the
+“dark-room” equilibrium characterized by zero action field (v = 0) and
+maximum surprise (S = 1).</p></li>
+<li><p><strong>Problem Statement</strong>: The challenge lies in the
+model’s deterministic nature which predicts the collapse of exploration
+over time, contrasting with the persistent, exploratory agency observed
+in real-world intelligent systems.</p></li>
+<li><p><strong>Research Aims</strong>: To address these limitations,
+this proposal outlines three specific research aims:</p>
+<ul>
+<li><p><strong>Aim 1 (SPDE Generalization)</strong>: Introduce
+observational noise via a stochastic partial differential equation to
+model inference in uncertain and unpredictable environments.</p></li>
+<li><p><strong>Aim 2 (Control Constraints)</strong>: Modify the energy
+functional to incorporate physical and computational limitations in the
+action field (v), moving beyond exponential policy decay.</p></li>
+<li><p><strong>Aim 3 (Persistent Agency)</strong>: Analyze externally
+forced and non-dissipative couplings to determine conditions under which
+sustained epistemic curvature can be maintained, thereby supporting
+persistent exploration.</p></li>
+</ul></li>
+<li><p><strong>Research Design and Methods</strong>: The research will
+extend the existing functional-analytic framework by introducing new
+terms into the energy functional while analyzing resulting
+Euler-Lagrange equations and gradient flows using established theory for
+PDEs and SPDEs to prove well-posedness and characterize long-term
+behavior:</p>
+<ul>
+<li><p><strong>Methodology for Aim 1</strong>: The deterministic
+diffusion equation [∂tS = −1 + S] will be extended to an SPDE including
+spacetime white noise. The existence of weak solutions will be analyzed,
+along with the long-time behavior under stochastic forcing.</p></li>
+<li><p><strong>Methodology for Aim 2</strong>: The energy functional
+E[S, v] will be modified by adding penalty or norm constraints on v,
+studying their effects on transient exploratory phases and realistic
+agency.</p></li>
+<li><p><strong>Methodology for Aim 3</strong>: External forcing or
+non-dissipative coupling between S and v will be introduced to frame
+persistent agency as a phase transition determined by steady-state
+predictive curvature [{∂t} |S(,t)|^2 ].</p></li>
+</ul></li>
+<li><p><strong>Expected Outcomes</strong>: The successful completion of
+this project is expected to result in:</p>
+<ul>
+<li>A generalized stochastic field theory modeling environmental
+uncertainty rigorously.</li>
+<li>A theory of constrained embodied agency incorporating realistic
+action limitations.</li>
+<li>Formal criteria for persistent exploration, enabling a mathematical
+theory for escaping the “dark-room collapse”.</li>
+</ul></li>
+</ol>
+<p>In summary, this research seeks to transform the VFT from a proof of
+inevitable failure into a predictive science capable of modeling
+sustained exploration and intelligence by including stochasticity,
+control constraints, and external forcing mechanisms. This would provide
+a more powerful and realistic mathematical language for studying aspects
+such as exploration, learning, and intelligence in complex systems.</p>
+<p>The Complexity-Weighted Surprise Minimization as a Variational Field
+Theory is an advanced mathematical framework that explores the origins
+of transient, agent-like behavior within predictive systems. This theory
+attempts to resolve fundamental questions about emergent agency using
+variational calculus and dissipative partial differential equations
+(PDEs).</p>
+<ol type="1">
+<li><p><strong>Core Problem</strong>: The central issue addressed is
+whether surprise minimization alone can generate non-trivial agency. In
+simpler terms, given a system that aims to minimize its level of
+surprise (i.e., the difference between its predictions and actual
+observations), does this inherently lead to active, exploratory
+behavior?</p></li>
+<li><p><strong>Dark-Room Paradox</strong>: This paradox arises because
+when a system minimizes surprise by avoiding all unpredictable sensory
+input, it tends towards a state of minimal variation in sensory input –
+essentially, a ‘dark room’ with little to no change or stimulation. The
+Solomonoff prior, which favors the simplest, least informative
+hypotheses, exacerbates this issue by making these minimal-complexity
+states global attractors.</p></li>
+<li><p><strong>Surprise and Action</strong>: Within this framework,
+surprise is represented as a scalar field (S(x,t)), modeling predictive
+uncertainty across space and time. The action or policy of the system is
+modeled as a vector field (v(x,t)), which influences future observations
+and alters the surprise field’s dynamics.</p></li>
+<li><p><strong>Predictive Curvature</strong>: This term represents
+spatial variations in the surprise field – essentially, how much the
+level of surprise changes across different points in space. It acts as
+an ‘epistemic drive,’ pushing the system to explore when curvature is
+non-zero and causing it to settle into a passive equilibrium when this
+curvature dissipates.</p></li>
+<li><p><strong>Long-term Behavior</strong>: According to this theory,
+the system’s dynamics are governed by a dissipative gradient flow that
+exponentially converges towards a unique steady state – a passive
+equilibrium where predictive curvature has vanished, and uncertainty is
+minimized. This equilibrium represents the global minimizer of the
+energy functional (E).</p></li>
+<li><p><strong>Transient Agency</strong>: In this context, agency refers
+to periods of active exploration or non-equilibrium behavior. These
+transient phases occur when there’s non-zero predictive curvature in the
+system. As time progresses, this curvature dissipates, leading to an
+exponential decay of the policy field and a collapse into
+passivity.</p></li>
+<li><p><strong>Play as Simulated Danger</strong>: This concept
+interprets exploration as deliberate exposure to informational risk or
+uncertainty. The theory suggests that momentarily increasing epistemic
+curvature (a form of simulated danger) can expand the future space of
+predictable outcomes, with the system’s inherent dissipative structure
+ensuring a safe return to stability after this transient phase.</p></li>
+<li><p><strong>Learning as Inoculation Against Surprise</strong>: The
+theory formalizes learning in this way by showing that the system
+experiences finite total exposure to epistemic curvature before reaching
+its steady state. This finite integral of epistemic energy means the
+system effectively ‘consumes’ informative curvature, becoming resistant
+to future surprises afterward. Additional information cannot be acquired
+without external forcing.</p></li>
+</ol>
+<p>This framework unifies insights from universal induction (Solomonoff
+prior), active inference (Free Energy Principle), and emergent agency in
+cellular automata (Vannucci). It provides a rigorous mathematical basis
+for understanding how transient, agent-like behavior can emerge from
+systems minimizing complexity-weighted surprise, while also explaining
+why such agency is typically transient without external influences.</p>
+<p>Title: Complexity-Weighted Surprise Minimization as a Variational
+Field Theory</p>
+<p>This scholarly work introduces a mathematical framework for
+understanding surprise minimization in predictive systems using
+continuous field theory, partial differential equations (PDEs),
+functional analysis, and information geometry. The authors propose
+modeling surprise as a scalar field and action as a vector field,
+governed by a variational principle that drives the system towards
+minimal-complexity equilibria via dissipative gradient flow.</p>
+<ol type="1">
+<li><p>Mathematical Framework:</p>
+<ul>
+<li>Surprise minimization is framed as a nonlinear PDE system. The
+solutions to this system are shown to be global energy minimizers within
+Sobolev spaces, a type of function space used in mathematical
+analysis.</li>
+<li>The energy functional includes complexity-weighted beliefs,
+penalizing both the instantaneous surprise and spatial gradients of
+predictive uncertainty. This means that not only is the immediate shock
+(surprise) considered, but also how rapidly one’s predictions change
+over space.</li>
+</ul></li>
+<li><p>Agency and Exploration:</p>
+<ul>
+<li>The model predicts transient agent-like behavior only in
+non-equilibrium regimes with non-zero predictive curvature (epistemic
+gradients). In simpler terms, when the system is uncertain or changing
+rapidly (high curvature), it exhibits behaviors akin to an autonomous
+agent.</li>
+<li>Over time, this curvature dissipates, leading to policy collapse and
+convergence towards a passive equilibrium state referred to as the
+“dark-room” equilibrium – a state of minimal complexity or
+uncertainty.</li>
+</ul></li>
+<li><p>Analytical Results:</p>
+<ul>
+<li>The existence and uniqueness of weak solutions are established using
+elliptic and parabolic PDE theory, ensuring that mathematical solutions
+to this system are well-defined.</li>
+<li>It’s proven that the flow is Lyapunov-stable (a type of stability
+where the system returns to equilibrium after a perturbation) and
+irreversible, meaning information regarding prior uncertainty
+monotonically decreases over time.</li>
+</ul></li>
+<li><p>Interpretations:</p>
+<ul>
+<li>Exploration in this context is interpreted as “simulated danger,” an
+intentional broadening of epistemic risk (uncertainty) to expand
+predictable future scenarios.</li>
+<li>Learning in this model acts as a form of ‘inoculation against
+surprise,’ protecting the system from high levels of unexpected
+information before it collapses into a minimal-complexity state.</li>
+</ul></li>
+<li><p>Relation to Discrete Models:</p>
+<ul>
+<li>The continuous PDE framework complements existing discrete cellular
+automaton models (like Vannucci), demonstrating that temporary
+autonomous behaviors can emerge in both settings, without the need for
+external forcing or control.</li>
+</ul></li>
+<li><p>Extensions and Experiments:</p>
+<ul>
+<li>The paper includes numerical sketches using JAX, a Python library
+for high-performance machine learning research, and proposes
+computational experiments to visualize phenomena such as curvature
+collapse, metastability (a state where the system stays in one region
+for a long time before transitioning), and phase transitions.</li>
+</ul></li>
+</ol>
+<p>The central insight from this work is that surprise minimization
+alone leads to an inevitable collapse into passive states of minimal
+complexity or uncertainty. Agency and exploration are temporary
+phenomena, persisting only while there’s significant predictive
+uncertainty (high curvature) unless maintained externally. This provides
+a rigorous mathematical foundation for understanding the structural
+limitations of self-driven autonomy in both continuous and discrete
+dynamical systems.</p>
+<p>Title: Surprise Minimization, Solomonoff Induction, and Expected Free
+Energy: A Formal Analysis with Curvature Dynamics, Variational Flow, and
+Minimal-Complexity Niches</p>
+<ol type="1">
+<li><p><strong>Core Problem and Motivation</strong> The paper explores
+an alternative to traditional reinforcement learning by replacing reward
+signals with the minimization of instantaneous sensory surprise
+(negative log-evidence). This approach connects two significant theories
+in artificial intelligence: Solomonoff Induction, which favors simple
+hypotheses, and Active Inference, which seeks to minimize free energy or
+surprise.</p></li>
+<li><p><strong>The Dark Room Paradox</strong> A fundamental issue arises
+when an agent aims solely to minimize surprise. The optimal strategy
+under this condition would be to avoid unpredictable sensory inputs
+entirely – essentially retreating into a silent, dark room. This leads
+to a paradoxical equilibrium: the agent withdraws from all exploratory
+behavior and settles in minimal-complexity niches.</p>
+<p>The Solomonoff prior exacerbates this problem by assigning maximum
+posterior weight to simple, uninformative hypotheses, thereby making
+such basins global attractors in predictive space. In reality,
+intelligent agents should actively seek information, not avoid
+it.</p></li>
+<li><p><strong>Mathematical Formulation (Variational Field
+Theory)</strong> To analyze this problem formally, the authors introduce
+a mathematical framework using variational calculus, information
+geometry, and dissipative partial differential equations (PDEs). The
+core variables include:</p>
+<ul>
+<li>S: A scalar field representing predictive uncertainty or
+surprise.</li>
+<li>v: A vector field denoting actions or policies of the agent.</li>
+</ul>
+<p>The total energy functional combines complexity-weighted surprise
+terms with a curvature penalty, driving the system to minimize both
+surprise and its variability.</p></li>
+<li><p><strong>Key Dynamic and Equilibrium Findings</strong></p>
+<ul>
+<li><p>Dissipative Dynamics and Collapse: The coupled PDEs actively
+eliminate predictive curvature (S). As a strictly dissipative,
+time-irreversible system, the solutions converge exponentially to a
+unique steady state regardless of initial conditions.</p></li>
+<li><p>Steady-State Equilibrium (The Dark Room): This equilibrium
+confirms the dark-room collapse. Here, the action field vanishes (v =
+0), terminating all exploratory behavior; minimal predictive curvature
+is achieved (e.g., S = constant); and this state is the global minimizer
+of the energy functional.</p></li>
+<li><p>Transient Agency: Exploratory behavior emerges as a transient
+phenomenon when there’s non-vanishing predictive curvature (gradients of
+S). Policy decays exponentially unless reactivated by new
+uncertainty.</p></li>
+</ul></li>
+<li><p><strong>Why Exploration Happens (Simulated Danger and
+Inoculation)</strong> The paper formalizes two key concepts about
+learning and exploration:</p>
+<ul>
+<li><p>Play as Simulated Danger: Exploration temporarily increases
+predictive curvature to expand the space of predictable futures, much
+like controlled exposure to difficulty, uncertainty, or risk.</p></li>
+<li><p>Learning as Inoculation Against Surprise: Long-term collapse in
+epistemic curvature represents learning; exposing oneself to surprise
+builds models that prevent catastrophic future uncertainty.</p></li>
+</ul></li>
+<li><p><strong>Resolution via Expected Free Energy (EFE)</strong> The
+Expected Free Energy (EFE) functional, a central concept in active
+inference, resolves the dark-room paradox by introducing an epistemic
+term into the objective function. This term encourages knowledge
+acquisition and permits temporary increases in predictive uncertainty,
+sustaining exploratory behavior.</p>
+<p>Mathematically, EFE counteracts curvature collapse, preventing
+convergence to passive, minimal-complexity states and ensuring
+exploration remains a structurally stable process rather than an
+exception.</p></li>
+</ol>
+<p><strong>Conclusion</strong>: Without an epistemic drive,
+surprise-minimizing agents inevitably converge to dark-room equilibria.
+The Expected Free Energy offers a principled solution by making
+exploration necessary for long-term surprise minimization, rather than
+an anomaly.</p>
+<p>Title: Surprise Minimization, Solomonoff Induction, and Expected Free
+Energy</p>
+<p>The paper delves into the theoretical implications of an agent that
+minimizes instantaneous sensory surprise (negative log-evidence) instead
+of maximizing external rewards. This concept is studied within the
+framework of perfect Bayesian inference with the Solomonoff prior,
+leading to what’s known as the “dark-room phenomenon.”</p>
+<p>In this scenario, the agent predictably settles into low-complexity
+behavioral niches and avoids exploration due to its adherence to minimal
+surprise.</p>
+<p>Key contributions of this paper include:</p>
+<ol type="1">
+<li><p><strong>Mathematical Reformulation</strong>: The authors employ
+variational calculus, information geometry, and partial differential
+equation (PDE) methods to formalize surprise minimization as a
+dissipative gradient flow. This mathematical approach provides a
+rigorous framework for understanding the behavior of such
+agents.</p></li>
+<li><p><strong>Curvature as Epistemic Drive</strong>: They introduce a
+curvature penalty term (S^2) to model epistemic uncertainty. Here,
+exploration corresponds to transient curvature, while collapse signifies
+vanishing curvature. Two conceptual interpretations are provided: (1)
+playing as simulated danger, where temporary increases in epistemic
+curvature expand predictable futures; and (2) learning as inoculation,
+where finite exposure to surprise “immunizes” the system for long-term
+predictability.</p></li>
+<li><p><strong>PDE Analysis</strong>: Proofs are presented regarding
+existence, uniqueness, and convergence of solutions to a PDE that
+combines surprise minimization with curvature dynamics. These show
+exponential decay toward minimal-curvature (dark-room) equilibria,
+essentially demonstrating why pure surprise minimization fails to
+sustain agency over time.</p></li>
+<li><p><strong>Policy Collapse</strong>: The authors prove that without
+epistemic terms, the policy field (v) decays exponentially, effectively
+halting exploration and leading to a state of minimal-complexity
+behavior.</p></li>
+<li><p><strong>Expected Free Energy (EFE) Resolution</strong>: They show
+how adding an epistemic value term in EFE can counteract collapse by
+sustaining curvature and exploratory drive, thus providing a means for
+the agent to maintain exploration despite its tendency towards
+minimizing surprise.</p></li>
+</ol>
+<p>The methodology involves deriving Euler-Lagrange equations and weak
+formulations for the variational problem. The time evolution of policy
+fields is modeled using gradient flow in Sobolev spaces. Connections are
+drawn between continuous PDE models and cellular automata, which serve
+as discrete analogues of perception-action loops. Numerical
+discretization schemes (such as those implemented in JAX) and stability
+analyses are also provided.</p>
+<p>Implications of this research include:</p>
+<ul>
+<li>Explaining why pure surprise minimization fails to sustain agency
+over time.</li>
+<li>Demonstrating that exploration is geometrically tied to curvature
+within predictive spaces.</li>
+<li>Offering a unified framework linking universal induction
+(Solomonoff), active inference (Friston), and emergent-agency models
+(Vannucci).</li>
+</ul>
+<p>In conclusion, this paper rigorously illustrates that
+surprise-minimizing agents, lacking an epistemic drive, will eventually
+converge to dark-room equilibria. It underscores the critical role of
+epistemic curvature in sustaining exploration and agency. The study also
+provides a mathematical foundation linking various theoretical
+approaches in artificial intelligence and cognitive science.</p>

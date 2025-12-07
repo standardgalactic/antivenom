@@ -1,0 +1,248 @@
+\documentclass[11pt]{article}
+
+% ------------------------------------------------------------
+% Encoding, Fonts, Layout
+% ------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\geometry{margin=1in}
+
+% ------------------------------------------------------------
+% Math Packages
+% ------------------------------------------------------------
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{bm}
+
+% ------------------------------------------------------------
+% Formatting
+% ------------------------------------------------------------
+\setlength{\parskip}{0.75em}
+\setlength{\parindent}{0pt}
+
+% ------------------------------------------------------------
+\title{Unidimary Numbers:\\Base \texorpdfstring{$\tfrac{3}{2}$}, the $3\to2$ Box, and Examples}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ============================================================
+\section{What Are Unidimary Numbers?}
+
+In ordinary positional notation, we choose an integer base $b$ and write every
+nonnegative integer $N$ in the form
+\[
+  N = \sum_{k=0}^m d_k b^k,
+\]
+where the digits $d_k$ are integers in $\{0,1,\dots,b-1\}$.
+
+\emph{Unidimary numbers} are the same idea carried over to a
+\emph{non--integer base}. Here the base is:
+\[
+  b = \frac{3}{2},
+\]
+so we are working in “base one and a half.” Remarkably, every
+nonnegative integer still has a finite positional representation, but now the
+digits are restricted to $\{0,1,2\}$:
+\[
+  N = \sum_{k=0}^m d_k \left(\frac{3}{2}\right)^k,
+  \qquad d_k \in \{0,1,2\}.
+\]
+
+This system was explored by Jim Propp using a $2 \leftarrow 3$ exploding dot machine. We refer to this representation as the \emph{unidimary system}.
+
+% ============================================================
+\section{The $3\to2$ Exploding Box Rule}
+
+The most intuitive way to generate unidimary representations is the
+“exploding dots” or \emph{$3\to2$ box} rule.
+
+Place $N$ dots in the rightmost box (box 0). Repeatedly apply:
+
+\begin{quote}
+Whenever a box contains $3$ or more dots, remove $3$ dots and add $2$ dots one box to the left.
+\end{quote}
+
+The value is conserved because:
+\[
+  3 \cdot \left(\frac{3}{2}\right)^k = 2 \cdot \left(\frac{3}{2}\right)^{k+1}
+\]
+
+Once no box contains more than 2 dots, the digit in each box gives the coefficient of that power of $3/2$.
+
+% ============================================================
+\section{Powers of \texorpdfstring{$\tfrac{3}{2}$}{3/2}}
+
+\begin{align*}
+  \left(\frac{3}{2}\right)^0 &= 1, &
+  \left(\frac{3}{2}\right)^1 &= 1.5, &
+  \left(\frac{3}{2}\right)^2 &= 2.25,\\
+  \left(\frac{3}{2}\right)^3 &= 3.375, &
+  \left(\frac{3}{2}\right)^4 &= 5.0625, &
+  \left(\frac{3}{2}\right)^5 &= 7.59375, \\
+  \left(\frac{3}{2}\right)^6 &= 11.390625
+\end{align*}
+
+% ============================================================
+\section{Example 1: Representing $10$}
+
+\subsection*{Using Exploding Boxes}
+
+\begin{itemize}
+\item Start with 10 dots in box 0.
+\item 3 explosions: 3×3 → 6 dots to box 1; 1 dot left in box 0.
+\item 2 explosions in box 1 → 4 dots to box 2.
+\item 1 explosion in box 2 → 2 dots to box 3, 1 dot left.
+\end{itemize}
+
+Final state:
+\[
+\text{Box 3: } 2,\quad \text{Box 2: } 1,\quad \text{Box 1: } 0,\quad \text{Box 0: } 1
+\Rightarrow (2101)_{3/2}
+\]
+
+\subsection*{Check Algebraically}
+
+\[
+2 \cdot 3.375 + 1 \cdot 2.25 + 0 + 1 = 6.75 + 2.25 + 1 = 10
+\]
+
+% ============================================================
+\section{Example 2: Representing $14$}
+
+Explode in box 0 → explode box 1 → explode box 2 → final state:
+
+\[
+\text{Box 3: } 2,\quad \text{Box 2: } 2,\quad \text{Box 1: } 1,\quad \text{Box 0: } 2
+\Rightarrow (2122)_{3/2}
+\]
+
+\[
+2 \cdot 3.375 + 1 \cdot 2.25 + 2 \cdot 1.5 + 2 = 14
+\]
+
+% ============================================================
+\section{Example 3: Representing $12$}
+
+\[
+(2120)_{3/2} = 2\cdot 3.375 + 1\cdot 2.25 + 2\cdot 1.5 = 6.75 + 2.25 + 3.0 = 12
+\]
+
+% ============================================================
+\section{Decimal Interpretation and Integer Preservation}
+
+Each digit in a unidimary expansion multiplies a rational place value, but the result is always an integer. Why?
+
+Because each $3\to2$ explosion is an exact identity:
+\[
+3 \cdot \left(\frac{3}{2}\right)^k = 2 \cdot \left(\frac{3}{2}\right)^{k+1}
+\]
+
+Hence, the system preserves value — just redistributes it.
+
+% ============================================================
+\section{Beta Expansions and Irrational Bases}
+
+Unidimary numbers are part of the larger class of \emph{beta expansions}. For any $\beta > 1$, numbers can be written as:
+\[
+x = \sum_{k=0}^\infty d_k \beta^{-k}, \quad d_k \in \mathbb{Z}
+\]
+
+Famous cases:
+- Base-$\phi$ (golden ratio)
+- Base-$e$
+- Base-$\tfrac{3}{2}$ (unidimary)
+
+These systems appear in symbolic dynamics, ergodic theory, and aperiodic tilings.
+
+% ============================================================
+\section{Arithmetic in Unidimary Notation}
+
+You can perform addition and subtraction digit-wise, then apply explosions:
+
+\[
+(2101)_{3/2} + (2)_{3/2} = (2120)_{3/2}
+\Rightarrow 10 + 2 = 12
+\]
+
+Digits may exceed 2 → trigger explosion:
+- 3 becomes 0, with 2 carried left
+- Borrowing for subtraction is similar (reverse the rule)
+
+Multiplication and division are harder; symbolic simulation or lookups help.
+
+% ============================================================
+\section{Lookup Table (0–20)}
+
+\begin{tabular}{r|l}
+Decimal & Unidimary \\
+\hline
+0 & 0 \\
+1 & 1 \\
+2 & 2 \\
+3 & 210 \\
+4 & 211 \\
+5 & 212 \\
+6 & 2100 \\
+7 & 2101 \\
+8 & 2102 \\
+9 & 2120 \\
+10 & 2101 \\
+11 & 2121 \\
+12 & 2120 \\
+13 & 21010 \\
+14 & 2122 \\
+15 & 21011 \\
+16 & 21012 \\
+17 & 21200 \\
+18 & 21201 \\
+19 & 21202 \\
+20 & 21210 \\
+\end{tabular}
+
+% ============================================================
+\section{Relation to Field-Theoretic Frameworks}
+
+This toy system mirrors dynamics in RSVP and TARTAN:
+
+- **Invariant-preserving local dynamics** (like energy flow)
+- **Multiscale recursion** via positional left-shift
+- **Compression** via explosion stabilization (complexity-minimizing)
+- **Bridging discrete and continuous** — analytic ↔ symbolic equivalence
+
+This aligns with lamphrodynamic entropy descent, symbolic approximation, and semantic dynamics in RSVP.
+
+% ============================================================
+\section*{Appendix: Python Converter for Unidimary}
+
+\begin{verbatim}
+def to_unidimary(n):
+    boxes = [0] * 32
+    boxes[0] = n
+    for i in range(len(boxes)):
+        while boxes[i] >= 3:
+            boxes[i] -= 3
+            boxes[i+1] += 2
+    digits = boxes[:]
+    while digits and digits[-1] == 0:
+        digits.pop()
+    return ''.join(str(d) for d in reversed(digits)) or '0'
+
+# Try:
+for i in range(21):
+    print(f"{i} → {to_unidimary(i)}")
+\end{verbatim}
+
+This script simulates the $3 \to 2$ explosion machine and prints unidimary codes.
+
+% ============================================================
+\section{Conclusion}
+
+Unidimary numbers offer a whimsical but mathematically exact alternative to ordinary base systems. Despite using fractional place values, they preserve integer meaning and allow intuitive “explosion”–based conversion.
+
+Their structural elegance connects them to symbolic dynamics, multiscale computation, and field-theoretic analogies — making them not only a pedagogical curiosity, but a portal into deeper structural mathematics.
+
+\end{document}

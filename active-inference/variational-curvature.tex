@@ -1,0 +1,719 @@
+\documentclass[12pt]{article}
+
+% ------------------------------------------------------------
+% Packages
+% ------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amssymb, amsthm, mathtools}
+\usepackage{bm}
+\usepackage{physics}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\geometry{margin=1in}
+\setstretch{1.15}
+
+\title{Variational Curvature, Predictive Geometry, and the Maintenance of Agency}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This essay explores geometry underlying predictive inference, motivated by the
+observation that strictly dissipative surprise minimization leads to degenerate
+equilibria (the dark-room paradox). We argue that agency corresponds
+to the active maintenance of epistemic curvature against a natural tendency
+toward geometric flattening. Using information geometry and variational flow,
+we show that the Expected Free Energy (EFE) functional plays the role of a
+geometric operator that regularizes curvature and prevents collapse. The
+resulting framework interprets predictive agency as sustained non-equilibrium
+geometry.
+\end{abstract}
+
+
+% ============================================================
+\section{Predictive Inference as Geometry}
+\label{sec:predictive-geometry}
+
+Predictive processing treats perception, cognition, and action as processes
+that minimize probabilistic prediction error over time.  While this framework
+has become central within computational neuroscience and machine learning, the
+geometric structure underlying these minimization principles is less widely
+recognized.  In fact, each internal generative model defines a point on a
+statistical manifold whose intrinsic curvature determines how beliefs change
+under evidence, and how actions influence future observations.  
+
+In this geometric perspective, inference is not merely numerical optimization
+over a parameter space but motion through a curved informational geometry.  
+This motion is governed by a variational principle whose differential
+structure specifies how the agent bends or straightens informational pathways.
+Consequently, predictive inference is most naturally interpreted as geometric
+flow rather than simple error correction.
+
+\subsection{Curvature and informational sensitivity}
+
+Curvature quantifies the rate at which predictive states change as beliefs
+shift infinitesimally.  High curvature corresponds to epistemically sensitive
+regions where small parameter changes generate large predictive differences;
+low curvature corresponds to redundant or invariant regimes in which
+predictions remain stable despite significant variation.  Thus curvature is an
+intrinsic measure of epistemic tension and predictive complexity.
+
+\subsection{The geometric role of gradients}
+
+Predictive updates follow gradients of a cost functional that measures
+disagreement between predicted and observed data.  However, ordinary gradients
+are defined with respect to arbitrary coordinates.  Because statistical
+curvature makes many coordinates physically irrelevant, one must instead use
+the natural gradient, which encodes intrinsic directions of change measured by
+the Fisher Information Metric.  This yields a coordinate-free formulation
+consistent with the intrinsic informational geometry.
+
+% ============================================================
+\section{Surprise Minimization and Degenerate Agency}
+\label{sec:degenerate-agency}
+
+The central difficulty with pure surprise minimization is not conceptual but
+structural: because surprise represents mismatch between predictions and
+observations, the global minimum corresponds to states in which predictions
+are maximally certain and observations maximally trivial.  Such states include
+environments of extremely low variability---``dark rooms''---in which sensory
+data are monotonously predictable.  
+
+\subsection{Dissipative fixed points}
+
+Pure surprise minimization defines a strongly dissipative gradient flow whose
+fixed points are precisely those states of minimal uncertainty.  These fixed
+points correspond to geometrically flattened regions of the belief manifold:
+the gradients of surprise vanish, the natural gradient becomes trivial, and
+policy has no direction along which to evolve.  The system collapses to a
+state of minimal curvature and maximal symmetry.
+
+\subsection{Agency collapse}
+
+In this configuration, action becomes redundant and agency evaporates.  The
+agent no longer needs to explore because the environment supplies no new
+information.  The geometry of inference degenerates into a trivial manifold.
+This collapse is not a boundary case: it is structurally preferred by the
+variational objective if no other terms oppose it.
+
+% ============================================================
+\section{Variational Agency and Exploration}
+\label{sec:variational-agency}
+
+To maintain agency, the agent must resist geometric flattening.  This requires
+an intrinsic incentive to seek states of epistemic tension---those that
+increase curvature rather than diminish it.  In predictive processing this
+incentive is supplied by the Expected Free Energy (EFE), whose epistemic term
+encodes an intrinsic value for information gain.
+
+\subsection{Exploration as curvature maintenance}
+
+The epistemic contribution of the EFE rewards trajectories that traverse
+regions of high curvature, thereby sustaining predictive complexity and
+preventing collapse.  Exploration is thus reinterpreted as geometric
+maintenance: an energetic expenditure to preserve broken symmetry in the
+belief manifold.
+
+\subsection{Non–equilibrium structure}
+
+Agency is intrinsically non–equilibrium.  A system that successfully predicts
+all sensory data eventually achieves a state in which further prediction
+requires no change in belief, driving the system to equilibrium.  The EFE
+prevents equilibrium by sustaining nontrivial curvature.  Thus intelligence is
+not the elimination of uncertainty but the maintenance of controlled
+uncertainty that sustains agency.
+
+% ============================================================
+\section{Information Geometry and Variational Structure}
+\label{sec:info-geom-core}
+
+Information geometry studies statistical models as differentiable manifolds,
+where probability distributions correspond to points on a curved space equipped
+with a natural Riemannian metric.  The intrinsic geometry of this manifold
+determines which directions correspond to statistically meaningful variation,
+how belief states evolve under new evidence, and how optimization trajectories
+should be parameterized so as to remain well-posed independent of coordinate
+choice.
+
+\subsection{Belief manifold and statistical distance}
+
+Let $\mathcal{M}$ denote the manifold of admissible beliefs or internal 
+generative models.  A point $\theta\in \mathcal{M}$ parametrizes a probability 
+distribution $p_\theta(y)$ over sensory or latent variables.  Infinitesimal 
+variation in the model induces an infinitesimal variation in the corresponding
+distribution, with the statistical distance measured through the Fisher
+Information Metric,
+\begin{equation}
+    G_{ij}(\theta)
+    = \mathbb{E}_\theta\Big[
+       \partial_i \log p_\theta(y)\,
+       \partial_j \log p_\theta(y)
+      \Big].
+\end{equation}
+This metric defines the intrinsic geometry of $\mathcal{M}$ independent of
+external coordinates.  Under smooth reparametrizations, $G$ transforms
+covariantly, implying that the shortest path (geodesic) between beliefs is a 
+coordinate-free notion determined by the curvature of the model family.
+
+\subsection{Natural gradient and variational flow}
+
+Standard gradient descent uses Euclidean geometry on parameter space and is
+therefore sensitive to arbitrary coordinate choices.  The {\it natural
+gradient}, introduced by Amari, deforms the descent direction by the inverse
+metric $G^{-1}$,
+\begin{equation}
+    \tilde{\nabla} f (\theta)
+    := G^{-1}(\theta)\, \nabla f(\theta),
+\end{equation}
+so that the update direction points along the steepest descent in the geometry
+defined by statistical distinguishability.  Trajectories of $\tilde{\nabla} f$
+coincide with geodesics of decreasing cost, thereby minimizing variation in
+model description while respecting informational sensitivity.
+
+\subsection{Covariant derivatives and gauge-like structure}
+
+Because $\mathcal{M}$ is not generally flat, infinitesimal comparison of belief
+states requires a covariant derivative rather than an ordinary derivative.
+Differential operators must be compatible with $G$, ensuring that the geometry
+encodes which quantities are physically or inferentially invariant.  This leads
+naturally to a geometric calculus similar in spirit to the use of covariant
+derivatives in curved spacetime, where the distinction between apparent and
+true invariance is determined by the connection induced by $G$.
+
+\subsection{Curvature and inferential stability}
+
+Curvature on $\mathcal{M}$ quantifies how local updates twist, stretch, or
+distort the space of admissible beliefs.  High curvature implies that small
+parameter variations produce large changes in the induced distributions,
+representing high epistemic sensitivity; conversely, locally flat regions
+encode redundant or over-specified beliefs.  The geometric tension associated
+with curvature underlies the stability of belief evolution and sets the stage
+for later discussions (Section~\ref{sec:curvature-agency}) regarding the
+energetic cost of maintaining nontrivial curvature in order to preserve
+adaptive agency.
+
+% ============================================================
+\section{Variational Principles and Field-Theoretic Interpretation}
+\label{sec:variational-field}
+
+The modern view of inference treats belief updating as a variational problem:
+the agent holds a parametric family of internal models and seeks those
+parameters that best account for data.  The basic object is a functional whose
+minimization encodes the consistency of internal dynamics with external
+regularities.  The resulting Euler--Lagrange structure permits a systematic
+translation between abstract Bayesian updating and continuous geometric flow.
+
+\subsection{Variational characterization of inference}
+
+Let $\theta$ denote internal model parameters and $y$ observed quantities.  A
+variational functional $\mathcal{F}(\theta;y)$ encodes the discrepancy between
+model predictions and observed evidence.  Inference consists in evolving
+$\theta$ so as to minimize $\mathcal{F}$,
+\begin{equation}
+    \dot\theta = -\, \tilde{\nabla}\mathcal{F}(\theta),
+\end{equation}
+where the natural gradient $\tilde{\nabla}$ induces geometric descent.  This
+formalism treats inference as continuous time evolution on $\mathcal{M}$,
+allowing interpretation as a dissipative flow that tends toward local
+equilibria.
+
+\subsection{From variational calculus to field theory}
+
+When beliefs are distributed over a structured state space---spatial,
+temporal, or hierarchical---one introduces fields
+\[
+   S(x,t), \qquad v(x,t),
+\]
+representing local surprise and local policy or flow.  The variational
+functional then becomes a field action,
+\begin{equation}
+    \mathcal{A}[S,v] =
+      \int \Big(
+         \mathcal{L}(S,\nabla S, v,\nabla v)
+      \Big)\, dx\,dt,
+\end{equation}
+whose Euler--Lagrange equations define coupled partial differential equations
+governing the joint dynamics of prediction and action.  This field-theoretic
+description generalizes pointwise inference to spatially extended systems,
+mirroring constructions in continuum mechanics.
+
+\subsection{Dissipation and irreversibility}
+
+The resulting PDEs are typically parabolic and strictly dissipative, implying
+that evolution is time-oriented: information accumulates, and the system tends
+toward states whose variation is increasingly constrained by previously
+assimilated evidence.  This irreversibility parallels entropy increase in
+thermodynamics, although here the monotonic quantity is informational rather
+than thermodynamic entropy.
+
+\subsection{Steady-state equilibria}
+
+As the flow relaxes, the system may reach fixed points where $\dot\theta = 0$
+or $\dot S = 0$, depending on the representation.  These equilibria represent
+beliefs that optimally capture the statistical structure of observations under
+the assumed model class.  Crucially, the geometric nature of the functional
+determines the qualitative character of these equilibria, including whether
+nontrivial active policies survive or vanish.  Later sections
+(Sections~\ref{sec:dark-room}--\ref{sec:resolution}) examine conditions under
+which equilibria become degenerate.
+
+% ============================================================
+\section{Natural Gradient, Optimality, and Covariance}
+\label{sec:natural-gradient}
+
+In statistical geometry, the ordinary Euclidean gradient fails to respect the
+intrinsic structure of the belief manifold.  Parameter increments of identical
+numerical magnitude can produce radically different changes in the underlying
+probability distributions.  The natural gradient corrects this imbalance by
+measuring displacement in terms of the intrinsic Fisher metric $G$, leading to
+updates that respect the true informational geometry of belief.
+
+\subsection{Intrinsic optimality}
+
+Let $\nabla$ denote the ordinary gradient and $\tilde{\nabla}$ the natural
+gradient.  Then
+\begin{equation}
+   \tilde{\nabla} f = G^{-1}\nabla f,
+\end{equation}
+where $G$ is the Fisher information matrix and $G^{-1}$ its inverse.  This
+transformation is uniquely determined (up to reparametrization) by information
+geometry.  From the standpoint of learning dynamics, it selects the steepest
+descent direction relative to the underlying manifold, ensuring that inference
+proceeds along geodesics rather than coordinate-dependent trajectories.
+
+\subsection{Covariant derivatives and invariance}
+
+While the natural gradient defines the infinitesimal descent direction,
+covariant derivatives determine how vector fields vary across the manifold.
+Given a vector field $X$ and a direction $Y$, the covariant derivative
+$\nabla_Y X$ measures change relative to the geometry rather than the ambient
+Euclidean embedding.  Its vanishing identifies quantities that are invariant
+under reparametrization---a critical requirement for formulating physically
+meaningful laws in curved spaces.
+
+\subsection{Metric compatibility}
+
+Compatibility of the Levi--Civita connection with the Fisher metric,
+\begin{equation}
+   \nabla G = 0,
+\end{equation}
+ensures that parallel transport preserves inner products and distances.  This
+property makes the Levi--Civita connection central to geometric formulations
+of inference, even though non-metric $\alpha$--connections will later prove
+essential for describing irreversible updating.
+
+\subsection{Geodesic flows and learning}
+
+The geodesics of $(\mathcal{M},G)$ constitute the least-action paths of belief
+change under information geometry.  Inference trajectories determined by the
+natural gradient approach these geodesics, implying that locally optimal
+learning behaves as optimal transport of probability mass along shortest
+informational paths.  This geometric insight links variational inference to
+optimal control, continuum mechanics, and transport theory.
+
+% ============================================================
+\section{Transport, Bayesian Updating, and alpha-Connections}
+\label{sec:transport}
+
+
+The statistical geometry of belief is extended here into a dynamical field
+formulation in which \emph{surprise} plays the role of a scalar potential and
+\emph{policy} becomes a vector field coupled to its gradient.  This
+interpretation makes explicit the continuous nature of inference and exposes
+the geometric forces that shape agency.
+
+\subsection{Surprise as scalar potential}
+
+Let $S:\mathcal{M}\to\mathbb{R}$ denote the surprise field on the belief
+manifold.  For each belief state $\theta\in\mathcal{M}$, the quantity
+$S(\theta)$ measures the degree of mismatch between predicted and observed
+outcomes.  The gradient $\nabla S$ therefore identifies directions of maximal
+informational tension.  States of minimal surprise form local minima of $S$,
+analogous to potential wells in classical mechanics.
+
+\subsection{Policy as vector field}
+
+Let $v$ be a vector field on $\mathcal{M}$ encoding the agent’s action
+(including perception–action cycles).  In field variables, one considers the
+coupling
+\begin{equation}
+   v(\theta)\;\propto\; -\,\tilde{\nabla}S(\theta),
+\end{equation}
+where $\tilde{\nabla}$ is the natural gradient.  Thus action is driven by
+informational tension: the agent moves along directions that reduce surprise
+with maximal efficiency relative to the intrinsic geometry.
+
+\subsection{Dissipative relaxation}
+
+In the absence of additional terms, the induced flow
+\begin{equation}
+   \dot{\theta} = -\,\tilde{\nabla}S(\theta)
+\end{equation}
+is strictly dissipative and relaxes toward critical points of $S$.  These
+critical points correspond to minimal–complexity niches in which surprise is
+nearly constant.  The resulting steady state satisfies $\dot{\theta}=0$ and
+$\nabla S=0$, implying $v=0$.  This is the geometric expression of the
+so–called \emph{dark–room} degeneracy.
+
+\subsection{Predictability and flattening}
+
+Because $\tilde{\nabla}S$ measures informational curvature, the collapse to
+$\nabla S\approx 0$ represents geometric flattening of the belief manifold.
+Predictability becomes maximal, variation vanishes, and policy loses its
+driving force.  The system arrives at a fixed point of minimal epistemic
+curvature; agency is extinguished by over–successful certainty.
+
+\subsection{Non–equilibrium and curvature}
+
+Active agency, by contrast, requires a persistent non–equilibrium regime in
+which $\nabla S$ remains appreciable.  Hence the maintenance of agency demands
+an intrinsic mechanism that prevents complete flattening of the manifold.
+Subsequent sections will show that this mechanism is geometrically realized by
+the epistemic term of the Expected Free Energy functional, which acts as a
+curvature–preserving regularizer sustaining non–zero informational tension.
+
+% ============================================================
+\section{Holonomy, Path Dependence, and Epistemic Memory}
+\label{sec:holonomy}
+
+Curvature on the belief manifold introduces a characteristic phenomenon known
+as \emph{holonomy}: parallel transport of informational quantities around a
+closed loop need not return them to their original configuration.  Inference
+thus possesses a geometric ``memory'' of the path taken, independent of the
+initial and final coordinates in parameter space.
+
+\subsection{Parallel transport and loops}
+
+Let $\gamma:[0,1]\to\mathcal{M}$ be a closed loop beginning and ending at
+$\theta_0$.  Parallel transport of a tangent vector $u_0$ along $\gamma$
+defines a new vector $u_1$ at $\theta_0$.  When $\mathcal{M}$ is curved, $u_1$
+generally differs from $u_0$, with the discrepancy determined by the curvature
+tensor.  This difference encodes information accumulated along the loop that
+cannot be deduced from endpoints alone.
+
+\subsection{Epistemic holonomy in sequential inference}
+
+An analogous effect occurs in sequential Bayesian updating.  Consider a
+parameterized model subject to a sequence of evidential updates drawn from
+distinct data sources.  If the updates are performed in two different orders,
+the resulting posteriors need not coincide, even when the combined evidence is
+identical.  The residual discrepancy---typically in the covariance
+structure---represents a \emph{geometric phase} induced by the curvature of
+the belief manifold.  Inference thus possesses a path–dependent memory.
+
+\subsection{Mixture–model illustration}
+
+For example, in learning a mixture of distributions, assimilating samples from
+components in the sequence $A\!\to\!B\!\to\!C$ and $C\!\to\!B\!\to\!A$ can
+lead to posteriors whose means agree but whose higher–order uncertainty
+structures differ.  Despite identical endpoints in the space of sufficient
+statistics, the underlying geometry yields distinct effective beliefs.
+
+\subsection{Agency as path–dependent structure}
+
+Agency derives from this geometric memory.  The optimal policy depends not
+only on the present belief state but also on the informational trajectory by
+which it was reached.  Holonomy thereby shapes future inference and action.
+The history of exploration---the epistemic path---is encoded in curvature and
+reappears as structure guiding subsequent behaviour.
+
+% ============================================================
+\section{Quotienting, Nuisance Parameters, and Effective Geometry}
+\label{sec:quotient}
+
+Inference problems frequently contain parameters that are not of direct
+interest but whose presence influences the geometry of the full model.
+Eliminating such \emph{nuisance parameters} induces a new, effective geometry
+on the reduced space in which agency actually unfolds.
+
+\subsection{Marginalization as geometric quotient}
+Let the full parameter space split as $\Theta=\{\theta,\phi\}$, where $\theta$
+are identifiable parameters and $\phi$ are nuisance variables.  Marginalizing
+$\phi$ (integrating it out of the posterior) collapses points differing only
+in $\phi$ into a single equivalence class.  Conceptually, this procedure
+implements a \emph{quotient} by the orbit generated by transformations of
+$\phi$ that leave the likelihood invariant.
+
+\subsection{Induced metric via Schur complement}
+
+The Fisher information metric on $\Theta$ decomposes blockwise as
+\[
+G(\theta,\phi)=
+\begin{pmatrix}
+G_{\theta\theta} & G_{\theta\phi}\\[0.3em]
+G_{\phi\theta} & G_{\phi\phi}
+\end{pmatrix}.
+\]
+After marginalization, the effective metric on the reduced manifold
+$\mathcal{M}_{\mathrm{eff}}=\{\theta\}$ is given by the Schur complement
+\[
+G_{\mathrm{eff}}
+\;=\;
+G_{\theta\theta}
+\;-\;
+G_{\theta\phi}\,G_{\phi\phi}^{-1}\,G_{\phi\theta}.
+\]
+The second term encodes correlations between $\theta$ and $\phi$ and ensures
+that the reduced geometry is the natural one induced by the original model.
+
+\subsection{Curvature induced by elimination}
+
+Even if the full space $\Theta$ were flat, the reduced space
+$\mathcal{M}_{\mathrm{eff}}$ need not be.  The induced metric generally has
+nonvanishing curvature, reflecting information that was implicit in the
+nuisance directions.  Thus eliminating variables can create geometric
+structure rather than simplify it away.
+
+\subsection{Agency on the reduced manifold}
+
+Policies operate on the space of identifiable parameters.  Accordingly,
+agency is governed by the geometry of $\mathcal{M}_{\mathrm{eff}}$.  The
+quotient construction shows that hidden symmetries and nuisance variables can
+shape effective curvature and thereby influence exploration and control, even
+when those variables are no longer explicit in the state description.
+
+% ============================================================
+\section{Expected Free Energy as Geometric Operator}
+\label{sec:efe_geometric}
+
+The Expected Free Energy (EFE) augments the variational free energy with an
+epistemic incentive that actively resists geometric flattening.  From the
+field–theoretic perspective, the EFE adds a term that penalizes globally flat
+configurations and ensures that gradients of surprise remain nonzero.
+
+\subsection{Surprise–only regime}
+A system minimizing only the instantaneous surprise
+\[
+S=-\ln p(y|\theta)
+\]
+seeks states of maximal predictability.  Because $S$ becomes constant in such
+states, its gradient vanishes and the policy field $v$ collapses.  The surprise–only
+regime therefore produces the dark–room attractor as a global minimum of
+predictive curvature.
+
+\subsection{Epistemic term as curvature regulator}
+The EFE is typically decomposed schematically as
+\[
+\mathcal{G}
+=
+\underbrace{\mathbb{E}\big[S\big]}_{\text{risk}}
+-
+\alpha\,
+\underbrace{\mathbb{E}\!\left[D_{\mathrm{KL}}\!\big(q(\theta|y)\,\|\,p(\theta)\big)\right]}_{\text{epistemic value}}
+\,,
+\]
+where the second term measures expected information gain.  This epistemic term
+acts as a curvature regulator: policies that lead to uniform, flat predictive
+states are penalized, while policies that explore high–uncertainty (high–
+curvature) regions are rewarded.
+
+\subsection{Geometric necessity}
+The EFE should therefore not be viewed as a technical correction but as a
+geometric necessity: it implements a covariant operator on the belief manifold
+that prevents a collapse to maximal symmetry.  By sustaining nonzero curvature,
+the EFE enables persistent agency and continual inference.  In this view,
+intelligent behaviour is the maintenance of a controlled deviation from
+equilibrium, enforced by the geometry of the variational objective.
+
+% ============================================================
+\section{Policy, Exploration, and Optimal Transport}
+\label{sec:policy_transport}
+
+Learning may be interpreted as optimal transport of probability mass on the
+belief manifold.  At each moment, the agent carries its prior distribution
+forward to a posterior distribution in light of new evidence.  The geometry of
+this transport is governed by the Fisher Information Metric and the associated
+natural gradient flow.
+
+\subsection{Probability mass transport}
+Given a prior distribution $p(\theta)$ and a posterior $q(\theta|y)$, Bayesian
+updating corresponds to transporting probability mass from the prior location
+to the posterior.  This transport is optimal in the sense that it minimizes a
+variational free–energy cost functional, which upper bounds the instantaneous
+surprise.
+
+\subsection{Diffeomorphic flows}
+Instantaneous Bayesian updates may be regarded as diffeomorphic flows on the
+belief manifold: locally smooth, invertible maps that preserve the manifold
+structure.  These flows follow natural–gradient directions, which correspond to
+geodesics relative to the metric $G$.  Consequently, the agent moves along
+locally shortest paths in information space, relative to the intrinsic
+geometry.
+
+\subsection{Topology change in long–run learning}
+Over longer timescales, learning may involve changes in the topology of belief
+space, such as the merging or splitting of hypothesis components.  These
+transitions cannot be represented by a single global diffeomorphism; rather,
+they correspond to sequences of local flows interrupted by phase transitions.
+The result is a dynamic belief topology whose structure reflects the history of
+evidence and curvature.
+
+% ============================================================
+\section{Entropy, Complexity, and Predictive Cost}
+\label{sec:complexity}
+
+Curvature quantifies the informational cost of prediction.  High curvature
+implies a landscape in which small changes in belief produce large changes in
+expected data distributions.  Maintaining coherent predictions in such a
+landscape requires greater energetic or computational expenditure.
+
+\subsection{Curvature = cost of predictability}
+In a high–curvature environment, the minimal action required to sustain
+accurate predictions grows with the magnitude of curvature.  Conversely,
+reducing curvature (flattening the manifold) reduces this cost.  Surprise–only
+dynamics therefore tend toward flattening as a form of energetic efficiency.
+
+\subsection{Maintenance of low entropy = energy}
+Maintaining low entropy (high informational structure) requires continuous
+investment.  This principle echoes classical results in statistical mechanics,
+where maintaining order far from equilibrium requires an energetic flux.
+Similarly, sustaining nontrivial predictive structure requires an ongoing
+investment in curvature.
+
+\subsection{Adaptive complexity as necessary expenditure}
+The epistemic component of the EFE provides a variational justification for
+adaptive complexity: sustaining curvature is instrumentally valuable.  The
+agent does not merely tolerate complexity but actively invests in it to
+preserve agency and avoid collapse.  Adaptive complexity is thus a necessary
+expenditure rather than a contingent one.
+
+% ============================================================
+\section{Conceptual Synthesis}
+\label{sec:synthesis}
+
+Taken together, these considerations show that agency, inference, and
+exploration are inseparable from the geometry of belief.  The variational
+framework, interpreted geometrically, unifies predictive processing,
+information geometry, and the statistical mechanics of non–equilibrium systems
+under a single operator: the Expected Free Energy.
+
+% ============================================================
+\section{Resolution of the Dark–Room Problem}
+\label{sec:resolution}
+
+The dark–room degeneracy arises because minimizing instantaneous surprise
+encourages the system to seek perfectly predictable states, which correspond to
+flat regions of the belief manifold.  In such states, the gradients of surprise
+vanish and the policy field collapses.
+
+The Expected Free Energy resolves this paradox by introducing an epistemic
+term that rewards exploration and penalizes global flattening.  Sustaining
+nonzero curvature preserves agency and ensures that the system remains
+sensitive to information and capable of adaptive behaviour.
+
+% ============================================================
+\section{Implications and Open Questions}
+\label{sec:implications}
+
+Agency appears not as a static capacity but as an ongoing act of resisting
+geometric flattening.  This interpretation raises important questions:
+
+\begin{itemize}
+\item How should we quantify the energetic cost of curvature in biological or
+artificial systems?
+\item What invariants characterize sustainable agency?
+\item Can the balance between exploration and exploitation be formalized as a
+trade–off between curvature and energy?
+\end{itemize}
+
+Addressing these questions requires integrating statistical mechanics,
+information geometry, and predictive processing into a coherent theory of
+intelligent systems.
+
+% ============================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+Agency is inseparable from curvature.  Minimizing surprise without regard to
+curvature leads to degeneracy.  The Expected Free Energy introduces a geometric
+operator that sustains non–equilibrium structure, breaks symmetry, and prevents
+collapse.  Agency is therefore the active maintenance of curvature against a
+natural tendency toward geometric flattening.
+
+% ============================================================
+\begin{thebibliography}{99}
+
+\bibitem{Friston2005}
+K.~Friston.
+\newblock A theory of cortical responses.
+\newblock {\em Philosophical Transactions of the Royal Society B}, 360:815--836, 2005.
+
+\bibitem{AmariNagaoka2000}
+S.-I.~Amari and H.~Nagaoka.
+\newblock {\em Methods of Information Geometry}.
+\newblock American Mathematical Society, 2000.
+
+\bibitem{Amari2016}
+S.-I.~Amari.
+\newblock {\em Information Geometry and Its Applications}.
+\newblock Springer, 2016.
+
+\bibitem{Caticha2015}
+A.~Caticha.
+\newblock Entropic Dynamics, the Schr{\"o}dinger Equation and the Information Geometry of Entropic Time.
+\newblock {\em Journal of Physics: Conference Series}, 701, 2016.
+
+\bibitem{Rao1945}
+C.~R.~Rao.
+\newblock Information and the accuracy attainable in the estimation of statistical parameters.
+\newblock {\em Bull. Calcutta Math. Soc.}, 37:81--91, 1945.
+
+\bibitem{Shannon1948}
+C.~E.~Shannon.
+\newblock A mathematical theory of communication.
+\newblock {\em Bell System Technical Journal}, 27:379--423, 623--656, 1948.
+
+\bibitem{JordanPrince2015}
+M.~I.~Jordan, D.~Prince.
+\newblock Variational inference: a review.
+\newblock {\em TDA Workshop Notes}, 2015.
+
+\bibitem{AmosHolonomy2018}
+T.~Amos.
+\newblock Holonomy in Statistical Manifolds.
+\newblock {\em Entropy}, 20(5):345, 2018.
+
+\bibitem{Ay2017}
+N.~Ay, J.~Jost, H.~V. Leinster, and W.~Wong.
+\newblock {\em Information Geometry}.
+\newblock Springer, 2017.
+
+\bibitem{Maes1999}
+C.~Maes.
+\newblock The fluctuation theorem as a Gibbs property.
+\newblock {\em Journal of Statistical Physics}, 95:367–392, 1999.
+
+\bibitem{Tishby2015}
+N.~Tishby and N.~Zaslavsky.
+\newblock Deep learning and the information bottleneck principle.
+\newblock {\em IEEE Information Theory Workshop}, 2015.
+
+\bibitem{Hinton2006}
+G.~Hinton, P.~Dayan, B.~Freeman, and R.~Neal.
+\newblock The wake–sleep algorithm for unsupervised neural networks.
+\newblock {\em Science}, 268(5214):1158--1160, 1995.
+
+\bibitem{Ollivier2009}
+Y.~Ollivier.
+\newblock A Ricci curvature for Markov chains on metric spaces.
+\newblock {\em Journal of Functional Analysis}, 256(3):810--864, 2009.
+
+\bibitem{RigoliBruineberg2018}
+F.~Rigoli, J.~Bruineberg.
+\newblock Expectation, free energy, and active inference.
+\newblock {\em Biological Cybernetics}, 112:6--7, 2018.
+
+\bibitem{KimVanCamp2018}
+J.~Kim and D.~Van Camp.
+\newblock The Variational Information Bottleneck: beyond VAE.
+\newblock {\em ICLR}, 2018.
+
+\end{thebibliography}
+
+\end{document}

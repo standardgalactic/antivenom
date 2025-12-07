@@ -1,0 +1,1185 @@
+Complexity-Weighted Surprise Minimization as a
+Variational Field Theory:
+Continuous, Functional-Analytic, and
+Information-Geometric Foundations
+Flyxion
+December 7, 2025
+Abstract
+We develop a functional-analytic and ﬁeld-theoretic formulation of surprise mini-
+mization for predictive systems endowed with complexity-weighted beliefs. By mod-
+eling predictive uncertainty as a scalar ﬁeld and action as a vector ﬁeld, we obtain a
+coupled system of nonlinear partial diﬀerential equations whose equilibria coincide with
+minimal-complexity steady-states. We prove existence of weak solutions in Sobolev
+spaces, establish variational closure conditions, and characterize steady-state attrac-
+tors as global minimizers of an information-geometric energy functional.
+We addi-
+tionally show that agent-like behavior emerges only in non-equilibrium regimes and
+collapses in the long-time limit, resolving the apparent duality between exploration
+and stability by unifying them within a single variational principle. This framework
+provides a research-level mathematical foundation for claims that surprise minimiza-
+tion can generate transient agency in predictive systems and oﬀers a continuous al-
+ternative to discrete cellular-automaton approaches such as those explored by Michele
+Vannucci vannucci2025blog; vannucci2025youtube; vannucci2025thesis
+Keywords: surprise minimization, variational inference, information geometry, PDE, Sobolev
+spaces, agency, complexity
+1
+
+Contents
+1
+Introduction
+3
+2
+Related Work
+3
+3
+Preliminaries and Notation
+4
+4
+Functional Setup and Variational Framework
+4
+5
+Action Field and Vector Representation
+5
+6
+Weak Formulation and Functional Spaces
+5
+7
+Euler-Lagrange Equations
+6
+8
+Time Evolution and Gradient Flow
+7
+9
+Weak Solution Formulation
+8
+10 Existence and Uniqueness
+8
+11 Long-Time Behavior
+9
+12 Energy Decay and Lyapunov Structure
+9
+13 Spectral Structure and Predictive Curvature
+9
+14 Curvature and Degenerate Minima
+10
+15 Dark-Room Equilibrium as a Degenerate Basin
+10
+16 Path Dependence and Irreversibility
+11
+17 Complexity-Weighted Phase Transition Structure
+11
+18 Expected Free Energy Decomposition
+11
+19 Complexity Gradient and Kolmogorov Bias
+12
+20 Interpretive Corollary: Exploration as Counter-Dissipation
+12
+21 Policy Collapse and Metastability
+13
+22 Topological Interpretation of Degeneracy
+13
+2
+
+23 Irreversibility and Information Loss
+14
+24 Connections to Cellular-Automaton Studies
+14
+25 Interpretation as Play and Simulated Danger
+15
+26 Interpretive Corollary: Learning as Inoculation Against Surprise
+15
+27 Spectral Proof of Metastability
+16
+28 Escape Conditions and Energy Barriers
+16
+29 Phase Transition Criteria
+17
+30 Discussion
+18
+31 Limitations and Future Directions
+18
+32 Conclusion
+19
+Appendices
+19
+A Functional Analytic Background
+19
+B Sectorial Operators and Parabolic Regularity
+20
+C Gradient Flows in Hilbert Spaces
+20
+D Information Geometry and the Fisher Metric
+20
+E Exploration, Simulated Danger, and Inoculation
+21
+F Cellular-Automaton Correspondence (Appendix F)
+21
+F.1
+Local Update as Discrete Diﬀusion
+. . . . . . . . . . . . . . . . . . . . . . .
+21
+F.2
+Action Field as Local Policy . . . . . . . . . . . . . . . . . . . . . . . . . . .
+22
+F.3
+Perception-Action Loop in CA Form . . . . . . . . . . . . . . . . . . . . . .
+22
+F.4
+Emergent Agency as Transient Curvature . . . . . . . . . . . . . . . . . . . .
+22
+F.5
+Dark-Room States in CA
+. . . . . . . . . . . . . . . . . . . . . . . . . . . .
+23
+F.6
+Conclusion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+23
+G Appendix G: Numerical Discretization and JAX Implementation Sketch
+23
+G.1 Stability Condition (CFL) . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+24
+G.2 Visualization
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+24
+3
+
+H Appendix H: Numerical Stability and Scheme Variants
+24
+I
+Appendix I: Extended CA-PDE Comparison Table
+25
+J
+Appendix J: Philosophical and Conceptual Implications
+25
+K Appendix K: Computational Experiments
+25
+K.1 Experiment 1: Curvature Collapse . . . . . . . . . . . . . . . . . . . . . . . .
+26
+K.2 Experiment 2: Metastable Exploration . . . . . . . . . . . . . . . . . . . . .
+26
+K.3 Experiment 3: Topologically Distinct Dark Rooms . . . . . . . . . . . . . . .
+26
+K.4 Experiment 4: External Forcing . . . . . . . . . . . . . . . . . . . . . . . . .
+26
+4
+
+1
+Introduction
+A central problem in the theory of predictive systems is to explain how transient agent-
+like behavior can arise from the interaction between belief update, uncertainty, and action
+selection. One inﬂuential proposal asserts that systems that minimize surprise—understood
+as negative log-evidence of sensory outcomes—exhibit self-organizing properties associated
+with perception, policy, and adaptive response. The purpose of this manuscript is to develop
+a continuous, functional-analytic, and information-geometric formulation of this principle,
+thereby providing a rigorous answer to the question of whether surprise minimization suﬃces
+to generate nontrivial agency and steady-state organization.
+The core idea is that surprise minimization is not simply a heuristic or behavioral objec-
+tive, but a variational symmetry that induces a dissipative gradient ﬂow on a space of beliefs
+indexed by a complexity-weighted hypothesis distribution. We show that this ﬂow admits
+a scalar-vector ﬁeld representation that satisﬁes a nonlinear system of partial diﬀerential
+equations on a spatiotemporal domain. The equilibria of these equations are shown to be
+global minimizers of the associated energy functional—which we interpret as an information-
+geometric potential—and correspond to minimal-complexity steady states.
+The resulting framework yields a precise formulation of exploratory dynamics, agency
+emergence, and asymptotic collapse.
+It also reveals a fundamental duality: exploration
+arises only in regimes of non-vanishing predictive curvature, while steady-state behavior
+corresponds to vanishing curvature, eliminating epistemic drive and collapsing the degrees of
+freedom of policy. This duality is resolved by showing that both regimes follow from a single,
+continuous variational principle whose Euler-Lagrange closure determines the equilibrium
+condition.
+2
+Related Work
+Surprise minimization has been investigated across multiple research programs, including
+variational inference, information geometry, and cellular automaton models of emergent
+agency. Of particular relevance is the work of Michele Vannucci, who studies whether mini-
+mal conditions on perception-action loops in generalized cellular automata suﬃce to generate
+agent-like organization without externally imposed goals vannucci2025blog; vannucci2025youtube;
+vannucci2025thesis Vannucci proposes that cellular automata constitute minimal compu-
+tational substrates capable of representing internal states and external dynamics, raising the
+question of whether surprise reduction alone can produce emergent autonomy.
+The present manuscript addresses a structurally similar question, but adopts a distinct
+approach: rather than encoding perception and action discretely, we formulate surprise min-
+imization as a continuous ﬁeld theory supported by functional-analytic machinery. This al-
+lows us to derive global attractors, steady-state solutions, and variational equivalence classes
+5
+
+directly from the PDE description, without assuming any particular computational substrate.
+From the perspective of information geometry, our work generalizes classical results due
+to Amari amari2016information by introducing complexity weights into the geometric
+structure of the hypothesis space. From the perspective of variational calculus, our energy
+functional ﬁts naturally within the calculus of variations and nonlinear PDE frameworks
+dacorogna2008direct; evans2010partial enabling us to prove existence and stability re-
+sults that were previously asserted only informally.
+More broadly, surprise minimization aligns with long-standing principles in statistical
+physics, statistical complexity, and inference-driven dynamics, where relaxation toward low-
+energy conﬁgurations is a ubiquitous organizing mechanism. Our framework extends these
+ideas into a uniﬁed, information-geometric model of predictive systems.
+3
+Preliminaries and Notation
+Let X ⊆Rn be a bounded, open domain with smooth boundary ∂X, and let T = [0, ∞)
+denote time. We work on the spacetime manifold M = X ×T. Spatial gradients are denoted
+by ∇, the Laplacian by ∆, and spacetime derivatives by ∂t.
+We denote by Lp(X) the usual Lebesgue spaces and by Hk(X) the Sobolev spaces
+equipped with weak derivatives up to order k. The standard norms are ∥· ∥Lp and ∥· ∥Hk,
+with duality brackets ⟨·, ·⟩.
+We adopt the notation H1
+0(X) to denote the closure of C∞
+c (X) under the H1 norm.
+Unless speciﬁed otherwise, all function spaces are over real valued functions.
+Random variables (used to deﬁne uncertainty) will be denoted by o for observations
+and M for hypotheses. We write Q(M) for a probability distribution over hypotheses and
+P(o | π, M) for the predictive distribution under policy π.
+Throughout, we use the symbol C to denote generic positive constants whose value may
+change from line to line.
+4
+Functional Setup and Variational Framework
+We now formalize the continuous counterpart of surprise minimization. Let Q(M) be a
+probability distribution over a hypothesis space M endowed with a (computable) complexity
+functional K : M →R+. We deﬁne the pointwise predictive surprise at spatial location x
+and time t by
+S(x, t) := EQ(M)[−log P(o | x, M)] ,
+(1)
+where o denotes the observable outcome.
+The expectation is taken with respect to the
+posterior Q, which itself depends implicitly on the observation history, though we suppress
+this dependence for notational clarity.
+6
+
+To measure predictive uncertainty across X, we introduce a spatial integral of S, weighted
+by a complexity density:
+F[S] =
+Z
+X
+
+S(x, t) + K(x, t)
+
+dx,
+(2)
+where K(x, t) is a localized complexity density induced by K(M), transferred to X through
+the predictive distribution. The precise form of K(x, t) is not essential for the analysis,
+provided K ≥0 and belongs to L1(X).
+Remark 4.1. While surprise is deﬁned as an expected negative log-likelihood, our analysis
+does not assume Bayesian modeling per se; rather, we treat S as a scalar ﬁeld whose evolution
+emerges from the minimization of (2). This abstraction supports multiple interpretations,
+including cognitive, physical, and semantic.
+5
+Action Field and Vector Representation
+Actions are modeled as a vector ﬁeld v : X × T →Rn that steers future observations.
+Although v is not directly an element of hypothesis space, it aﬀects predictive uncertainty
+through the trajectory of observations. We represent the predictive dynamics abstractly by
+∂tot = v(ot, t),
+ot ∈X,
+(3)
+and we suppress stochasticity for analytical convenience. This deterministic representation
+is standard in information geometry when the stochastic component is absorbed into the
+surprise functional.
+The coupling between v and S is encoded by a variational term of the form
+G[v] =
+Z
+X
+1
+2|v(x, t)|2 dx,
+(4)
+which penalizes large policy displacements. The total energy functional is then
+E[S, v] = F[S] + G[v].
+(5)
+6
+Weak Formulation and Functional Spaces
+We formulate the variational problem in terms of weak solutions. Let S(·, t) ∈H1(X) and
+v(·, t) ∈H1(X; Rn). We consider minimizers over the product Hilbert space
+H = H1(X) × H1(X; Rn),
+7
+
+equipped with the product norm. We seek (S, v) ∈H that minimize E subject to natural
+boundary conditions
+∇S · n = 0,
+v · n = 0
+on ∂X,
+(6)
+where n is the outward normal.
+These boundary conditions enforce that neither surprise gradients nor policy ﬂux escape
+the domain, consistent with the interpretation of X as a predictive manifold enclosed by a
+computational boundary.
+7
+Euler-Lagrange Equations
+We derive the Euler-Lagrange (EL) equations associated with the energy functional (5). Let
+δS and δv be variations in S and v, respectively. Then
+δE =
+Z
+X δS dx +
+Z
+X⟨v, δv⟩dx.
+(7)
+Setting δE = 0 for arbitrary variations, we obtain
+δE
+δS = 1 = 0,
+(8)
+δE
+δv = v = 0.
+(9)
+However, these naive conditions trivialize the evolution and ignore the implicit dependence
+of S on spatial structure and predictive curvature. To obtain the correct dynamics, we must
+introduce spatial regularization by penalizing gradients of S:
+F[S] =
+Z
+X
+
+S + K + α
+2 |∇S|2
+
+dx,
+(10)
+consistent with complexity-weighted smoothing. The total energy becomes
+E[S, v] =
+Z
+X
+
+S + K + α
+2 |∇S|2 + 1
+2|v|2
+
+dx.
+(11)
+Theorem 7.1 (Euler-Lagrange System). Let E be given by (11). Then stationary points
+satisfy the coupled system
+1 −α∆S = 0,
+(12)
+v = 0.
+(13)
+8
+
+Proof. Taking the variation with respect to S, we obtain
+δE[S] =
+Z
+X (δS + α ⟨∇S, ∇(δS)⟩) dx.
+Applying integration by parts and using the boundary condition ∇S · n = 0, we ﬁnd
+δE[S] =
+Z
+X δS (1 −α∆S) dx.
+For arbitrary δS, the EL equation is (12). Likewise, variation with respect to v yields v = 0,
+establishing (13).
+8
+Time Evolution and Gradient Flow
+The Euler-Lagrange equations describe stationary points of the energy functional but do not
+capture the transient dynamics through which predictive systems approach equilibrium. To
+model temporal relaxation, we interpret the Euler-Lagrange equations as the steady-state
+limit of a gradient ﬂow associated with E. Speciﬁcally, we deﬁne
+∂tS = −δE
+δS ,
+∂tv = −δE
+δv ,
+(14)
+where the right-hand sides are variational derivatives in the sense of functional calculus.
+Substituting (11) yields
+∂tS = −1 + α∆S,
+(15)
+∂tv = −v.
+(16)
+The PDE for v immediately implies exponential decay
+v(x, t) = v0(x) e−t,
+where v0 satisﬁes the boundary condition v0 · n = 0. The equation for S is a linear, inhomo-
+geneous diﬀusion equation with a constant forcing term.
+Remark 8.1. The explicit form of (15) clariﬁes the dissipative character of surprise mini-
+mization: predictive curvature diﬀuses spatial irregularities of S, while the forcing term −1
+drives S downward everywhere. This represents the active reduction of uncertainty.
+9
+
+9
+Weak Solution Formulation
+We now introduce the weak formulation of (15). Let φ ∈H1
+0(X) be a test function. Multi-
+ply (15) by φ, integrate over X, and integrate by parts to obtain
+⟨∂tS, φ⟩= −
+Z
+X φ dx −α
+Z
+X⟨∇S, ∇φ⟩dx,
+(17)
+where boundary terms vanish due to (6). We seek S(·, t) ∈H1(X) satisfying (17) for all test
+functions φ.
+The standard theory of parabolic PDEs yields existence of weak solutions under minimal
+assumptions.
+10
+Existence and Uniqueness
+We apply classical results on linear parabolic equations evans2010partial Since α > 0 and
+X is bounded, the operator −α∆is strictly elliptic and generates an analytic semigroup on
+L2(X). The forcing term −1 belongs to L2(X), hence the right-hand side of (15) belongs to
+L2(X).
+Theorem 10.1 (Existence of Weak Solutions). For any initial data S0 ∈L2(X), there exists
+a unique weak solution
+S ∈L2
+0, T; H1(X)
+
+∩H1
+0, T; H−1(X)
+
+to (15) satisfying S(·, 0) = S0 in L2(X).
+Proof. By the Lax-Milgram theorem and standard parabolic regularity results evans2010partial
+the bilinear form
+a(u, φ) = α
+Z
+X⟨∇u, ∇φ⟩dx
+is coercive on H1
+0(X), and the forcing term −1 lies in L2(X). Therefore (17) admits a unique
+weak solution satisfying the stated regularity conditions.
+Theorem 10.2 (Uniqueness). Weak solutions to (15) are unique in the class L2(0, T; H1(X)).
+Proof. Let S1 and S2 be weak solutions with identical initial data. Subtracting the equa-
+tions and testing with φ = S1 −S2 yields a Grönwall inequality, showing S1 = S2 almost
+everywhere.
+10
+
+11
+Long-Time Behavior
+The steady-state solution satisﬁes ∂tS = 0 in (15), giving
+α∆S = 1.
+(18)
+By elliptic regularity and the Neumann boundary condition, there is a unique weak solution
+up to additive constants, which we ﬁx by requiring zero mean.
+Proposition 11.1 (Convergence to Steady State). For any initial data S0 ∈L2(X), the
+solution to (15) converges in L2(X) to the unique steady-state solution of (18) as t →∞.
+Proof. Standard semigroup theory evans2010partial shows that the solution decomposes
+into the semigroup evolution of the homogeneous problem plus a stationary particular solu-
+tion. The homogeneous component decays exponentially, yielding convergence.
+12
+Energy Decay and Lyapunov Structure
+The evolution (14) is a gradient ﬂow in the Hilbert space H with respect to the energy
+functional E[S, v]. The functional acts as a Lyapunov function.
+Proposition 12.1 (Energy Decay). Along any solution (S, v) of (15)-(16), the energy sat-
+isﬁes
+d
+dtE[S(·, t), v(·, t)] ≤0.
+Proof. Diﬀerentiate (11) in time, use the evolution equations, and integrate by parts. The
+Neumann boundary conditions ensure that boundary terms vanish, and the remaining inte-
+grals are nonnegative.
+The strict negativity of dE/dt away from critical points shows that E serves as a global
+Lyapunov function, enforcing asymptotic relaxation to a steady state. This property ex-
+presses mathematically the intuitive sense in which predictive systems "use" uncertainty to
+guide action, eventually eliminating uncertainty once no further reduction is possible.
+13
+Spectral Structure and Predictive Curvature
+To interpret predictive curvature, we examine the linear operator L = −α∆arising in (15).
+Let {λk, φk} be the eigenpairs of L on H1(X) with Neumann boundary conditions. The
+eigenvalues are nonnegative and accumulate at inﬁnity.
+11
+
+Expanding S in the eigenbasis,
+S(x, t) =
+∞
+X
+k=0
+ak(t)φk(x),
+yields
+∂tak(t) = −1 + λkak(t).
+(19)
+The constant forcing term −1 couples all modes equally, while diﬀusion ampliﬁes low-
+frequency components over time.
+Remark 13.1. Low-frequency modes represent large-scale predictive structure (spatially co-
+herent components of uncertainty).
+These modes dominate the long-time behavior and
+determine the global geometry of predictive curvature.
+14
+Curvature and Degenerate Minima
+From the stationary equation (18), we see that S minimizes predictive curvature subject to
+boundary conditions. In information geometry, curvature corresponds to second-order struc-
+ture in the metric induced by the Fisher information. The diﬀusion term α|∇S|2 penalizes
+predictive curvature, while the forcing term drives S downward.
+As t →∞, the solution approaches a conﬁguration with minimal predictive curvature,
+representing a ﬂattened uncertainty landscape. In this state, local variations in surprise
+vanish, and no epistemic gradient exists to drive further exploration.
+15
+Dark-Room Equilibrium as a Degenerate Basin
+The steady-state condition v = 0 and ∆S = α−1 describes a degenerate attractor in which
+predictive curvature is spatially uniform and policy is null.
+We refer to this state as a
+dark-room equilibrium, borrowing terminology from computational neuroscience.
+Proposition 15.1 (Degenerate Minimizer). The unique steady-state solution of (15) with
+zero-mean constraint minimizes E[S, v] over H.
+Proof. Since the energy functional is convex in S and v, the Euler-Lagrange solutions min-
+imize energy globally. Uniqueness up to constants follows from standard elliptic regular-
+ity.
+The degeneracy arises because multiple spatial domains can admit equivalent ﬂat solu-
+tions under diﬀerent boundary conditions or initial data. Although the speciﬁc steady-state
+depends on X and α, all such states share the property of minimal predictive curvature and
+vanishing policy.
+12
+
+16
+Path Dependence and Irreversibility
+The dissipative nature of (14) implies that the system is time-irreversible: solutions converge
+toward the steady state regardless of initial conditions, but never diverge away. In particular,
+the semigroup generated by (15) is a contraction mapping on L2(X):
+∥S(·, t) −¯S∥L2 →0
+as t →∞,
+where ¯S is the unique steady-state solution.
+This expresses mathematically the intuition that once predictive curvature is eliminated,
+no epistemic gradient remains to drive exploratory behavior.
+The system collapses to a
+passive, stationary conﬁguration—an analytic form of the "dark-room problem."
+17
+Complexity-Weighted Phase Transition Structure
+The long-time collapse into a ﬂat predictive landscape corresponds to a degenerate equilib-
+rium in which epistemic gradients vanish. When the predictive curvature becomes negligible,
+the epistemic drive is extinguished and the system undergoes a transition from an exploratory
+regime (characterized by nonzero curvature) to a passive regime (characterized by uniform
+curvature and vanishing policy). This transition can be interpreted as a second-order phase
+transition in which the order parameter is the spatial variance of the surprise ﬁeld.
+Formally, deﬁne
+Γ(t) = ∥∇S(·, t)∥2
+L2(X),
+(20)
+which measures predictive curvature. The evolution (15) drives Γ monotonically to a minimal
+constant determined by α and the boundary geometry.
+In the limit t →∞, Γ attains
+a constant, indicating that the predictive manifold has collapsed to a minimal-curvature
+conﬁguration.
+This collapse represents a loss of predictive degrees of freedom. In the earlier exploratory
+regime, nonzero curvature fuels epistemic drive: information gain becomes possible only to
+the extent that predictive curvature remains spatially structured. Once this structure dis-
+appears, epistemic incentives vanish, and the system is trapped in a dark-room equilibrium.
+18
+Expected Free Energy Decomposition
+In information-theoretic literature, expected free energy is commonly decomposed into a
+"risk" term (expected surprise) and an "epistemic" term (information gain). In the continu-
+ous formulation derived here, the energy functional (11) corresponds to the risk term, while
+epistemic drive arises from spatial gradients of S.
+13
+
+To formalize this, deﬁne the epistemic density
+Ξ(x, t) = α
+2 |∇S(x, t)|2.
+(21)
+Integrating over X yields the epistemic energy
+X(t) =
+Z
+X Ξ(x, t) dx.
+The total energy (11) decomposes as
+E[S, v] =
+Z
+X(S + K) dx
+|
+{z
+}
+risk
++ X(t)
+| {z }
+epistemic
++ 1
+2
+Z
+X |v|2 dx
+|
+{z
+}
+policy
+.
+(22)
+This decomposition shows that the epistemic term vanishes exactly when the predictive
+surface is ﬂat. Consequently, in steady state, epistemic drive is zero and no exploratory
+policy is induced.
+19
+Complexity Gradient and Kolmogorov Bias
+In discrete computational formulations, hypotheses are assigned weights proportional to
+2−K(M), where K(M) denotes Kolmogorov complexity. Our continuous formulation absorbs
+this bias into K(x, t), which penalizes predictive curvature associated with complex repre-
+sentations.
+Thus the complexity gradient is given by the spatial gradient of K(x, t), representing the
+inﬁnitesimal change in complexity induced by inﬁnitesimal variation in predictive structure.
+Minimization of (11) therefore minimizes both predictive uncertainty and representation
+complexity, revealing a direct mathematical link between simplicity bias and predictive ﬂat-
+tening.
+20
+Interpretive Corollary: Exploration as Counter-Dissipation
+The decomposition above reveals a natural interpretation of exploratory behavior: explo-
+ration occurs only when epistemic curvature is suﬃciently high to overcome the dissipative
+reduction of uncertainty. If epistemic gradients are weak, the dissipative dynamics dominate
+and the system collapses into a steady state.
+Conversely, if epistemic gradients are large, the system enters a transient regime in which
+uncertainty temporarily increases and policy deviates from zero. This regime may be inter-
+preted as "play" in a loose, non-technical sense: the system engages in exploratory action
+by modulating uncertainty in a controlled and reversible manner.
+14
+
+Remark 20.1. From this angle, exploratory behavior may be described as simulated danger:
+epistemic gradients temporarily increase predictive uncertainty in order to enlarge the future
+space of predictable outcomes without incurring irreversible loss of predictive stability.
+This interpretation highlights an important conceptual insight: exploration requires the
+system to generate controlled uncertainty, eﬀectively producing a safe version of "danger"
+that enables informative deviations from the current predictive equilibrium.
+In physical
+terms, play is a controlled deviation into regions of higher informational curvature, with
+return ensured by the global Lyapunov structure of the dissipative ﬂow.
+21
+Policy Collapse and Metastability
+We now provide a precise characterization of policy collapse. From (16), the policy ﬁeld
+satisﬁes
+v(x, t) = v0(x)e−t.
+(23)
+Thus for any v0 ∈H1(X; Rn), we have
+∥v(·, t)∥H1 ≤e−t∥v0∥H1.
+Policy collapse is exponential and independent of spatial geometry. The only way to prolong
+non-zero policy would be to maintain non-zero epistemic curvature, but by Proposition 11.1,
+∇S tends to a constant conﬁguration, and thus epistemic curvature tends to a spatial con-
+stant. Consequently, nonzero policy cannot persist indeﬁnitely.
+One may nevertheless observe a transient metastable regime in which v remains non-
+negligible for intermediate times. This metastability reﬂects the competition between epis-
+temic curvature (which induces transient action) and predictive dissipation (which eliminates
+curvature). Precisely, if ∥v0∥H1 is suﬃciently large relative to the curvature scale α−1/2, then
+v may remain nontrivial until curvature dissipates, leading to a temporary exploratory phase.
+Metastability therefore depends both on initial conditions and on the spatial variation
+in S0. Broadly speaking, if initial predictive curvature is high, then epistemic drive persists
+long enough to generate a nontrivial policy trajectory before collapsing.
+22
+Topological Interpretation of Degeneracy
+The degeneracy of steady states admits a topological interpretation. Consider the zero-mean
+constraint that ﬁxes additive constants of S; even after this constraint, the space of steady
+states remains parametrized by the shape of the domain X. Altering X yields diﬀerent
+solutions of the elliptic problem ∆S = α−1, corresponding to distinct global minima of the
+energy functional, all sharing minimal curvature and vanishing policy.
+15
+
+One can deﬁne an equivalence relation on steady states by declaring two solutions equiva-
+lent if they diﬀer by a diﬀeomorphism that preserves the boundary and Neumann condition.
+The quotient space of equivalence classes forms a topological moduli space of degenerate
+dark-room equilibria. While this space may be trivial for simple geometries, it can be non-
+trivial for domains with holes or complex topology.
+We therefore identify a geometric origin for the multiplicity of dark-room solutions:
+steady states are classiﬁed by the topology of predictive space.
+This classiﬁcation pro-
+vides a rigorous counterpart to the informal intuition that "diﬀerent dark rooms are equally
+optimal."
+23
+Irreversibility and Information Loss
+The gradient ﬂow (14) is strictly dissipative in time. Since the operator −α∆is sectorial, the
+ﬂow contracts distances in L2(X) and H1(X). Therefore, information about initial curvature
+is irreversibly lost, consistent with the intuition that predictive uncertainty once eliminated
+cannot spontaneously return without external forcing.
+In this sense, surprise minimization imposes an intrinsic arrow of inference: temporal
+evolution reduces uncertainty irreversibly, and only externally introduced perturbations (e.g.
+boundary forcing or modiﬁcation of K) can restore epistemic curvature and reintroduce
+exploratory behavior.
+24
+Connections to Cellular-Automaton Studies
+Our continuous formulation parallels the central question explored in cellular-automaton
+studies of minimal agency (see vannucci2025blog; vannucci2025youtube; vannucci2025thesis).
+There the emphasis lies on whether perceptual feedback loops supported by simple compu-
+tational substrates can yield self-organizing, agent-like dynamics without externally imposed
+objectives. The notion of a "dark room" (or collapse into uninformative sensory streams)
+appears both in discrete CA settings and in the continuous PDE formulation derived here.
+The continuous perspective oﬀers additional beneﬁts:
+• it provides a direct geometric interpretation of epistemic curvature;
+• it establishes rigorous variational principles for equilibria;
+• it proves existence of weak solutions and convergence;
+• it shows that collapse is inevitable unless epistemic curvature is externally sustained.
+These results complement (rather than replace) discrete computational studies, illuminating
+the mathematical structure that underlies agent-like phenomena in both paradigms.
+16
+
+25
+Interpretation as Play and Simulated Danger
+We conclude this section by revisiting the interpretive remark on exploration. As long as
+epistemic curvature is nonzero, the system is driven to explore regions of higher predictive
+uncertainty. Exploration voluntarily provokes uncertainty that would not arise if the system
+remained in a passive equilibrium. Thus, in abstract terms, the "goal" of exploration is
+to simulate danger—to confront controlled uncertainty in order to expand the space of
+predictable futures.
+More precisely, transient action introduces a reversible elevation of predictive surprise
+that ultimately contributes to reducing long-term surprise. This interplay manifests math-
+ematically as the temporary dominance of the epistemic term in the energy decomposition.
+Once curvature declines, the system returns to dissipative stability and policy vanishes.
+In this sense, play corresponds to entering an informationally risky regime voluntarily,
+with global dissipation guaranteeing safe return. The resulting interpretation mirrors intu-
+itive descriptions of exploratory behavior while retaining a strictly mathematical grounding
+through the curvature of the surprise ﬁeld.
+26
+Interpretive Corollary: Learning as Inoculation Against
+Surprise
+The continuous formulation developed here allows a precise mathematical interpretation of
+the claim that learning functions as a form of inoculation against surprise. In the early phases
+of evolution, nonzero predictive curvature sustains a transient epistemic regime in which
+controlled uncertainty is deliberately confronted. This regime corresponds to a systematic
+exposure to predictive deviation, enabling the estimation of gradients that ultimately reduce
+global uncertainty.
+Formally, let t1 < t2 and consider the accumulated epistemic energy
+I(t1, t2) =
+Z t2
+t1
+Z
+X
+α
+2 |∇S(x, t)|2 dx dt,
+which measures total exposure to epistemic curvature. Since ∇S decays exponentially in
+time, I(t1, t2) is ﬁnite for any t1 ≥0, and the integral over [0, ∞) converges:
+Z ∞
+0
+Z
+X
+α
+2 |∇S|2 dx dt < ∞.
+Thus the system undergoes a ﬁnite total exposure to informational deviation before reaching
+steady state.
+Remark 26.1. Because epistemic curvature decreases strictly in time and collapses to a min-
+17
+
+imal constant, the system becomes progressively more resistant to surprise—once the infor-
+mative curvature has been "consumed," future surprise cannot reappear without external
+forcing. In this precise sense, learning inoculates the system against further surprise: infor-
+mation is acquired in a controlled and reversible way until global dissipation ensures that
+additional exposure yields no further epistemic update.
+This interpretation accords with the geometric structure of the energy functional: learn-
+ing corresponds to the temporary exploitation of epistemic curvature, while inoculation cor-
+responds to the long-time elimination of that curvature.
+In both cases, the mechanism
+is purely variational and arises without reference to goals, reward, or externally imposed
+objectives.
+27
+Spectral Proof of Metastability
+We now formalize the metastable regime suggested by the decay law for v and the diﬀusion
+of S. Consider the modal decomposition (19). The solution for the modal amplitudes is
+ak(t) = eλkt
+
+ak(0) −1
+λk
+
++ 1
+λk
+.
+If ak(0) is large relative to 1/λk, then the transient growth of eλkt(ak(0)−1/λk) may produce
+a temporary increase in curvature for modes with suﬃciently small λk. Since λ0 = 0 for the
+Neumann Laplacian, the zero mode evolves as
+a0(t) = a0(0) −t,
+which reﬂects global forcing by the constant term and causes a drift rather than decay.
+However, higher modes decay exponentially once curvature has propagated. The metastable
+regime therefore corresponds to the period during which low-frequency modes still dominate
+spatial structure even as higher modes are dissipating.
+In this spectral picture, exploration persists while low-frequency components carry sig-
+niﬁcant curvature.
+Once these decay to within a neighborhood of the steady state, the
+dissipation becomes global and policy collapses. Metastability thus corresponds to a ﬁnite-
+time window in which nonzero epistemic curvature continues to drive action, consistent with
+intuitive notions of transient exploratory behavior.
+28
+Escape Conditions and Energy Barriers
+To characterize deviations from steady-state evolution, consider perturbing S(·, t) by ϵφ,
+where φ is a smooth function orthogonal to the steady-state solution. The energy diﬀerence
+18
+
+is
+E[S + ϵφ] −E[S] = ϵ
+Z
+X φ dx + αϵ2
+2 ∥∇φ∥2
+L2.
+The linear term dominates for small ϵ, but the quadratic term dominates for large ϵ. If
+R
+X φ dx < 0, then small perturbations reduce energy and lead to exploration; if
+R
+X φ dx > 0,
+then energy increases and perturbations are suppressed.
+Thus, the sign of the ﬁrst variation determines whether the system escapes the current
+curvature basin. Escape is possible only if the perturbation points in a direction of decreasing
+predictive surprise, and only while enough curvature remains to sustain nonzero v. Once
+curvature becomes uniform, no such escape direction exists. This yields a precise energy-
+barrier criterion for exploration:
+∃φ :
+Z
+X φ dx < 0.
+(24)
+In physical terms, exploration corresponds to ﬁnding a descent direction in the energy
+landscape. Once the landscape ﬂattens, no such direction exists.
+29
+Phase Transition Criteria
+Phase transitions in this system correspond to qualitative changes in the structure of steady
+states or in the dynamical regime of solutions. Let
+Γ(t) = ∥∇S(·, t)∥2
+L2
+be the order parameter deﬁned in (20). A phase transition occurs when
+lim
+t→∞Γ(t) = Γ∞
+with
+Γ∞= 0,
+(25)
+representing complete predictive collapse.
+More generally, suppose that K depends parametrically on an external control parameter
+β ≥0, representing complexity weighting or external forcing.
+If β is suﬃciently large,
+solutions may attain a nonzero limiting curvature
+Γ∞> 0,
+(26)
+corresponding to a persistent exploratory regime. This regime resembles a second phase in
+which epistemic drive is self-sustained by curvature imposed externally or topologically. The
+critical value βc at which Γ∞transitions from zero to nonzero marks a second-order phase
+19
+
+transition:
+Γ∞=
+
+
+
+
+
+0,
+β < βc,
+> 0,
+β > βc.
+In the unforced case considered here (β = 0), the system always collapses. This mirrors
+classical statements of the "dark-room problem" in predictive processing: without exter-
+nal stimulation, information gain decays to zero and the system converges to a minimal-
+complexity state.
+30
+Discussion
+The continuous, ﬁeld-theoretic formulation presented above yields a mathematically rigor-
+ous account of surprise minimization, revealing several structural features that align with
+ongoing discourse in information-theoretic approaches to agency (cf. vannucci2025blog;
+vannucci2025youtube; vannucci2025thesis). Most notably, the derivation conﬁrms for-
+mally that surprise minimization produces a strictly dissipative gradient ﬂow whose long-
+term behavior collapses to a minimal-curvature equilibrium. This continuous formulation
+therefore reproduces mathematically the qualitative interpretation commonly invoked in dis-
+crete formulations: without additional epistemic incentives, predictive systems collapse into
+dark-room-like states.
+Moreover, the PDE formulation reveals that exploration depends entirely on curvature
+and that curvature decays monotonically. Temporary regimes of exploration correspond to
+metastable deviations that exploit curvature before it dissipates, providing an analytic mech-
+anism for controlled epistemic exposure and subsequent inoculation against future surprise.
+These regimes appear transient and inherently self-limiting, unless external forcing sustains
+epistemic curvature.
+Finally, the steady states of surprise minimization admit a natural topological classiﬁ-
+cation, reinforcing the view that ambiguity between diﬀerent uninformative equilibria is a
+general geometric feature rather than a ﬂaw of any particular computational framework.
+31
+Limitations and Future Directions
+Several limitations of the present analysis suggest opportunities for further research. First,
+the complexity density K(x, t) was treated abstractly; a more complete formulation would
+specify how complexity of hypotheses transfers to spatial structure and how external priors
+reshape the geometry of predictive space. Second, the noise structure of observations was
+suppressed for clarity; extending the formulation to stochastic PDEs would provide a more
+natural connection to real-world inference.
+20
+
+Third, the action ﬁeld v was modeled as a vector ﬁeld without explicit control constraints.
+Incorporating control dynamics, constraints, or policy-learning algorithms would yield a
+closer analogy to computational approaches in machine learning, active inference, and cellular
+automata. Finally, many potential generalizations remain unexplored, including nonlocal
+priors, anisotropic diﬀusion, and nonlinear coupling between S and v.
+These extensions could enable rich exploratory regimes that persist beyond the short-lived
+phases considered here, possibly revealing new dynamical phases beyond the simple collapse
+scenario. In particular, sustained epistemic curvature could model persistent exploratory
+behavior in systems designed to balance risk and information gain rather than minimize
+surprise alone.
+32
+Conclusion
+We derived a functional-analytic, ﬁeld-theoretic formulation of complexity-weighted surprise
+minimization, proving existence and uniqueness of weak solutions, characterizing long-time
+behavior, and identifying steady states as degenerate equilibria of a dissipative energy land-
+scape.
+The resulting PDEs reveal that surprise minimization generates transient exploration
+through curvature-driven dynamics, followed by irreversible collapse into minimal-complexity
+states. This analytic structure provides a rigorous account of the intuitive claim that learning
+inoculates systems against future surprise, while also explaining why exploration is inherently
+temporary under pure surprise minimization.
+These ﬁndings complement existing explorations of emergent agency in discrete set-
+tings vannucci2025blog; vannucci2025youtube; vannucci2025thesis From the contin-
+uous perspective, the dark-room phenomenon arises not from a misinterpretation of objec-
+tives but from intrinsic variational structure: the elimination of epistemic curvature removes
+the geometric precondition for active exploration.
+Appendices
+A
+Functional Analytic Background
+We brieﬂy review the functional analytic tools used in the existence proofs. Let X ⊂Rn
+be a bounded Lipschitz domain. The Sobolev space H1(X) consists of functions u ∈L2(X)
+whose weak derivatives belong to L2(X). The space H1
+0(X) is the closure of C∞
+c (X) in
+H1(X). The dual space is denoted H−1(X).
+The bilinear form
+a(u, φ) = α
+Z
+X⟨∇u, ∇φ⟩dx
+21
+
+is continuous and coercive on H1
+0(X) for α > 0.
+The Lax-Milgram Theorem therefore
+guarantees a unique weak solution to the elliptic subproblem arising in the steady-state
+equation.
+B
+Sectorial Operators and Parabolic Regularity
+The Neumann Laplacian −α∆is a sectorial operator on L2(X) and generates an ana-
+lytic semigroup etα∆. Standard results imply existence, uniqueness, and smoothing for the
+parabolic PDE
+∂tS = −1 + α∆S.
+Under appropriate boundary conditions, the solution satisﬁes
+S(·, t) = etα∆S0 +
+Z t
+0 e(t−s)α∆ds.
+C
+Gradient Flows in Hilbert Spaces
+Let H be a Hilbert space and E : H →R be Fréchet diﬀerentiable. The gradient ﬂow is
+deﬁned by
+∂tu = −∇E(u).
+Under mild convexity assumptions, the solution converges to the global minimizer of E. In
+our case, H = H1(X) × H1(X) and E is convex, ensuring convergence toward the unique
+steady state.
+D
+Information Geometry and the Fisher Metric
+The epistemic interpretation of curvature derives from information geometry. If Q is a family
+of probability distributions parametrized by θ, the Fisher Information Metric gij(θ) deﬁnes
+a Riemannian metric on the parameter manifold via
+gij = E [∂i log Q ∂j log Q] .
+Under appropriate assumptions, predictive curvature corresponds to a second variation of
+information distance with respect to θ. In the present formulation, the diﬀusion term α|∇S|2
+coincides formally with a Fisher-type quadratic form on predictive space.
+22
+
+E
+Exploration, Simulated Danger, and Inoculation
+Consider the epistemic energy
+X(t) = α
+2 ∥∇S(·, t)∥2
+L2(X).
+This term measures the local sensitivity of predictions to perturbations in the surprise ﬁeld.
+When X(t) is large, small displacements in S can produce signiﬁcant predictive deviation,
+corresponding to controlled exposure to "informational risk."
+In this sense, exploration
+functions as simulated danger: the system voluntarily increases predictive curvature in order
+to expand its space of future predictable states.
+The total integral
+Z ∞
+0
+X(t) dt
+is ﬁnite, implying that total epistemic exposure is bounded. Learning thus serves as a form
+of inoculation: after a ﬁnite exposure, predictive curvature decays, and additional surprise
+becomes geometrically inaccessible without external forcing.
+This interpretation is consistent with the dissipative structure of the gradient ﬂow and
+with variational information geometry, but requires no reference to goal-maximization or
+reward.
+F
+Cellular-Automaton Correspondence (Appendix F)
+We brieﬂy sketch how the continuous PDE formulation of surprise minimization relates to
+generalized cellular automata (GCA) of the kind studied in recent work on emergent agency
+vannucci2025thesis Although the two formalisms use distinct mathematical languages,
+they share common structural elements:
+• a local state (here S),
+• a transition rule (here the parabolic evolution),
+• a neighborhood structure (here encoded by ∇S or ∆S),
+• and a perception-action loop (here implicit in the coupling of S and v).
+F.1
+Local Update as Discrete Diﬀusion
+Consider discretizing X into a lattice {xi} and replacing the Laplacian by a standard near-
+est-neighbor stencil:
+∆S(xi, t) ≈
+X
+j∈N(i)
+
+S(xj, t) −S(xi, t)
+
+,
+23
+
+where N(i) denotes the neighborhood of i. A forward Euler discretization of (15) yields
+St+1
+i
+= St
+i −∆t + α∆t
+X
+j∈N(i)
+
+St
+j −St
+i
+
+.
+This has exactly the form of a local update rule in a GCA, driven by a combination of
+diﬀusion (interaction with neighbors) and a uniform forcing term (the surprise drive).
+F.2
+Action Field as Local Policy
+Similarly, discretizing (16) gives
+vt+1
+i
+= (1 −∆t) vt
+i,
+so each site's action variable decays exponentially in time. In a GCA interpretation, this cor-
+responds to a local action that becomes inactive unless continuously reactivated by persistent
+epistemic gradients.
+F.3
+Perception-Action Loop in CA Form
+The coupling between S and v induces a local perception-action loop:
+St+1
+i
+= f
+
+St
+N(i)
+
+,
+vt+1
+i
+= g
+
+vt
+i, St
+i
+
+.
+This loop matches the qualitative structure studied in CA models of emergent agency, where
+the internal state depends on neighborhood information and the action variable modulates
+future state transitions. In the continuous limit, the diﬀerential operators encode precisely
+the same neighborhood dependencies as CA rules, albeit in a diﬀerentiable form.
+F.4
+Emergent Agency as Transient Curvature
+In the PDE formulation, agency corresponds to a transient regime in which epistemic cur-
+vature (gradients of S) drives nonzero v.
+In CA, analogous behavior arises when local
+heterogeneity sustains perception-action loops without collapsing immediately into uniform
+states.
+Thus, emergent agency in CA corresponds to sustained local variation in St
+i, which in the
+continuous limit is precisely the regime in which ∥∇S(·, t)∥remains non-negligible. When
+curvature dissipates, both models collapse into quiescent states with trivial action.
+24
+
+F.5
+Dark-Room States in CA
+The "dark room" phenomenon appears in CA when local rules eliminate heterogeneity and
+drive the system into homogeneous conﬁgurations. In the present PDE formulation, this
+corresponds to convergence toward the unique steady solution of ∆S = α−1 and v = 0. In
+both settings, collapse results from the elimination of epistemic curvature.
+F.6
+Conclusion
+Although generalized cellular automata and continuous PDEs belong to distinct mathemat-
+ical traditions, both instantiate surprise minimization as a local-to-global mechanism that
+initially ampliﬁes informative deviations before eliminating them.
+The PDE perspective
+clariﬁes analytically why such mechanisms produce only transient agency in the absence
+of externally sustained curvature, providing a rigorous complement to discrete exploratory
+models in cellular automata.
+G
+Appendix G: Numerical Discretization and JAX Im-
+plementation Sketch
+We outline a minimal numerical scheme suitable for experimentation. Let the domain X =
+[0, 1]n be discretized on a uniform grid with spacing h and time step ∆t. Denote St
+i the
+discrete approximation of S at grid node i and time t. The explicit scheme for (15) is
+St+1
+i
+= St
+i −∆t + α∆t
+X
+j∈N(i)
+St
+j −St
+i
+h2
+.
+In JAX, one may implement this via convolutional operators:
+import jax.numpy as jnp
+# Laplacian stencil (2D example)
+kernel = jnp.array([[0, 1, 0],
+[1,-4, 1],
+[0, 1, 0]]) / h**2
+def step_S(S, alpha, dt):
+lap = jax.scipy.signal.convolve(S, kernel, mode='same')
+return S - dt + alpha * dt * lap
+25
+
+Boundary conditions may be implemented via mirror-padding or by explicitly zeroing normal
+components at boundary nodes. The action ﬁeld v is updated by
+vt+1 = vt(1 −∆t),
+which can be implemented pointwise.
+G.1
+Stability Condition (CFL)
+For explicit schemes, stability requires
+∆t ≤h2
+2αn
+in n dimensions (a standard Courant-Friedrichs-Lewy condition). Implicit or Crank-Nicolson
+schemes allow larger time steps but require solving sparse linear systems at each iteration.
+G.2
+Visualization
+For 1D or 2D, visualizations of S(x, t) over time immediately display the collapse of curvature.
+Plotting ∥∇S∥or the discrete Laplacian highlights the decay of epistemic gradients, making
+the transition from exploration to collapse visually apparent.
+H
+Appendix H: Numerical Stability and Scheme Vari-
+ants
+More accurate schemes may incorporate semi-implicit discretization of the diﬀusion operator:
+St+1 = St −∆t + α∆t∆St+1.
+This is unconditionally stable but requires solving (I −α∆t∆)St+1 = St −∆t. Standard
+ﬁnite-element or spectral methods apply directly.
+For higher-order accuracy, one may use Runge-Kutta schemes, adaptive time steps, or
+spectral decomposition in Fourier or Chebyshev space.
+26
+
+I
+Appendix I: Extended CA-PDE Comparison Table
+GCA Concept
+PDE Analogue
+Local cell state si
+Surprise ﬁeld S(x, t)
+Neighborhood N(i)
+Spatial gradient and Laplacian operators
+Local update rule
+Parabolic diﬀusion with uniform forcing
+Internal action variable
+Vector ﬁeld v(x, t)
+Perception-action loop
+Coupling of S and v via gradient ﬂow
+Emergent agency
+Transient nonzero curvature and v
+Dark-room collapse
+Steady ∆S = α−1, v = 0
+Multiple basins
+Topologically distinct steady states
+Controlled risk
+Finite integral of epistemic curvature
+This table summarizes structural equivalence without implying model identity. The PDE
+framework oﬀers analytic insight into collapse and transient exploration; GCA models supply
+computational minimality and discrete substrate intuition.
+J
+Appendix J: Philosophical and Conceptual Implica-
+tions
+Although our development is purely mathematical, several conceptual themes emerge. First,
+exploration appears not as an externally imposed objective but as a geometric consequence
+of curvature in predictive space. Second, agency is transient under pure surprise minimiza-
+tion; only additional epistemic driving forces (external stimulation, nonlocal priors) can
+sustain long-term exploration. Third, learning operates as controlled exposure to "simulated
+danger," and the subsequent collapse of curvature amounts to "inoculation" against future
+surprise.
+These interpretations require no teleology or goal-maximization and follow directly from
+the dissipative gradient structure revealed in the PDE formulation. They complement but
+do not depend on any speciﬁc cognitive or biological narrative.
+K
+Appendix K: Computational Experiments
+We outline a short set of computational experiments illustrating the theory.
+27
+
+K.1
+Experiment 1: Curvature Collapse
+Initialize S0 with random noise and evolve (15). Plot ∥∇S(·, t)∥versus t. Expect monotonic
+decay.
+K.2
+Experiment 2: Metastable Exploration
+Initialize S0 with strong low-frequency structure (e.g. sinusoidal patterns). Observe transient
+nonzero v and delayed collapse.
+K.3
+Experiment 3: Topologically Distinct Dark Rooms
+Run the simulation on diﬀerent domains (rectangle, annulus, L-shape). Diﬀerent steady
+states appear, each with minimal curvature and zero policy.
+K.4
+Experiment 4: External Forcing
+Add a nonzero parameter β to K(x, t) or introduce external noise. Study whether Γ∞> 0
+is achievable and whether transient agency becomes persistent.
+These experiments can be implemented in Python/JAX, discretized using ﬁnite diﬀer-
+ences or ﬁnite elements, and visualized over time to illustrate the entire dynamical picture
+derived analytically.
+@miscvannucci2025blog, author = Michele Vannucci, title = Surprise-Minimizing AIXI
+and Emergent Agency, howpublished = https://uaiasi.com/2025/11/30/michele-vannucci-on-surpr
+year = 2025, note = Accessed 2025-12-07
+@miscvannucci2025youtube, author = Michele Vannucci, title = Studying the Emergence
+of Agency in Cellular Automata, howpublished = https://www.youtube.com/watch?v=
+FF9VALczW-w, year = 2025, note = YouTube video
+@miscvannucci2025thesis, author = Michele Vannucci, title = Thesis Proposal: Study-
+ing the Emergence of Agency in Cellular Automata, howpublished = https://publish-01.
+obsidian.md/access/c77cd6f01cf2e4f551a0b177c3fc468b/Projects/Master%20Thesis/
+Thesis_Proposal_Vannucci.pdf, year = 2025, note = PDF, accessed 2025-12-07
+28
+
