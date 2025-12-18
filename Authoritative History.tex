@@ -1,0 +1,1553 @@
+\documentclass[11pt]{article}
+
+% --------------------------------------------------
+% Packages
+% --------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+% --------------------------------------------------
+% Theorem environments
+% --------------------------------------------------
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% --------------------------------------------------
+% Macros
+% --------------------------------------------------
+\newcommand{\State}{\Sigma}
+\newcommand{\Obs}{\mathcal{O}}
+\newcommand{\Act}{\mathcal{A}}
+\newcommand{\View}{\mathcal{V}}
+\newcommand{\Log}{\mathcal{L}}
+\newcommand{\Replay}{\mathrm{Replay}}
+\newcommand{\Commit}{\mathrm{Commit}}
+\newcommand{\Inv}{\Omega}
+\newcommand{\cost}{\mathcal{C}}
+\newcommand{\TV}{\mathrm{TV}}
+
+% --------------------------------------------------
+% Title
+% --------------------------------------------------
+\title{Authoritative History and the Limits of Autoregressive Intelligence}
+\author{Flyxion}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Recent critiques of large autoregressive language models converge on a common diagnosis: despite remarkable fluency, such systems lack a stable internal account of the world. This paper develops a unified formal framework explaining this limitation and proposing a constructive alternative. We argue that robust intelligence requires an authoritative internal history governed by invariant-preserving replay. Autoregressive systems operate exclusively at the level of derived views, lacking any mechanism to commit, verify, or replay causal structure. We formalize this distinction, prove that view-only generation suffers unavoidable long-horizon drift, and introduce deterministic event logs as a minimal substrate for grounded reasoning, planning, and safety. We further show how structural constraint systems in language and action instantiate the same invariant discipline, and how automatic, low-cost behavior emerges naturally through kernel optimization without abandoning authoritative control. The resulting architecture reconciles efficiency, reliability, and grounding without recourse to purely statistical imitation.
+\end{abstract}
+
+\tableofcontents
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+The rapid success of large language models has revived foundational questions about the nature of intelligence. Systems trained to predict the next token in a sequence now generate coherent text, write functional code, and answer a wide range of questions. Yet these systems exhibit persistent failures in tasks requiring stable reasoning across time, physical interaction, or causal intervention. Such failures are often described informally as hallucinations, but their consistency across scale and domain suggests a deeper architectural limitation.
+
+A growing body of critique argues that intelligence requires more than surface-level statistical fluency. In particular, it requires internal models that encode causal structure, support counterfactual reasoning, and enable planning under constraints. Language-only autoregressive models, by construction, lack these capacities. They do not maintain an internal state that is authoritative with respect to the world; they merely extend views conditioned on prior views.
+
+This paper advances a precise formulation of that critique. We argue that the fundamental deficit of autoregressive systems is the absence of an authoritative internal history. Without such a history, a system cannot distinguish between speculative continuation and committed fact, between appearance and consequence. The result is inevitable drift under long-horizon generation and brittleness under intervention.
+
+We develop this claim constructively. First, we formalize autoregressive generation as a view-only stochastic process and show that compounding divergence is unavoidable. Second, we introduce deterministic event logs as a minimal formal structure supporting authoritative replay and invariant preservation. Third, we show that world models, structural linguistic constraints, and event logs are formally equivalent as invariant-preserving transition systems. Finally, we demonstrate how efficiency and automaticity emerge naturally from repeated validation through kernel optimization, eliminating the false tradeoff between deliberation and speed.
+
+The central thesis is simple but strong: intelligence requires machinery that can tell the difference between a view and a commitment.
+
+\subsection{Contributions}
+
+This paper advances a unified theoretical framework for understanding intelligence as the management of authoritative commitment rather than the accumulation of predictive fluency. It begins by providing a formal characterization of autoregressive generation as a view-only process of sequential conditioning, in which each continuation is produced solely on the basis of prior outputs without access to an invariant-governed state. This characterization makes explicit the structural limitations of autoregressive architectures that are often obscured by their empirical performance.
+
+\par
+The paper then establishes that view-only systems exhibit unavoidable long-horizon drift under mild and general assumptions. By analyzing error propagation in the absence of invariant-gated transitions, it is shown that even small deviations from admissible structure compound irreversibly over extended sequences, yielding incoherence under perturbation or intervention. This result explains the characteristic failure modes of large predictive models without appealing to implementation details or training deficiencies.
+
+\par
+Next, the paper introduces a deterministic event-log formalism in which authoritative history is treated as a first-class computational object. In this formalism, state is not updated implicitly but derived through invariant-preserving replay of committed events. This construction enforces coherence by design, ensuring that speculative views and hypothetical continuations cannot corrupt authoritative state.
+
+\par
+Building on this foundation, the paper demonstrates that world models in control theory, structural constraints in linguistic cognition, and event-log architectures in computation are instances of a single abstract structure: invariant-preserving transition systems. By establishing this equivalence, the work unifies previously disparate approaches under a common formal core, showing that their differences lie in representation and domain specificity rather than in expressive power.
+
+\par
+Finally, the paper provides a principled account of how fast, automatic behavior emerges from slow, authoritative reasoning through kernel-level optimization. Repeatedly validated event schemas are compiled into low-cost replay primitives, yielding efficient execution without sacrificing correctness. Automaticity is thus explained not as heuristic shortcut or approximation, but as optimized authority grounded in prior invariant-preserving validation.
+
+
+\subsection{Roadmap}
+
+Section 2 introduces formal preliminaries. Section 3 defines the world model requirement. Section 4 analyzes autoregressive generation and proves drift results. Section 5 introduces deterministic event logs and proves replay stability. Section 6 connects structural linguistic constraints to invariant-preserving transitions. Section 7 presents the unified equivalence theorem. Section 8 introduces kernel optimization and automaticity. Section 9 formalizes planning and safety. Section 10 discusses implications and limitations.
+
+% ============================================================
+\section{Formal Preliminaries}
+% ============================================================
+
+\subsection{States, observations, and actions}
+
+We distinguish between internal states, external observations, and actions.
+
+\begin{definition}[State space]
+$\State$ denotes the internal state space of the system. States summarize all committed information relevant to prediction, planning, and constraint evaluation.
+\end{definition}
+
+\begin{definition}[Observation space]
+$\Obs$ denotes the space of externally observable signals, including tokens, images, or sensor readings.
+\end{definition}
+
+\begin{definition}[Action space]
+$\Act$ denotes the space of actions available to the system.
+\end{definition}
+
+\subsection{Views and commitments}
+
+\begin{definition}[View]
+A view is any externally expressed or internally proposed description that has not been committed to the authoritative state. The space of views is denoted $\View$.
+\end{definition}
+
+\begin{definition}[Commitment]
+A commitment is an update to the authoritative internal state, recorded as part of a deterministic history and subject to invariant constraints.
+\end{definition}
+
+This distinction is central: views may be inconsistent, speculative, or transient; commitments must be lawful.
+
+\subsection{Invariants}
+
+\begin{definition}[Invariant]
+An invariant is a predicate defining a subset $\Inv \subseteq \State$ of admissible states. A state $\sigma$ is legal if $\sigma \in \Inv$.
+\end{definition}
+
+Invariants encode physical, logical, or structural constraints that must never be violated by committed state.
+
+\subsection{Transition systems}
+
+\begin{definition}[Transition function]
+A transition function is a (possibly partial) map
+\[
+\delta : \State \times \Act \rightarrow \State
+\]
+defined only when the resulting state lies in $\Inv$.
+\end{definition}
+
+\begin{remark}
+Partiality is essential: inadmissible transitions are rejected rather than penalized.
+\end{remark}
+
+% ============================================================
+\section{World Models as Invariant-Preserving Predictors}
+% ============================================================
+
+The claim that intelligence requires a \emph{world model} is often stated informally. In this section we give a precise formulation that isolates the functional requirements without committing to any particular implementation substrate. The core idea is that a world model is not a generator of surface detail, but a constrained predictor of lawful state transitions.
+
+\subsection{Historical motivation}
+
+Early theories of cognition emphasized internal models as tools for prediction and control rather than for faithful reproduction of sensory input. Craik’s original formulation characterized thought as the manipulation of internal models that anticipate the consequences of action. Classical AI planning systems instantiated this idea explicitly, encoding state variables and transition operators subject to hard constraints. More recent approaches reintroduce world models through learned latent dynamics, motivated by sample efficiency and transfer.
+
+Across these traditions, the unifying thread is not simulation fidelity but \emph{counterfactual sensitivity}: the ability to answer questions of the form, “What would happen if I did this instead?”
+
+\subsection{Formal definition}
+
+\begin{definition}[World model]
+A world model is a tuple $(g, f)$ where
+\[
+g : \Obs^{*} \rightarrow \State
+\quad\text{and}\quad
+f : \State \times \Act \rightarrow \State
+\]
+such that:
+\begin{enumerate}
+\item $g$ maps observation histories to internal states;
+\item $f$ predicts the next state conditional on an action;
+\item $f$ is defined only when the resulting state lies in $\Inv$.
+\end{enumerate}
+\end{definition}
+
+The defining feature is not probabilistic prediction per se, but admissibility: the model must preserve invariants under action-conditioned transitions.
+
+\subsection{Completeness, soundness, and efficiency}
+
+\begin{definition}[Soundness]
+A world model is \emph{sound} if, for all admissible states $\sigma \in \Inv$ and actions $a \in \Act$, the predicted transition $f(\sigma,a)$ respects the same invariants as the true environment.
+\end{definition}
+
+\begin{definition}[Completeness]
+A world model is \emph{complete} relative to a task domain if every admissible action sequence in the environment corresponds to a sequence of transitions in the model.
+\end{definition}
+
+\begin{definition}[Efficiency]
+A world model is \emph{efficient} if it supports planning and adaptation with asymptotically fewer observations than direct imitation, by exploiting structural regularities encoded in $\Inv$.
+\end{definition}
+
+These criteria clarify why generating realistic sensory detail is neither necessary nor sufficient. A system may produce visually plausible futures while violating causal or structural constraints, rendering it useless for planning.
+
+\subsection{Planning as constrained rollout}
+
+Given a world model and a cost function $\cost : \State \rightarrow \mathbb{R}$, planning consists of evaluating hypothetical action sequences without committing them.
+
+\begin{definition}[Plan evaluation]
+For a horizon $H$ and action sequence $(a_1,\dots,a_H)$, define the predicted rollout
+\[
+\sigma_{t+1} = f(\sigma_t, a_t),
+\]
+with cumulative cost
+\[
+J = \sum_{t=1}^{H} \cost(\sigma_t).
+\]
+\end{definition}
+
+Crucially, this evaluation occurs in the space of hypothetical states. Only selected actions are later committed to the authoritative history.
+
+\begin{remark}
+This separation between hypothetical rollout and commitment is precisely what autoregressive systems lack.
+\end{remark}
+
+% ============================================================
+\section{Autoregressive Generation as View-Only Dynamics}
+% ============================================================
+
+We now contrast world models with autoregressive systems. Although such systems are often described as predictive, their prediction targets are views rather than states.
+
+\subsection{Formal characterization}
+
+An autoregressive model defines a family of conditional distributions
+\[
+P(x_t \mid x_{<t})
+\]
+over observations. Generation proceeds by sampling or decoding from these conditionals.
+
+Let $S_t = x_{<t}$ denote the prefix at time $t$. Then autoregressive generation defines a Markov process on prefixes:
+\[
+\mathbb{P}(S_{t+1} = S_t \cdot x) = D(P(x \mid S_t)),
+\]
+where $D$ is a decoding operator.
+
+\subsection{Absence of authoritative state}
+
+Although prefixes may encode information implicitly, they do not constitute an authoritative state in the sense defined earlier. There is no distinguished internal object against which views are checked, nor any mechanism that enforces invariant preservation across steps.
+
+\begin{remark}
+Any notion of “state” in an autoregressive system is implicit, distributed, and non-binding. It cannot reject an illegal continuation; it can only assign it lower probability.
+\end{remark}
+
+\subsection{Exposure bias and distributional mismatch}
+
+During training, conditionals are optimized under a data distribution over prefixes. During generation, prefixes are drawn from the model’s own induced distribution. This mismatch accumulates.
+
+\begin{assumption}[Local mismatch bound]
+There exists $\varepsilon > 0$ such that for all prefixes in a relevant support,
+\[
+\TV\!\left(P_{\text{data}}(\cdot \mid s), P_{\text{model}}(\cdot \mid s)\right) \le \varepsilon.
+\]
+\end{assumption}
+
+\subsection{Horizon divergence}
+
+\begin{theorem}[View-only drift]
+Under the local mismatch bound, the total variation distance between the distribution of prefixes under the model and under the data distribution grows at least linearly with horizon:
+\[
+\TV\!\left(P_{\text{model}}(S_t), P_{\text{data}}(S_t)\right) \le t \varepsilon,
+\]
+up to saturation.
+\end{theorem}
+
+\begin{proof}
+The result follows by induction using a telescoping argument on the Markov chain induced by autoregressive generation. Each step introduces at most $\varepsilon$ additional divergence; absent a contraction mechanism, these errors accumulate.
+\end{proof}
+
+\subsection{Projection to state space}
+
+Suppose one attempts to recover an internal state by projecting prefixes into a latent space.
+
+\begin{assumption}[Lipschitz projection]
+There exists a projection $\pi : \Obs^{*} \rightarrow \State$ and constant $L>0$ such that
+\[
+\mathbb{E}[d(\pi(S), \pi(S'))] \le L \, \TV(P(S),P(S')).
+\]
+\end{assumption}
+
+\begin{proposition}[Projected drift]
+Under the above assumptions, expected deviation between projected states grows at least linearly with horizon.
+\end{proposition}
+
+\begin{proof}
+Immediate from the horizon divergence theorem and the Lipschitz condition.
+\end{proof}
+
+This result formalizes the intuition that even small local errors become catastrophic when propagated through view-only generation.
+
+\subsection{Why heuristics do not solve the problem}
+
+Techniques such as multi-sample selection, chain-of-thought prompting, or tree-based decoding can reduce local error by searching over views. However, they do not introduce an authoritative state or invariant gating. They select among speculative continuations but never bind the system to a committed internal history.
+
+\begin{remark}
+Improved search over views is still search over views. Without commitment, there is no notion of correctness beyond local plausibility.
+\end{remark}
+
+% ============================================================
+\section{Deterministic Event Logs and Authoritative State}
+% ============================================================
+
+We now introduce the central constructive alternative to view-only autoregression: a deterministic event-log architecture that enforces authoritative history through invariant-preserving replay. This formalism separates speculative views from committed facts and provides the minimal substrate required for grounding, planning, and verification.
+
+\subsection{Motivation: why history, not snapshots}
+
+State-based descriptions are ubiquitous in formal models of cognition and computation. However, when states are updated implicitly or probabilistically, the provenance of information becomes opaque. By contrast, an explicit history records not only \emph{what} the current state is, but \emph{why} it is that way.
+
+Event logs treat state as a derived quantity rather than a primitive. The authoritative object is the sequence of committed events; state is obtained by replay.
+
+\subsection{Event space and replay semantics}
+
+\begin{definition}[Event space]
+Let $\mathcal{E}$ be a set of atomic events. Events represent minimal, semantically meaningful state transitions admissible under system invariants.
+\end{definition}
+
+\begin{definition}[Event log]
+An event log is a finite sequence
+\[
+\Log = (e_1, e_2, \dots, e_T) \in \mathcal{E}^{*}.
+\]
+\end{definition}
+
+\begin{definition}[Replay function]
+Fix an initial state $\sigma_0 \in \Inv$. Let
+\[
+\delta : \State \times \mathcal{E} \rightarrow \State
+\]
+be a deterministic transition function. The replay function is defined recursively by
+\[
+\Replay(\emptyset) = \sigma_0, \qquad
+\Replay(\Log \cdot e) = \delta(\Replay(\Log), e).
+\]
+\end{definition}
+
+\begin{remark}
+Replay is deterministic by construction. Any nondeterminism must occur at the proposal stage, prior to commitment.
+\end{remark}
+
+\subsection{Commitment and invariant gating}
+
+The defining feature of authoritative history is that not all proposed events are accepted.
+
+\begin{definition}[Invariant-gated commit]
+Let $\Inv \subseteq \State$ be the admissible set. The commit operator is a partial function
+\[
+\Commit : \mathcal{E}^{*} \times \mathcal{E} \rightharpoonup \mathcal{E}^{*}
+\]
+defined by
+\[
+\Commit(\Log, e) =
+\begin{cases}
+\Log \cdot e & \text{if } \delta(\Replay(\Log), e) \in \Inv, \\
+\text{undefined} & \text{otherwise.}
+\end{cases}
+\]
+\end{definition}
+
+Proposals that would violate invariants are rejected outright rather than penalized probabilistically.
+
+\subsection{Views as non-authoritative projections}
+
+\begin{definition}[View projection]
+A view is any function
+\[
+q : \State \rightarrow \View.
+\]
+Given an event log $\Log$, the authoritative view is $q(\Replay(\Log))$. Other views may be generated independently and need not correspond to any committed state.
+\end{definition}
+
+\begin{remark}
+Multiple views may coexist without conflict. Only the log determines what is authoritative.
+\end{remark}
+
+\subsection{Replay-stabilized consistency}
+
+We now state and prove the central stability property of the architecture.
+
+\begin{theorem}[Replay-stabilized consistency]
+Assume $\Replay(\emptyset) = \sigma_0 \in \Inv$. Under invariant-gated commit, every reachable authoritative state is admissible:
+\[
+\Log \text{ reachable by successive commits } \implies \Replay(\Log) \in \Inv.
+\]
+Moreover, no sequence of non-authoritative views can corrupt the authoritative state.
+\end{theorem}
+
+\begin{proof}
+By induction on the length of the log. The base case holds by assumption. For the inductive step, suppose $\Replay(\Log) \in \Inv$. A new event $e$ is committed only if $\delta(\Replay(\Log), e) \in \Inv$. Thus $\Replay(\Log \cdot e) \in \Inv$. Views do not alter $\Log$ and therefore cannot affect $\Replay(\Log)$.
+\end{proof}
+
+\begin{corollary}[Quarantine of incoherence]
+Any incoherence arising in speculative views remains non-authoritative unless it passes the invariant gate. Incoherent views may exist, but they cannot propagate into committed state.
+\end{corollary}
+
+\subsection{Branching, counterfactuals, and planning}
+
+Event logs naturally support counterfactual reasoning.
+
+\begin{definition}[Hypothetical extension]
+Given a log $\Log$ and a candidate event sequence $(e_1',\dots,e_k')$, the hypothetical state is
+\[
+\sigma' = \Replay(\Log \cdot e_1' \cdots e_k'),
+\]
+provided all intermediate transitions are admissible.
+\end{definition}
+
+Such hypothetical extensions are evaluated during planning but not committed unless selected.
+
+\begin{remark}
+This formalizes counterfactual reasoning as replay over uncommitted branches. The distinction between imagination and action is enforced structurally rather than heuristically.
+\end{remark}
+
+\subsection{Relation to causality}
+
+The meaning of an event is defined entirely by its effect under replay. This aligns naturally with interventionist accounts of causation: to intervene is to append an event and observe its consequences via replay.
+
+\begin{definition}[Intervention]
+An intervention corresponds to proposing an event $e$ whose acceptance is evaluated by the commit gate. The causal effect of the intervention is the difference between $\Replay(\Log)$ and $\Replay(\Log \cdot e)$.
+\end{definition}
+
+\subsection{Comparison with alternative formalisms}
+
+State machines encode transitions directly but do not preserve history as a first-class object. Petri nets emphasize concurrency but lack a single authoritative linearization without additional structure. Temporal logics describe admissible sequences but do not provide a constructive replay mechanism.
+
+Event logs differ in making history primitive and state derivative. This inversion is essential for auditability, counterfactual reasoning, and invariant enforcement.
+
+Naive replay incurs a computational cost that is linear in the length of the event log, since the authoritative state must be reconstructed by sequentially applying each committed event. While this property is sufficient for theoretical analysis, it is impractical for real-time systems operating over long histories.
+
+\par
+In practice, this cost is mitigated through incremental replay, in which the current authoritative state is maintained alongside the log and updated eagerly upon each successful commit. Full replay is then required only for validation, auditing, or recovery, rather than for routine operation.
+
+\par
+Additional efficiency is obtained through snapshotting, whereby periodic checkpoints of the authoritative state are recorded and used as replay anchors. When reconstruction is required, replay proceeds from the most recent snapshot rather than from the beginning of the log, reducing reconstruction time while preserving determinism and auditability.
+
+\par
+Finally, indexed projections, or materialized views, are employed to support efficient access to commonly queried aspects of state. These projections are derived functions of the authoritative state and are updated deterministically in response to new commits. Because they do not participate in commitment, they cannot corrupt authoritative history.
+
+\par
+Together, these techniques preserve the formal guarantees of invariant-preserving replay while enabling real-time operation at scale. They demonstrate that treating history as authoritative is not merely a conceptual idealization, but a viable computational strategy.
+
+% ============================================================
+\section{Structural Constraints and Domain-Specific Invariants}
+% ============================================================
+
+The event-log formalism introduced in the previous section is intentionally domain-agnostic. It specifies how authoritative history is maintained, but not what kinds of events or invariants are required. In this section we show how domain-specific structure—particularly in language and action—instantiates the same invariant-preserving transition discipline.
+
+The key claim is that what are often described as “rules,” “schemas,” or “forms” are best understood as admissibility constraints on event composition.
+
+\subsection{From surface regularities to structural admissibility}
+
+Surface regularities, whether linguistic or behavioral, are insufficient to guarantee coherence under perturbation. What stabilizes cognition is not the ability to predict common continuations, but the ability to reject illegal ones.
+
+Structural constraints define which event compositions are admissible, independently of their frequency.
+
+\begin{definition}[Structural invariant]
+A structural invariant is a predicate $\Omega_D \subseteq \State_D$ over a domain-specific state space $\State_D$ (e.g.\ syntactic configurations, motor plans) such that only states in $\Omega_D$ may be committed.
+\end{definition}
+
+\subsection{Language as constrained event composition}
+
+Consider a domain $\State_{\text{lang}}$ whose elements encode partial linguistic structures. Events correspond to minimal structure-building operations.
+
+\begin{definition}[Linguistic event]
+A linguistic event $e \in \mathcal{E}_{\text{lang}}$ is a minimal admissible transformation of a partial structure, such as feature unification or hierarchical composition.
+\end{definition}
+
+\begin{definition}[Structural composition]
+Let $\delta_{\text{lang}} : \State_{\text{lang}} \times \mathcal{E}_{\text{lang}} \rightarrow \State_{\text{lang}}$ be a deterministic transition function defined only when the resulting structure satisfies domain invariants (e.g.\ hierarchy, locality).
+\end{definition}
+
+These invariants are not statistical preferences. They are hard constraints: violations are undefined, not improbable.
+
+\begin{remark}
+This distinction explains why grammatically invalid constructions cannot be repaired by probability mass alone. They are rejected because they fail admissibility, not because they are rare.
+\end{remark}
+
+\subsection{Hierarchy as a stability constraint}
+
+Hierarchical organization is often treated as a representational choice. In the present framework it plays a deeper role: hierarchy enforces bounded locality of dependency and enables compositional replay.
+
+\begin{lemma}[Hierarchical admissibility]
+If a structural invariant enforces hierarchical embedding, then admissible event sequences admit replay with bounded dependency depth.
+\end{lemma}
+
+\begin{proof}[Sketch]
+Hierarchical constraints ensure that dependencies are nested rather than crossed. Replay of nested dependencies can be performed using a stack discipline, bounding the required contextual access.
+\end{proof}
+
+\subsection{Structural collapse and canonical form}
+
+Many domain-specific operations admit multiple equivalent representations. Structural collapse maps such equivalence classes to canonical forms.
+
+\begin{definition}[Canonical collapse]
+Let $\sim$ be an equivalence relation on $\State_D$ preserving semantic content. A collapse operator
+\[
+\kappa : \State_D \rightarrow \State_D / \sim
+\]
+maps states to canonical representatives.
+\end{definition}
+
+Collapse reduces redundancy without sacrificing invariants. It is a form of normalization.
+
+\subsection{Action and motor control}
+
+The same formalism applies to motor planning. Let $\State_{\text{motor}}$ encode partial motor plans, and let events correspond to elementary motor primitives.
+
+\begin{definition}[Motor invariant]
+A motor invariant encodes biomechanical, energetic, or safety constraints such that only physically realizable plans are admissible.
+\end{definition}
+
+Motor expertise consists in discovering sequences of events that reliably satisfy these invariants across contexts.
+
+\subsection{Why domain-specific invariants must be hard}
+
+Soft constraints can be violated with some probability. Hard invariants cannot.
+
+\begin{proposition}[Necessity of hard constraints]
+If domain invariants are enforced probabilistically rather than by admissibility, then long-horizon plans cannot be guaranteed invariant-preserving under replay.
+\end{proposition}
+
+\begin{proof}
+Probabilistic enforcement allows a non-zero chance of violation at each step. Over unbounded horizons, the probability of at least one violation approaches one.
+\end{proof}
+
+\subsection{Relation to learned representations}
+
+Nothing in this framework forbids learning invariants. What is required is that, once learned, they function as hard gates on commitment.
+
+\begin{remark}
+Learning determines what the invariants are; architecture determines how they are enforced.
+\end{remark}
+
+% ============================================================
+\section{Toward a Unified Formalism}
+% ============================================================
+
+At this point, three parallel constructions have been developed within the framework. The first consists of action-conditioned world models, which preserve physical and causal invariants by restricting state transitions to those consistent with environmental dynamics. The second consists of structural constraint systems, which enforce domain-specific admissibility conditions, such as hierarchical organization and compositional locality in language or feasibility constraints in action. The third consists of deterministic event-log architectures, which preserve authoritative history by deriving state exclusively through invariant-preserving replay of committed events.
+
+\par
+Although these constructions originate in different literatures and are often treated as fundamentally distinct, they share a common underlying structure. In the following section, it is shown that each can be formalized as an instance of a single abstract class of systems, differing only in representational choice and domain-specific invariant specification rather than in computational principle.
+
+
+% ============================================================
+\section{Invariant-Preserving Transition Systems}
+% ============================================================
+
+We now abstract from domain-specific detail and identify the common formal structure underlying world models, structural constraint systems, and deterministic event logs. The goal is not to introduce new machinery, but to recognize an invariant pattern already present in each case.
+
+\subsection{Abstract definition}
+
+\begin{definition}[Invariant-preserving transition system]
+An invariant-preserving transition system (IPTS) is a tuple
+\[
+\mathcal{T} = (X, U, \tau, \Omega),
+\]
+where $X$ denotes a state space and $U$ denotes an input or action space. The transition function
+\[
+\tau : X \times U \rightharpoonup X
+\]
+is a partial function, meaning that it is defined only on a subset of state--action pairs. The set $\Omega \subseteq X$ specifies the admissible states of the system. A transition $\tau(x,u)$ is defined if and only if the resulting state lies in $\Omega$.
+\end{definition}
+
+\par
+The defining feature of this formalism is partiality rather than probabilistic weighting. Transitions that would violate invariants are not assigned low likelihood or penalized by an objective function; they are undefined and therefore unexecutable. Admissibility is enforced structurally at the level of state evolution rather than statistically at the level of prediction.
+
+\subsection{Instantiation by world models}
+
+A world model specified by a state transition function $f$ and an observation or representation map $g$ induces an invariant-preserving transition system in a direct manner. In this instantiation, the state space $X$ corresponds to the set of internal world states $\State$, and the action space $U$ corresponds to the set of agent actions $\Act$. The transition function $\tau$ is given by the world model dynamics, so that $\tau(\sigma,a) = f(\sigma,a)$ whenever the resulting state is admissible. The admissible set $\Omega$ coincides with the set of physically or causally valid world states, denoted $\Inv$.
+
+\par
+Under this identification, soundness of the world model is equivalent to the correctness of $\tau$ with respect to environmental dynamics, while invariant preservation ensures that planning and prediction remain confined to physically realizable trajectories.
+
+Soundness of the world model corresponds to correctness of $\tau$ relative to environmental dynamics.
+
+\subsection{Instantiation by structural constraint systems}
+
+A structural constraint system induces an invariant-preserving transition system by treating domain-specific configurations as states and structure-building operations as transitions. In this instantiation, the state space $X$ is identified with a domain-dependent configuration space $\State_D$, where $D$ may correspond to language, motor control, or any other structured cognitive domain. The input space $U$ is identified with the set of domain events $\mathcal{E}_D$, each event representing a minimal admissible transformation of a partial structure.
+
+\par
+The transition function $\tau$ is defined by the rules of admissible composition within the domain. A transition $\tau(x,e)$ is defined only when the application of event $e$ to state $x$ yields a configuration that satisfies the structural constraints of the domain. The admissible set $\Omega$ therefore coincides with the set $\Omega_D$ of structurally well-formed states, encoding invariants such as hierarchy, locality, compositional closure, or physical feasibility. Under this formulation, structural well-formedness is enforced directly through partiality of the transition function rather than indirectly through probabilistic preference.
+
+\subsection{Instantiation by event logs}
+
+An event-log architecture induces an invariant-preserving transition system by taking authoritative system states as elements of the state space and committed events as inputs. In this case, the state space $X$ corresponds to the set of system states $\State$, while the input space $U$ corresponds to the set of atomic events $\mathcal{E}$ recorded in the log. The transition function $\tau$ is given by the deterministic event application function $\delta$, so that $\tau(\sigma,e) = \delta(\sigma,e)$ whenever the resulting state is admissible.
+
+\par
+The admissible set $\Omega$ is identified with the invariant-satisfying states $\Inv$, and the partiality of $\tau$ enforces invariant-gated commitment. Replay is then defined as the iterative application of $\tau$ starting from a fixed initial state, yielding a deterministic reconstruction of the authoritative state from the committed event history. This construction ensures that all reachable states arise from sequences of admissible transitions and that speculative or non-authoritative views cannot alter committed state.
+
+
+\subsection{Equivalence theorem}
+
+We now state the central equivalence.
+
+\begin{theorem}[Equivalence of invariant-preserving formalisms]
+World models, structural constraint systems, and deterministic event logs are equivalent up to representation when each is formalized as an invariant-preserving transition system.
+
+The equivalence asserted by the theorem consists of three claims. First, each of the formalisms developed in the preceding sections induces an invariant-preserving transition system. This follows directly from their construction: world models, structural constraint systems, and event-log architectures each define a state space, an input space, a partial transition function, and a set of admissible states such that transitions are defined only when invariants are preserved.
+
+\par
+Second, for any invariant-preserving transition system $(X, U, \tau, \Omega)$, there exists a log-based realization whose replay reproduces the same transition behavior. Given such a system, one may define atomic events as elements of the input space $U$ and construct an event log as a finite sequence of these events. Replay is defined as the successive application of the transition function $\tau$ starting from a fixed initial state. Because $\tau$ is partial, invariant gating is enforced automatically: any event sequence that would lead outside $\Omega$ is undefined and therefore cannot be committed.
+
+\par
+Third, the apparent differences between world models, structural constraint systems, and event-log architectures correspond to choices of state representation and invariant specification rather than to differences in expressive power. Any behavior admissible under one formalism can be embedded into the others through the corresponding identification of states, inputs, and invariants. Consequently, the systems are equivalent up to encoding, and their distinctions are representational rather than structural.
+\end{theorem}
+
+\begin{proof}
+The first claim follows immediately from the constructions given in Sections~4 and~5, where each formalism was shown to instantiate the defining components of an invariant-preserving transition system. 
+
+\par
+To establish the second claim, consider an arbitrary invariant-preserving transition system $(X, U, \tau, \Omega)$. Define a log-based system in which events correspond to elements of $U$ and replay corresponds to iterated application of $\tau$ from a designated initial state. Because $\tau$ is a partial function whose codomain is restricted to $\Omega$, any attempt to replay an inadmissible transition is undefined, thereby enforcing invariant gating at the level of commitment.
+
+\par
+The third claim follows from the observation that admissibility is preserved under representational embedding. Given an admissible transition sequence in one formalism, the corresponding sequence in another formalism—constructed via the appropriate identification of states and transitions—yields the same admissible behavior under replay. Thus, differences among the formalisms do not reflect differences in computational principle, but only in representational choice.
+\end{proof}
+
+
+\begin{corollary}[Necessity of authoritative history]
+Any system lacking an IPTS realization—specifically, any system without invariant-gated transitions—cannot guarantee long-horizon coherence under intervention.
+\end{corollary}
+
+\subsection{Why autoregression does not fit}
+
+Autoregressive models fail to instantiate an invariant-preserving transition system for structural reasons rather than for reasons of scale or training regime. In an autoregressive architecture, there is no distinguished internal state space $X$ that evolves independently of the surface-level output sequence. Instead, the system’s effective state is implicitly identified with the sequence of previously generated tokens, which conflates representation, history, and proposal into a single object.
+
+\par
+Moreover, autoregressive transitions do not exhibit partiality in the sense required by invariant-preserving systems. Given any prior context, the conditional distribution defining the next-token prediction assigns nonzero probability to all elements of the vocabulary, including those that would correspond to invariant violations in a structured domain. As a result, transitions that would be inadmissible under structural, causal, or logical constraints are not rendered undefined; they are merely assigned lower probability.
+
+\par
+Because of this, autoregressive systems lack a mechanism for rejecting illegal continuations outright. They can only downweight such continuations statistically, which is insufficient to guarantee invariant preservation under long-horizon generation or intervention. Over extended sequences, even small probabilities of violation compound, leading to the drift and incoherence analyzed earlier.
+
+\par
+For these reasons, autoregression is strictly weaker than invariant-preserving transition systems. Its expressive power is limited to approximating admissible behavior in distribution, rather than enforcing admissibility by construction. No increase in scale or training data alters this structural limitation.
+
+
+\subsection{Optional categorical perspective}
+
+For readers inclined toward abstraction, an IPTS may be viewed as a category whose objects are admissible states and whose morphisms are admissible transitions. Event logs correspond to composable morphism sequences; replay is functorial composition. Invariants define a subcategory closed under composition. This perspective adds no expressive power but clarifies compositionality.
+
+\begin{remark}
+Nothing in the argument depends on category theory. It merely provides a compact language for the equivalence.
+\end{remark}
+
+% ============================================================
+\section{Kernel Optimization and Compiled Replay}
+% ============================================================
+
+A common objection to invariant-preserving architectures is that they appear computationally expensive. If every proposed transition must be validated against global constraints and replayed through authoritative history, how can real-time behavior be achieved? This objection assumes that validation cost is fixed. In fact, invariant-preserving systems naturally admit a form of kernel optimization whereby repeated lawful transitions are compiled into low-cost replay primitives.
+
+\subsection{Repeated validation and cost reduction}
+
+Let $\mathcal{S}$ be a finite event schema,
+\[
+\mathcal{S} = (e_1, e_2, \dots, e_k),
+\]
+such that committing $\mathcal{S}$ from any state in a designated admissible context class $\Omega_{\mathcal{S}} \subseteq \Inv$ always results in an admissible state.
+
+Initially, execution of $\mathcal{S}$ requires full arbiter mediation: each event proposal $e_i$ must be validated sequentially. Let $C_n(\mathcal{S})$ denote the cost of executing $\mathcal{S}$ after $n$ successful commits.
+
+\begin{definition}[Validation cost]
+The validation cost $C(\mathcal{S})$ is the computational cost of confirming that $\Replay(\Log \cdot \mathcal{S}) \in \Inv$, including all invariant checks required during replay.
+\end{definition}
+
+\subsection{Cost collapse through repetition}
+
+Repeated successful validation allows the kernel to replace expensive checks with cached guarantees.
+
+\begin{assumption}[Contextual exhaustiveness]
+There exists a finite or effectively enumerable set of contexts $\Omega_{\mathcal{S}}$ such that $\mathcal{S}$ has been validated in all relevant admissible contexts.
+\end{assumption}
+
+\begin{proposition}[Cost monotonicity]
+If $\mathcal{S}$ is repeatedly committed without invariant violation across $\Omega_{\mathcal{S}}$, then
+\[
+C_{n+1}(\mathcal{S}) \le C_n(\mathcal{S}),
+\qquad
+\lim_{n \to \infty} C_n(\mathcal{S}) = C_{\mathrm{replay}},
+\]
+where $C_{\mathrm{replay}}$ is the cost of deterministic replay without validation.
+\end{proposition}
+
+\begin{proof}[Sketch]
+Invariant checks are redundant once correctness has been established for all admissible contexts. Removing redundant checks preserves correctness while reducing cost.
+\end{proof}
+
+\subsection{Cached schemas}
+
+\begin{definition}[Cached schema]
+A cached schema is an event schema $\mathcal{S}$ whose execution has been promoted from arbiter-mediated validation to direct replay, under a specified context class $\Omega_{\mathcal{S}}$.
+\end{definition}
+
+Cached schemas function as low-level primitives. They are fast precisely because their legality has already been proven.
+
+\begin{remark}
+Cached schemas are not unconstrained shortcuts. They are admissible only within their validated context class. Outside this class, control reverts to full validation.
+\end{remark}
+
+\subsection{Automaticity as compiled authority}
+
+Fast, apparently effortless behavior arises when cached schemas dominate execution. Such behavior is often described as intuitive or automatic, but in this framework it is simply compiled authority.
+
+\begin{proposition}[Authority preservation under caching]
+Cached schema execution preserves all invariants enforced by arbiter-mediated execution, provided that execution occurs within the validated context class.
+\end{proposition}
+
+\begin{proof}
+By definition, cached schemas are compiled from invariant-preserving executions. Their replay reproduces the same transitions without re-evaluating constraints.
+\end{proof}
+
+\subsection{Failure and re-escalation}
+
+Cached execution is not irrevocable. When conditions fall outside the validated context class, cached replay may be unsafe.
+
+\begin{definition}[Escalation]
+Escalation is the process by which execution of a cached schema is suspended and control is returned to arbiter-mediated validation upon detection of context mismatch.
+\end{definition}
+
+\begin{remark}
+This mechanism explains how rapid behavior can fail gracefully: rather than compounding error, the system slows down and reasserts authority.
+\end{remark}
+
+\subsection{Relation to learning}
+
+Learning in this framework is understood as a structured transformation of how event schemas are handled by the system rather than as a relaxation of constraint enforcement. Initially, novel event schemas are introduced as speculative proposals that must be evaluated under full arbiter control. Each proposed schema is executed only through invariant-gated validation, ensuring that its effects on authoritative history are admissible across the relevant state contexts.
+
+\par
+As execution proceeds, the system accumulates evidence about the reliability of a given schema. When repeated validation demonstrates that the schema preserves all required invariants across its intended domain of application, the system may promote it to a cached schema. This promotion reflects not a change in correctness criteria, but a change in how correctness is enforced: costly validation checks are replaced by previously established guarantees.
+
+\par
+Learning, therefore, does not weaken or bypass structural constraints. On the contrary, it strengthens efficiency by compiling invariant-preserving behavior into low-cost replay primitives. The system becomes faster not because it abandons authority, but because it has earned the right to exercise it more efficiently.
+
+
+\subsection{Why view-only systems cannot replicate this}
+
+Autoregressive systems exhibit fast generation because they never validate. However, without an arbiter and authoritative history, they cannot distinguish cached legality from coincidental regularity. As a result, speed is achieved at the cost of correctness, and no principled mechanism exists for re-escalation when invariants are violated.
+
+\begin{corollary}[False automaticity]
+Any system that exhibits fast execution without a mechanism for authoritative validation risks unbounded error accumulation under perturbation.
+\end{corollary}
+
+% ============================================================
+\section{Planning as Search over Authoritative History}
+% ============================================================
+
+We now show how goal-directed behavior arises naturally once authoritative history, invariant gating, and cached replay are in place. Planning is not an auxiliary module layered atop the system; it is the disciplined exploration of hypothetical event logs under admissibility constraints.
+
+\subsection{Plans as hypothetical extensions}
+
+Let $\Log$ be the current authoritative log. A plan is a finite sequence of candidate events evaluated without commitment.
+
+\begin{definition}[Plan]
+A plan is a finite sequence
+\[
+\pi = (e_1, e_2, \dots, e_k)
+\]
+such that $\Replay(\Log \cdot \pi)$ is defined, i.e.\ all intermediate transitions are admissible.
+\end{definition}
+
+Plans exist entirely in hypothetical space until committed.
+
+\subsection{Objectives as evaluative functionals}
+
+An objective assigns value to reachable states.
+
+\begin{definition}[Objective functional]
+An objective is a function
+\[
+J : \State \rightarrow \mathbb{R}
+\]
+evaluated on replayed hypothetical states.
+\end{definition}
+
+Objectives do not determine admissibility. They rank admissible outcomes.
+
+\subsection{Planning as constrained optimization}
+
+Planning is the process of selecting a plan that optimizes the objective while respecting invariants.
+
+\begin{definition}[Constrained planning problem]
+Given current log $\Log$, objective $J$, and planning horizon $H$, find
+\[
+\pi^* = \arg\min_{\pi \in \Pi_H} J(\Replay(\Log \cdot \pi)),
+\]
+where $\Pi_H$ is the set of admissible plans of length $\le H$.
+\end{definition}
+
+\begin{remark}
+Illegitimate plans are excluded by construction, not penalized.
+\end{remark}
+
+\subsection{Safety as admissibility}
+
+Safety constraints are simply invariants expressed at the system level.
+
+\begin{definition}[Safety invariant]
+A safety invariant is a predicate $\Omega_{\text{safe}} \subseteq \State$ such that any state outside $\Omega_{\text{safe}}$ is uncommittable.
+\end{definition}
+
+\begin{proposition}[Safety by construction]
+If all committed states satisfy $\Omega_{\text{safe}}$, then no committed action sequence can violate safety.
+\end{proposition}
+
+\begin{proof}
+Immediate from invariant-gated commit: unsafe transitions are undefined.
+\end{proof}
+
+\subsection{Hard constraints vs.\ soft penalties}
+
+Penalty-based systems encode safety as a cost to be traded off. Invariant-based systems encode safety as impossibility.
+
+\begin{proposition}[Non-compensability of invariants]
+No finite objective penalty is equivalent to an invariant constraint under unbounded planning horizons.
+\end{proposition}
+
+\begin{proof}
+Any finite penalty can be outweighed by sufficient reward. An invariant cannot.
+\end{proof}
+
+\subsection{Escalation during planning}
+
+Cached schemas accelerate planning but may fail under novel contexts.
+
+\begin{definition}[Planning escalation]
+Planning escalation occurs when a cached schema cannot be safely applied during hypothetical replay, triggering arbiter-mediated validation.
+\end{definition}
+
+This ensures correctness under novelty without sacrificing speed in familiar domains.
+
+\subsection{Failure modes}
+
+Although invariant-preserving systems eliminate entire classes of failure associated with unconstrained prediction, they are not immune to error. One source of failure arises from incomplete or incorrectly specified invariants. If the admissibility conditions enforced by the arbiter fail to capture all relevant structural, causal, or safety constraints, the system may admit transitions that are formally legal but substantively undesirable.
+
+\par
+A second source of failure concerns the specification of objective functions. While objectives do not determine admissibility, they guide selection among admissible futures. Poorly chosen or misaligned objectives can therefore lead the system to pursue outcomes that satisfy invariants yet fail to meet external performance or alignment criteria.
+
+\par
+Failure may also result from bounded search horizons. Planning over authoritative history is necessarily finite, and insufficient lookahead can cause the system to select locally admissible plans that lead to undesirable long-term consequences. This limitation reflects computational trade-offs rather than architectural deficiency.
+
+\par
+Finally, errors may occur when context classes for cached schemas are misidentified. If a schema is promoted to low-cost replay under conditions broader than those for which its invariant preservation has been established, automatic execution may occur in contexts where escalation would have been required.
+
+\par
+Crucially, these failure modes are diagnosable by design. They manifest as explicit violations, refusals, or escalations within the system’s decision process, rather than as silent drift or undetected incoherence. This transparency distinguishes invariant-preserving systems from view-only architectures, whose failures often remain latent until they accumulate catastrophically.
+
+
+\subsection{Comparison with contemporary safety approaches}
+
+Unlike reinforcement learning with human feedback, which relies on external correction, invariant-preserving systems enforce safety internally. Unlike red-teaming, which samples failures, admissibility prevents them.
+
+\begin{remark}
+Interpretability is intrinsic: every committed action is justified by replay.
+\end{remark}
+
+% ============================================================
+\section{Why Scaling Alone Is Insufficient}
+% ============================================================
+
+The preceding analysis explains why increasing model capacity does not resolve the deficiencies of view-only architectures. Without authoritative history and invariant gating, increased scale merely accelerates drift.
+
+Planning, safety, and efficiency are not emergent properties of prediction. They are consequences of commitment.
+
+% ============================================================
+\section{Empirical Signatures and Evaluation Criteria}
+% ============================================================
+
+A theory of intelligence that cannot be empirically distinguished from its competitors is of limited scientific value. The framework developed in this paper makes strong architectural commitments, and therefore yields concrete, testable predictions. In this section we identify empirical signatures that differentiate invariant-preserving systems from view-only predictive models.
+
+\subsection{What must be evaluated}
+
+Standard benchmarks in artificial intelligence typically emphasize short-horizon accuracy or next-step prediction performance. While such metrics are appropriate for assessing surface-level fluency or local predictive competence, they are insufficient for detecting the presence of authoritative history or invariant-gated state evolution. Systems that differ fundamentally in their capacity for commitment may nevertheless achieve comparable scores on these benchmarks.
+
+\par
+Evaluation must therefore target properties that are sensitive to architectural differences rather than to statistical approximation alone. In particular, the relevant measures concern long-horizon coherence under intervention, where the system must maintain invariant-preserving behavior across extended sequences of actions. Robustness to distributional perturbation is likewise essential, as it probes the system’s ability to adapt to structurally meaningful changes rather than merely interpolate within familiar data regimes.
+
+\par
+Equally important is sample efficiency in novel environments, which reflects the system’s ability to infer and enforce new invariants from limited experience. Finally, evaluation must examine the system’s failure modes under constraint violation, distinguishing between architectures that fail silently through cumulative drift and those whose failures manifest as explicit rejection, escalation, or diagnostic signals. Only benchmarks that capture these dimensions can meaningfully assess the presence of authoritative state and commitment.
+
+
+\subsection{Long-horizon coherence}
+
+\begin{definition}[Coherence horizon]
+The coherence horizon $H_c$ of a system is the maximum horizon length such that replayed behavior remains invariant-preserving under arbitrary admissible perturbations.
+\end{definition}
+
+\begin{prediction}
+Invariant-preserving systems exhibit coherence horizons that scale with planning depth rather than training data size. View-only systems exhibit rapidly decaying coherence horizons regardless of scale.
+\end{prediction}
+
+Empirical measurement may involve iterated reasoning tasks, multi-step physical manipulation, or extended dialogue with constraint maintenance.
+
+\subsection{Perturbation tests}
+
+Perturbation tests introduce minor but structurally relevant changes to the environment.
+
+\begin{example}
+A navigation task in which a familiar obstacle is displaced by a small amount. Systems relying on surface regularities often fail catastrophically, while invariant-preserving systems adapt via replay and replanning.
+\end{example}
+
+\begin{prediction}
+Failure in view-only systems will manifest as confident but incoherent continuations. Failure in invariant-preserving systems will manifest as escalation and slowed decision-making.
+\end{prediction}
+
+\subsection{Sample efficiency and novelty}
+
+Invariant-preserving systems learn by validating transitions rather than memorizing trajectories.
+
+\begin{prediction}
+Given a novel environment with consistent dynamics, invariant-preserving systems require orders of magnitude fewer samples to achieve stable performance than predictive systems trained end-to-end.
+\end{prediction}
+
+This prediction aligns with biological learning and sharply contradicts data-scaling assumptions common in large models.
+
+\subsection{Failure topology}
+
+Not all failures are equal.
+
+\begin{definition}[Failure topology]
+The failure topology of a system characterizes how errors propagate under iteration: whether they remain localized, escalate gracefully, or compound irreversibly.
+\end{definition}
+
+\begin{prediction}
+Invariant-preserving systems exhibit bounded failure propagation: errors trigger rejection or escalation. View-only systems exhibit unbounded error accumulation.
+\end{prediction}
+
+\subsection{Benchmarks that matter}
+
+Not all benchmarks are equally informative with respect to the architectural claims advanced in this paper. Diagnostic benchmarks are those that require the system to respect hard constraints over extended interaction rather than merely producing locally plausible outputs. Tasks involving tool use with strict preconditions are particularly revealing, as successful performance depends on the system’s ability to reject actions that are syntactically or causally ill-formed rather than merely unlikely.
+
+\par
+Physical reasoning tasks with delayed consequences provide a second class of meaningful evaluation. Such tasks test whether a system can maintain invariant-preserving behavior across long horizons, where early decisions constrain later possibilities in ways that cannot be repaired retroactively. Similarly, language tasks that require syntactic repair under perturbation probe the presence of structural admissibility constraints, distinguishing systems that enforce grammatical well-formedness from those that merely approximate it statistically.
+
+\par
+Finally, environments that require reversible reasoning—where actions must be undone or counterfactual branches must be explored—directly test the system’s capacity for authoritative replay. Benchmarks that emphasize fluency, static correctness, or short-horizon prediction lack this diagnostic power and are therefore insufficient for evaluating the claims made here.
+
+\subsection{What would falsify this framework}
+
+The framework developed in this paper makes strong architectural claims and is therefore falsifiable. It would be undermined by empirical evidence demonstrating that a view-only predictive system can sustain unbounded coherence under arbitrary perturbations, maintaining invariant-preserving behavior without explicit mechanisms for authoritative state or commitment.
+
+\par
+Similarly, the framework would be challenged if an autoregressive model were shown to reliably reject illegal continuations in structured domains without incorporating explicit constraint machinery or invariant-gated transitions. Such a result would indicate that admissibility enforcement can emerge robustly from probabilistic conditioning alone.
+
+\par
+Finally, the theory would be falsified if planning and safety were observed to emerge consistently and robustly in systems lacking any notion of authoritative history, replay, or commitment. To date, no empirical evidence supports these possibilities, and existing results are consistent with the necessity of invariant-preserving architectures for long-horizon coherence and safety.
+
+
+\subsection{Relation to existing empirical work}
+
+Existing results on hallucination, compounding error, and brittleness in large models are predicted by this framework rather than explained away as engineering limitations.
+
+\begin{remark}
+Negative results are as informative as positive ones. The absence of certain failure modes is a stronger signal than benchmark success.
+\end{remark}
+
+% ============================================================
+\section{Related Work}
+% ============================================================
+
+The framework developed in this paper intersects with several traditions across artificial intelligence, cognitive science, linguistics, and philosophy. This section surveys relevant work, emphasizing points of genuine contact as well as principled divergence.
+
+\subsection{World models in artificial intelligence}
+
+The idea that intelligent systems require internal models of the world predates modern machine learning. Early cybernetic and control-theoretic approaches emphasized prediction and feedback as prerequisites for adaptive behavior. Craik famously proposed that organisms carry small-scale models of reality that allow them to anticipate outcomes.
+
+Classical AI instantiated world models through symbolic planning systems such as STRIPS and situation calculus. These systems possessed explicit state representations and transition operators but lacked robustness and scalability. Later hybrid approaches combined model-free reinforcement learning with learned dynamics models.
+
+More recent work on learned world models emphasizes latent-space prediction, particularly in continuous domains. While these approaches move away from symbolic manipulation, they often retain probabilistic transition semantics and lack hard admissibility constraints. As a result, they remain vulnerable to compounding error under long-horizon planning.
+
+The present framework differs by treating invariant preservation as primary. Prediction is subordinated to commitment, and uncertainty is handled at the proposal stage rather than during state evolution.
+
+\subsection{Critiques of statistical language models}
+
+Skepticism toward purely statistical language modeling has a long history. Early arguments emphasized the distinction between grammatical competence and surface distributional patterns. Contemporary critiques focus on hallucination, brittleness, and lack of grounding.
+
+Recent defenses of large language models argue that scale induces implicit world models. While large models exhibit impressive in-context generalization, their failure modes under perturbation suggest the absence of invariant-gated state transitions. The framework developed here explains both the strengths and weaknesses of such systems without denying their empirical success.
+
+\subsection{Structured approaches to language}
+
+Formal linguistics has long emphasized hierarchical structure, compositionality, and locality constraints. Constraint-based grammars and minimalist frameworks enforce well-formedness through admissibility rather than likelihood.
+
+The present work aligns with this tradition in treating structure as a hard constraint, but diverges in its computational realization. Rather than positing static grammars, structure is enforced dynamically through invariant-gated event composition and replay.
+
+\subsection{Cognitive architectures}
+
+Cognitive architectures such as SOAR and ACT-R incorporate explicit representations of goals, memory, and procedural knowledge. These systems resemble event-log architectures in their separation of declarative memory and procedural execution.
+
+However, classical architectures rely on hand-engineered rules and lack mechanisms for invariant learning and promotion. The present framework generalizes these ideas by treating logs and invariants as first-class computational objects subject to optimization.
+
+\subsection{Neuroscientific perspectives}
+
+Neuroscientific evidence supports the existence of replay mechanisms in biological cognition. Hippocampal replay during sleep and rest is implicated in consolidation and planning. Predictive coding frameworks emphasize the minimization of prediction error but often conflate perception and state update.
+
+The distinction between authoritative history and derived views clarifies these findings. Replay corresponds to authoritative reconstruction, while perception corresponds to proposal generation subject to validation.
+
+\subsection{Philosophical foundations}
+
+Philosophically, the framework resonates with interventionist accounts of causation, where meaning is defined by the effects of actions rather than by static descriptions. It also aligns with views in epistemology that distinguish belief from knowledge by commitment and justification.
+
+In philosophy of mind, the approach is compatible with functionalist accounts that emphasize role over substrate. What matters is not representation per se, but the existence of a mechanism capable of enforcing coherence under counterfactuals.
+
+\subsection{Event-based systems outside AI}
+
+Event sourcing and command–query responsibility segregation in software engineering demonstrate the practical advantages of treating history as authoritative. Distributed systems rely on logs to ensure consistency under partial failure.
+
+These systems illustrate that replay-based architectures are not exotic but proven at scale. The present work extends these ideas into cognition and intelligence.
+
+\subsection{Summary}
+
+Across disciplines, the same pattern recurs: systems that privilege authoritative history and invariant enforcement outperform those that rely on surface prediction alone. The contribution of this paper is to make this pattern explicit, formal, and testable.
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+This paper began with a simple observation: systems that predict continuations without committing to consequences cannot sustain coherence under intervention. From that observation we developed a unified framework in which intelligence is understood not as statistical fluency, but as the disciplined management of commitment.
+
+\subsection{Summary of contributions}
+
+The central contributions of this work are as follows.
+
+First, we distinguished \emph{authoritative history} from \emph{derived views}. Authoritative history is a deterministic, invariant-preserving record of committed events. Views are projections that may be speculative, approximate, or optimized for efficiency. Confusing the two leads to unbounded error accumulation.
+
+Second, we formalized invariant-preserving transition systems and showed that world models, structural constraint systems, and deterministic event logs are instances of the same abstract structure. This equivalence clarifies long-standing debates by showing that disagreements often concern representation rather than capability.
+
+Third, we demonstrated that autoregressive architectures fail to instantiate invariant-preserving transition systems. Their inability to reject illegal continuations, enforce causal constraints, or maintain authoritative state explains their characteristic failure modes under long-horizon reasoning and perturbation.
+
+Fourth, we introduced kernel optimization as a principled mechanism by which invariant-preserving systems achieve efficiency. Repeated lawful transitions are compiled into cached schemas, yielding fast behavior without sacrificing correctness. Automaticity emerges as optimized authority, not as heuristic shortcut.
+
+Fifth, we showed that planning and safety are naturally expressed as constrained search over hypothetical extensions of authoritative history. Objectives rank admissible futures; invariants determine which futures are possible at all. Safety is enforced by construction rather than penalty.
+
+Finally, we articulated empirical predictions and falsifiability criteria that distinguish this framework from purely predictive approaches. These predictions concern coherence horizons, failure topology, sample efficiency, and robustness under intervention.
+
+\subsection{Addressing the strongest objections}
+
+A common objection is that large predictive models may implicitly learn world models. The framework developed here does not deny that predictive systems can approximate invariants in distribution. What it denies is that approximation suffices for commitment. Without explicit invariant gating and authoritative history, such approximations cannot guarantee correctness under novel conditions.
+
+Another objection holds that tools or external modules can compensate for missing internal structure. However, unless those tools are integrated into an authoritative commit pathway, they merely relocate the problem. The question is not whether constraints exist somewhere, but whether they are enforced at the point of commitment.
+
+A further objection appeals to scaling laws, suggesting that sufficient scale will induce planning and grounding. Scale increases capacity, not authority. Without architectural support for invariant preservation, increased scale amplifies both fluency and failure.
+
+\subsection{Implications for artificial intelligence}
+
+The implications for AI research are direct. Systems aspiring to general competence must treat commitment as a first-class operation. Prediction must be subordinated to admissibility. Efficiency must arise through compilation of verified behavior, not through abandonment of validation.
+
+This suggests a shift in emphasis away from end-to-end predictive optimization and toward architectures that explicitly separate proposal, validation, commitment, and replay. Such architectures need not abandon learning; they require that learning produce constraints, not merely correlations.
+
+\subsection{Implications for cognition}
+
+The framework also illuminates cognitive phenomena. Fast, intuitive behavior arises from cached replay of previously validated schemas. Deliberative reasoning corresponds to arbiter-mediated exploration of hypothetical histories. Learning consists in promoting reliable patterns from costly validation to efficient execution.
+
+Errors, hesitation, and slowdown under novelty are not failures of intelligence but signatures of its operation.
+
+\subsection{Open questions and future work}
+
+Several questions remain open.
+
+How are invariants learned efficiently in high-dimensional domains? What mechanisms best detect context boundaries for cached schemas? How should invariant hierarchies be organized to support compositionality across domains?
+
+Empirically, building minimal invariant-preserving systems in constrained environments would provide decisive tests of the framework. Theoretical work on approximate replay and bounded validation may yield practical optimizations without undermining guarantees.
+
+\subsection{Final perspective}
+
+Intelligence is often described as the ability to predict. This paper argues that prediction is secondary. What matters is the ability to commit—to bind oneself to consequences and to maintain coherence in the face of counterfactuals.
+
+Systems that merely speak about the world may appear intelligent. Systems that act within it must answer to history.
+
+% ============================================================
+\appendix
+\section{Formal Proofs}
+% ============================================================
+
+This appendix provides detailed proofs of selected propositions and theorems stated in the main text. All notation and terminology follow Sections~2 through~7. The purpose of these proofs is not merely to establish correctness, but to make explicit the assumptions under which the results hold and to clarify the scope of their applicability.
+
+\subsection{Proof of Proposition~1 (Autoregressive Drift)}
+
+We restate the proposition for convenience.
+
+\begin{proposition}[Autoregressive Drift]
+In the absence of explicit invariant enforcement, autoregressive generation produces cumulative divergence from any invariant-preserving manifold with probability one under mild regularity assumptions.
+\end{proposition}
+
+\subsubsection*{Setup and assumptions}
+
+Let $\mathcal{X}$ denote the space of possible system outputs, and let $\mathcal{M} \subset \mathcal{X}$ be a subset corresponding to invariant-preserving states. The set $\mathcal{M}$ may represent grammatical well-formedness, physical feasibility, logical consistency, or any other structural constraint.
+
+Consider an autoregressive process generating a sequence $\{x_t\}_{t \ge 1}$ according to conditional distributions
+\[
+p(x_t \mid x_{<t}),
+\]
+where $x_{<t} = (x_1, \dots, x_{t-1})$.
+
+We impose the following minimal assumptions:
+
+\begin{itemize}
+\item[(A1)] The model assigns nonzero probability mass to states outside $\mathcal{M}$ whenever $x_{<t} \in \mathcal{M}$.
+\item[(A2)] The probability of leaving $\mathcal{M}$ at each step is bounded below by a positive constant on a set of nonzero measure.
+\end{itemize}
+
+Assumption (A1) reflects the absence of hard constraint enforcement; assumption (A2) excludes degenerate cases in which violations are asymptotically suppressed to zero.
+
+\subsubsection*{Lemma: persistence probability}
+
+\begin{lemma}
+Let
+\[
+\epsilon_t = \mathbb{P}[x_t \notin \mathcal{M} \mid x_{<t} \in \mathcal{M}].
+\]
+If there exists $\epsilon > 0$ such that $\epsilon_t \ge \epsilon$ for infinitely many $t$, then
+\[
+\mathbb{P}\big[ x_t \in \mathcal{M} \text{ for all } t \le T \big] \le (1-\epsilon)^T.
+\]
+\end{lemma}
+
+\begin{proof}
+The probability that the sequence remains within $\mathcal{M}$ up to time $T$ is given by
+\[
+\prod_{t=1}^{T} (1 - \epsilon_t).
+\]
+If $\epsilon_t \ge \epsilon$ for infinitely many $t$, then this product is bounded above by $(1-\epsilon)^T$, which converges to zero as $T \to \infty$.
+\end{proof}
+
+\subsubsection*{Proof of Proposition}
+
+By the lemma, the probability that an autoregressive sequence remains within $\mathcal{M}$ over arbitrarily long horizons converges to zero. Since autoregressive architectures lack a mechanism for rendering invariant-violating transitions undefined, they cannot enforce $\epsilon_t = 0$ uniformly. Consequently, divergence from $\mathcal{M}$ is not merely possible but inevitable in the limit.
+
+This establishes that autoregression cannot guarantee invariant preservation over unbounded horizons, regardless of model capacity or training data size.
+\qed
+
+\subsection{Proof of Replay-Stabilized Consistency}
+
+We restate the theorem.
+
+\begin{theorem}[Replay-Stabilized Consistency]
+If an event-log system employs invariant-gated commitment, then every reachable authoritative state satisfies all system invariants.
+\end{theorem}
+
+\subsubsection*{Definitions}
+
+Let $\Log = (e_1, \dots, e_n)$ denote a finite event log, let $\sigma_0$ be the initial state, and let
+\[
+\Replay(\Log) = \delta(\cdots \delta(\delta(\sigma_0, e_1), e_2), \dots, e_n)
+\]
+be the deterministic replay function. Let $\Inv \subseteq \State$ denote the set of admissible states.
+
+\subsubsection*{Proof}
+
+We proceed by induction on the length of the event log.
+
+\par
+\emph{Base case.} For the empty log $\emptyset$, $\Replay(\emptyset) = \sigma_0 \in \Inv$ by assumption.
+
+\par
+\emph{Inductive hypothesis.} Assume that for some $n \ge 0$, $\Replay(e_1, \dots, e_n) \in \Inv$.
+
+\par
+\emph{Inductive step.} Consider a proposed event $e_{n+1}$. By definition of invariant-gated commit, $e_{n+1}$ is appended to the log only if
+\[
+\delta(\Replay(e_1, \dots, e_n), e_{n+1}) \in \Inv.
+\]
+If this condition is satisfied, then
+\[
+\Replay(e_1, \dots, e_{n+1}) \in \Inv.
+\]
+Otherwise, the event is rejected and the log remains unchanged.
+
+\par
+Thus, by induction, all reachable authoritative states are admissible.
+\qed
+
+\subsection{Proof of Non-Compensability of Invariants}
+
+We restate the proposition.
+
+\begin{proposition}[Non-Compensability of Invariants]
+No finite penalty-based objective can enforce an invariant over unbounded planning horizons.
+\end{proposition}
+
+\subsubsection*{Setup}
+
+Let $J : \State \to \mathbb{R}$ be a reward function and let $P : \State \to \mathbb{R}$ be a penalty function satisfying $|P(\sigma)| \le M$ for some finite $M > 0$. Suppose that invariant violations incur a penalty $-P(\sigma)$ but remain admissible.
+
+\subsubsection*{Proof}
+
+Because the penalty magnitude is finite, there exists a planning horizon $H$ and a sequence of actions leading to a state $\sigma'$ such that the cumulative reward accumulated prior to reaching $\sigma'$ exceeds $M$. In this case, the total expected return of the plan remains positive despite the invariant violation.
+
+Formally, for sufficiently large $H$,
+\[
+\sum_{t=1}^{H} J(\sigma_t) - P(\sigma') > 0.
+\]
+Thus, $\sigma'$ becomes optimal under the objective despite violating the intended constraint.
+
+\par
+By contrast, invariant-gated systems render $\sigma'$ unreachable, independent of reward structure or horizon length. Therefore, finite penalties cannot substitute for hard invariants.
+\qed
+
+\subsection{Discussion}
+
+The results in this appendix formalize three complementary claims. First, probabilistic suppression of illegal states is insufficient to guarantee long-horizon coherence. Second, invariant-gated replay provides absolute admissibility guarantees by construction. Third, safety and structural constraints cannot be reduced to optimization objectives without loss of enforceability.
+
+Together, these results support the central thesis of the paper: commitment, not prediction, is the fundamental unit of intelligence.
+
+% ============================================================
+\appendix
+\section{Formal Proofs}
+% ============================================================
+
+This appendix provides detailed proofs of selected propositions and theorems stated in the main text. All notation and terminology follow Sections~2 through~7. The purpose of these proofs is not merely to establish correctness, but to make explicit the assumptions under which the results hold and to clarify the scope of their applicability.
+
+\subsection{Proof of Proposition~1 (Autoregressive Drift)}
+
+We restate the proposition for convenience.
+
+\begin{proposition}[Autoregressive Drift]
+In the absence of explicit invariant enforcement, autoregressive generation produces cumulative divergence from any invariant-preserving manifold with probability one under mild regularity assumptions.
+\end{proposition}
+
+\subsubsection*{Setup and assumptions}
+
+Let $\mathcal{X}$ denote the space of possible system outputs, and let $\mathcal{M} \subset \mathcal{X}$ be a subset corresponding to invariant-preserving states. The set $\mathcal{M}$ may represent grammatical well-formedness, physical feasibility, logical consistency, or any other structural constraint.
+
+Consider an autoregressive process generating a sequence $\{x_t\}_{t \ge 1}$ according to conditional distributions of the form
+\[
+p(x_t \mid x_{<t}),
+\]
+where $x_{<t} = (x_1, \dots, x_{t-1})$.
+
+We impose two minimal regularity assumptions. First, whenever the prefix $x_{<t}$ lies entirely within $\mathcal{M}$, the conditional distribution assigns nonzero probability mass to outputs outside $\mathcal{M}$. This assumption formalizes the absence of hard constraint enforcement: invariant-violating continuations are not rendered impossible by the model. Second, the probability of leaving $\mathcal{M}$ is bounded below by a strictly positive constant on a set of prefixes of nonzero measure. This assumption excludes degenerate cases in which violations are asymptotically suppressed to zero through explicit architectural mechanisms.
+
+\subsubsection*{Lemma: persistence probability}
+
+\begin{lemma}
+Let
+\[
+\epsilon_t = \mathbb{P}[x_t \notin \mathcal{M} \mid x_{<t} \in \mathcal{M}].
+\]
+If there exists $\epsilon > 0$ such that $\epsilon_t \ge \epsilon$ for infinitely many values of $t$, then
+\[
+\mathbb{P}\big[ x_t \in \mathcal{M} \text{ for all } t \le T \big] \le (1-\epsilon)^T.
+\]
+\end{lemma}
+
+\begin{proof}
+The probability that the sequence remains within $\mathcal{M}$ up to time $T$ is given by the product
+\[
+\prod_{t=1}^{T} (1 - \epsilon_t).
+\]
+If $\epsilon_t \ge \epsilon$ for infinitely many values of $t$, this product is bounded above by $(1-\epsilon)^T$, which converges to zero as $T \to \infty$.
+\end{proof}
+
+\subsubsection*{Proof of Proposition}
+
+By the preceding lemma, the probability that an autoregressive sequence remains within $\mathcal{M}$ over arbitrarily long horizons converges to zero. Because autoregressive architectures lack a mechanism for rendering invariant-violating transitions undefined, they cannot enforce $\epsilon_t = 0$ uniformly across time. Consequently, divergence from $\mathcal{M}$ is not merely possible but inevitable in the limit.
+
+This establishes that autoregression cannot guarantee invariant preservation over unbounded horizons, regardless of model capacity, training data size, or decoding strategy.
+\qed
+
+\subsection{Proof of Replay-Stabilized Consistency}
+
+We restate the theorem.
+
+\begin{theorem}[Replay-Stabilized Consistency]
+If an event-log system employs invariant-gated commitment, then every reachable authoritative state satisfies all system invariants.
+\end{theorem}
+
+\subsubsection*{Definitions}
+
+Let $\Log = (e_1, \dots, e_n)$ denote a finite event log, let $\sigma_0$ be the initial state, and let
+\[
+\Replay(\Log) = \delta(\cdots \delta(\delta(\sigma_0, e_1), e_2), \dots, e_n)
+\]
+be the deterministic replay function induced by the transition operator $\delta$. Let $\Inv \subseteq \State$ denote the set of admissible states.
+
+\subsubsection*{Proof}
+
+The proof proceeds by induction on the length of the event log.
+
+For the base case, the empty log $\emptyset$ yields $\Replay(\emptyset) = \sigma_0$, which lies in $\Inv$ by assumption.
+
+For the inductive step, assume that for some $n \ge 0$ the replayed state $\Replay(e_1, \dots, e_n)$ lies in $\Inv$. Consider a proposed event $e_{n+1}$. By definition of invariant-gated commitment, this event is appended to the log if and only if
+\[
+\delta(\Replay(e_1, \dots, e_n), e_{n+1}) \in \Inv.
+\]
+If the condition is satisfied, replay of the extended log produces an admissible state. If the condition is not satisfied, the event is rejected and the authoritative state remains unchanged. In either case, the invariant is preserved.
+
+By induction, all reachable authoritative states are admissible.
+\qed
+
+\subsection{Proof of Non-Compensability of Invariants}
+
+We restate the proposition.
+
+\begin{proposition}[Non-Compensability of Invariants]
+No finite penalty-based objective can enforce an invariant over unbounded planning horizons.
+\end{proposition}
+
+\subsubsection*{Setup}
+
+Let $J : \State \to \mathbb{R}$ be a reward function and let $P : \State \to \mathbb{R}$ be a penalty function satisfying $|P(\sigma)| \le M$ for some finite constant $M > 0$. Suppose that invariant violations incur a penalty $-P(\sigma)$ but remain admissible under the system’s transition dynamics.
+
+\subsubsection*{Proof}
+
+Because the penalty magnitude is finite, there exists a planning horizon $H$ and a sequence of actions leading to an invariant-violating state $\sigma'$ such that the cumulative reward accumulated prior to reaching $\sigma'$ exceeds $M$. For sufficiently large $H$, the total return of the plan satisfies
+\[
+\sum_{t=1}^{H} J(\sigma_t) - P(\sigma') > 0.
+\]
+As a result, $\sigma'$ becomes optimal under the objective function despite violating the intended constraint.
+
+By contrast, invariant-gated systems render $\sigma'$ unreachable, independently of reward structure, planning horizon, or discounting scheme. Finite penalties therefore cannot substitute for hard invariants.
+\qed
+
+\subsection{Discussion}
+
+The results in this appendix formalize three complementary claims. First, probabilistic suppression of illegal states is insufficient to guarantee long-horizon coherence. Second, invariant-gated replay provides absolute admissibility guarantees by construction. Third, safety and structural constraints cannot be reduced to optimization objectives without loss of enforceability.
+
+Taken together, these results support the central thesis of the paper: commitment, rather than prediction, is the fundamental unit of intelligence.
+
+
+% ============================================================
+\section{Illustrative Examples of Invariant Enforcement}
+% ============================================================
+
+This appendix provides extended, concrete examples illustrating the behavioral differences between view-only predictive systems and invariant-preserving architectures. The purpose of these examples is not to introduce new formal machinery, but to make explicit how the abstract commitments of the framework manifest in familiar domains such as language and physical planning.
+
+\subsection{Language Example: Syntactic Repair Under Structural Invariants}
+
+Consider the partially constructed sentence
+\[
+\text{``The keys to the cabinet \underline{is} missing.''}
+\]
+At the point where the verb form is selected, the system must choose between alternative agreement options. In many corpora, surface-level frequency biases favor singular constructions following intervening singular nouns such as \emph{cabinet}. As a result, a view-only autoregressive system may assign high probability to the singular verb form \emph{is}, even though it violates subject--verb agreement.
+
+In an invariant-preserving system, the proposed verb insertion is treated as an event whose admissibility is evaluated against syntactic invariants derived from the authoritative structure of the sentence. Because the grammatical subject \emph{keys} is plural, the event inserting a singular verb fails invariant validation and is therefore rejected outright. Importantly, rejection does not depend on probability thresholds or post hoc correction, but on structural inadmissibility.
+
+Repair proceeds by proposing alternative events that satisfy the same contextual role while respecting the invariant constraints. The plural verb form \emph{are} is admissible, allowing the sentence to be completed without violating grammatical structure. The key point is that the system does not merely prefer correct forms; it enforces them by construction, ensuring that syntactic well-formedness is preserved even under perturbation or misleading local cues.
+
+\subsection{Physical Planning Example: Escalation Under Constraint Violation}
+
+Consider an embodied agent tasked with moving a rigid block through a narrow passage. Through prior experience, the agent has cached a motor schema for transporting blocks along straight-line trajectories. Under typical conditions, this schema executes efficiently and without invoking higher-level planning.
+
+In the present scenario, however, the cached schema proposes a trajectory that intersects the passage walls, violating spatial and physical constraints. In a view-only system, the agent may continue to execute the action, repeatedly colliding with the obstacle or producing incoherent behavior that implicitly assumes the passage is wider than it is.
+
+By contrast, an invariant-preserving system detects the violation at the level of authoritative transition evaluation. The proposed motor event is rejected because it would lead to an inadmissible physical state. This rejection triggers escalation: the system temporarily suspends the cached schema and invokes arbiter-mediated planning to search for an alternative sequence of actions. The resulting plan may involve rotating the block, adjusting orientation, or selecting a longer but feasible path through the passage.
+
+Crucially, the failure of the cached behavior does not result in hallucinated success. Instead, it produces a controlled refusal followed by deliberate re-planning, preserving physical feasibility throughout execution.
+
+\subsection{Failure Mode Comparison and Diagnostic Signatures}
+
+These examples highlight a fundamental difference in how failure manifests across architectures. In view-only predictive systems, failure typically appears as confident but incorrect continuation. The system proceeds as though constraints were satisfied, producing outputs that are locally plausible yet globally impossible. Because no authoritative state exists, the system lacks a principled mechanism for recognizing impossibility.
+
+In invariant-preserving systems, failure is explicit and diagnosable. When no admissible transition exists, the system halts, escalates, or refuses to proceed. Such behavior may appear slower or more conservative, but it reflects a deeper form of reliability: the system does not trade correctness for fluency. Instead of hallucinating compliance with constraints, it acknowledges their violation and responds accordingly.
+
+These diagnostic differences are central to the evaluation claims advanced in the main text. The presence of refusal, repair, and escalation behaviors serves as empirical evidence for authoritative history and invariant gating, distinguishing genuine world models from purely statistical approximations.
+
+% ============================================================
+\section{Formal Clarifications and Interpretive Correspondences}
+% ============================================================
+
+This appendix records several interpretive correspondences that arise naturally from the formal structures introduced in the main body. The purpose is to disambiguate how these structures relate to standard notions in epistemology and cognitive theory, without extending the formal system itself.
+
+\subsection{Commitment and Knowledge}
+
+Let $\Log$ denote an authoritative event log and let $\Inv \subseteq \State$ denote the admissible state set. A commitment is defined as the successful incorporation of an event into $\Log$ via invariant-gated transition. Such a commitment is irreversible in the sense that its removal would violate replay consistency.
+
+Within this setting, knowledge may be identified with stable commitment. A proposition or action schema is known by the system if and only if it constrains future admissible transitions through its presence in the log. Justification corresponds to replay admissibility: an event is justified precisely when its inclusion preserves invariants under deterministic replay. No additional semantic or representational criterion is required.
+
+This characterization replaces static truth conditions with dynamic consistency conditions. Knowledge is thus indexed to admissible histories rather than to instantaneous internal states.
+
+\subsection{Ontological Status of the Event Log}
+
+The event log $\Log$ is not a representational structure mapping states of the world to internal symbols. Instead, it is a record of constraint-respecting interactions. Formally, $\Log$ is a sequence in the event alphabet $\mathcal{E}$ such that replay yields a state in $\Inv$ at every prefix.
+
+The authority of $\Log$ derives from its construction rules rather than from correspondence relations. An event’s presence in the log signifies that it was admissible under the system’s transition constraints at the time of commitment. The log therefore functions as a boundary condition on future behavior rather than as a descriptive model of external reality.
+
+\subsection{Deliberation and Hypothetical Extension}
+
+Let $\Log$ be the current authoritative log and let $\Log \cdot e$ denote a hypothetical extension by event $e$. Deliberation corresponds to evaluation of such hypothetical extensions under invariant-gated transition without committing them to $\Log$.
+
+Formally, deliberation is the exploration of partial transition paths in the induced invariant-preserving transition system, subject to rejection prior to commitment. Automatic behavior corresponds to direct replay of cached event schemas whose admissibility has been previously established.
+
+Escalation occurs when no cached schema yields an admissible extension. In such cases, the system reverts to explicit evaluation of hypothetical extensions. No special status is assigned to execution itself; the distinction lies in whether invariant validation is bypassed or explicitly invoked.
+
+\subsection{Discrete Commitment and Substrate Neutrality}
+
+The formalism does not impose discreteness, determinism, or symbolic structure at the level of physical implementation. Continuous, stochastic, or distributed substrates may realize the transition function $\delta$ and the invariant set $\Inv$.
+
+The claim is limited to the level of commitment. For any system to maintain coherence across time, the distinction between committed and uncommitted transitions must be discrete. Either an event is incorporated into the authoritative history or it is not. This discreteness is a property of admissibility, not of the underlying dynamics.
+
+Accordingly, the framework is neutral with respect to the ontology of mental states, neural mechanisms, or physical realization. It specifies only the minimal structural conditions required for invariant-preserving action over extended horizons.
+
+
+% ============================================================
+\begin{thebibliography}{99}
+
+\bibitem{craik1943}
+Craik, K. (1943).
+\emph{The Nature of Explanation}.
+Cambridge University Press.
+
+\bibitem{newell1976}
+Newell, A., \& Simon, H. A. (1976).
+Computer science as empirical inquiry: Symbols and search.
+\emph{Communications of the ACM}, 19(3), 113--126.
+
+\bibitem{chomsky1957}
+Chomsky, N. (1957).
+\emph{Syntactic Structures}.
+Mouton.
+
+\bibitem{chomsky1965}
+Chomsky, N. (1965).
+\emph{Aspects of the Theory of Syntax}.
+MIT Press.
+
+\bibitem{fodor1983}
+Fodor, J. A. (1983).
+\emph{The Modularity of Mind}.
+MIT Press.
+
+\bibitem{pearl2009}
+Pearl, J. (2009).
+\emph{Causality: Models, Reasoning, and Inference} (2nd ed.).
+Cambridge University Press.
+
+\bibitem{ha2018}
+Ha, D., \& Schmidhuber, J. (2018).
+World models.
+\emph{arXiv preprint arXiv:1803.10122}.
+
+\bibitem{bender2020}
+Bender, E. M., \& Koller, A. (2020).
+Climbing towards NLU: On meaning, form, and understanding in the age of data.
+In \emph{Proceedings of ACL}.
+
+\bibitem{marcus2020}
+Marcus, G. (2020).
+The next decade in AI: Four steps towards robust artificial intelligence.
+\emph{arXiv preprint arXiv:2002.06177}.
+
+\bibitem{lecun2022}
+LeCun, Y. (2022).
+A path towards autonomous machine intelligence.
+Meta AI Research Position Paper.
+
+\bibitem{lecun2023}
+LeCun, Y. (2023).
+What is intelligence?
+Public lectures and interviews, Meta AI.
+
+\bibitem{murphy2023roseneurocomputationalarchitecturesyntax}
+Murphy, E. (2023).
+ROSE: A neurocomputational architecture for syntax.
+\emph{arXiv preprint arXiv:2303.08877}.
+
+\bibitem{berwick2011}
+Berwick, R. C., \& Chomsky, N. (2011).
+The biolinguistic program: The current state of its evolution.
+In \emph{The Biolinguistic Enterprise}.
+Oxford University Press.
+
+\bibitem{tenenbaum2011}
+Tenenbaum, J. B., Kemp, C., Griffiths, T. L., \& Goodman, N. D. (2011).
+How to grow a mind: Statistics, structure, and abstraction.
+\emph{Science}, 331(6022), 1279--1285.
+
+\bibitem{friston2010}
+Friston, K. (2010).
+The free-energy principle: A unified brain theory?
+\emph{Nature Reviews Neuroscience}, 11(2), 127--138.
+
+\bibitem{clark2016}
+Clark, A. (2016).
+\emph{Surfing Uncertainty: Prediction, Action, and the Embodied Mind}.
+Oxford University Press.
+
+\bibitem{dennett1987}
+Dennett, D. C. (1987).
+\emph{The Intentional Stance}.
+MIT Press.
+
+\bibitem{soar}
+Laird, J. E. (2012).
+\emph{The Soar Cognitive Architecture}.
+MIT Press.
+
+\bibitem{actr}
+Anderson, J. R. (2007).
+\emph{How Can the Human Mind Occur in the Physical Universe?}
+Oxford University Press.
+
+\bibitem{eventsource}
+Fowler, M. (2005).
+Event sourcing.
+\emph{martinfowler.com}.
+
+\bibitem{cqrs}
+Young, G. (2010).
+CQRS documents.
+\emph{gregyoung.com}.
+
+\bibitem{hippocampalreplay}
+Buzsaki, G. (2015).
+Hippocampal sharp wave–ripple: A cognitive biomarker for episodic memory and planning.
+\emph{Hippocampus}, 25(10), 1073--1188.
+
+\bibitem{lake2017}
+Lake, B. M., Ullman, T. D., Tenenbaum, J. B., \& Gershman, S. J. (2017).
+Building machines that learn and think like people.
+\emph{Behavioral and Brain Sciences}, 40.
+
+\bibitem{jaeger2007}
+Jaeger, H., \& Haas, H. (2004).
+Harnessing nonlinearity: Predicting chaotic systems and saving energy in wireless communication.
+\emph{Science}, 304(5667), 78--80.
+
+\bibitem{vernon2014}
+Vernon, D. (2014).
+\emph{Artificial Cognitive Systems}.
+MIT Press.
+
+\bibitem{turing1950}
+Turing, A. M. (1950).
+Computing machinery and intelligence.
+\emph{Mind}, 59(236), 433--460.
+
+\bibitem{shannon1948}
+Shannon, C. E. (1948).
+A mathematical theory of communication.
+\emph{Bell System Technical Journal}, 27, 379--423.
+
+\bibitem{kanerva1988}
+Kanerva, P. (1988).
+\emph{Sparse Distributed Memory}.
+MIT Press.
+
+\bibitem{goodfellow2014}
+Goodfellow, I., et al. (2014).
+Generative adversarial nets.
+In \emph{Advances in Neural Information Processing Systems}.
+
+\bibitem{vaswani2017}
+Vaswani, A., et al. (2017).
+Attention is all you need.
+In \emph{Advances in Neural Information Processing Systems}.
+
+\bibitem{browning2023}
+Browning, B., et al. (2023).
+Why language models hallucinate.
+\emph{arXiv preprint arXiv:2305.13534}.
+
+\end{thebibliography}
+% ============================================================
+
+
+\end{document}

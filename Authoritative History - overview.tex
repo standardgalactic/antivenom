@@ -1,0 +1,217 @@
+\documentclass[11pt]{article}
+
+% --------------------------------------------------
+% Packages
+% --------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{csquotes}
+\usepackage{hyperref}
+\usepackage{booktabs}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+% --------------------------------------------------
+% Theorem environments
+% --------------------------------------------------
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{lemma}{Lemma}
+\newtheorem{proposition}{Proposition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% --------------------------------------------------
+% Macros
+% --------------------------------------------------
+\newcommand{\State}{\Sigma}
+\newcommand{\Obs}{\mathcal{O}}
+\newcommand{\Act}{\mathcal{A}}
+\newcommand{\View}{\mathcal{V}}
+\newcommand{\Log}{\mathcal{L}}
+\newcommand{\Replay}{\mathrm{Replay}}
+\newcommand{\Commit}{\mathrm{Commit}}
+\newcommand{\Inv}{\Omega}
+\newcommand{\cost}{\mathcal{C}}
+\newcommand{\TV}{\mathrm{TV}}
+
+% --------------------------------------------------
+% Title
+% --------------------------------------------------
+\title{Authoritative History and the Limits of Autoregressive Intelligence}
+\author{Flyxion}
+\date{December 2025}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a formal account of why purely autoregressive systems fail to sustain long-horizon coherence, and what architectural structure is required to do so. The central claim is that intelligence requires an authoritative internal history: a deterministic, invariant-preserving record of committed events against which future actions are evaluated. Autoregressive models generate fluent views without commitment and therefore exhibit unavoidable drift under intervention, counterfactual reasoning, or delayed consequences.
+
+We formalize autoregressive generation as a view-only sequential conditioning process and show that, under mild mismatch assumptions, invariant violations accumulate inevitably with horizon length. We then introduce invariant-gated event logs as a minimal constructive substrate for coherence, grounding, and refusal. Finally, we show that world models, structural constraint systems, and event logs are equivalent instances of a single abstract class of invariant-preserving transition systems. Efficiency and automaticity arise through compilation of validated transitions rather than relaxation of constraints. The resulting framework clarifies the architectural limits of scale-driven fluency and provides a principled foundation for planning and safety.
+\end{abstract}
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+Large autoregressive models exhibit remarkable surface competence across language, vision, and code. They generate coherent text, synthesize images, and produce executable programs. Nevertheless, these systems fail systematically in settings that require stable reasoning across time, explicit intervention, or counterfactual dependence. Common failure modes include brittle tool use, incoherent long-horizon plans, and confident violations of physical, logical, or syntactic constraints.
+
+Such failures persist even as model scale, training data, and optimization procedures improve. This persistence suggests that the limitation is not merely contingent on insufficient capacity or data coverage. Instead, it reflects a structural property of autoregressive generation itself. Autoregressive systems extend sequences by conditioning on prior outputs, producing locally plausible continuations without committing to their consequences. They lack an internal distinction between hypothetical extension and irreversible update.
+
+This paper argues that the absence of authoritative internal history is the critical limitation. Systems that act in the world must distinguish between tentative proposals and committed events. Without this distinction, illegal or incoherent actions cannot be rendered impossible, only unlikely. Over extended horizons, even small probabilities of violation accumulate into near certainty.
+
+The argument proceeds in three stages. First, autoregressive generation is formalized as a view-only process and shown to exhibit unavoidable drift under mild assumptions. Second, deterministic event logs with invariant-gated commitment are introduced as a minimal architectural substrate capable of sustaining coherence, refusal, and counterfactual reasoning. Third, world models, structural constraint systems, and event logs are shown to be equivalent instances of invariant-preserving transition systems, differing only in representation rather than expressive power.
+
+% ============================================================
+\section{Formal Preliminaries}
+% ============================================================
+
+\begin{definition}[State, view, commitment]
+Let $\State$ denote authoritative internal state. A view is any speculative, derived, or provisional representation $v \in \View$ that has not been admitted into authoritative state. A commitment is an irreversible update to $\State$ that is admitted only if it preserves all invariants.
+\end{definition}
+
+\begin{definition}[Invariant]
+An invariant is a predicate defining an admissible set $\Inv \subseteq \State$. States outside $\Inv$ are unreachable by commitment.
+\end{definition}
+
+\begin{definition}[Transition]
+A transition function is a partial map $\delta : \State \times U \rightharpoonup \State$ that is defined if and only if the resulting state lies in $\Inv$.
+\end{definition}
+
+These definitions establish a sharp separation between speculative representation and authoritative update. Views may be generated freely, but only invariant-preserving transitions may alter authoritative state.
+
+% ============================================================
+\section{World Models as Invariant-Preserving Predictors}
+% ============================================================
+
+\begin{definition}[World model]
+A world model is a pair $(g,f)$ where $g : \Obs^* \to \State$ maps observation histories to internal state and $f : \State \times \Act \rightharpoonup \State$ predicts the effect of actions on state. The function $f$ is defined only on invariant-preserving transitions.
+\end{definition}
+
+World models are distinguished not by the realism of their outputs but by their counterfactual sensitivity. They support evaluation of hypothetical actions without committing them to authoritative history. This capacity is essential for planning, refusal, and error recovery.
+
+% ============================================================
+\section{Autoregressive Generation and Drift}
+% ============================================================
+
+Autoregressive models define conditional distributions $P(x_t \mid x_{<t})$ over observations. Generation induces a Markov process over prefixes, where the effective state of the system is the output history itself. There is no distinguished authoritative state separate from the sequence, and no mechanism for rendering illegal continuations undefined.
+
+\begin{assumption}[Local mismatch]
+There exists $\varepsilon > 0$ such that the model's conditional distributions deviate from the data-generating conditionals by at most $\varepsilon$ in total variation.
+\end{assumption}
+
+\begin{theorem}[View-only drift]
+Under local mismatch, divergence between model-generated and admissible sequences grows at least linearly with horizon length, up to saturation.
+\end{theorem}
+
+\begin{proof}
+Each autoregressive step introduces bounded divergence without contraction. Because no step enforces admissibility categorically, deviations accumulate additively over time.
+\end{proof}
+
+This result establishes that invariant preservation cannot be guaranteed by scaling autoregressive models alone.
+
+% ============================================================
+\section{Deterministic Event Logs}
+% ============================================================
+
+\begin{definition}[Event log]
+An event log is a finite sequence $\Log = (e_1,\dots,e_T)$ of atomic events. Authoritative state is derived exclusively by deterministic replay.
+\end{definition}
+
+\begin{definition}[Replay]
+Fix an initial state $\sigma_0 \in \Inv$. Define $\Replay(\emptyset) = \sigma_0$ and $\Replay(\Log \cdot e) = \delta(\Replay(\Log), e)$ whenever defined.
+\end{definition}
+
+\begin{definition}[Invariant-gated commit]
+An event $e$ is appended to $\Log$ if and only if $\Replay(\Log \cdot e) \in \Inv$.
+\end{definition}
+
+\begin{theorem}[Replay-stabilized consistency]
+All reachable authoritative states obtained by replay of a committed log satisfy invariants.
+\end{theorem}
+
+\begin{proof}
+The result follows by induction on the length of the log.
+\end{proof}
+
+% ============================================================
+\section{Invariant-Preserving Transition Systems}
+% ============================================================
+
+\begin{definition}[Invariant-preserving transition system]
+An invariant-preserving transition system is a tuple $(X,U,\tau,\Omega)$ where $\tau : X \times U \rightharpoonup X$ is a partial transition function defined only on admissible states $\Omega$.
+\end{definition}
+
+\begin{theorem}[Equivalence]
+World models, structural constraint systems, and event logs are equivalent up to representation when formalized as invariant-preserving transition systems.
+\end{theorem}
+
+\begin{proof}[Sketch]
+Each architecture induces a partial transition system enforcing admissibility by construction. Differences arise from representational choices rather than expressive power.
+\end{proof}
+
+Autoregressive models fail to instantiate an invariant-preserving transition system because they assign nonzero probability to invariant violations rather than rendering them undefined.
+
+% ============================================================
+\section{Compiled Replay and Automaticity}
+% ============================================================
+
+Repeatedly validated event schemas may be compiled into cached replay primitives. Such compilation preserves authority within validated contexts while reducing computational cost.
+
+\begin{proposition}[Compiled authority]
+Cached replay preserves all invariants enforced by arbiter-mediated validation within its validated context.
+\end{proposition}
+
+Automaticity is therefore optimized authority rather than heuristic approximation.
+
+% ============================================================
+\section{Planning and Safety}
+% ============================================================
+
+Planning is search over hypothetical log extensions.
+
+\begin{definition}[Plan]
+A plan is a sequence of events $\pi$ such that $\Replay(\Log \cdot \pi)$ is defined.
+\end{definition}
+
+Safety constraints are invariants. They are enforced by impossibility rather than by penalty.
+
+\begin{proposition}[Non-compensability]
+No finite penalty can substitute for an invariant over unbounded horizons.
+\end{proposition}
+
+% ============================================================
+\section{Conclusion}
+% ============================================================
+
+Prediction alone is insufficient for intelligence. What distinguishes systems that merely generate from systems that act is the ability to commit, replay, and refuse. Systems that generate views may speak fluently; systems that act must answer to history.
+
+% ============================================================
+\begin{thebibliography}{9}
+
+\bibitem{craik1943}
+Craik, K. (1943). \emph{The Nature of Explanation}.
+
+\bibitem{bender2020}
+Bender, E. M., \& Koller, A. (2020). Climbing towards NLU.
+
+\bibitem{lecun2022}
+LeCun, Y. (2022). A path towards autonomous machine intelligence.
+
+\bibitem{murphy2023}
+Murphy, E. (2023). ROSE: A neurocomputational architecture for syntax.
+
+\bibitem{pearl2009}
+Pearl, J. (2009). \emph{Causality}.
+
+\end{thebibliography}
+
+\end{document}
