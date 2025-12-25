@@ -1,0 +1,1616 @@
+\documentclass[11pt]{article}
+
+% --------------------------------------------------
+% LuaLaTeX setup
+% --------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{csquotes}
+\usepackage{hyperref}
+
+\geometry{margin=1in}
+\setstretch{1.15}
+
+% --------------------------------------------------
+% Theorem Environments
+% --------------------------------------------------
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+
+% --------------------------------------------------
+% Macros
+% --------------------------------------------------
+\newcommand{\Hist}{\mathcal{H}}
+\newcommand{\State}{\mathcal{S}}
+\newcommand{\Action}{\mathcal{A}}
+\newcommand{\Struct}{\mathcal{C}}
+\newcommand{\Culture}{\mathcal{K}}
+\newcommand{\Survive}{\mathsf{Surv}}
+\newcommand{\Reprod}{\mathsf{Rep}}
+\newcommand{\Energy}{\mathcal{E}}
+\newcommand{\Entropy}{\mathcal{S}}
+\newcommand{\Field}{\Phi}
+\newcommand{\Grad}{\nabla}
+
+% --------------------------------------------------
+% Title
+% --------------------------------------------------
+\title{Culture and Structural Power:\\
+Mute Compulsion as a General Theory of Social Reproduction}
+
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+% ==================================================
+\begin{abstract}
+This paper develops a formal theory of social power centered on structural
+constraint, survival, and reproduction. Building on the concept of \emph{mute
+compulsion}, it argues that capitalist social order persists not through
+persuasion, legitimacy, or cultural hegemony, but through the alignment of
+survival with participation. Culture is treated not as a primary causal driver
+but as an adaptive coordination layer, selectively stabilized by material
+viability.
+
+The argument is formalized using constraint fields, entropy functionals, and
+event-historical dynamics. Structural power is modeled as the continuous pruning
+of admissible futures, while reproduction occurs along low-entropy trajectories
+that coincide with ordinary survival behavior. Political change is shown to be a
+threshold phenomenon requiring counter-structures capable of temporarily
+decoupling survival from compliance.
+
+The paper further introduces extraction fields to model attention-based
+platforms, demonstrating how advertising saturation constitutes a stable
+equilibrium of asymmetric value transfer that degrades cultural coherence while
+remaining structurally profitable. Universality is redefined as structural
+invariance across constraint fields, explaining the strategic efficacy of
+material demands over identity-fragmented claims.
+
+By integrating materialist social theory with a field-theoretic and
+event-historical framework, the paper generalizes class analysis beyond
+political economy, offering a unified account of durability, resistance, and
+the conditions under which alternative futures become materially viable.
+\end{abstract}
+% ==================================================
+
+% ==================================================
+\section{Introduction}
+% ==================================================
+
+This essay develops a structural account of social power centered on the concept
+of \emph{mute compulsion}: the idea that systems may secure compliance not by
+persuasion, coercion, or legitimacy, but by organizing the conditions of survival
+themselves. The immediate object of analysis is capitalist society, but the
+argument generalizes beyond political economy to any system whose reproduction
+is coupled to agents’ material viability.
+
+Against theories that locate social order primarily in culture, discourse, or
+ideology, the approach developed here treats culture as an adaptive medium rather
+than a sovereign driver. Social structures persist when the actions required to
+reproduce them coincide with the actions required to remain alive within them.
+
+The essay proceeds in four stages. First, it formalizes structural constraint and
+distinguishes it from agentic power. Second, it models culture as a filtered
+coordination layer. Third, it analyzes time, reproduction, and political change
+as threshold phenomena. Finally, it integrates these insights into a general
+field-theoretic and event-historical framework.
+
+% ==================================================
+\section{Constraint and Structural Power}
+% ==================================================
+
+Social power admits of two analytically distinct forms. The first is \emph{agentic
+power}: the ability of an actor or institution to issue commands backed by
+sanctions. The second is \emph{structural power}: the power exerted by the
+configuration of conditions within which action occurs.
+
+\begin{definition}[Structural Constraint]
+A \emph{structural constraint} is a condition $c \in \Struct$ such that failure to
+comply with $c$ results in loss of material viability.
+\end{definition}
+
+In capitalist societies, the central structural constraint is the absence of
+independent access to the means of subsistence. Agents lacking such access must
+sell their labor in order to secure food, shelter, and reproduction.
+
+Let $\State$ denote the space of admissible agent states and $\Action$ the space
+of actions available to an agent.
+
+\begin{definition}[Survival Operator]
+Define the survival operator
+\[
+\Survive : \State \times \Action \to \{0,1\}
+\]
+such that $\Survive(s,a)=1$ iff action $a$ taken in state $s$ preserves material
+viability.
+\end{definition}
+
+The defining feature of mute compulsion is that, for most states $s$,
+\[
+\Survive(s,a)=1 \quad \text{only if} \quad a \in \Action_{\text{market}},
+\]
+where $\Action_{\text{market}}$ denotes participation in labor-mediated exchange.
+
+No command is required. The constraint is enforced by the environment itself.
+
+% ==================================================
+\section{Binary Thresholds and Continuous Pressure}
+% ==================================================
+
+Structural constraint operates at two levels simultaneously.
+
+\begin{lemma}[Survival Threshold]
+Material viability imposes a binary condition:
+\[
+\Survive(s,a) \in \{0,1\}.
+\]
+An agent either survives or does not.
+\end{lemma}
+
+However, the \emph{experience} of constraint varies continuously.
+
+\begin{definition}[Compulsion Gradient]
+Let $\Energy(s)$ denote the slack or buffer available to an agent in state $s$
+(e.g.\ savings, welfare access, labor scarcity). Define the compulsion gradient
+\[
+\lambda(s) = -\Grad \Energy(s).
+\]
+\end{definition}
+
+Higher slack corresponds to lower felt compulsion, but does not remove the
+underlying threshold. Even when $\lambda(s)$ is small, the survival condition
+remains binding.
+
+This dual structure explains how systems can feel permissive while remaining
+structurally absolute.
+
+% ==================================================
+\section{Reproduction as Low-Maintenance Dynamics}
+% ==================================================
+
+Structural power is not self-propelling; it must be reproduced through action.
+However, reproduction may be \emph{low-maintenance} if survival-aligned actions
+coincide with system reproduction.
+
+\begin{definition}[Reproduction Operator]
+Define the reproduction operator
+\[
+\Reprod : \Hist \to \Hist
+\]
+mapping histories to extended histories through ordinary survival actions.
+\end{definition}
+
+Capitalism is reproduced because:
+\[
+\Survive(h_t, a_t) = 1 \;\; \Rightarrow \;\; \Reprod(h_{t+1}),
+\]
+for most admissible histories $h_t$.
+
+Unlike systems requiring constant coercion or ideological reinforcement, this
+structure is robust because compliance is endogenous to survival.
+
+% ==================================================
+\section{Constraint as Boundary Condition}
+% ==================================================
+
+Structural constraint functions not as a force but as a boundary condition on
+admissible trajectories.
+
+Let $\Hist$ denote the space of event histories. Define the admissible subset
+\[
+\Hist_{\text{adm}} = \{ h \in \Hist \mid \forall t,\; \Survive(h_t,a_t)=1 \}.
+\]
+
+All large-scale social dynamics occur within $\Hist_{\text{adm}}$. Culture,
+politics, and ideology operate by selecting paths within this space, not by
+removing its boundaries.
+
+This completes the foundational formalization of mute compulsion as structural
+constraint. The next section turns to culture as an adaptive coordination layer
+within these constraints.
+
+% ==================================================
+\section{Culture as an Adaptive Medium}
+% ==================================================
+
+All social action is mediated by meaning. Agents do not merely respond to
+constraints; they interpret, anticipate, and coordinate. The error of the
+cultural turn is not its attention to meaning, but its elevation of meaning to
+primary causal status. Culture does not generate structural persistence; it
+adapts to it.
+
+\begin{definition}[Cultural Configuration]
+Let $\Culture$ denote the space of cultural configurations, understood as shared
+scripts, norms, expectations, and interpretive frames that guide action.
+\end{definition}
+
+Cultural configurations do not operate independently of structure. They are
+selected and stabilized insofar as they permit survival within existing
+constraints.
+
+% ==================================================
+\section{Cultural Scripts as Coordination Devices}
+% ==================================================
+
+Cultural scripts solve coordination problems under constraint. They reduce
+uncertainty about how others will behave and about which actions are viable.
+
+Let $\pi_k(a \mid s)$ denote the probability of action $a$ in state $s$ under
+cultural configuration $k \in \Culture$.
+
+\begin{definition}[Viable Culture]
+A cultural configuration $k$ is \emph{viable} iff
+\[
+\mathbb{E}_{a \sim \pi_k}[\Survive(s,a)] = 1
+\quad \text{for a large measure of states } s.
+\]
+\end{definition}
+
+Cultural configurations that systematically generate non-viable actions decay
+rapidly at scale. They may persist locally or temporarily, but cannot stabilize
+as mass phenomena.
+
+This gives culture a selective environment: not all meanings are equally
+reproducible.
+
+% ==================================================
+\section{Selective Filtering and Structural Anchoring}
+% ==================================================
+
+Cultural innovation is constant. New norms, values, and identities emerge
+continuously. However, their persistence is governed by a filtering process.
+
+\begin{proposition}[Material Filtering]
+Let $k_t$ be a cultural configuration at time $t$. If
+\[
+\mathbb{E}_{a \sim \pi_{k_t}}[\Survive(s,a)] < 1
+\]
+for a non-negligible set of states $s$, then
+\[
+\lim_{t \to \infty} \Pr(k_t \text{ persists}) = 0.
+\]
+\end{proposition}
+
+This does not imply conscious calculation. Filtering occurs through differential
+attrition: agents and groups whose practices are incompatible with survival
+conditions exit, adapt, or shrink.
+
+Over time, adaptive scripts harden into norms.
+
+\begin{definition}[Internalized Norm]
+A cultural script $k$ is \emph{internalized} when its associated actions are
+executed without explicit instrumental reasoning.
+\end{definition}
+
+Internalization produces the appearance of autonomy. However, anchoring remains.
+When the material conditions supporting a norm erode, the norm typically decays,
+albeit with lag.
+
+% ==================================================
+\section{Culture, Common Sense, and Apparent Autonomy}
+% ==================================================
+
+Internalized norms generate what appears as ``common sense.'' These norms feel
+moral, natural, or inevitable precisely because they are aligned with survival.
+
+Let $\Entropy(k)$ denote the entropic cost of maintaining cultural configuration
+$k$ within structure $\Struct$.
+
+\begin{lemma}[Low-Entropy Norms]
+Cultural norms with low $\Entropy(k)$ relative to $\Struct$ are more stable than
+those requiring constant reinforcement.
+\end{lemma}
+
+Capitalist workplace norms persist not because they are deeply believed, but
+because violating them is costly. The system does not require ideological
+saturation; it requires only that deviation be expensive.
+
+% ==================================================
+\section{When Culture Becomes Causally Operative}
+% ==================================================
+
+Culture becomes a primary causal factor only under specific conditions.
+
+\begin{definition}[Coordination Gap]
+A coordination gap exists when no individually viable action yields a
+collectively viable outcome.
+\end{definition}
+
+Collective action problems instantiate coordination gaps. Here, culture can
+alter structure.
+
+\begin{proposition}[Cultural Feedback Condition]
+Culture becomes a causal driver of structural change iff it enables coordinated
+action that alters $\Struct$ itself, such that
+\[
+\Struct_{t+1} \neq \Struct_t.
+\]
+\end{proposition}
+
+Unions, parties, and disciplined movements exemplify this condition. Their
+cultural forms matter not as symbols, but as mechanisms for synchronizing action
+across agents.
+
+Absent this feedback, culture remains adaptive rather than generative.
+
+% ==================================================
+\section{Limits of Cultural Causality}
+% ==================================================
+
+Cultural frames that do not resolve coordination gaps may circulate indefinitely
+without altering constraints. Symbolic critique, expressive identity, and moral
+denunciation do not, by themselves, modify $\Hist_{\text{adm}}$.
+
+This explains the persistence of high cultural volatility alongside remarkable
+structural stability. Culture churns; structure endures.
+
+The next section turns to time, reproduction, and political strategy, examining
+how structural change occurs when adaptive coordination crosses critical
+thresholds.
+
+% ==================================================
+\section{Time, Reproduction, and Political Change}
+% ==================================================
+
+Structural systems persist not merely because they constrain action, but because
+they reproduce themselves over time through irreversible sequences of ordinary
+activity. Any adequate theory of social change must therefore model time not as a
+neutral parameter, but as a constitutive dimension of power.
+
+Let $\Hist = \{h_0, h_1, \dots \}$ denote an event history, where each $h_t$
+represents the cumulative state of the system at time $t$.
+
+\begin{definition}[Irreversible Event]
+An event $e_t$ is \emph{irreversible} if its effects on $\Hist$ cannot be undone
+without additional cost or intervention.
+\end{definition}
+
+Most survival-aligned actions—rent payments, work shifts, debt servicing—are
+irreversible in this sense. They accumulate history and progressively restrict
+future options.
+
+% ==================================================
+\section{Reproduction Through Ordinary Action}
+% ==================================================
+
+Capitalist reproduction occurs through actions that agents must perform in order
+to survive. Let $a_t$ be the action taken at time $t$.
+
+\[
+h_{t+1} = h_t \cup \{a_t\}
+\]
+
+When $a_t$ satisfies the survival condition, it simultaneously extends the
+history that sustains the structure.
+
+\begin{proposition}[Daily Reproduction]
+If for most $t$,
+\[
+\Survive(h_t, a_t) = 1,
+\]
+then the structure $\Struct$ is reproduced without requiring extraordinary
+intervention.
+\end{proposition}
+
+This gives capitalist systems a temporal advantage: they renew themselves
+continuously, while opposition must organize discontinuously.
+
+% ==================================================
+\section{Threshold Dynamics and Nonlinear Change}
+% ==================================================
+
+Political change does not occur smoothly. Organizational gains accumulate until
+they cross a threshold beyond which qualitatively new outcomes become possible.
+
+Let $O(t)$ denote the organizational capacity of a movement at time $t$, measured
+in members, funds, discipline, or institutional presence.
+
+\begin{definition}[Structural Threshold]
+A threshold $\theta$ exists such that
+\[
+O(t) < \theta \;\; \Rightarrow \;\; \Delta \Struct \approx 0,
+\]
+while
+\[
+O(t) \ge \theta \;\; \Rightarrow \;\; \Delta \Struct \neq 0.
+\]
+\end{definition}
+
+Below the threshold, action is expressive. Above it, action becomes structural.
+
+This explains why long periods of apparent stagnation can precede sudden shifts
+in power relations.
+
+% ==================================================
+\section{Counter-Structures and Temporal Leverage}
+% ==================================================
+
+Because reproduction is continuous, resistance must interrupt survival-aligned
+action long enough to stabilize alternative trajectories.
+
+\begin{definition}[Counter-Structure]
+A counter-structure is an organized system that temporarily supplies survival
+conditions independently of $\Struct$.
+\end{definition}
+
+Examples include strike funds, mutual aid networks, legal defense, and political
+protections. Formally, a counter-structure modifies the survival operator:
+
+\[
+\Survive'(s,a) = 1 \quad \text{even when} \quad a \notin \Action_{\text{market}}.
+\]
+
+\begin{lemma}[Cost Reduction]
+Counter-structures reduce the energetic and entropic cost of resistance, making
+noncompliance temporarily viable.
+\end{lemma}
+
+Without counter-structures, resistance collapses into individual sacrifice rather
+than collective leverage.
+
+% ==================================================
+\section{Mediation and the Professional-Managerial Class}
+% ==================================================
+
+Large-scale organization requires mediation. Coordination channels, leadership
+roles, and interpretive frameworks must be maintained. This introduces a distinct
+stratum whose structural position differs from that of wage-dependent workers.
+
+\begin{definition}[Professional-Managerial Class]
+The Professional-Managerial Class (PMC) consists of agents hired by capital to
+organize, supervise, or manage labor rather than directly perform it.
+\end{definition}
+
+The PMC occupies an intermediate position: dependent on wages, yet invested in
+autonomy, expertise, and status.
+
+% ==================================================
+\section{PMC as Control Surface}
+% ==================================================
+
+In movements, the PMC often functions as a control surface, translating material
+demands into administrable or culturally legible forms.
+
+\begin{definition}[Control Surface]
+A control surface is a mediating layer that maps demands $D$ into actions $A$ via
+interpretive or organizational filters.
+\end{definition}
+
+Because PMC members possess more discretionary time, cultural capital, and access
+to coordination channels, they disproportionately influence this mapping.
+
+\begin{proposition}[Displacement Risk]
+If the control surface prioritizes moral legitimacy or symbolic coherence over
+material leverage, then
+\[
+\Delta O(t) < 0 \quad \text{relative to potential}.
+\]
+\end{proposition}
+
+This displacement weakens threshold accumulation and dissipates structural power.
+
+% ==================================================
+\section{Coalition Leadership and Failure Modes}
+% ==================================================
+
+Effective coalitions require heterogeneous participation. However, leadership
+cannot be neutral.
+
+\begin{lemma}[Leadership Constraint]
+A coalition must be led by agents whose structural position grants maximal
+leverage over $\Struct$.
+\end{lemma}
+
+Wage-dependent workers possess such leverage through their capacity to disrupt
+production. The PMC contributes skills and coordination capacity, but failure
+occurs when managerial logics override survival-driven priorities.
+
+This completes the analysis of time, reproduction, and mediation. The final
+section integrates these dynamics into a generalized field-theoretic and
+event-historical framework.
+
+% ==================================================
+\section{Advertising Saturation as Structural Degradation}
+% ==================================================
+
+Before turning to formal constraint dynamics, it is necessary to confront a
+phenomenon often treated as peripheral but which in fact exemplifies the moral
+and structural logic under analysis: the saturation of everyday life by
+advertising.
+
+Consider the contemporary social media feed, in which approximately every
+third post is an advertisement. This is not merely intrusive; it is
+structurally corrosive. Advertising of this form bypasses nearly all traditional
+methods by which economic activity historically established legitimacy or
+value. There is no apprenticeship, no reputation, no local trust, no craft, no
+demonstrated competence. Instead, visibility is purchased directly. Whoever is
+willing to pay is elevated, regardless of substance, relevance, or merit.
+
+This represents a profound inversion of social signaling. The feed no longer
+reflects the interests one has cultivated, the communities one has joined, or
+the local networks one inhabits. Years of curating one’s social and intellectual
+environment—finding peers in one’s area, sharing practices, building
+relationships—are undone by the indiscriminate insertion of gaudy,
+incoherent, and frequently fraudulent solicitations every few seconds.
+
+The moral pathology is especially stark under conditions of scarcity. When the
+user has no money, advertising does not merely fail to serve them; it actively
+harms them. It incessantly reframes success in terms of acquisition that is
+materially impossible, producing a constant contrast between lived constraint
+and advertised fantasy. This is not neutral persuasion but a systematic
+manipulation of aspiration under conditions where aspiration cannot be realized.
+
+Moreover, much of this advertising promotes forms of grueling materialism and
+voyeuristic tourism: curated experiences, luxury lifestyles, extractive travel,
+and aestheticized consumption that detach desire from any stable form of social
+participation or productive agency. The user is invited to look, envy, and
+desire—but never to belong or build.
+
+The economic structure underpinning this system reveals its ethical character.
+Most advertisers in these ecosystems do not profit. They are small operators,
+drop-shippers, spam farms, or speculative entrepreneurs who lack the capacity to
+produce genuinely valuable goods or meaningful content, but who are nonetheless
+willing to pay for exposure. Their failure is not incidental; it is systemic.
+
+The platform extracts money from those least able to afford it, aggregating
+these losses upward into vast rents captured by the already wealthy owners of
+the advertising infrastructure. In this sense, the system functions as a
+\emph{reverse Robin Hood}: it steals from the poor, the desperate, and the
+gullible, and redistributes upward to the ultra-rich, all while presenting
+itself as neutral market mediation.
+
+This is not a cultural accident. It is a direct expression of structural
+constraint. Advertising thrives precisely because survival under capitalism
+forces participation in attention markets regardless of their quality or moral
+standing. The result is not merely annoyance, but the active degradation of
+social meaning, trust, and orientation.
+
+The advertising-saturated feed thus provides a concrete, everyday illustration
+of mute compulsion at work: individuals endure an environment they despise not
+because they consent to it, but because exit carries unacceptable social and
+material costs. What appears as cultural noise is in fact structural violence
+rendered banal.
+
+With this in view, the subsequent formal analysis of constraint, culture, and
+reproduction should be read not as abstraction, but as an attempt to explain why
+such an environment is not only possible, but profitable—and why moral appeal
+alone is powerless to stop it.
+
+% ==================================================
+\section{Why Moral Critique Fails Under Structural Constraint}
+% ==================================================
+
+The persistence of advertising saturation despite widespread resentment is not a
+paradox, nor a failure of moral clarity. It is a predictable outcome of a system
+in which harm is profitable precisely because it is structurally embedded.
+Moral critique presupposes an addressee capable of choice: an agent who could do
+otherwise if properly persuaded. Structural power nullifies this presupposition.
+
+In environments governed by survival-conditioned participation, the relevant
+decision variables are not values or intentions but costs, gradients, and
+thresholds. Platforms do not optimize for legitimacy, coherence, or social
+well-being; they optimize for extraction subject to retention constraints.
+Advertising persists because it satisfies these constraints, not because anyone
+believes it is good.
+
+This renders moral appeal strategically impotent. Condemnation, exposure, and
+normative argument may circulate indefinitely without altering outcomes so long
+as they fail to modify the underlying constraint field. Even universal disgust
+does not translate into change if exit is costly and coordination is fragmented.
+In such cases, outrage becomes another low-energy dissipation channel: expressive
+but non-intervening.
+
+The appropriate analytic response is therefore not ethical intensification but
+structural re-description. To intervene in a system that reproduces itself
+through ordinary survival activity, one must identify the variables that govern
+reproduction itself. This requires abandoning agent-centered explanations in
+favor of field-level analysis: mapping viability regions, extraction gradients,
+entropy flows, and admissible futures.
+
+The formal analysis that follows should thus be read as a shift in explanatory
+register. Where moral critique asks whether a practice is justified, structural
+analysis asks whether it is stable. Where ethical discourse seeks better reasons,
+constraint analysis seeks leverage. Only the latter can explain why practices
+that are widely hated nonetheless endure—and what it would take, in concrete
+terms, for them to stop.
+
+
+% ==================================================
+\section{Constraint as Field Boundary Condition}
+% ==================================================
+
+The dynamics analyzed thus far admit a more general formulation. Structural
+constraints function as boundary conditions on an underlying field of possible
+social trajectories. Capitalism is not merely a system of rules or institutions,
+but a configuration of conditions that defines which paths through social space
+are viable.
+
+Let $\Field$ denote a scalar constraint field over state space $\State$.
+
+\begin{definition}[Constraint Field]
+The constraint field $\Field : \State \to \mathbb{R}$ assigns to each state $s$
+the cost of maintaining material viability.
+\end{definition}
+
+Survival corresponds to remaining within a bounded region of this field.
+
+\[
+\Survive(s,a) = 1 \quad \Leftrightarrow \quad \Field(s') \le \Field_{\max},
+\]
+where $s'$ is the successor state induced by action $a$.
+
+Mute compulsion arises when the gradient of this field strongly penalizes actions
+outside a narrow corridor of admissible behavior.
+
+% --------------------------------------------------
+\subsection{Extraction Fields and Attention Gradients}
+% --------------------------------------------------
+
+Not all constraint fields merely delimit viability. Some actively extract value
+from agents by shaping the distribution of attention itself. Contemporary
+advertising platforms instantiate such an \emph{extraction field}.
+
+Let $\Attention$ denote a finite attentional budget available to an agent over a
+time interval, and let $E$ denote an extraction operator acting on attention.
+
+\begin{definition}[Extraction Field]
+An extraction field is a scalar field
+\[
+\Psi : \State \to \mathbb{R}
+\]
+whose gradient induces a net transfer of value from agents to the field’s
+operators by capturing attention independently of agent interest or benefit.
+\end{definition}
+
+Unlike productive fields, which exchange value symmetrically, extraction fields
+operate by imposing involuntary exposure. The relevant dynamic is not persuasion
+but capture.
+
+Let $a_t$ be an attentional allocation at time $t$. The extraction rate is given
+by
+\[
+\mathcal{X}(s) = \Grad \Psi(s) \cdot a_t,
+\]
+which measures the rate at which attention is diverted away from agent-chosen
+trajectories.
+
+In advertising-saturated environments, this diversion is decoupled from
+relevance, quality, or trust. Visibility is allocated not by informational value
+but by payment, yielding a monotonic relationship between capital and exposure.
+
+\begin{proposition}[Asymmetric Loss]
+For most agents $s$, the expected return on extracted attention satisfies
+\[
+\mathbb{E}[\text{value gained} \mid \mathcal{X}(s)] < \mathbb{E}[\text{value lost}],
+\]
+while the aggregate surplus is captured upstream by platform owners.
+\end{proposition}
+
+This asymmetry explains why extraction fields persist even when most advertisers
+fail. The system does not optimize for mutual benefit, but for maximal aggregate
+extraction under survival-conditioned participation.
+
+Crucially, extraction fields interfere with cultural adaptation. They overwrite
+locally curated interest structures with incoherent, externally imposed signals,
+thereby increasing entropic load while preserving structural profitability.
+
+Advertising saturation is thus not a market imperfection but a stable
+equilibrium: a low-maintenance extraction regime nested within the broader
+constraint field of capitalism.
+
+
+% ==================================================
+\section{Entropic Reproduction and Stability}
+% ==================================================
+
+The reproduction of structure can be understood entropically. Actions aligned
+with survival tend to minimize energetic and organizational expenditure.
+
+Let $\Entropy(h)$ denote the entropy associated with maintaining history $h$.
+
+\begin{proposition}[Low-Entropy Reproduction]
+Structures persist when
+\[
+\Entropy(h_{t+1}) - \Entropy(h_t) \approx 0
+\]
+for survival-aligned actions.
+\end{proposition}
+
+Capitalism is stable because its reproduction coincides with low-entropy
+behavior: working, paying rent, and complying with institutional routines
+requires less energy than sustained deviation.
+
+Resistance, by contrast, is initially high-entropy. It demands coordination,
+sacrifice, and sustained deviation from default paths. This explains why
+counter-structures are necessary to reduce entropic cost during periods of
+conflict.
+
+% ==================================================
+\section{Event-Historical Trajectories}
+% ==================================================
+
+Social systems evolve through irreversible event sequences. Each action updates
+the space of possible futures.
+
+Let $\mathsf{Fut}(h_t)$ denote the set of admissible futures following history
+$h_t$.
+
+\begin{definition}[Admissible Future]
+A future history $h_{t+1}$ is admissible iff
+\[
+h_{t+1} \in \Hist_{\text{adm}}.
+\]
+\end{definition}
+
+Structural power operates by continuously pruning $\mathsf{Fut}(h_t)$, narrowing
+the range of viable trajectories. Ordinary survival actions incrementally lock
+in paths that reproduce the existing field.
+
+Political intervention, therefore, is not merely oppositional but
+path-constructive: it seeks to expand $\mathsf{Fut}(h_t)$ by altering constraint
+conditions.
+
+% ==================================================
+\section{Universality as Structural Invariance}
+% ==================================================
+
+Within this framework, universality acquires a precise meaning. Universal demands
+correspond to invariants across the constraint field.
+
+\begin{definition}[Structural Invariant]
+A demand $D$ is structurally universal if it targets a feature of $\Field$ shared
+across a wide measure of states $s \in \State$.
+\end{definition}
+
+Healthcare, housing, and wages are universal because they attach to survival
+thresholds rather than contingent identities. They intersect the same boundary
+conditions for heterogeneous agents.
+
+Identity-fragmented demands, by contrast, attach to local features of the field
+and therefore fail to aggregate pressure at scale.
+
+% ==================================================
+\section{Decoupling Survival and the Limits of Compulsion}
+% ==================================================
+
+The mute-compulsion thesis admits a clear limit case.
+
+\begin{proposition}[Decoupling Condition]
+If survival becomes independent of market participation for a large population,
+then the constraint field $\Field$ flattens:
+\[
+\Grad \Field \approx 0.
+\]
+\end{proposition}
+
+Under such conditions, structural power weakens dramatically. Order must then be
+maintained through ideological saturation or direct coercion, both of which are
+costly and unstable.
+
+This provides a falsifiability condition for the framework and a diagnostic for
+future political possibilities.
+
+% ==================================================
+\section{Conclusion}
+% ==================================================
+
+This essay has reconstructed a materialist theory of social power centered on
+constraint, survival, and reproduction. Capitalist domination persists not
+because it persuades, but because it organizes the conditions under which action
+remains viable.
+
+Culture adapts to these conditions, coordinating action within constrained
+spaces. The advertising-saturated feed is therefore not incidental but diagnostic: it is the visible trace of an extraction field that monetizes attention precisely where exit is costly, redistributing losses upward while presenting the result as neutral exchange.
+
+Political change occurs when coordination accumulates beyond thresholds
+and interrupts reproduction through counter-structures. Mediation introduces
+failure modes when symbolic legitimacy displaces material leverage.
+
+Integrated into a field-theoretic and event-historical framework, these dynamics
+generalize beyond political economy. Systems endure when compliance coincides
+with survival; they destabilize only when alternative trajectories become
+materially viable.
+
+Politics, in this view, is not primarily a struggle over meaning. It is a
+struggle over which futures can exist.
+
+\newpage
+% ==================================================
+\appendix
+\section{Formal Constraint Fields}
+% ==================================================
+
+\subsection{State Space and Actions}
+
+Let $\State$ be a measurable state space and $\Action$ a set of admissible
+actions.
+
+Let
+\[
+T : \State \times \Action \to \State
+\]
+be the state transition operator.
+
+\subsection{Constraint Field}
+
+Define the constraint field
+\[
+\Field : \State \to \mathbb{R}
+\]
+with upper viability bound $\Field_{\max} \in \mathbb{R}$.
+
+\begin{definition}[Viability Region]
+The viability region is
+\[
+\State_{\text{viable}} = \{ s \in \State \mid \Field(s) \le \Field_{\max} \}.
+\]
+\end{definition}
+
+\subsection{Survival Operator}
+
+Define the survival operator
+\[
+\Survive(s,a) =
+\begin{cases}
+1 & \text{if } T(s,a) \in \State_{\text{viable}}, \\
+0 & \text{otherwise}.
+\end{cases}
+\]
+
+\subsection{Admissible Actions}
+
+For a given state $s$, define the admissible action set
+\[
+\Action_{\text{adm}}(s) = \{ a \in \Action \mid \Survive(s,a) = 1 \}.
+\]
+
+\subsection{Mute Compulsion Condition}
+
+\begin{definition}[Mute Compulsion]
+Mute compulsion holds at $s$ if
+\[
+|\Action_{\text{adm}}(s)| \ll |\Action|.
+\]
+\end{definition}
+
+Equivalently, mute compulsion holds when the gradient
+\[
+\|\Grad \Field(s)\|
+\]
+is large relative to action-induced displacement in $\State$.
+
+\subsection{Slack Parameter}
+
+Define slack
+\[
+\Energy(s) = \Field_{\max} - \Field(s).
+\]
+
+Then
+\[
+\Grad \Energy(s) = - \Grad \Field(s).
+\]
+
+High slack corresponds to weak felt compulsion without altering admissibility.
+
+\subsection{Boundary Dynamics}
+
+Let $\gamma : [0,T] \to \State$ be a trajectory.
+
+Then $\gamma$ is viable iff
+\[
+\forall t \in [0,T], \quad \gamma(t) \in \State_{\text{viable}}.
+\]
+
+Violation at any $t$ yields trajectory termination.
+
+% ==================================================
+\subsection{Structural Robustness}
+% ==================================================
+
+\begin{proposition}[Low-Maintenance Structure]
+If for almost all $s \in \State_{\text{viable}}$,
+\[
+\exists a \in \Action_{\text{adm}}(s)
+\quad \text{such that} \quad
+\Reprod(s,a) = 1,
+\]
+then the structure is self-reproducing under survival dynamics.
+\end{proposition}
+
+% ==================================================
+\section{Entropic Reproduction Dynamics}
+% ==================================================
+
+\subsection{Event Histories}
+
+Let
+\[
+\Hist = \{ h_0, h_1, \dots, h_T \}
+\]
+denote a finite event history, where each $h_t$ is the cumulative system state at
+time $t$.
+
+Let $e_t$ denote the event occurring at time $t$ such that
+\[
+h_{t+1} = h_t \cup \{e_t\}.
+\]
+
+\subsection{Entropy Functional}
+
+Define an entropy functional
+\[
+\Entropy : \Hist \to \mathbb{R}_{\ge 0}
+\]
+measuring the organizational, energetic, or coordination cost of maintaining
+history $h$.
+
+\subsection{Incremental Entropy}
+
+Define the incremental entropy
+\[
+\Delta \Entropy_t = \Entropy(h_{t+1}) - \Entropy(h_t).
+\]
+
+\begin{definition}[Low-Entropy Action]
+An action $a_t$ is low-entropy at $h_t$ if
+\[
+\Delta \Entropy_t \approx 0.
+\]
+\end{definition}
+
+\subsection{Reproduction Operator}
+
+Define the reproduction indicator
+\[
+\Reprod(h_t, a_t) =
+\begin{cases}
+1 & \text{if } h_{t+1} \text{ preserves } \Struct, \\
+0 & \text{otherwise}.
+\end{cases}
+\]
+
+\subsection{Reproductive Stability}
+
+\begin{proposition}[Entropic Stability]
+A structure $\Struct$ is entropically stable if for almost all viable histories
+$h_t$,
+\[
+\exists a_t \in \Action_{\text{adm}}(h_t)
+\quad \text{such that} \quad
+\Delta \Entropy_t \approx 0
+\;\; \text{and} \;\;
+\Reprod(h_t,a_t)=1.
+\]
+\end{proposition}
+
+\subsection{Survival-Aligned Actions}
+
+Define the survival-aligned action set
+\[
+\Action_{\text{surv}}(h_t) =
+\{ a \in \Action_{\text{adm}}(h_t) \mid \Survive(h_t,a)=1 \}.
+\]
+
+\begin{lemma}[Entropy Minimization]
+For most $h_t$,
+\[
+\arg\min_{a \in \Action_{\text{surv}}(h_t)} \Delta \Entropy_t
+\subseteq \Action_{\text{market}}.
+\]
+\end{lemma}
+
+\subsection{High-Entropy Resistance}
+
+Define resistance actions
+\[
+\Action_{\text{res}}(h_t) =
+\Action_{\text{adm}}(h_t) \setminus \Action_{\text{market}}.
+\]
+
+Then typically
+\[
+\mathbb{E}_{a \in \Action_{\text{res}}}[\Delta \Entropy_t]
+\gg
+\mathbb{E}_{a \in \Action_{\text{market}}}[\Delta \Entropy_t].
+\]
+
+\subsection{Counter-Structures}
+
+Let $C$ denote a counter-structure.
+
+Define the modified entropy
+\[
+\Entropy_C(h) = \Entropy(h) - \Delta_C(h),
+\]
+where $\Delta_C(h) \ge 0$ captures entropic support supplied by $C$.
+
+\begin{proposition}[Entropy Reduction]
+If
+\[
+\Delta_C(h) \ge
+\mathbb{E}_{a \in \Action_{\text{res}}}[\Delta \Entropy],
+\]
+then resistance trajectories become entropically viable.
+\end{proposition}
+
+\subsection{Phase Preference}
+
+Define the preferred phase
+\[
+\mathcal{P}(h_t) = \arg\min_{a \in \Action_{\text{adm}}(h_t)} \Delta \Entropy_t.
+\]
+
+Structural persistence follows when
+\[
+\mathcal{P}(h_t) \subseteq \Action_{\text{market}}
+\quad \forall t.
+\]
+
+% ==================================================
+\section{Extraction Fields and Attention Dynamics}
+% ==================================================
+
+\subsection{Attention Budget}
+
+Let $\Attention$ denote a finite attentional budget per agent over a time interval
+$[t,t+1]$.
+
+\[
+\Attention = \int_t^{t+1} a(\tau)\, d\tau,
+\quad a(\tau) \ge 0.
+\]
+
+\subsection{Extraction Field}
+
+Define an extraction field
+\[
+\Psi : \State \to \mathbb{R}
+\]
+with associated gradient $\Grad \Psi(s)$.
+
+\begin{definition}[Extraction Gradient]
+The extraction gradient at state $s$ is
+\[
+\mathbf{g}_\Psi(s) = \Grad \Psi(s),
+\]
+representing directional pressure on attentional allocation.
+\end{definition}
+
+\subsection{Attention Allocation Operator}
+
+Let
+\[
+\mathcal{A} : \State \to \Delta(\Attention)
+\]
+map states to probability distributions over attention allocation.
+
+\subsection{Extraction Operator}
+
+Define the extraction operator
+\[
+E_\Psi(s,a) = \mathbf{g}_\Psi(s) \cdot a,
+\]
+measuring involuntary diversion of attention under allocation $a$.
+
+\subsection{Involuntary Capture Condition}
+
+\begin{definition}[Involuntary Attention Capture]
+Capture occurs at state $s$ if
+\[
+E_\Psi(s,a) > 0
+\quad \text{for all admissible } a.
+\]
+\end{definition}
+
+This condition holds when attention diversion is unavoidable regardless of agent
+preference.
+
+\subsection{Value Transfer}
+
+Let $V_u$ denote user value and $V_p$ platform value.
+
+Define expected transfers:
+\[
+\Delta V_u(s) = - \mathbb{E}[E_\Psi(s,a)],
+\quad
+\Delta V_p(s) = \mathbb{E}[E_\Psi(s,a)].
+\]
+
+\subsection{Asymmetric Extraction}
+
+\begin{proposition}[Reverse Redistribution]
+If
+\[
+\mathbb{E}[\Delta V_u(s)] < 0
+\quad \text{and} \quad
+\mathbb{E}[\Delta V_p(s)] > 0
+\]
+for almost all $s$, then the extraction field induces net upward redistribution.
+\end{proposition}
+
+\subsection{Advertiser Failure Regime}
+
+Let $A_i$ index advertisers.
+
+Define advertiser return
+\[
+R_i = V_i^{\text{out}} - V_i^{\text{in}}.
+\]
+
+Empirically typical:
+\[
+\Pr(R_i < 0) \gg \Pr(R_i > 0).
+\]
+
+\subsection{Platform Profitability}
+
+Platform profit satisfies
+\[
+\Pi_{\text{platform}} = \sum_i V_i^{\text{in}} - C_{\text{infra}},
+\]
+where $C_{\text{infra}}$ is sublinear in advertiser count.
+
+\begin{lemma}[Failure-Compatible Profit]
+Platform profitability does not require advertiser success:
+\[
+\frac{\partial \Pi_{\text{platform}}}{\partial R_i} \approx 0.
+\]
+\end{lemma}
+
+\subsection{Interference with Cultural Filtering}
+
+Let $\Culture$ be the endogenous cultural configuration and
+$\Culture_\Psi$ the post-extraction configuration.
+
+Define distortion:
+\[
+D(\Culture,\Culture_\Psi) =
+\Entropy(\Culture_\Psi) - \Entropy(\Culture).
+\]
+
+\begin{proposition}[Cultural Entropy Increase]
+Under involuntary extraction,
+\[
+D(\Culture,\Culture_\Psi) > 0.
+\]
+\end{proposition}
+
+\subsection{Stability of Extraction Fields}
+
+Extraction fields are stable if
+\[
+\Grad \Psi \neq 0
+\quad \text{and} \quad
+\Survive(s,a)=1 \;\; \forall s \text{ in platform domain}.
+\]
+
+Thus extraction persists whenever exit is costly.
+
+% ==================================================
+\section{Event-Historical Dynamics and Admissible Futures}
+% ==================================================
+
+\subsection{Event Space}
+
+Let $\mathcal{E}$ denote the space of atomic events.
+
+An event history is a finite sequence
+\[
+h_t = (e_0, e_1, \dots, e_t), \quad e_i \in \mathcal{E}.
+\]
+
+\subsection{Prefix Order}
+
+Define the prefix order $\preceq$ on histories:
+\[
+h_t \preceq h_{t'} \iff t \le t' \;\; \text{and} \;\; h_t \text{ is a prefix of } h_{t'}.
+\]
+
+This induces a partial order on $\Hist$.
+
+\subsection{Transition Operator}
+
+Define the transition operator
+\[
+\mathcal{T} : \Hist \times \Action \to \Hist,
+\quad
+\mathcal{T}(h_t,a_t) = h_{t+1}.
+\]
+
+\subsection{Admissibility Constraint}
+
+Let $\Hist_{\text{adm}} \subseteq \Hist$ denote admissible histories.
+
+\begin{definition}[Admissible History]
+A history $h_t$ is admissible iff
+\[
+\forall i \le t, \quad \Survive(h_i,a_i)=1.
+\]
+\end{definition}
+
+\subsection{Future Operator}
+
+Define the future operator
+\[
+\mathsf{Fut}(h_t) = \{ h_{t'} \in \Hist_{\text{adm}} \mid h_t \preceq h_{t'} \}.
+\]
+
+\subsection{Pruning Operator}
+
+Define the pruning operator
+\[
+\mathcal{P} : \mathcal{P}(\Hist) \to \mathcal{P}(\Hist),
+\quad
+\mathcal{P}(X) = X \cap \Hist_{\text{adm}}.
+\]
+
+\subsection{Structural Power as Pruning}
+
+\begin{definition}[Structural Pruning]
+Structural power acts by repeated application of $\mathcal{P}$ at each time step:
+\[
+\mathsf{Fut}(h_{t+1}) = \mathcal{P}(\mathsf{Fut}(h_t)).
+\]
+\end{definition}
+
+This process monotonically reduces the cardinality of admissible futures.
+
+\subsection{Irreversibility}
+
+Define reversibility of an event $e_t$:
+
+\[
+e_t \text{ is reversible} \iff \exists e'_t \text{ such that }
+\mathcal{T}(\mathcal{T}(h_{t-1},e_t),e'_t) = h_{t-1}.
+\]
+
+\begin{lemma}[Generic Irreversibility]
+For most survival-aligned events $e_t$,
+\[
+e_t \text{ is irreversible}.
+\]
+\end{lemma}
+
+Examples include debt accumulation, rent payment, credential aging, and skill
+obsolescence.
+
+\subsection{Path Dependence}
+
+Define path dependence:
+
+\begin{definition}[Path Dependence]
+A history $h_t$ is path-dependent if
+\[
+|\mathsf{Fut}(h_t)| < |\mathsf{Fut}(h_{t-1})|.
+\]
+\end{definition}
+
+Structural reproduction increases path dependence monotonically.
+
+\subsection{Intervention}
+
+Define an intervention $I$ as an operator
+\[
+I : \Hist \to \Hist
+\]
+such that
+\[
+|\mathsf{Fut}(I(h_t))| > |\mathsf{Fut}(h_t)|.
+\]
+
+\begin{proposition}[Counter-Structural Intervention]
+An intervention alters structure iff it expands admissible futures:
+\[
+\Delta |\mathsf{Fut}| > 0.
+\]
+\end{proposition}
+
+Symbolic or discursive actions that do not modify admissibility leave
+$\mathsf{Fut}$ unchanged.
+
+\subsection{Terminal Histories}
+
+Define terminal histories:
+\[
+\Hist_{\text{term}} =
+\{ h \in \Hist \mid \mathsf{Fut}(h) = \varnothing \}.
+\]
+
+Terminal histories correspond to system exit (death, exclusion, collapse).
+
+% ==================================================
+\section{Thresholds, Coalitions, and Structural Phase Change}
+% ==================================================
+
+\subsection{Organizational Capacity}
+
+Let $O(t) \in \mathbb{R}_{\ge 0}$ denote organizational capacity at time $t$.
+
+Components of $O(t)$ may include membership count, financial reserves,
+coordination efficiency, institutional presence, and strike readiness.
+
+\subsection{Accumulation Dynamics}
+
+Define accumulation dynamics:
+\[
+O(t+1) = O(t) + \Delta O(t),
+\]
+where $\Delta O(t)$ may be positive or negative.
+
+\subsection{Threshold Parameter}
+
+Let $\theta \in \mathbb{R}_{>0}$ denote a structural threshold.
+
+\begin{definition}[Effective Capacity]
+Organizational capacity is effective iff
+\[
+O(t) \ge \theta.
+\]
+\end{definition}
+
+\subsection{Below-Threshold Regime}
+
+For $O(t) < \theta$,
+\[
+\Delta \Struct(t) \approx 0.
+\]
+
+Actions in this regime have expressive or symbolic effect but do not alter
+constraint fields.
+
+\subsection{Above-Threshold Regime}
+
+For $O(t) \ge \theta$,
+\[
+\exists a_t \in \Action_{\text{res}} \text{ such that }
+\Delta \Struct(t) \neq 0.
+\]
+
+This defines the onset of structural leverage.
+
+\subsection{Phase Transition}
+
+Define a phase transition at time $t^*$ iff
+\[
+O(t^* - 1) < \theta
+\quad \text{and} \quad
+O(t^*) \ge \theta.
+\]
+
+\begin{proposition}[Nonlinearity]
+Structural change is nonlinear in $O(t)$ at $\theta$:
+\[
+\frac{d \Struct}{d O} \Big|_{O=\theta^-} \ll
+\frac{d \Struct}{d O} \Big|_{O=\theta^+}.
+\]
+\end{proposition}
+
+\subsection{Coalition Composition}
+
+Let a coalition be a partition
+\[
+\mathcal{Q} = \{ Q_1, Q_2, \dots, Q_n \},
+\]
+where each $Q_i$ denotes a participating group.
+
+\subsection{Leverage Function}
+
+Define leverage contribution
+\[
+\ell : \mathcal{Q} \to \mathbb{R}_{\ge 0}.
+\]
+
+Working-class groups satisfy
+\[
+\ell(Q_i) \gg \ell(Q_j)
+\quad \text{for most non-disruptive groups } Q_j.
+\]
+
+\subsection{Leadership Condition}
+
+\begin{definition}[Leadership Constraint]
+A coalition satisfies the leadership constraint iff
+\[
+\arg\max_{Q_i \in \mathcal{Q}} \ell(Q_i)
+\]
+determines strategic priorities.
+\end{definition}
+
+\subsection{PMC Mediation Operator}
+
+Define mediation
+\[
+M : D \to A,
+\]
+mapping demands $D$ to actions $A$.
+
+\subsection{Displacement Condition}
+
+Displacement occurs if
+\[
+\ell(M(D)) < \ell(D).
+\]
+
+\begin{proposition}[Coalition Failure Mode]
+If displacement persists, then
+\[
+\lim_{t \to \infty} O(t) < \theta.
+\]
+\end{proposition}
+
+\subsection{Counter-Structural Support}
+
+Let $C$ denote counter-structures.
+
+Define supported capacity
+\[
+O_C(t) = O(t) + \sigma(C),
+\]
+where $\sigma(C) \ge 0$ measures support magnitude.
+
+\subsection{Threshold Crossing with Support}
+
+\begin{lemma}[Support-Induced Transition]
+If
+\[
+O(t) < \theta \quad \text{and} \quad O_C(t) \ge \theta,
+\]
+then a phase transition occurs.
+\end{lemma}
+
+\subsection{Hysteresis}
+
+Define post-transition capacity decay
+\[
+O(t+1) = O(t) - \delta,
+\quad \delta > 0.
+\]
+
+Structural gains persist iff
+\[
+O(t) - \delta \ge \theta.
+\]
+
+Otherwise, regression occurs.
+
+\subsection{Critical Slowing}
+
+Near $\theta$, accumulation dynamics satisfy
+\[
+\Delta O(t) \to 0,
+\]
+producing apparent stagnation prior to transition.
+
+\subsection{Terminal Coalitions}
+
+Define terminal coalition states:
+\[
+\mathcal{Q}_{\text{term}} =
+\{ \mathcal{Q} \mid \forall t,\; O(t) < \theta \}.
+\]
+
+Terminal coalitions exhaust resources without inducing phase change.
+
+% ==================================================
+\begin{thebibliography}{99}
+
+\bibitem{MarxCapital}
+Marx, K. (1867).
+\textit{Capital: A Critique of Political Economy, Vol.~I}.
+Hamburg: Otto Meissner Verlag.
+
+\bibitem{MarxGrundrisse}
+Marx, K. (1857--1858).
+\textit{Grundrisse: Foundations of the Critique of Political Economy}.
+Moscow: Progress Publishers.
+
+\bibitem{ChibberClassMatrix}
+Chibber, V. (2022).
+\textit{The Class Matrix: Social Theory after the Cultural Turn}.
+Cambridge, MA: Harvard University Press.
+
+\bibitem{ChibberPostcolonial}
+Chibber, V. (2013).
+\textit{Postcolonial Theory and the Specter of Capital}.
+London: Verso.
+
+\bibitem{WeberEconomySociety}
+Weber, M. (1922).
+\textit{Economy and Society}.
+Berkeley: University of California Press.
+
+\bibitem{Polanyi}
+Polanyi, K. (1944).
+\textit{The Great Transformation}.
+New York: Farrar \& Rinehart.
+
+\bibitem{BourdieuDistinction}
+Bourdieu, P. (1979).
+\textit{Distinction: A Social Critique of the Judgement of Taste}.
+Cambridge, MA: Harvard University Press.
+
+\bibitem{BourdieuForms}
+Bourdieu, P. (1986).
+The forms of capital.
+In J.~Richardson (Ed.),
+\textit{Handbook of Theory and Research for the Sociology of Education}
+(pp.~241--258).
+New York: Greenwood.
+
+\bibitem{SimonAttention}
+Simon, H.~A. (1971).
+Designing organizations for an information-rich world.
+In M.~Greenberger (Ed.),
+\textit{Computers, Communications, and the Public Interest}.
+Baltimore: Johns Hopkins University Press.
+
+\bibitem{Zuboff}
+Zuboff, S. (2019).
+\textit{The Age of Surveillance Capitalism}.
+New York: PublicAffairs.
+
+\bibitem{VarianShapiro}
+Shapiro, C., \& Varian, H.~R. (1999).
+\textit{Information Rules: A Strategic Guide to the Network Economy}.
+Boston: Harvard Business School Press.
+
+\bibitem{GeorgescuRoegen}
+Georgescu-Roegen, N. (1971).
+\textit{The Entropy Law and the Economic Process}.
+Cambridge, MA: Harvard University Press.
+
+\bibitem{Prigogine}
+Prigogine, I. (1980).
+\textit{From Being to Becoming: Time and Complexity in the Physical Sciences}.
+San Francisco: W. H. Freeman.
+
+\bibitem{Arrow}
+Arrow, K.~J. (1951).
+\textit{Social Choice and Individual Values}.
+New York: Wiley.
+
+\bibitem{Hirschman}
+Hirschman, A.~O. (1970).
+\textit{Exit, Voice, and Loyalty}.
+Cambridge, MA: Harvard University Press.
+
+\bibitem{FoucaultPower}
+Foucault, M. (1975).
+\textit{Discipline and Punish: The Birth of the Prison}.
+New York: Pantheon Books.
+
+\bibitem{Olson}
+Olson, M. (1965).
+\textit{The Logic of Collective Action}.
+Cambridge, MA: Harvard University Press.
+
+\bibitem{Friston}
+Friston, K. (2010).
+The free-energy principle: A unified brain theory?
+\textit{Nature Reviews Neuroscience}, 11(2), 127--138.
+
+\bibitem{Landauer}
+Landauer, R. (1961).
+Irreversibility and heat generation in the computing process.
+\textit{IBM Journal of Research and Development}, 5(3), 183--191.
+
+\bibitem{burgis2025chibber}
+Ben Burgis,
+\emph{Why Everyone Should Read Vivek Chibber},
+\textit{Give Them an Argument w/ Ben Burgis}, YouTube livestream,
+22 December 2025,
+available at:
+\url{https://www.youtube.com/live/SxRTDm0agy4}.
+
+\end{thebibliography}
+
+\end{document}
