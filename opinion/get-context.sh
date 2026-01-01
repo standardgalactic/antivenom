@@ -1,138 +1,178 @@
 #!/bin/bash
+#
+# =============================================================================
+# NAME
+#   get-context.sh
+#
+# SYNOPSIS
+#   ./get-context.sh [OPTIONS]
+#
+# DESCRIPTION
+#   Recursively processes all .txt files in the current directory and
+#   subdirectories. Files are split into chunks and sent to an LLM via Ollama.
+#   Results are appended to a single summary file.
+#
+#   Previously processed files are tracked to avoid reprocessing.
+#
+# OPTIONS
+#   -m, --memory
+#       Load all *.memory files (recursively) before processing and use their
+#       contents as prior context for every model invocation.
+#
+#   -t, --translate
+#       Translate input text to English instead of summarizing.
+#
+# BEHAVIOR
+#   - Without flags: summarizes text files
+#   - With --memory: summaries/translations are informed by memory context
+#   - With --translate: replaces summarization prompt with translation prompt
+#   - Flags may be combined
+#
+# OUTPUT FILES
+#   progress.log  - append-only processing log
+#   opinion.txt  - model output (summaries or translations)
+#
+# REQUIREMENTS
+#   - bash
+#   - ollama
+#   - granite3.2:8b model installed
+#
+# =============================================================================
 
-# Define progress and summary files
+# ===============================
+# Configuration
+# ===============================
 progress_file="progress.log"
-summary_file="attention-economy.txt"
-summary_file_01="attention-economy-01memory.txt"
-summary_file_02="attention-economy-02memory.txt"
-source_file="source"
+summary_file="opinion.txt"
 main_dir=$(pwd)
 
-# Function to check if a file is already processed
+# ===============================
+# Flags
+# ===============================
+USE_MEMORY=false
+USE_TRANSLATE=false
+MEMORY_CONTEXT=""
+
+for arg in "$@"; do
+    case "$arg" in
+        -m|--memory)
+            USE_MEMORY=true
+            ;;
+        -t|--translate)
+            USE_TRANSLATE=true
+            ;;
+    esac
+done
+
+# ===============================
+# Setup output files
+# ===============================
+touch "$main_dir/$progress_file"
+touch "$main_dir/$summary_file"
+
+echo "Script started at $(date)" >> "$main_dir/$progress_file"
+echo "Summaries/translations saved to $summary_file" >> "$main_dir/$progress_file"
+
+# ===============================
+# Load *.memory files if enabled
+# ===============================
+if $USE_MEMORY; then
+    echo "Memory mode enabled" >> "$main_dir/$progress_file"
+
+    while IFS= read -r -d '' memfile; do
+        echo "Loading memory file: $memfile" >> "$main_dir/$progress_file"
+        MEMORY_CONTEXT+=$'\n\n'"===== MEMORY FILE: $(basename "$memfile") ====="$'\n'
+        MEMORY_CONTEXT+="$(cat "$memfile")"
+    done < <(find "$main_dir" -type f -name "*.memory" -print0)
+
+    if [ -z "$MEMORY_CONTEXT" ]; then
+        echo "Warning: --memory flag set but no *.memory files found" >> "$main_dir/$progress_file"
+    fi
+fi
+
+# ===============================
+# Helper: processed check
+# ===============================
 is_processed() {
     grep -Fxq "$1" "$main_dir/$progress_file"
 }
 
-# Create progress and summary files if they don't exist
-touch "$main_dir/$progress_file"
-touch "$main_dir/$summary_file"
-touch "$main_dir/$summary_file_01"
-touch "$main_dir/$summary_file_02"
-
-# Start logging script progress
-echo "Script started at $(date)" >> "$main_dir/$progress_file"
-echo "Summaries will be saved to $summary_file, $summary_file_01, and $summary_file_02" >> "$main_dir/$progress_file"
-
-# Function to process text files in a directory
+# ===============================
+# Process files in a directory
+# ===============================
 process_files() {
     local dir=$1
     echo "Processing directory: $dir"
-    
-    # Iterate over each .txt file in the specified directory
+
     for file in "$dir"/*.txt; do
-        # Skip if no .txt files are found
-        if [ ! -e "$file" ]; then
+        [ -e "$file" ] || continue
+
+        if [ "$(basename "$file")" == "$summary_file" ]; then
             continue
         fi
 
-        # Skip processing the summary files, memory files, and source file
-        if [ "$(basename "$file")" == "$summary_file" ] || [ "$(basename "$file")" == "$summary_file_01" ] || [ "$(basename "$file")" == "$summary_file_02" ] || [ "$(basename "$file")" == "01.memory" ] || [ "$(basename "$file")" == "02.memory" ] || [ "$(basename "$file")" == "$source_file" ]; then
-            echo "Skipping summary, memory, or source file: $(basename "$file")"
-            continue
-        fi
-
-        # Process the file if it's a regular file
         if [ -f "$file" ]; then
-            local file_name=$(basename "$file")  # Get the file name only
-            
-            # Process only if not processed before
+            local file_name=$(basename "$file")
+
             if ! is_processed "$file_name"; then
-                echo "Processing $file_name"
                 echo "Processing $file_name" >> "$main_dir/$progress_file"
 
-                # Create a temporary directory for the file's chunks
                 sanitized_name=$(basename "$file" | tr -d '[:space:]')
                 temp_dir=$(mktemp -d "$dir/tmp_${sanitized_name}_XXXXXX")
-                echo "Temporary directory created: $temp_dir" >> "$main_dir/$progress_file"
+                echo "Temp dir: $temp_dir" >> "$main_dir/$progress_file"
 
-                # Split the file into chunks of 100 lines each
-                split -l 100 "$file" "$temp_dir/chunk_"
-                echo "File split into chunks: $(find "$temp_dir" -type f)" >> "$main_dir/$progress_file"
+                split -l 2000 "$file" "$temp_dir/chunk_"
 
-                # Extract metadata from source file if it exists
-                local metadata=""
-                if [ -f "$main_dir/$source_file" ]; then
-                    metadata="Source File: $file_name\n$(cat "$main_dir/$source_file" | grep -E 'Title:|Interviewer:|Interviewee:')\n\n"
-                else
-                    metadata="Source File: $file_name\nWarning: Source file not found\n\n"
-                    echo "Warning: Source file not found for $file_name" >> "$main_dir/$progress_file"
-                fi
-
-                # Summarize each chunk and append to the respective summary files
                 for chunk_file in "$temp_dir"/chunk_*; do
                     [ -f "$chunk_file" ] || continue
-                    local chunk_name=$(basename "$chunk_file")
-                    echo "Summarizing chunk: $chunk_name"
-                    
-                    # Original summary (with source file and metadata)
-                    if [ -f "$main_dir/$source_file" ]; then
-                        echo -e "$metadata" | tee -a "$main_dir/$summary_file"
-                        cat "$main_dir/$source_file" "$chunk_file" | ollama run granite3.2:8b "Summarize in detail and explain:" | tee -a "$main_dir/$summary_file"
-                        echo "" >> "$main_dir/$summary_file"
+
+                    if $USE_TRANSLATE; then
+                        PROMPT="Translate the following text to clear, fluent English:"
                     else
-                        echo -e "$metadata" | tee -a "$main_dir/$summary_file"
-                        ollama run granite3.2:8b "Summarize in detail and explain:" < "$chunk_file" | tee -a "$main_dir/$summary_file"
-                        echo "" >> "$main_dir/$summary_file"
+                        PROMPT="Summarize in detail and explain the following text:"
                     fi
-                    
-                    # Summary with 01.memory (no source file, no metadata)
-                    if [ -f "$main_dir/01.memory" ]; then
-                        cat "$main_dir Infantry/01.memory" "$chunk_file" | ollama run granite3.2:8b "Summarize in detail and explain:" | tee -a "$main_dir/$summary_file_01"
-                        echo "" >> "$main_dir/$summary_file_01"
+
+                    if $USE_MEMORY; then
+                        ollama run granite3.2:8b \
+"Use the following prior memory as background context. Do not summarize or translate the memory itself unless relevant.
+
+$MEMORY_CONTEXT
+
+$PROMPT" \
+                        < "$chunk_file" | tee -a "$main_dir/$summary_file"
                     else
-                        ollama run granite3.2:8b "Summarize in detail and explain:" < "$chunk_file" | tee -a "$main_dir/$summary_file_01"
-                        echo "" >> "$main_dir/$summary_file_01"
-                        echo "Warning: 01.memory not found, skipping 01.memory inclusion for $chunk_name" >> "$main_dir/$progress_file"
+                        ollama run granite3.2:8b \
+"$PROMPT" \
+                        < "$chunk_file" | tee -a "$main_dir/$summary_file"
                     fi
-                    
-                    # Summary with 02.memory (no source file, no metadata)
-                    if [ -f "$main_dir/02.memory" ]; then
-                        cat "$main_dir/02.memory" "$chunk_file" | ollama run granite3.2:8b "Summarize in detail and explain:" | tee -a "$main_dir/$summary_file_02"
-                        echo "" >> "$main_dir/$summary_file_02"
-                    else
-                        ollama run granite3.2:8b "Summarize in detail and explain:" < "$chunk_file" | tee -a "$main_dir/$summary_file_02"
-                        echo "" >> "$main_dir/$summary_file_02"
-                        echo "Warning: 02.memory not found, skipping 02.memory inclusion for $chunk_name" >> "$main_dir/$progress_file"
-                    fi
+
+                    echo "" >> "$main_dir/$summary_file"
                 done
 
-                # Remove the temporary directory
                 rm -rf "$temp_dir"
-                echo "Temporary directory $temp_dir removed" >> "$main_dir/$progress_file"
-
-                # Mark the file as processed
                 echo "$file_name" >> "$main_dir/$progress_file"
             fi
         fi
     done
 }
 
-# Recursively process subdirectories
-# process_subdirectories() {
-#    local parent_dir=$1
-#    
-#    # Iterate over all subdirectories
-#    for dir in "$parent_dir"/*/; do
-#        if [ -d "$dir" ]; then
-#            process_files "$dir"  # Process files in the subdirectory
-#            process_subdirectories "$dir"  # Recursive call for nested subdirectories
-#        fi
-#    done
-#}
+# ===============================
+# Recursive traversal
+# ===============================
+process_subdirectories() {
+    local parent_dir=$1
 
+    for dir in "$parent_dir"/*/; do
+        [ -d "$dir" ] || continue
+        process_files "$dir"
+        process_subdirectories "$dir"
+    done
+}
+
+# ===============================
 # Main execution
-process_files "$main_dir"  # Process files in the main directory
-# process_subdirectories "$main_dir"  # Process files in subdirectories
+# ===============================
+process_files "$main_dir"
+process_subdirectories "$main_dir"
 
-# Mark script completion
 echo "Script completed at $(date)" >> "$main_dir/$progress_file"
