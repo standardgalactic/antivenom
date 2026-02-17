@@ -2,7 +2,14 @@
 
 𝘝𝘦𝘯𝘦𝘯𝘶𝘮 𝘴𝘰𝘭𝘢 𝘧𝘢𝘤𝘪𝘵 𝘥𝘰𝘴𝘪𝘴
 
-**Your Brain is Just a Prediction Machine, and Play is How It Hacks Reality**
+# Escaping Polemic Debt
+
+[Essay](https://standardgalactic.github.io/antivenom/The%20Polemic%20Debt.pdf)
+
+[Audio Overview](https://standardgalactic.github.io/antivenom/working/)
+
+
+# **Your Brain is Just a Prediction Machine, and Play is How It Hacks Reality**
 
 Think you're in control? Think again. William Glasser says you're just acting out your deepest psychological cravings, tweaking reality to match some idealized fantasy world in your head. But wait—William T. Powers disagrees! He says you're not reacting to the world at all; you're manipulating your own perception just to feel like you're in charge.
 
@@ -20,12 +27,12 @@ So, what have we learned? Your brain is an anxious little prediction engine, con
 [The Joy of Spherepop](https://standardgalactic.github.io/spherepop/Joy-of-Spherepop.pdf)
 
 
+<!--
 ![](dark-patterns.jpg)
 
 
 [Interface Opacity](https://standardgalactic.github.io/antivenom/Interface%20Opacity.pdf)
 
-<!--
 ![](ankara-01.webp)
 ![](ankara-02.webp)
 ![](ankara-03.webp)
