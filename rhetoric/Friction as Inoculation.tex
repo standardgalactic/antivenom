@@ -1,0 +1,2286 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1.25in]{geometry}
+\usepackage{setspace}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+
+\onehalfspacing
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{remark}{Remark}
+
+\theoremstyle{remark}
+\newtheorem*{example*}{Example}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+\titleformat{\section}{\large\bfseries}{{\thesection}}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{{\thesubsection}}{1em}{}
+\titleformat{\subsubsection}{\normalsize\itshape}{{\thesubsubsection}}{1em}{}
+
+\title{\textbf{Friction as Inoculation:\\[4pt]
+Null Preservation, Bounded Difficulty,\\[2pt]
+and the Architecture of Cognitive Resilience}}
+
+\author{Flyxion}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Contemporary cognitive and institutional systems are optimized for smoothness: interfaces minimize delay, ambiguity, and friction to maximize engagement, efficiency, and throughput. This essay argues that such optimization produces brittle competence by removing the incompleteness signals required for robust evaluation. The central claim is that bounded friction functions as epistemic inoculation, structured exposure to null states that strengthens a system’s capacity to resolve incomplete inputs without collapsing into incoherence.
+
+The framework integrates four components. Null Convention Logic formalizes incompleteness as a correctness condition rather than an error, showing that premature evaluation against unresolved inputs yields structural incoherence. Thermodynamic free energy provides a stability criterion in which null preservation maintains entropy above a threshold that prevents premature belief concentration. Geometric Bayesianism interprets sparsity as geodesic efficiency under anisotropic energetic cost, with bounded null exposure expanding viable low-action trajectories. Metastability theory identifies the target regime as sustained operation near criticality, where reorganization remains possible without global decoherence.
+
+Together these perspectives yield the Null Inoculation Principle: for any delay-insensitive system whose robustness increases when previously null inputs are successfully resolved, there exists a critical exposure parameter $\epsilon^*$ such that bounded null injection below this threshold increases expected long-run robustness, while exposure beyond it induces collapse. The argument moves from pedagogical practice, including language immersion and delayed automation, through computation, thermodynamics, and geometry, to institutional design, where the central problem is preserving null semantics under adversarial pressure toward premature evaluation.
+\end{abstract}
+
+\tableofcontents
+
+\newpage
+
+%%% PART I: MOTIVATION AND PHENOMENOLOGY %%%
+
+\section{Introduction: The Smoothness Optimum and Its Costs}
+\label{sec:intro}
+
+The dominant design principle of contemporary systems is reduction of friction. Software minimizes clicks. Interfaces remove ambiguity. Platforms optimize for seamless transition between states. Latency is treated as defect. Hesitation is treated as churn risk. Complexity is hidden behind layers of smoothing abstraction.
+
+This orientation has clear economic advantages. Smooth systems are easier to adopt, faster to use, and more predictable to scale. Yet the same design logic that maximizes short-term usability may degrade long-term resilience. The reason is structural: a system trained exclusively under ideal conditions acquires competence whose validity presupposes those conditions. When conditions shift, the gap between the world the system was trained on and the world it now inhabits becomes a failure mode.
+
+Biological cognition suggests a different organizing principle. Organisms do not eliminate uncertainty; they metabolize it. Robust competence emerges not from isolation but from structured exposure within survivable bounds --- from encounters with noise, delay, partial information, and conflicting signals that resolve without catastrophic overload.
+
+The central claim of this essay is that friction, when bounded and paired with consolidation, functions as epistemic inoculation. Rather than treating incompleteness as error to be eliminated, resilient systems formalize and preserve null states --- signals that are not yet valid --- and refuse premature evaluation. This is not a metaphor but a structural condition derivable from computational, thermodynamic, and dynamical principles.
+
+The argument proceeds in four stages. Section~\ref{sec:phenomenology} develops the phenomenological case through the practice of language immersion, examining how deliberate ambiguity tolerance and delayed automation produce deeper competence than immediate clarity. Section~\ref{sec:ncl} introduces Null Convention Logic as the computational formalization of these observations, deriving the Null Inoculation Principle rigorously. Section~\ref{sec:thermo} connects null preservation to thermodynamic free energy, geometric Bayesianism, and metastability theory, showing that the same structural insight appears independently across physical and probabilistic frameworks. Section~\ref{sec:institutional} extends the analysis to institutional design, formalizing the governance problem as maintenance of null semantics under adversarial pressure. Appendices provide supporting mathematical derivations and analogical illustrations.
+
+Throughout, the central invariant is: \emph{premature collapse of uncertainty produces incoherence; bounded preservation of null states produces robustness}. Friction, properly staged, is not inefficiency. It is a correctness condition.
+
+\section{The Phenomenology of Bounded Difficulty}
+\label{sec:phenomenology}
+
+\subsection{The Comfort Trap}
+
+Facebook once offered Pirate English, upside-down text, and novelty language modes that made the interface marginally harder to parse. Those options have quietly disappeared. The official explanation would invoke accessibility and consistency. The structural explanation is more precise: friction reads as failure inside systems optimized for engagement metrics. A user who pauses, rereads, or experiences mild disorientation is a user at risk of departure. Smoothness maximizes retention.
+
+From a product perspective this is rational. From an epistemic perspective it produces a characteristic failure mode. Those novelty interfaces did not impair usability at any consequential scale. What they did was prevent the interface from collapsing entirely into habit. They made reading effortful again. They reintroduced attention.
+
+Modern systems remove that effort systematically. Feeds are curated. Ambiguity is minimized. Irregularity is filtered. Inputs are cleaned before exposure. The user inhabits a world optimized for clarity and speed. This is the comfort trap: not that systems are easy, but that they are too clean --- trained on a world that does not exist, producing competence conditional on conditions that external reality does not reliably provide.
+
+\subsection{Language Immersion as Structured Strain}
+
+When the author began learning Spanish, the approach adopted was deliberately adversarial to comfort. For nearly two years reading was restricted to Spanish texts. The first anchor was \emph{Harry Potter} --- a narrative already known in English, whose semantic structure could stabilize unfamiliar lexical signals. Spanish audio recordings accompanied the Spanish text, so that acoustic and orthographic channels could reinforce one another under ambiguity. As structural competence accumulated, the reading moved from familiar narratives to unfamiliar ones, from children's literature to adult novels.
+
+At any moment the fallback to English was available. It was refused.
+
+When living in Spanish-speaking countries, the practice extended to social interaction. When interlocutors shifted to English as a courtesy --- reducing friction at the interface --- the response continued in Spanish. The interaction was slower and occasionally awkward. The cognitive cost was real and deliberate.
+
+Only at a later stage were device languages changed to Spanish. Until that point, routine system messages had remained English --- an invisible translation layer suppressing ambient friction. Removing it meant that automatized interactions suddenly required active parsing. The environment ceased to function as transparent extension and became a domain requiring interpretation.
+
+In each case the structural move was the same: remove the clean fallback. Not because difficulty is intrinsically valuable, but because the clean fallback trains the system on an idealized input distribution that the target environment does not provide.
+
+Monica Anderson's holistic thesis~\cite{anderson} sharpens this observation. Filtering input before a system encounters it does not merely simplify learning. It trains the system on a world that does not exist. Sanitized corpora produce competence that functions only inside sanitized conditions. Real environments contain ambiguity, delay, contradiction, noise, partial comprehension, and conflicting signals. Competence conditioned on their absence is not understanding. It is shelter.
+
+\subsection{Distributional Shift and Staged Ambiguity}
+
+The machine learning concept of distributional shift~\cite{quinonero} provides a precise framing for this failure mode. A model trained on distribution $P_{\text{train}}$ performs poorly when deployed under distribution $P_{\text{test}} \neq P_{\text{train}}$. The mechanism is straightforward: the model learned to represent $P_{\text{train}}$, not the target process. When the two diverge, performance degrades.
+
+Language immersion made this concrete. The reading practice was not casual exposure but structured strain. When unfamiliar vocabulary appeared, it was underlined and the forward momentum of the narrative was preserved. Comprehension dropped below comfort, sometimes substantially. This was not indifference to ignorance but staging.
+
+Interrupting to look up each word would have produced lexical precision at the cost of structural coherence. Characters would not stabilize across pages. Plot would fragment into isolated translation problems. The text would dissolve into a sequence of local puzzles rather than a developing system. An earlier lesson from English reading had made this visible: apparent confusion in a passage was often deliberate authorial withholding. Meaning at the chapter level routinely resolved ambiguity at the sentence level. If local ambiguity was eliminated prematurely, higher-order structure never formed.
+
+The same principle governed the Spanish practice: exposure came first; completion came second; clarification came afterward.
+
+Once a book was finished, underlined words were collected into a list. Each term was looked up in a dictionary, the definition written by hand, and the result transferred to homemade flashcards. Repetition continued until recognition ceased to require conscious effort. This sequence separated exposure from consolidation. During reading, ambiguity was tolerated. After reading, ambiguity was resolved deliberately. The ignorance was temporary but real; the repair was systematic.
+
+\subsection{Positive Ignorance and Operational Provisionality}
+
+Anderson's notion of \emph{Positive Ignorance}~\cite{anderson} describes the capacity to produce useful outcomes without possessing a complete internal model of the problem domain. Applied carefully, it names a disciplined provisionality: the system acts effectively within acknowledged incompleteness rather than halting until completeness is achieved.
+
+Two forms of ignorance are worth distinguishing. Negligent ignorance leaves gaps unexamined and untracked, allowing incompleteness to harden silently into error. Operational ignorance tolerates incompleteness provisionally to preserve forward motion, with explicit intention of later integration. The reading practice depended entirely on the second form.
+
+Continuing under ambiguity preserved higher-order structure. Underlining preserved accountability. Later vocabulary consolidation ensured that ambiguity did not accumulate as drift. This oscillation --- exposure under uncertainty, retrospective clarification, repetition until automaticity --- changes the functional profile of ambiguity. It ceases to feel like threat and begins to function as gradient. Comprehension becomes scalar rather than binary. Revision becomes recalibration rather than collapse.
+
+Premature correction is therefore not neutral. Resolving every local ambiguity immediately treats sentence-level confusion as if it were chapter-level failure. It interrupts structural discovery with procedural repair. Positive ignorance is not anti-model; it is anti-premature-closure. It allows structure to emerge at the appropriate level before it is locked.
+
+\subsection{Delayed Automation and Premature Compression}
+
+The same structural principle manifests in technical skill acquisition. When writing, retyping passages rather than copying them forces re-encoding. When programming, building pipelines manually in Bash and plain Python before introducing frameworks forces confrontation with file paths, processes, error states, and environmental variables. Compression is deferred until the underlying structure has been internalized through repetition.
+
+This is not nostalgia for inefficiency. It is resistance to \emph{premature compression}: the introduction of abstraction before the structural understanding that makes abstraction interpretable has been established. When one inherits layered systems before encountering their underlying constraints directly, competence becomes dependent on scaffolding one cannot inspect or repair.
+
+The sequence matters critically. Strain precedes compression. Exposure precedes abstraction. Manual competence precedes automation. If compression comes first, fluency develops without depth. If strain never resolves, progress stalls. The discipline lies in staging the transition correctly, not in refusing it.
+
+Competence that rests entirely on scaffolding collapses when scaffolding shifts. A programmer who has only used frameworks struggles when debugging beneath them. A reader who has only consumed pre-digested summaries struggles when confronting dense primary texts. Delayed automation distributes competence into the participant before centralizing it in the system.
+
+\subsection{The Dosage Principle}
+
+Inoculation functions because of dosage. Insufficient exposure produces no adaptation. Excessive exposure overwhelms. Cognitive training follows the same constraint.
+
+The reading method worked because difficulty was staged. During reading, ambiguity was tolerated up to the level at which narrative coherence was preserved. After reading, ambiguity was resolved deliberately through vocabulary work. The friction was real but bounded; the recovery was equally real and systematic.
+
+A system perpetually heated never anneals. A system perpetually cooled never adapts. Resilience emerges from oscillation between bounded exposure and consolidation. This principle extends beyond language to physical training, cognitive development, and institutional design alike. In each domain, the distinction between productive and destructive difficulty is architectural: bounded friction paired with integration produces growth; unbounded friction without integration produces exhaustion.
+
+%%% PART II: FORMAL FRAMEWORK %%%
+
+\section{From Practice to Formal Structure}
+\label{sec:bridge_practice}
+
+The preceding sections described concrete practices: immersion without fallback, delayed automation, structured ambiguity tolerance. We now clarify why these are not merely pedagogical heuristics but instances of a deeper structural constraint.
+
+Each practice shares a common invariant: evaluation is delayed until dependency structure has resolved. In language immersion, lexical uncertainty is tolerated until narrative coherence stabilizes. In delayed automation, abstraction is deferred until manual causal chains are internalized. In both cases, local incompleteness is preserved to prevent premature global collapse.
+
+Null Convention Logic provides the formal substrate for this invariant. The practices described earlier can be read as biological implementations of delay-insensitive computation. What appears as discomfort at the experiential level corresponds to null state propagation at the formal level.
+
+\section{Null Convention Logic and the Formal Structure of Incompleteness}
+\label{sec:ncl}
+
+\subsection{Ternary Signal Algebra}
+
+We formalize the null condition using a ternary signal domain
+
+\[
+\Sigma = \{\varnothing,\, 0,\, 1\},
+\]
+
+where $\varnothing$ denotes null (not yet valid) and $\{0,1\}$ denote resolved Boolean values. We equip $\Sigma$ with the partial order
+
+\[
+\varnothing \prec 0, \qquad \varnothing \prec 1,
+\]
+
+with $0$ and $1$ left incomparable. Null is strictly less informative than any resolved value.
+
+\begin{definition}[Validity predicate]
+The validity predicate $V : \Sigma \to \{0,1\}$ is defined by
+\[
+V(x) = \begin{cases} 0 & \text{if } x = \varnothing, \\ 1 & \text{if } x \in \{0,1\}. \end{cases}
+\]
+A signal is evaluable only if $V(x) = 1$.
+\end{definition}
+
+\begin{remark}
+Null is not the same as false. $V(\varnothing) = 0$ does not mean the signal evaluates to $0$ in the Boolean sense; it means the signal carries no resolved information. Downstream computation that conflates null with false commits a type error at the level of signal semantics.
+\end{remark}
+
+\subsection{Delay-Insensitive Gate Semantics}
+
+Let $f : \{0,1\}^n \to \{0,1\}$ be any Boolean function. We extend $f$ to $\tilde{f} : \Sigma^n \to \Sigma$ by
+
+\[
+\tilde{f}(x_1, \dots, x_n) = \begin{cases} \varnothing & \text{if } \exists\, i \text{ such that } V(x_i) = 0, \\ f(x_1, \dots, x_n) & \text{otherwise.} \end{cases}
+\]
+
+Evaluation is suspended until every input is valid. No global clock enforces synchronization; each gate fires at the moment its own inputs resolve.
+
+\begin{definition}[Delay-insensitive circuit]
+A delay-insensitive circuit is a directed acyclic graph $G = (V_G, E_G)$ in which each node $v \in V_G$ computes $\tilde{f}_v$ for some Boolean $f_v$, and edge weights encode arbitrary positive transmission delays.
+\end{definition}
+
+\begin{definition}[Validity wavefront]
+A system state assigns $s(v) \in \Sigma$ to each node. Node $v$ is \emph{eligible} at time $t$ if
+
+\[
+\forall u \in \operatorname{Pred}(v),\quad V(s(u,t)) = 1.
+\]
+
+The \emph{completion wavefront} is the minimal $t^*$ such that $V(s(v, t^*)) = 1$ for all $v \in V_G$.
+\end{definition}
+
+Validity propagates monotonically outward from input nodes through successive eligibility transitions. No node fires ahead of its inputs.
+
+\subsection{Nested Scope Resolution and the Pop Operation}
+
+Let a computation be represented as a tree $T$ whose leaves are atomic signals and whose internal nodes are gate applications. Define resolution recursively:
+
+\[
+R(v) = \begin{cases} 1 & \text{if } v \text{ is a leaf and } V(s(v)) = 1, \\ 1 & \text{if } \forall u \in \operatorname{Children}(v),\; R(u) = 1, \\ 0 & \text{otherwise.} \end{cases}
+\]
+
+A node evaluates only when all its children resolve. The root evaluates if and only if $R(\text{root}) = 1$.
+
+\begin{remark}[Pop semantics]
+This recursive descent captures the Pop operation: computation is driven to maximal depth before validity propagates upward. The outermost scope cannot collapse until every nested scope has resolved. Premature evaluation at any internal node --- treating a child with $R = 0$ as though $R = 1$ --- introduces a state unreachable under the null-respecting transition relation and constitutes structural incoherence.
+\end{remark}
+
+\subsection{Premature Collapse as Structural Incoherence}
+
+\begin{definition}[Reachable states]
+Let $\mathcal{R} \subset \Sigma^{|V_G|}$ denote the set of system states reachable under null-respecting propagation from valid inputs.
+\end{definition}
+
+\begin{proposition}
+Evaluation of $\tilde{f}_v$ when $\exists\, u \in \operatorname{Pred}(v)$ with $s(u) = \varnothing$ produces a state $s' \notin \mathcal{R}$.
+\end{proposition}
+
+\begin{proof}
+Any state reachable by null-respecting propagation satisfies the eligibility precondition at each node at the time of evaluation. Evaluation against an unresolved input violates this precondition, producing a state absent from the reachable set by definition.
+\end{proof}
+
+Premature collapse is therefore not merely suboptimal. It is formally incoherent: the resulting state could not have been reached by any valid execution of the system.
+
+\begin{example*}[Narrative illustration]
+At the Last Supper, Jesus declares that he will not drink of the fruit of the vine until the kingdom of God comes (Luke 22:18). Read structurally, this is a public declaration of null state at a particular output node. The wine is the validity token: its consumption would signal that the outermost evaluative scope has resolved. Consuming it before that resolution constitutes premature evaluation --- treating an unresolved computation as complete. The statement functions identically to a null signal posted at an interface boundary: not ``absent'' but ``not yet valid.'' The disciples, as the distributed mediating layer between interior intention and exterior environment, constitute a Markov blanket: $X \perp Y \mid B$, where $B$ is the blanket, $X$ the interior states, and $Y$ the external environment. All coupling between internal computation and external reality is mediated through $B$. Boundary stability preserves the integrity of the null state against premature external perturbation.
+\end{example*}
+
+\subsection{The Bounded Null Exposure Operator}
+
+We now formalize friction as controlled injection of null states within coherence-preserving bounds.
+
+\begin{definition}[Robustness functional]
+Let $\mathcal{U} : \Sigma^{|V_G|} \to \mathbb{R}_{\geq 0}$ measure the system's capacity to absorb perturbations without entering incoherent states --- for example, via distance in state space from the boundary of $\mathcal{R}$, or via expected basin stability under stochastic delay variation.
+\end{definition}
+
+\begin{definition}[Bounded null exposure operator]
+Let $\mu$ be a scale measure on $V_G$ (e.g., the proportion of nodes). Define $\mathcal{E}_\epsilon : \Sigma^{|V_G|} \to \Sigma^{|V_G|}$ such that for state $s$, the operator $\mathcal{E}_\epsilon(s)$ sets $s(v) \leftarrow \varnothing$ for nodes $v$ in some subset $N_\epsilon \subseteq V_G$ with $\mu(N_\epsilon) \leq \epsilon$, subject to the constraint
+
+\[
+\mathcal{E}_\epsilon(s) \in \mathcal{R}.
+\]
+
+Exposure is bounded and coherence-preserving.
+\end{definition}
+
+The operator temporarily reintroduces incompleteness into a resolved system. It simulates delay, ambiguity, or partial information arrival without violating the null-respecting transition invariant. This models friction.
+
+\subsection{The Null Inoculation Principle}
+
+Let system evolution follow transition operator $\Phi_t$ that respects null propagation rules.
+
+\begin{theorem}[Null Inoculation Principle]
+\label{thm:nip}
+Suppose:
+\begin{enumerate}[label=(\roman*)]
+  \item The system is delay-insensitive: $\tilde{f}_v$ is defined as above for all $v \in V_G$.
+  \item Premature collapse states lie outside $\mathcal{R}$.
+  \item $\mathcal{U}$ is increasing in the number of successfully resolved inputs that were previously null; formally, $\mathcal{U}(\Phi_T(\mathcal{E}_\epsilon(s))) \geq \mathcal{U}(\Phi_T(s))$ in expectation for resolved completions.
+\end{enumerate}
+Then there exists $\epsilon^* > 0$ such that for all $0 < \epsilon < \epsilon^*$,
+
+\[
+\mathbb{E}\bigl[\mathcal{U}(\Phi_T(\mathcal{E}_\epsilon(s)))\bigr] > \mathcal{U}(\Phi_T(s)).
+\]
+\end{theorem}
+
+\begin{proof}[Proof sketch]
+Bounded null exposure introduces additional unresolved inputs while preserving reachability ($\mathcal{E}_\epsilon(s) \in \mathcal{R}$). Resolution of these inputs requires the system to propagate validity through previously unexplored dependency paths, increasing sensitivity to delay ordering and strengthening internal consistency. Because the system respects null semantics throughout, the resolution process does not introduce incoherent states; each resolved input makes a positive contribution to $\mathcal{U}$ by hypothesis~(iii). For $\epsilon < \epsilon^*$, perturbations remain within the basin of attraction of coherent states, so the expected gain from resolution exceeds the transient cost of reintroduced incompleteness.
+\end{proof}
+
+\begin{corollary}[Failure regime]
+If $\epsilon \geq \epsilon_c$ for some critical threshold $\epsilon_c$, such that $\mathcal{E}_\epsilon(s) \notin \mathcal{R}$, then premature collapse or incoherent states are induced. This corresponds to infection rather than inoculation. The dosage constraint $\epsilon < \epsilon_c$ is therefore necessary, not merely prudent.
+\end{corollary}
+
+\subsection{Cognitive Correspondence}
+
+Under this formalism, the language immersion practice is a concrete instantiation of controlled null injection at $\epsilon < \epsilon^*$. Reading without immediate lexical resolution sets $s(v) = \varnothing$ at vocabulary nodes while preserving narrative structure nodes in their valid states. The narrative functions as the outer scope, preserving $\mathcal{R}$ membership while inner scopes remain temporarily unresolved. Consolidation is the recovery phase: it drives null nodes to valid resolution and updates $\mathcal{U}$ upward. The later automaticity of recognition corresponds to a state in which the basin of attraction around the correct resolution has been widened --- the system is less easily perturbed out of coherence by the same inputs that previously induced temporary null.
+
+The discipline of underlining without interruption, then resolving deliberately, is therefore not a study technique. It is null-respecting evaluation with staged consolidation: formally, a controlled application of $\mathcal{E}_\epsilon$ followed by $\Phi_T$.
+
+%%% PART III: THERMODYNAMICS, GEOMETRY, METASTABILITY %%%
+
+\section{Thermodynamic, Geometric, and Dynamical Foundations}
+\label{sec:thermo}
+
+\subsection{Variational Free Energy and Null Preservation}
+
+The connection between null preservation and thermodynamic stability emerges from the variational free energy framework. Let the system maintain a belief distribution $q(z)$ over latent configurations $z \in \mathcal{Z}$, given observations $y$. The variational free energy functional is
+
+\begin{equation}
+\mathcal{F}[q] = \mathbb{E}_{q(z)}\bigl[-\log p(y,z)\bigr] - \mathcal{H}(q),
+\label{eq:vfe}
+\end{equation}
+
+where $\mathcal{H}(q) = -\mathbb{E}_{q(z)}[\log q(z)]$ is the Shannon entropy. Minimizing $\mathcal{F}[q]$ simultaneously maximizes model evidence and preserves entropy against over-concentration.
+
+Premature collapse corresponds to forcing $q$ to concentrate excessively before the energy term $\mathbb{E}_{q(z)}[-\log p(y,z)]$ has been properly shaped by evidence. This drives $\mathcal{H}(q)$ downward prematurely, sacrificing the entropy that maintains a viable hypothesis space. In the null-respecting setting, unresolved signals act as explicit missingness constraints that prevent illegitimate concentration.
+
+To formalize this, represent signal validity by a mask $m \in \{0,1\}^d$ over $d$ input channels, where $m_i = 0$ indicates null at channel $i$. Let $y_m$ denote the valid subset. The correct likelihood factorization is
+
+\[
+p(y \mid z, m) = p(y_m \mid z),
+\]
+
+rather than imputing $y_{\bar{m}}$ by default or by premature inference. The null condition declares $m_i = 0$ and thereby forbids evaluation contingent on $y_{\bar{m}}$.
+
+\begin{proposition}[Entropy floor under null exposure]
+Bounded null exposure $\mathcal{E}_\epsilon$ at level $\epsilon > 0$ enforces a lower entropy floor during the exposure phase:
+\[
+\mathcal{H}(q_t) \geq \mathcal{H}_{\min}(\epsilon),
+\]
+with $\mathcal{H}_{\min}(\epsilon) > 0$ for $\epsilon > 0$. Subsequent consolidation over recovery window $T$ achieves:
+\[
+\mathcal{F}[q_{t+T}] \leq \mathcal{F}[q_t].
+\]
+\end{proposition}
+
+The two-phase structure --- entropy maintained during exposure, free energy reduced during consolidation --- mirrors exactly the oscillation between strain and stabilization described in Section~\ref{sec:phenomenology}. Null preservation is thermodynamically responsible inference.
+
+\subsection{Geometric Bayesianism and the Emergence of Sparsity}
+
+The Natural Sparsity Principle asserts that cognitive systems develop sparse, heuristic representations not by explicit regularization but as a consequence of energetic and physiological constraints on computation. Geometric Bayesianism formalizes this as constrained motion on a Riemannian manifold.
+
+Let $x(t)$ denote the internal state of a cognitive system evolving on a manifold $\mathcal{M}$ equipped with Riemannian metric $g$. The metric encodes effective energetic cost, signal-to-noise structure, and physiological impedance. The minimal action for a trajectory is
+
+\begin{equation}
+\mathcal{A}[x] = \int_0^T \left( \frac{1}{2}\,\|\dot{x}(t)\|_g^2 + U(x(t)) \right) dt,
+\label{eq:action}
+\end{equation}
+
+where $U$ is a potential encoding expected surprisal or mismatch cost.
+
+Sparsity emerges when $g$ is strongly anisotropic: large eigenvalues in most directions, small eigenvalues in a sparse low-dimensional subspace. The kinetic term $\|\dot{x}\|_g^2$ is minimized by avoiding costly directions, concentrating motion on a few salient coordinates. Sparse heuristics are, in this sense, geodesic shortcuts: the system navigates along cheap, high-salience directions that preserve viability with minimal energetic expenditure.
+
+Bounded null exposure fits naturally into this picture. By temporarily withholding valid inputs, $\mathcal{E}_\epsilon$ forces the system to traverse geodesics it would not have visited under full information. This widens the set of viable low-action paths explored. Consolidation then selects and stabilizes the paths that minimize long-run action under realistic perturbation conditions.
+
+\begin{remark}
+The relationship between Bayesian updating and geodesic motion under $g$ can be made precise in the framework of information geometry~\cite{amari}, where the Fisher information metric plays the role of $g$ and gradient flows on the statistical manifold correspond to natural gradient descent on $\mathcal{F}$.
+\end{remark}
+
+\subsection{Metastability, Criticality, and the Null Band}
+
+The target dynamical regime for resilient systems is metastability: prolonged residence within an attractor basin while retaining the capacity to reorganize when evidence warrants.
+
+Let $\Phi(x)$ be an effective potential over macro-states $x$, with local minima as stable attractors. Introduce an effective temperature parameter $\theta$ controlling exploratory variance through a stationary distribution
+
+\[
+\pi_\theta(x) \propto e^{-\Phi(x)/\theta}.
+\]
+
+Low $\theta$ produces rigid freezing into a single basin. High $\theta$ produces diffuse wandering with loss of coherence. The critical regime --- sometimes called the edge of chaos in complex systems theory~\cite{langton} --- is the intermediate band in which the system maintains long correlation lengths without global phase-lock.
+
+Null preservation induces a controlled elevation of effective temperature. By preventing illegitimate certainty, the system maintains non-zero exploratory variance. The bounded null exposure parameter $\epsilon$ acts as a proxy for temperature:
+
+\[
+\theta = \theta(\epsilon), \qquad \theta'(\epsilon) > 0 \quad \text{for small } \epsilon.
+\]
+
+The dosage constraint $\epsilon < \epsilon_c$ becomes the criticality constraint: below $\epsilon_c$, the system remains in the metastable band where reorganization is possible without decoherence; above it, coherence breaks.
+
+In diffusion models of escape from attractor basins, expected escape time scales approximately as
+
+\begin{equation}
+\mathbb{E}[\tau] \asymp e^{\Delta\Phi / \theta},
+\label{eq:escape}
+\end{equation}
+
+where $\Delta\Phi$ is a potential barrier. Too small $\theta$ makes the system brittle --- it cannot adapt when inhabiting a suboptimal basin. Too large $\theta$ prevents stable skill from crystallizing. The Null Inoculation Principle is the claim that bounded exposure modulates $\theta$ upward just enough to prevent premature freezing while preserving long-lived basins for learned structure.
+
+This is the dynamical restatement of the dosage principle: resilience is not maximal rigidity but sustained operation in the metastable band.
+
+\subsection{Unified Interpretation}
+
+The three frameworks --- thermodynamic, geometric, dynamical --- converge on the same structural claim through different mathematical vocabularies.
+
+\begin{itemize}
+  \item \textbf{Thermodynamically:} Null preservation maintains entropy above the floor that prevents premature belief concentration; consolidation then achieves legitimate free energy reduction.
+  \item \textbf{Geometrically:} Bounded null exposure forces geodesic exploration of the state manifold, widening the set of viable low-action trajectories; consolidation stabilizes optimal paths.
+  \item \textbf{Dynamically:} Null injection modulates effective temperature into the metastable band, preventing brittle freezing while preserving coherent attractors; recovery reduces temperature to stabilize learned structure.
+\end{itemize}
+
+Each framework provides a distinct explanatory resource for the same underlying phenomenon: controlled incompleteness, bounded and paired with consolidation, produces systems that are robust rather than brittle.
+
+\section{Invariant Across Representations}
+\label{sec:invariant}
+
+We now make explicit what has so far been shown implicitly: the four frameworks are not analogical overlays but coordinate transformations of the same dynamical condition.
+
+In Null Convention Logic, robustness corresponds to reachability within $\mathcal{R}$.
+
+In free-energy dynamics, robustness corresponds to preservation of positive curvature.
+
+In geometric Bayesianism, robustness corresponds to low-action geodesic viability.
+
+In metastability theory, robustness corresponds to residence within an attractor basin at subcritical temperature.
+
+Each description encodes the same inequality:
+\[
+0 < \epsilon < \epsilon_c.
+\]
+
+The difference lies only in representation. What appears as entropy floor in thermodynamics appears as curvature margin in geometry and as spectral contraction in dynamics. The Null Inoculation Principle is therefore representation-invariant.
+
+This invariance is what permits movement between neural, cognitive, institutional, and computational scales without changing the governing law.
+
+\section{Information-Theoretic Bounds on Premature Collapse}
+\label{sec:information_bounds}
+
+The Null Inoculation Principle can be reformulated in strictly information-theoretic terms. Let $X$ denote the true latent state of the world and let $Y$ denote observations. Let $\hat{X}$ denote the system's internal estimate after evaluation.
+
+Premature collapse corresponds to selecting $\hat{X}$ under incomplete information, effectively projecting onto a reduced hypothesis space before sufficient evidence has been accumulated.
+
+Define the mutual information between latent state and observation under mask $m$ as
+
+\[
+I(X; Y_m) = \mathcal{H}(X) - \mathcal{H}(X \mid Y_m).
+\]
+
+If evaluation occurs when $m$ suppresses a nontrivial subset of inputs, then
+
+\[
+I(X; Y_m) < I(X; Y),
+\]
+
+provided the masked inputs contain nonzero information about $X$.
+
+Premature evaluation therefore induces an information deficit. The system behaves as though it has access to $Y$, while in fact operating under $Y_m$.
+
+\begin{proposition}
+Let $\hat{X}_m$ be the estimator formed under masked input $Y_m$. If evaluation proceeds as though $m = \mathbf{1}$, then expected KL divergence from the true posterior satisfies
+
+\[
+\mathbb{E}\big[D_{\mathrm{KL}}(P(X \mid Y) \,\|\, P(X \mid Y_m))\big] > 0,
+\]
+
+whenever $I(X; Y_{\bar m} \mid Y_m) > 0$.
+\end{proposition}
+
+\begin{proof}
+By the chain rule of mutual information,
+
+\[
+I(X; Y) = I(X; Y_m) + I(X; Y_{\bar m} \mid Y_m).
+\]
+
+If $I(X; Y_{\bar m} \mid Y_m) > 0$, then conditioning on $Y_m$ alone yields a strictly less informative posterior than conditioning on full $Y$. The KL divergence between the two posteriors is positive in expectation.
+\end{proof}
+
+Null preservation enforces that estimation waits until $m = \mathbf{1}$. Bounded null exposure, by contrast, temporarily increases entropy in $P(X \mid Y_m)$ but does not falsely collapse it. The key distinction is that entropy is preserved honestly rather than suppressed illegitimately.
+
+Premature smoothing can therefore be interpreted as an implicit, unjustified assumption that $I(X; Y_{\bar m} \mid Y_m) = 0$ when in fact it is positive. In epistemic terms, this is overconfidence.
+
+\begin{remark}
+The robustness gain under bounded null exposure arises because the system learns to approximate $P(X \mid Y)$ more faithfully under partial observation, reducing the sensitivity of $\hat{X}$ to small perturbations in $Y$. Formally, this corresponds to reducing the Lipschitz constant of the estimator mapping.
+\end{remark}
+
+\section{Spectral Stability and Basin Enlargement}
+\label{sec:spectral}
+
+Resilience may also be characterized in spectral terms.
+
+Let the linearization of system dynamics near an attractor $x^*$ be
+
+\[
+\dot{\delta x} = J(x^*) \, \delta x,
+\]
+
+where $J$ is the Jacobian matrix. Stability requires that eigenvalues $\lambda_i$ of $J$ satisfy $\operatorname{Re}(\lambda_i) < 0$.
+
+Premature collapse often corresponds to sharp curvature in state space, producing large-magnitude negative eigenvalues in some directions but near-zero curvature in others. This produces narrow attractor basins: strongly stable locally but fragile under transverse perturbation.
+
+Bounded null exposure perturbs the system away from exact equilibrium repeatedly. Under appropriate recovery, this modifies $J$ through plastic adaptation, redistributing curvature across directions.
+
+\begin{proposition}
+If bounded null exposure induces plastic adaptation that increases the minimum magnitude of negative real parts of transverse eigenvalues without eliminating stability, then the volume of the basin of attraction increases.
+\end{proposition}
+
+\begin{proof}[Sketch]
+Basin volume scales inversely with local curvature anisotropy. By reducing eigenvalue disparity and increasing transverse stability margins, the set of initial perturbations from which trajectories return to $x^*$ expands.
+\end{proof}
+
+In this reading, null inoculation is spectral regularization: it reduces pathological anisotropy in the stability landscape.
+
+Metastability is therefore not merely heuristic language but corresponds to controlled spectral shaping of attractor geometry.
+
+%%% PART IV: INSTITUTIONAL DESIGN %%%
+
+\section{Scaling the Law}
+\label{sec:scaling}
+
+The formal results derived above are scale-free. They make no reference to neurons, circuits, or institutions specifically. They require only three ingredients: delayed evaluation, curvature-preserving dynamics, and bounded perturbation.
+
+Institutions satisfy these conditions when they process information through layered dependencies and when decisions propagate through causal chains. The same null-respecting constraint that prevents incoherent circuit states prevents incoherent policy states.
+
+The move from individual cognition to institutional design is therefore not metaphorical. It is a scaling argument. A society is a delay-sensitive inference engine operating under adversarial perturbation.
+
+The question at scale is identical to the question at the individual level: can the system maintain $\epsilon < \epsilon_c$ under pressure to evaluate prematurely?
+
+\section{Institutional Design as Null Maintenance Under Adversarial Pressure}
+\label{sec:institutional}
+
+\subsection{Premature Smoothness and Structural Fragility}
+
+At the personal scale, delayed automation and bounded friction are elective disciplines. At the institutional scale, they become architectural choices with systemic consequences.
+
+Modern platforms and educational systems are designed for smoothness. Environments streamline problems into well-formed exercises. Platforms optimize onboarding and eliminate novelty that interrupts engagement. Software ecosystems abstract complexity into frameworks that conceal underlying mechanics. Interfaces remove friction in the name of accessibility and retention.
+
+When friction is eliminated before competence is distributed, institutions centralize capability in the system rather than cultivating it in participants. Students learn to solve only well-structured problems. Users consume only curated feeds. Citizens encounter simplified narratives rather than conflicting evidence. The system becomes more efficient. The participant becomes more dependent. The inversion is subtle: institutions appear stronger because they are seamless; in reality, they are more brittle because resilience has not been rehearsed at the level of the individual.
+
+When perturbation arrives --- when frameworks break, when narratives conflict, when ambiguity resurfaces --- the shock is disproportionate precisely because friction has been systematically deferred rather than rehearsed at manageable amplitude.
+
+\subsection{Formal Governance Model}
+
+Let a platform or institution be a distributed evaluation system whose outputs are functions of heterogeneous inputs: reports, claims, observations, complaints, and transactions. The institution operates with an internal null-respecting protocol requiring sufficient validity before propagation of high-impact decisions.
+
+Let $\epsilon(t)$ denote the effective rate of null injection experienced by the institution --- the fraction of inputs that are incomplete, noisy, adversarially distorted, or strategically delayed. In benign environments, $\epsilon(t)$ arises from ordinary noise and latency. In adversarial environments, it is actively increased by actors who benefit from premature collapse or incoherent propagation.
+
+The institutional stability condition requires a threshold $\epsilon_c$ such that for $\epsilon(t) < \epsilon_c$, the institution remains within $\mathcal{R}$, while for $\epsilon(t) \geq \epsilon_c$ it enters regimes of premature collapse: rumor cascades, policy whiplash, or brittle overconfidence.
+
+The designer's problem is not to eliminate $\epsilon$, which is impossible, but to ensure that the system's effective $\epsilon_c$ is high and that operational $\epsilon(t)$ remains below it. Formally, this yields two coupled design targets.
+
+\begin{enumerate}
+  \item \textbf{Preserve null semantics at boundaries.} The institution must be able to label states as not-yet-valid and refuse propagation without being punished by its own incentives. This is the organizational analogue of delay-insensitive correctness: the system must not be forced by engagement or market pressure to evaluate on incomplete inputs.
+
+  \item \textbf{Implement recovery cycles.} The institution must maintain procedures for converting bounded null exposure into robustness rather than overload. Exposure without consolidation causes stress accumulation; institutionally, this corresponds to allowing verification and recomposition before irreversible commitments are made.
+\end{enumerate}
+
+Adversarial pressure can be modeled as a control input $a(t) \geq 0$ that increases $\epsilon(t)$:
+
+\[
+\epsilon(t) = \epsilon_0(t) + a(t).
+\]
+
+Stability requires the invariant set condition:
+
+\begin{equation}
+\epsilon_0(t) + a(t) < \epsilon_c \quad \text{for all } t \text{ in the operating regime.}
+\label{eq:governance}
+\end{equation}
+
+Resilient governance is therefore the collective maintenance of~\eqref{eq:governance} under strategic pressure to evaluate prematurely --- by protecting incompleteness signals, enforcing scope resolution, and preventing incentive structures from rewarding premature collapse.
+
+\section{Adversarial Null Exploitation and Defensive Design}
+\label{sec:adversarial}
+
+Adversarial actors exploit precisely those systems that collapse null states prematurely. Consider a decision process $D$ that maps inputs $Y$ to outputs $O$ without enforcing null semantics. If incomplete input subsets can induce decisive outputs, then adversaries need only control a subset of channels to force outcomes.
+
+Formally, let $D(Y_m)$ denote evaluation under masked inputs. If
+
+\[
+D(Y_m) \neq D(Y)
+\]
+
+for some mask $m$ with small support, then the system is vulnerable to partial-input manipulation.
+
+\begin{definition}[Null-respecting decision rule]
+A decision rule $D$ is null-respecting if
+
+\[
+D(Y_m) = \varnothing
+\]
+
+whenever $m \neq \mathbf{1}$.
+\end{definition}
+
+Null-respecting decision rules trade latency for robustness. They prevent adversaries from forcing collapse through selective channel manipulation.
+
+\begin{theorem}
+Under adversarial model where attacker controls up to $k$ input channels, a null-respecting rule eliminates successful manipulation for all $k$ such that masked inputs remain incomplete.
+\end{theorem}
+
+\begin{proof}
+If the rule outputs null whenever masked inputs are present, adversarial manipulation of fewer than all channels cannot produce a decisive output.
+\end{proof}
+
+The cost is delay. The benefit is immunity to partial-input coercion.
+
+Institutions optimized exclusively for speed abandon null semantics and therefore reduce $\epsilon_c$. Defensive design requires explicit encoding of incompleteness as a first-class state rather than forcing binary resolution.
+
+\section{Distributed Versus Centralized Competence}
+\label{sec:distributed}
+
+At institutional scale, total system competence can be decomposed as
+
+\[
+C_{\text{total}} = \sum_{i=1}^N S_i + A_{\text{central}},
+\]
+
+where $S_i$ represents structural competence distributed in individual participants and $A_{\text{central}}$ represents centralized automation or abstraction. Smooth systems increase $A_{\text{central}}$ while reducing distributed $S_i$.
+
+Fragility emerges when
+
+\[
+A_{\text{central}} \gg \sum_{i=1}^N S_i.
+\]
+
+In this regime, perturbations to the central layer propagate system-wide without distributed competence as a buffer. Resilient institutions maintain
+
+\[
+\sum_{i=1}^N S_i \approx A_{\text{central}},
+\]
+
+ensuring that adaptive capacity remains distributed and that central system failures encounter participants capable of improvised response rather than total dependence.
+
+This distributional balance is the institutional analogue of the dosage principle: efficiency (increasing $A_{\text{central}}$) is valuable but must be matched by corresponding investment in distributed structural competence (increasing $\sum S_i$). Premature centralization, like premature compression, produces depth deficit that emerges only under perturbation.
+
+\section{Equivalence of Free Energy Curvature and Dynamical Stability}
+\label{sec:hessian_jacobian}
+
+We now prove that, near equilibrium, curvature of the variational free energy functional is equivalent to spectral contraction of the induced dynamics. This establishes a formal bridge between Bayesian inference, thermodynamic stability, and dynamical systems theory.
+
+\subsection{Gradient Flow of Variational Free Energy}
+
+Let $q \in \mathcal{M}$ denote coordinates on a statistical manifold (e.g., mean parameters of a Gaussian family). Assume inference proceeds via gradient descent:
+
+\[
+\dot{q} = - \nabla \mathcal{F}(q).
+\]
+
+Let $q^*$ be a stationary point such that $\nabla \mathcal{F}(q^*) = 0$, and assume $q^*$ corresponds to a local minimum.
+
+\subsection{Linearization Near Equilibrium}
+
+Let perturbation $\delta q = q - q^*$. Linearizing the dynamics:
+
+\[
+\dot{\delta q}
+=
+- D^2 \mathcal{F}(q^*) \, \delta q.
+\]
+
+The Hessian $H := D^2 \mathcal{F}(q^*)$ gives the Jacobian of the system as $J = -H$.
+
+\subsection{Spectral Equivalence}
+
+\begin{theorem}[Curvature--Contraction Equivalence]
+\label{thm:curvature_contraction}
+The equilibrium $q^*$ is locally exponentially stable under gradient flow if and only if the Hessian $H$ is positive definite.
+
+Equivalently,
+\[
+\lambda_i(H) > 0
+\quad \forall i
+\quad \Longleftrightarrow \quad
+\operatorname{Re}(\lambda_i(J)) < 0 \quad \forall i.
+\]
+\end{theorem}
+
+\begin{proof}
+Local exponential stability requires the Jacobian $J$ to have eigenvalues with strictly negative real parts. Since $J = -H$ and $H$ is symmetric, its eigenvalues are real. Thus $\lambda_i(J) < 0 \iff \lambda_i(H) > 0$, and positive definiteness of the Hessian is equivalent to spectral contraction of the linearized dynamics.
+\end{proof}
+
+\subsection{Effect of Bounded Null Exposure}
+
+Bounded null exposure modifies the effective free energy landscape. Let exposure parameter $\epsilon$ alter the functional:
+
+\[
+\mathcal{F}_\epsilon(q)
+=
+\mathcal{F}(q)
++
+\epsilon \, R(q),
+\]
+
+where $R(q)$ captures structural reinforcement induced by resolving previously null dependencies. Then $H_\epsilon = H + \epsilon K$, where $K := D^2 R(q^*)$.
+
+If $K$ is positive semi-definite, then for small $\epsilon$, $\lambda_i(H_\epsilon) > \lambda_i(H)$: curvature increases and contraction rate strengthens.
+
+For large $\epsilon$, higher-order terms $\epsilon^2 L = \epsilon^2 D^2 S(q^*)$ may have indefinite curvature, and stability requires solving
+
+\[
+\lambda_{\min}(H) + \epsilon \lambda_{\min}(K) + \epsilon^2 \lambda_{\min}(L) = 0,
+\]
+
+yielding critical exposure threshold $\epsilon_c$.
+
+\subsection{Unified Interpretation}
+
+We have established:
+
+\[
+\text{Positive definite Hessian}
+\iff
+\text{Spectral contraction}
+\iff
+\text{Metastable basin existence}.
+\]
+
+Null inoculation increases Hessian curvature locally, widening the basin of attraction. Excessive exposure reverses curvature sign, collapsing basin geometry. The Null Inoculation Principle is a statement about preserving positive curvature of the free energy landscape under bounded perturbation.
+
+\section{Natural Gradient Flow and Information-Geometric Stability}
+\label{sec:natural_gradient}
+
+The Euclidean equivalence of Section~\ref{sec:hessian_jacobian} is sufficient to identify free-energy curvature with Jacobian spectral contraction under ordinary gradient descent. We now strengthen the result by moving to an information-geometric setting, where dynamics are Riemannian and curvature is measured relative to the Fisher metric.
+
+\subsection{Riemannian Setup and Natural Gradient Flow}
+
+Let $(\mathcal{M}, g)$ be a smooth Riemannian manifold representing a parametric belief family, with metric tensor $G(\theta)$. The natural gradient flow is
+
+\[
+\dot{\theta} = - G(\theta)^{-1}\nabla \mathcal{F}(\theta).
+\]
+
+The Riemannian Hessian $\operatorname{Hess}\mathcal{F}(\theta)$ is defined via the Levi--Civita connection $\nabla^g$:
+
+\[
+\operatorname{Hess}\mathcal{F}(\theta)[v] = \nabla^{\!g}_v \operatorname{grad}\mathcal{F}.
+\]
+
+Stability is governed by the generalized eigenproblem $H v = \lambda G v$, where $H = \nabla^2\mathcal{F}(\theta^*)$.
+
+\subsection{Curvature--Contraction in Fisher Geometry}
+
+\begin{theorem}[Information-Geometric Curvature--Contraction]
+\label{thm:info_curvature_contraction}
+Let $\theta^*$ be an equilibrium of the natural gradient flow. Then $\theta^*$ is locally exponentially stable if and only if the Riemannian Hessian $\operatorname{Hess}\mathcal{F}(\theta^*)$ is positive definite as a bilinear form:
+\[
+g_{\theta^*}\big(v,\operatorname{Hess}\mathcal{F}(\theta^*)[v]\big) > 0
+\quad \text{for all } v \neq 0.
+\]
+Equivalently, all generalized eigenvalues of $H v = \lambda G v$ are strictly positive.
+\end{theorem}
+
+\begin{proof}
+In Riemannian normal coordinates at $\theta^*$, $G(\theta^*) = I$ and Christoffel symbols vanish, so the natural gradient flow linearizes as $\dot{\delta\theta} = -H\,\delta\theta$. By the argument of Theorem~\ref{thm:curvature_contraction}, exponential stability holds iff $H$ is positive definite in these coordinates, which is the coordinate expression of the intrinsic bilinear form condition. In arbitrary coordinates the same condition is expressed through positive generalized eigenvalues. Conversely, a nonpositive generalized eigenvalue produces a direction along which the linearized flow fails to contract.
+\end{proof}
+
+\subsection{Metric Contraction Rate}
+
+Define Lyapunov function $V(\delta\theta) = \frac{1}{2}\,\delta\theta^\top G(\theta^*)\,\delta\theta$. Under linearized natural gradient flow,
+
+\[
+\dot{V}
+=
+-\delta\theta^\top H\,\delta\theta
+\le
+-2\lambda_{\min} V,
+\]
+
+where $\lambda_{\min}$ is the smallest generalized eigenvalue of $(H, G)$. Therefore
+
+\[
+V(t) \le e^{-2\lambda_{\min} t}\,V(0).
+\]
+
+The contraction rate is the generalized curvature margin of $\mathcal{F}$ in Fisher geometry.
+
+\subsection{Interpretation and Connection to Null Inoculation}
+
+When $g$ is the Fisher information metric, $\lambda_{\min}$ measures curvature in directions that are statistically distinguishable. Bounded null exposure that increases $\lambda_{\min}$ increases the contraction rate and hence the rate at which the system resolves perturbations. If null-induced deformation drives $\lambda_{\min} \to 0$, the system enters critical slowing-down; crossing zero corresponds to loss of stability.
+
+The dosage inequality $\epsilon < \epsilon_c$ is therefore the requirement that null-induced deformation preserves $\lambda_{\min}(\epsilon) > 0$ in the Fisher metric.
+
+\subsection{Critical Slowing-Down and Early Warning}
+\label{sec:slowing_down}
+
+A further consequence of the curvature-contraction equivalence is that the approach to the dosage boundary $\epsilon \to \epsilon_c^-$ produces observable precursors. As $\lambda_{\min}(\epsilon) \to 0$, the system's recovery time from small perturbations diverges:
+
+\[
+\tau_{\text{recovery}} \sim \frac{1}{\lambda_{\min}(\epsilon)} \to \infty.
+\]
+
+Simultaneously, variance of fluctuations near equilibrium increases. In the natural gradient setting, the stationary covariance under small Gaussian perturbation $\xi$ satisfies
+
+\[
+\Sigma_{\text{stat}} = \frac{1}{2} (G^{-1}H + H G^{-1})^{-1} \approx \frac{1}{2\lambda_{\min}} P_{\min},
+\]
+
+where $P_{\min}$ is the projection onto the least-stable generalized eigendirection.
+
+These divergences constitute \emph{early warning signals} of impending instability --- exactly the ``critical slowing-down'' phenomenon observed in ecological, climatic, and neural systems near tipping points~\cite{scheffer}.
+
+The institutional analogue is significant. An organization approaching its coherence threshold $\epsilon_c$ will exhibit increasing recovery time from informational shocks --- slower consensus, wider policy variance, repeated reversals --- before catastrophic collapse. Monitoring $\lambda_{\min}$ as a systemic health indicator corresponds, institutionally, to tracking variance and autocorrelation in decision outputs over time.
+
+Null-preserving governance is therefore not only defensive but diagnostic: a well-instrumented system can detect its own approach to the critical boundary before crossing it.
+
+\section{Delay-Tolerance, Partial Orders, and Causal Consistency}
+\label{sec:causal}
+
+The delay-insensitive semantics of Section~\ref{sec:ncl} have a natural formulation in the language of partial orders that clarifies the relationship between null preservation and causal consistency.
+
+\subsection{Event Structures and Causal Dependencies}
+
+\begin{definition}[Event structure]
+An event structure is a triple $(E, \leq, \#)$ where $E$ is a set of events, $\leq$ is a partial order encoding causal dependency, and $\#$ is a conflict relation.
+\end{definition}
+
+In an NCL circuit, events are validity transitions: a node $v$ transitioning from $\varnothing$ to a resolved value constitutes an event $e_v$. The causal order is induced by the circuit graph: $e_u \leq e_v$ whenever $u \in \operatorname{Pred}^*(v)$ (the reflexive-transitive closure of the predecessor relation).
+
+Delay-insensitive semantics enforce that $e_v$ can only occur after all $e_u$ with $e_u \leq e_v$ have occurred. The null-respecting transition relation is precisely the set of configurations consistent with this partial order.
+
+\begin{proposition}[Null states and downward-closure]
+The set of valid intermediate states of a delay-insensitive circuit is exactly the set of downward-closed subsets of $(E, \leq)$: sets $C \subseteq E$ such that $e \in C$ and $e' \leq e$ imply $e' \in C$.
+\end{proposition}
+
+\begin{proof}
+By induction on circuit depth. A state is reachable iff every resolved node has all causal predecessors resolved, which is the downward-closure condition.
+\end{proof}
+
+Premature collapse corresponds to violating downward-closure: evaluating a node whose causal predecessors have not all fired. This is a violation of causal consistency, not merely temporal ordering.
+
+\subsection{The Causal Interpretation of Friction}
+
+The causal framing reframes what bounded null exposure accomplishes. It does not merely introduce delay. It forces the system to respect causal dependencies that an over-eager evaluation would skip. The immersion practice, in these terms, preserves causal order: higher-level semantic structure (narrative coherence) is causally downstream of lower-level resolution (lexical acquisition). Attempting to lock in higher-level structure before lower-level structure is resolved violates the causal dependency.
+
+The Pop operation --- resolving the most nested scope first, propagating upward --- is causal consistency enforcement by descent. It ensures that every event in the evaluation tree has its causal predecessors resolved before it fires.
+
+\begin{remark}
+This causal framing connects to the theory of concurrent and distributed systems. Lamport's happens-before relation~\cite{lamport} is the prototype: event $a$ happens before event $b$ if $a$ causally precedes $b$, and any execution respecting this order is consistent. NCL delay-insensitive semantics are the hardware instantiation of the same principle.
+\end{remark}
+
+\subsection{Causal Stability Under Partial Orders}
+
+Consider a distributed evaluation system in which multiple agents each advance their own causal chains. Shared consistency requires that whenever two agents evaluate a shared variable, the causal precedences in both chains are respected.
+
+\begin{definition}[Causal merge]
+Two causal chains $C_1, C_2$ are \emph{causally mergeable} if there exists a common extension $C_3 \supseteq C_1 \cup C_2$ that is downward-closed with respect to the union of their causal orders.
+\end{definition}
+
+Premature collapse in one chain creates events that have no valid causal precedent in the other chain's order, making causal merge impossible. Null preservation in both chains maintains the conditions for eventual merge.
+
+This is the causal analogue of the intersubjective history model of Section~\ref{sec:institutional}: two agents can coordinate only if both have maintained null-respecting evaluation. Agents who have prematurely collapsed their null states have committed to an ordering of events that cannot be reconciled with others who have not.
+
+Speed, from this perspective, is not neutral. An agent who evaluates prematurely has purchased local certainty at the cost of global consistency.
+
+\section{Null Inoculation and Predictive Coding}
+\label{sec:predictive_coding}
+
+The free energy framework of Section~\ref{sec:thermo} has a hierarchical neural instantiation in predictive coding architectures~\cite{friston}. This section shows that null inoculation has a precise correlate in the predictive coding formalism, and that the dosage constraint reappears as a condition on the precision-weighting of prediction errors.
+
+\subsection{Predictive Coding Hierarchy}
+
+In a predictive coding hierarchy with $L$ levels, each level $\ell$ maintains a representation $\mu_\ell$ and generates predictions $\hat{x}_\ell$ for the level below. Prediction errors
+
+\[
+\varepsilon_\ell = x_\ell - \hat{x}_\ell
+\]
+
+are passed upward, weighted by precision matrices $\Pi_\ell$:
+
+\[
+\delta\mu_\ell \propto -\Pi_\ell \varepsilon_\ell + \Pi_{\ell+1}\varepsilon_{\ell+1}.
+\]
+
+The variational free energy decomposes as
+
+\[
+\mathcal{F} = \sum_\ell \varepsilon_\ell^\top \Pi_\ell \varepsilon_\ell - \log |\Pi_\ell|.
+\]
+
+Minimizing $\mathcal{F}$ simultaneously minimizes precision-weighted prediction errors and maximizes precision (model confidence).
+
+\subsection{Null States as Precision Attenuation}
+
+When a sensory channel $i$ is null, the appropriate response is to set the corresponding precision to zero:
+
+\[
+[\Pi_0]_{ii} = 0 \quad \text{when } m_i = 0.
+\]
+
+This effectively removes the channel from the prediction error signal, preventing null inputs from driving representation updates. The null condition is precision attenuation: not an absence of signal, but a withdrawal of confidence from an unresolved channel.
+
+Premature collapse corresponds to maintaining positive precision on a channel whose validity has not been established --- allowing an unresolved prediction error to drive representation updates as if it were valid. The hierarchy then adjusts $\mu_\ell$ to explain variance that does not yet exist, producing representations that are fit to noise rather than signal.
+
+\begin{proposition}[Null as precision gating]
+In a predictive coding hierarchy with precision gating, free energy reduction at level $\ell$ is suppressed until all channels feeding that level have non-zero precision, i.e., until their validity is established.
+\end{proposition}
+
+\begin{proof}
+If $[\Pi_0]_{ii} = 0$ for any channel $i$ contributing to the prediction error $\varepsilon_0$, then the contribution of that error to $\varepsilon_0^\top \Pi_0 \varepsilon_0$ vanishes, and the corresponding update to $\mu_1$ is zero. Level 1 cannot reduce free energy on that channel until precision is restored. By induction, no higher level can reduce free energy conditioned on the unresolved channel.
+\end{proof}
+
+The completion wavefront of Section~\ref{sec:ncl} corresponds, in the predictive coding setting, to the moment at which all precision-gated channels have been opened: the system can now legitimately minimize free energy across the full hierarchy.
+
+\subsection{Inoculation as Precision Curriculum}
+
+Bounded null exposure in the predictive coding setting is a precision curriculum: a structured schedule of channel attenuation and restoration that forces the hierarchy to develop representations that are robust to precision fluctuation.
+
+If the system is always trained with full precision on all channels, higher-level representations become dependent on the presence of all lower-level inputs at full fidelity. Attenuating channels during inference then induces large prediction errors that the hierarchy has no history of resolving.
+
+Conversely, a system trained under occasional precision attenuation develops higher-level representations that are robust to lower-level dropout. This is the predictive coding correlate of distributional shift robustness: the model has been trained on $P_{\text{test}}$ as well as $P_{\text{train}}$.
+
+The dosage constraint $\epsilon < \epsilon_c$ in this setting is the constraint that precision attenuation does not drive the system to represent noise as signal. Excessive attenuation forces the hierarchy to explain its own prior as if it were sensory evidence, collapsing the distinction between prediction and perception --- the predictive coding analogue of hallucination.
+
+\section{Closing the Loop}
+\label{sec:closing}
+
+The argument has moved from small personal practices to formal computation, through thermodynamics, dynamics, information theory, causal consistency, and predictive coding, and the same inequality has governed each level: $\epsilon < \epsilon_c$. The convergence is not coincidental. It reflects the fact that the central structural principle --- bounded incompleteness produces robustness; unbounded incompleteness produces collapse --- is a feature of systems that must evaluate under uncertainty at any scale.
+
+At the personal level, deliberate ambiguity tolerance and staged consolidation maintain the individual below the overload threshold. At the institutional level, null-respecting governance maintains the collective below the coherence-failure threshold under adversarial pressure. At the neural level, precision gating maintains the predictive hierarchy below the hallucination threshold.
+
+The world does not arrive pre-cleaned. Competence conditional on pre-cleaned input is shelter, not understanding. Robust systems --- individual, institutional, and neural --- are those that rehearse ambiguity at manageable amplitude, consolidate the resulting structure, and thereby widen the basin of coherent operation that perturbation must overcome.
+
+\section{Conclusion}
+
+The argument of this essay has moved from small practices to formal structure and back again. What began as a reflection on language immersion and deliberate ambiguity tolerance unfolded into a general principle about evaluation under incompleteness, derivable independently from computational, thermodynamic, geometric, dynamical, information-theoretic, causal, and predictive-coding foundations.
+
+The computational core is the Null Inoculation Principle (Theorem~\ref{thm:nip}): for any delay-insensitive system satisfying conditions~(i)--(iii), there exists a critical exposure level $\epsilon^*$ below which controlled null injection increases expected long-run robustness. Null is not absence. It is protected incompleteness --- a correctness condition rather than an error state. Premature collapse of null states produces structural incoherence: states unreachable under any valid execution of the system.
+
+The thermodynamic reading shows that null preservation maintains entropy above the floor that prevents premature belief concentration. The geometric reading shows that bounded null exposure forces geodesic exploration of the state manifold. The dynamical reading shows that null injection modulates effective temperature into the metastable band. The information-theoretic reading shows that premature collapse is implicit overconfidence, an unjustified assumption that $I(X; Y_{\bar m} \mid Y_m) = 0$. The causal reading shows that null preservation enforces downward-closure in event structures --- the hardware expression of happens-before. The predictive coding reading shows that null is precision attenuation, and that bounded null exposure is a precision curriculum that produces representations robust to channel dropout. The spectral reading, strengthened to Fisher geometry, shows that the dosage constraint is the requirement that null-induced deformation preserve positive generalized curvature, and that the approach to the critical boundary is detectable as critical slowing-down.
+
+These frameworks agree on the central invariant: resilience requires maintaining incompleteness long enough for validity to propagate at the appropriate scale. Premature smoothing eliminates the perturbation signals that teach a system how to metabolize perturbation. The dosage constraint $0 < \epsilon < \epsilon_c$ captures the precise architectural condition: too little exposure produces no adaptation; too much induces collapse.
+
+The institutional extension formalizes governance as the collective maintenance of this constraint under adversarial pressure. Adversarial actors who force premature evaluation exploit exactly the null-abandoning design pattern that smoothness optimization produces. Defensive design requires null as a first-class state and adversarial null management as an explicit governance target.
+
+The phenomenological observations with which the essay began are not incidental illustrations of a separately derived theory. They are instantiations of the same structural principle operating at the level of individual practice. The sequence is identical at every scale: exposure under bounded ambiguity, maintenance of forward coherence, retrospective consolidation, repetition until automaticity. Strain precedes compression. Exposure precedes abstraction. Null is maintained until the completion wavefront arrives.
+
+Smoothness is efficient. Efficiency without structural depth is brittle. Friction, properly staged, is not defect. It is a correctness condition for systems that must remain coherent in a world that does not arrive pre-cleaned.
+
+%%% APPENDICES %%%
+
+\appendix
+
+\section{Minimal Dynamical Model of Bounded Friction}
+\label{app:dynamics}
+
+We decompose cognitive state into structural competence $S(t)$ and automated compression $A(t)$:
+
+\[
+C(t) = S(t) + A(t).
+\]
+
+\subsection*{A.1 Exposure Dynamics}
+
+Structural competence under friction input $F(t) \geq 0$ evolves as
+
+\[
+\frac{dS}{dt} = \alpha F(t) - \beta S(t),
+\]
+
+with $\alpha, \beta > 0$ capturing learning sensitivity and structural decay respectively. The bounded regime requires $0 < F(t) < F_{\max}$.
+
+\subsection*{A.2 Consolidation Dynamics}
+
+Consolidation converts provisional structure into stable automation:
+
+\[
+\frac{dA}{dt} = \gamma S(t) - \delta A(t).
+\]
+
+Resilience emerges from oscillatory input producing bounded cycles in $(S, A)$.
+
+\subsection*{A.3 Dosage Condition}
+
+Adaptive growth requires $\int_0^{T_r} F(t)\,dt < F_{\max}\, T_r$. Excessive exposure without recovery causes overload.
+
+\subsection*{A.4 Institutional Scale}
+
+$C_{\text{total}} = \sum_{i=1}^N S_i + A_{\text{central}}$. Fragility emerges when $A_{\text{central}} \gg \sum S_i$.
+
+\section{Stochastic Robustness and Gradient Regularization}
+\label{app:stochastic}
+
+\subsection*{A. Stochastic Exposure Model}
+
+Let structural competence evolve under deterministic friction input $F(t) \geq 0$. Introduce stochastic perturbation $\xi(t)$ with
+\[
+\mathbb{E}[\xi(t)] = 0,
+\qquad
+\operatorname{Var}(\xi(t)) = \sigma^2.
+\]
+
+Define effective friction
+\[
+F_{\text{eff}}(t) = F(t) + \xi(t).
+\]
+
+The stochastic component models environmental variability, incomplete information arrival, and adversarial noise.
+
+\subsection*{B. Sensitivity and Response Operator}
+
+Let system output be $C = \Psi(\theta)$, where $\theta$ denotes internal parameters adapted through exposure. Under small perturbations $\delta \theta$, linearization gives
+\[
+\delta C = J_\Psi(\theta)\,\delta \theta,
+\]
+where $J_\Psi$ is the Jacobian (response operator).
+
+Define robustness loss under perturbation as proportional to the spectral norm
+\[
+\|J_\Psi(\theta)\|_2.
+\]
+
+Systems trained under near-deterministic regimes $\sigma^2 \to 0$ tend to develop large curvature directions aligned with dominant training modes. In such regimes, eigenvalues of $J_\Psi^\top J_\Psi$ become sharply anisotropic, yielding steep sensitivity gradients. Small distributional shifts produce disproportionate output deviations.
+
+\subsection*{C. Noise-Induced Regularization}
+
+Under stochastic exposure, parameter updates follow stochastic gradient dynamics:
+\[
+\theta_{t+1}
+=
+\theta_t
+-
+\eta \nabla_\theta \mathcal{L}(\theta_t)
++
+\eta \zeta_t,
+\]
+where $\zeta_t$ is noise induced by $\xi(t)$.
+
+Averaging over noise realizations yields effective objective
+\[
+\mathcal{L}_{\text{eff}}(\theta)
+=
+\mathcal{L}(\theta)
++
+\frac{\lambda}{2} \|\theta\|^2,
+\]
+with regularization coefficient
+\[
+\lambda \propto \eta^2 \sigma^2.
+\]
+
+Thus bounded stochastic exposure induces Tikhonov-type regularization. The Hessian becomes
+\[
+H_{\text{eff}}
+=
+H
++
+\lambda I.
+\]
+
+\subsection*{D. Spectral Consequences}
+
+Let eigenvalues of $H$ be $\{\lambda_i\}$. Under regularization,
+\[
+\lambda_i^{\text{eff}} = \lambda_i + \lambda.
+\]
+
+This shifts small eigenvalues upward, increasing spectral margin and reducing condition number:
+\[
+\kappa_{\text{eff}}
+=
+\frac{\lambda_{\max} + \lambda}{\lambda_{\min} + \lambda}
+<
+\frac{\lambda_{\max}}{\lambda_{\min}}
+\quad \text{for } \lambda > 0.
+\]
+
+Reduced condition number corresponds to smoother gradients and diminished sensitivity to perturbations in ill-conditioned directions.
+
+Equivalently, the spectral norm of the response operator satisfies
+\[
+\|J_\Psi\|_2^2
+=
+\lambda_{\max}(J_\Psi^\top J_\Psi),
+\]
+and regularization contracts this norm by flattening high-curvature modes.
+
+\subsection*{E. Distributional Shift Interpretation}
+
+Let training distribution be $\mathcal{D}_0$ and deployment distribution $\mathcal{D}_1$. Sensitivity to shift can be bounded by
+\[
+\|C(\mathcal{D}_1) - C(\mathcal{D}_0)\|
+\le
+\|J_\Psi\|_2 \cdot \|\mathcal{D}_1 - \mathcal{D}_0\|.
+\]
+
+By reducing $\|J_\Psi\|_2$, bounded stochastic exposure reduces worst-case performance degradation under shift.
+
+\subsection*{F. Relation to Null Inoculation}
+
+Stochastic null exposure at variance level $\sigma^2$ therefore increases robustness by enlarging spectral margin while preserving reachability within $\mathcal{R}$, provided exposure amplitude remains below the critical threshold $\epsilon_c$.
+
+Too little stochasticity yields sharp curvature and brittle gradients. Excessive stochasticity destroys structure. The regularization effect holds only in the bounded regime.
+
+Thus stochastic friction functions as gradient smoothing through spectral contraction, providing a complementary mechanism to the deterministic null-inoculation effect derived earlier.
+
+\section{Bayesian Ambiguity Tolerance}
+\label{app:bayesian}
+
+\subsection*{A. Posterior Dynamics}
+
+Let $\mathcal{H}$ denote a hypothesis space and let $P(H \mid D_t)$ be the posterior distribution after observing data stream $D_t = \{d_1,\dots,d_t\}$. Bayesian updating proceeds via
+
+\[
+P(H \mid D_{t})
+=
+\frac{P(d_t \mid H)\, P(H \mid D_{t-1})}
+{\int_{\mathcal{H}} P(d_t \mid H')\, P(H' \mid D_{t-1})\, dH'}.
+\]
+
+Posterior entropy is
+
+\[
+\mathcal{H}_t
+=
+- \int_{\mathcal{H}} P(H \mid D_t)\,
+\log P(H \mid D_t)\, dH.
+\]
+
+Entropy reduction corresponds to concentration of belief into narrower regions of hypothesis space.
+
+\subsection*{B. Basin Structure and Likelihood Curvature}
+
+Let the log-likelihood define an effective potential
+
+\[
+\Phi(H)
+=
+- \log P(D_t \mid H) - \log P(H).
+\]
+
+Posterior modes correspond to local minima of $\Phi(H)$. Each minimum defines an attractor basin under gradient flow dynamics.
+
+Correct model identification requires that evidence accumulation sufficiently deform $\Phi(H)$ so that the true hypothesis basin becomes globally dominant. Premature entropy collapse may trap the posterior within a locally favorable but globally incorrect basin.
+
+\subsection*{C. Entropy Floor Condition}
+
+Ambiguity tolerance imposes the constraint
+
+\[
+\mathcal{H}_t > \mathcal{H}_{\min} > 0
+\quad \text{for } t < T^*,
+\]
+
+where $T^*$ is the time at which sufficient evidence has accumulated to reshape the potential landscape.
+
+Maintaining $\mathcal{H}_t$ above this floor ensures that posterior mass remains distributed across competing basins long enough for likelihood curvature to determine the correct region.
+
+Premature correction corresponds to forcing
+
+\[
+\mathcal{H}_t \to 0
+\quad \text{before} \quad
+\nabla^2 \Phi(H) \text{ reflects sufficient evidence}.
+\]
+
+In that case, belief concentration precedes landscape deformation.
+
+\subsection*{D. Information-Theoretic Threshold}
+
+Let expected information gain per observation be
+
+\[
+\Delta I_t
+=
+\mathbb{E}\!\left[
+D_{\mathrm{KL}}
+\big(
+P(H \mid D_t)
+\,\Vert\,
+P(H \mid D_{t-1})
+\big)
+\right].
+\]
+
+Sustainable entropy reduction requires
+
+\[
+\sum_{t=1}^{T^*} \Delta I_t
+\ge
+\mathcal{H}_0 - \mathcal{H}_{\min}.
+\]
+
+If entropy collapses faster than information accumulates, i.e.,
+
+\[
+\mathcal{H}_t
+<
+\mathcal{H}_0 - \sum_{i=1}^t \Delta I_i,
+\]
+
+then posterior contraction exceeds evidential support. This is epistemic overfitting.
+
+\subsection*{E. Correspondence to Null Preservation}
+
+The null state in NCL corresponds to withholding evaluative commitment until all dependency inputs resolve. In Bayesian terms, null preservation corresponds to maintaining non-zero posterior entropy until curvature of $\Phi(H)$ is shaped by sufficient data.
+
+Premature NCL evaluation produces unreachable states in $\mathcal{R}$. Premature Bayesian collapse produces overconfident posteriors unsupported by evidence.
+
+Both are violations of a structural invariant:
+
+\[
+\text{commitment must not precede sufficient dependency resolution}.
+\]
+
+\subsection*{F. Basin Stability Interpretation}
+
+Under bounded ambiguity tolerance, posterior mass remains within a metastable band across multiple basins. As evidence accumulates, curvature differences amplify gradually until one basin dominates legitimately.
+
+If entropy is forced to zero too early, the system becomes brittle: it may converge rapidly but lacks capacity to reallocate mass under contradictory evidence. This is the probabilistic analogue of spectral margin collapse and temperature quenching discussed previously.
+
+Thus Bayesian ambiguity tolerance is not indecision. It is controlled entropy preservation that prevents premature basin lock-in. It satisfies the same inequality governing null inoculation:
+
+\[
+0 < \epsilon < \epsilon_c,
+\]
+
+where $\epsilon$ measures effective rate of premature commitment relative to evidential accumulation.
+
+\section{Entropy Suppression and the Smoothness Deficit}
+\label{app:entropy}
+
+\subsection*{A. Entropy Dynamics Under Updating}
+
+Let $p_t(x)$ denote the system's distribution over interpretations $x$ at time $t$. Shannon entropy is
+
+\[
+\mathcal{H}(p_t)
+=
+- \int p_t(x) \log p_t(x)\, dx.
+\]
+
+Under Bayesian updating, entropy evolves according to
+
+\[
+\frac{d\mathcal{H}}{dt}
+=
+- \mathbb{E}_{p_t}
+\left[
+\frac{\partial}{\partial t} \log p_t(x)
+\right].
+\]
+
+Entropy reduction corresponds to concentration of mass into fewer modes; entropy increase corresponds to exploratory dispersion.
+
+\subsection*{B. Evidence-Constrained Entropy Reduction}
+
+Let instantaneous information gain rate be
+
+\[
+\mathcal{I}(t)
+=
+\frac{d}{dt}
+D_{\mathrm{KL}}\big(p_t \,\Vert\, p_{t-\Delta t}\big).
+\]
+
+Legitimate entropy reduction must be supported by evidence accumulation:
+
+\[
+- \frac{d\mathcal{H}}{dt}
+\le
+\mathcal{I}(t).
+\]
+
+If entropy decreases faster than information is gained, then contraction exceeds evidential support. This condition defines over-smoothing.
+
+\subsection*{C. Smoothness Deficit}
+
+Define the smoothness deficit functional
+
+\[
+\Delta_{\text{smooth}}(t)
+=
+\left(
+- \frac{d\mathcal{H}}{dt}
+\right)
+-
+\mathcal{I}(t).
+\]
+
+When
+
+\[
+\Delta_{\text{smooth}}(t) > 0,
+\]
+
+entropy is collapsing faster than evidence justifies. The system is becoming overconfident relative to signal strength.
+
+Platforms optimized for frictionless interaction implicitly maximize $-d\mathcal{H}/dt$ by minimizing ambiguity and accelerating decision cycles. When evidential input does not scale proportionally, $\Delta_{\text{smooth}}$ becomes positive.
+
+\subsection*{D. Entropy Floor Condition}
+
+Adaptive systems impose a lower bound
+
+\[
+\mathcal{H}(p_t) > \mathcal{H}_{\min} > 0
+\]
+
+until cumulative information gain satisfies
+
+\[
+\int_0^T \mathcal{I}(t)\, dt
+\ge
+\mathcal{H}(p_0) - \mathcal{H}_{\min}.
+\]
+
+Only then may entropy legitimately approach $\mathcal{H}_{\min}$ without structural brittleness.
+
+If evidence arrives slowly, partially, or adversarially distorted, entropy must remain elevated correspondingly. Forced certainty under weak evidence reduces basin diversity and shrinks spectral margin in the corresponding free-energy landscape.
+
+\subsection*{E. Relation to Free Energy and Curvature}
+
+Recall variational free energy
+
+\[
+\mathcal{F}[q]
+=
+\mathbb{E}_{q}[-\log p(y,z)]
+-
+\mathcal{H}(q).
+\]
+
+Premature smoothing corresponds to reducing $\mathcal{H}(q)$ without proportional reduction in expected energy. This artificially lowers exploration capacity while leaving curvature underdetermined.
+
+Maintaining entropy above $\mathcal{H}_{\min}$ preserves curvature flexibility and prevents premature freezing into narrow basins. In Hessian terms, it preserves non-degenerate eigenstructure long enough for data to shape the spectrum.
+
+\subsection*{F. Structural Interpretation}
+
+The smoothness deficit is therefore not merely a sociotechnical phenomenon. It is a dynamical mismatch between entropy decay and information flow.
+
+Premature smoothing enforces
+
+\[
+\frac{d\mathcal{H}}{dt} \ll 0
+\]
+
+independently of evidential rate. Adaptive systems enforce
+
+\[
+- \frac{d\mathcal{H}}{dt}
+\le
+\mathcal{I}(t),
+\]
+
+with entropy remaining elevated until evidence warrants contraction.
+
+This is the entropy-level expression of the Null Inoculation Principle. Just as null signals must not be evaluated before dependencies resolve, entropy must not collapse before the likelihood landscape has been sufficiently deformed by evidence.
+
+The inequality
+\[
+0 < \epsilon < \epsilon_c
+\]
+is the exposure-rate form of the same constraint: smoothing must not exceed the rate at which genuine structure is acquired.
+
+\section{Simulated Annealing and the Exposure--Consolidation Cycle}
+\label{app:annealing}
+
+\subsection*{A. Energy Landscape and Temperature}
+
+Let system states $x \in \mathcal{X}$ evolve over an energy landscape
+\[
+E : \mathcal{X} \to \mathbb{R}.
+\]
+
+At effective temperature $\theta > 0$, the stationary distribution is
+
+\[
+\pi_\theta(x)
+\propto
+e^{-E(x)/\theta}.
+\]
+
+Low $\theta$ concentrates mass near local minima of $E$. High $\theta$ flattens the distribution, increasing exploration across basins.
+
+\subsection*{B. Exposure as Temperature Elevation}
+
+Bounded null exposure induces exploratory variance. We model this as a temperature increase
+
+\[
+\theta \mapsto \theta + \Delta\theta,
+\]
+
+with $\Delta\theta = k \epsilon$ for exposure level $\epsilon$ and proportionality constant $k > 0$.
+
+Thus
+
+\[
+\text{Exposure}
+\quad \Longleftrightarrow \quad
+\theta \uparrow.
+\]
+
+Elevation of $\theta$ increases transition probability between neighboring basins, permitting escape from shallow or spurious minima.
+
+\subsection*{C. Consolidation as Controlled Cooling}
+
+During consolidation, evidence accumulation and structural reinforcement reduce exploratory variance:
+
+\[
+\theta \mapsto \theta - \Delta\theta'.
+\]
+
+Thus
+
+\[
+\text{Consolidation}
+\quad \Longleftrightarrow \quad
+\theta \downarrow.
+\]
+
+Cooling allows probability mass to concentrate into basins whose depth has been reshaped by exposure-induced exploration.
+
+\subsection*{D. Metastable Band}
+
+Let $\theta_{\min}$ denote the rigidity threshold below which escape times become exponentially large,
+
+\[
+\mathbb{E}[\tau] \asymp e^{\Delta E / \theta},
+\]
+
+and let $\theta_{\max}$ denote the decoherence threshold above which basin structure loses stability and the landscape effectively flattens.
+
+The metastable operating band is
+
+\[
+\theta_{\min} < \theta < \theta_{\max}.
+\]
+
+Within this band, attractors persist yet remain traversable.
+
+\subsection*{E. Annealing Schedule Constraint}
+
+An annealing schedule $\theta(t)$ is admissible if
+
+\[
+\theta_{\min} < \theta(t) < \theta_{\max}
+\quad \text{for all } t.
+\]
+
+The dosage constraint therefore becomes
+
+\[
+k \epsilon < \theta_{\max} - \theta_{\text{baseline}},
+\]
+
+where $\theta_{\text{baseline}}$ is the pre-exposure temperature.
+
+If
+
+\[
+\theta(t) \ge \theta_{\max},
+\]
+
+basin coherence is lost. If
+
+\[
+\theta(t) \le \theta_{\min},
+\]
+
+the system freezes prematurely.
+
+Thus
+
+\[
+0 < \epsilon < \frac{\theta_{\max} - \theta_{\text{baseline}}}{k}
+\]
+
+is required for adaptive annealing.
+
+\subsection*{F. Cycle Interpretation}
+
+The exposure--consolidation cycle can therefore be expressed as periodic modulation:
+
+\[
+\theta(t)
+=
+\theta_0
++
+k \epsilon(t),
+\]
+
+with $\epsilon(t)$ piecewise bounded and followed by cooling dynamics governed by structural reinforcement.
+
+Adaptive improvement requires:
+
+\begin{enumerate}
+\item Exposure raises $\theta$ enough to permit basin exploration.
+\item Cooling occurs slowly enough to settle into deeper basins.
+\item Temperature never exceeds $\theta_{\max}$ nor falls irreversibly below $\theta_{\min}$.
+\end{enumerate}
+
+This is precisely the annealing schedule condition in optimization theory: exploration must be sufficient to escape suboptimal minima but controlled to prevent loss of global structure.
+
+\subsection*{G. Relation to Null Inoculation}
+
+The inequality
+
+\[
+0 < \epsilon < \epsilon_c
+\]
+
+is the exposure-rate form of the annealing schedule constraint. Null injection increases effective temperature; consolidation reduces it. Robustness increases only when temperature modulation remains within the metastable band.
+
+Premature smoothing corresponds to rapid quenching: $\theta$ forced below $\theta_{\min}$ before landscape curvature has stabilized. Excessive friction corresponds to overheating: $\theta$ exceeding $\theta_{\max}$ and destroying structure.
+
+Thus the exposure--consolidation cycle is the thermodynamic realization of bounded null preservation.
+
+\section{Control-Theoretic Stability Analysis}
+\label{app:control}
+
+\subsection*{A. Nonlinear Dynamics with Friction Input}
+
+Let structural competence be represented by state variable
+\[
+C(t) \in \mathbb{R}^n
+\]
+with equilibrium $C^*$ corresponding to coherent operation.
+
+Assume nonlinear dynamics of the form
+\[
+\dot{C} = f(C) + g(C) F(t),
+\]
+where
+\begin{itemize}
+\item $f(C)$ governs intrinsic dynamics,
+\item $F(t)$ is friction input,
+\item $g(C)$ maps exposure into state perturbation.
+\end{itemize}
+
+We assume $f(C^*) = 0$.
+
+\subsection*{B. Lyapunov Stability Without Exposure}
+
+Let $V : \mathbb{R}^n \to \mathbb{R}_{\ge 0}$ be a continuously differentiable Lyapunov function satisfying
+
+\[
+V(C) > 0 \quad \text{for } C \neq C^*, 
+\qquad
+V(C^*) = 0.
+\]
+
+Stability of $C^*$ under zero exposure requires
+
+\[
+\dot{V}(C)
+=
+\nabla V(C)^\top f(C)
+<
+0
+\quad \text{for } C \in \mathcal{D}_0 \setminus \{C^*\}.
+\]
+
+The set $\mathcal{D}_0$ defines the baseline domain of attraction.
+
+\subsection*{C. Bounded Exposure and Input-to-State Stability}
+
+Under bounded friction
+
+\[
+|F(t)| \le \bar{F},
+\]
+
+the Lyapunov derivative becomes
+
+\[
+\dot{V}(C)
+=
+\nabla V(C)^\top f(C)
++
+\nabla V(C)^\top g(C) F(t).
+\]
+
+If there exists class $\mathcal{K}$ function $\alpha(\cdot)$ such that
+
+\[
+\nabla V(C)^\top f(C)
+\le
+- \alpha(\|C - C^*\|),
+\]
+
+and exposure satisfies
+
+\[
+|\nabla V(C)^\top g(C) F(t)|
+\le
+\beta \|C - C^*\|
+\]
+
+with $\beta$ sufficiently small relative to $\alpha$, then the system is input-to-state stable (ISS).
+
+In particular, stability is preserved if
+
+\[
+\beta \bar{F} < \alpha_{\min},
+\]
+
+where $\alpha_{\min}$ is the minimum contraction rate in $\mathcal{D}_0$.
+
+\subsection*{D. Domain of Attraction Expansion}
+
+Exposure induces rehearsal of perturbation directions. Suppose repeated bounded exposure modifies intrinsic dynamics:
+
+\[
+f(C) \mapsto f_\epsilon(C)
+=
+f(C)
+-
+K_\epsilon(C - C^*),
+\]
+
+where $K_\epsilon$ is positive semidefinite reinforcement gained through consolidation.
+
+Then the effective Lyapunov derivative becomes
+
+\[
+\dot{V}_\epsilon(C)
+=
+\nabla V(C)^\top f_\epsilon(C)
+<
+\nabla V(C)^\top f(C)
+\]
+
+for $C \neq C^*$.
+
+This increases the contraction rate, enlarging the region
+
+\[
+\mathcal{D}_\epsilon
+=
+\{ C : V(C) < \rho_\epsilon \},
+\]
+
+with $\rho_\epsilon > \rho_0$.
+
+Thus bounded friction expands the domain of attraction:
+
+\[
+\mathcal{D}_0 \subset \mathcal{D}_\epsilon.
+\]
+
+\subsection*{E. Catastrophic Threshold}
+
+If exposure exceeds critical amplitude $\bar{F}_c$, the ISS condition fails:
+
+\[
+\beta \bar{F} \ge \alpha_{\min}.
+\]
+
+In this regime, $\dot{V}$ may become positive in parts of $\mathcal{D}_0$, and trajectories can exit the basin of attraction.
+
+Therefore there exists exposure threshold $\epsilon_c$ such that
+
+\[
+0 < \epsilon < \epsilon_c
+\quad \Longrightarrow \quad
+\mathcal{D}_{\text{attract}} \text{ expands},
+\]
+
+while
+
+\[
+\epsilon \ge \epsilon_c
+\quad \Longrightarrow \quad
+\mathcal{D}_{\text{attract}} \text{ contracts or destabilizes}.
+\]
+
+\subsection*{F. Structural Interpretation}
+
+Control-theoretically, bounded friction acts as structured disturbance followed by reinforcement that increases contraction margin. This enlarges the set of initial conditions from which the system returns to equilibrium.
+
+Premature smoothing corresponds to zero exposure: the system remains stable but its domain of attraction remains narrow. Excessive friction corresponds to destabilizing input exceeding contraction capacity.
+
+The Null Inoculation Principle therefore admits a control-theoretic form: bounded perturbation followed by adaptive reinforcement increases basin size, provided perturbation amplitude remains below the stability threshold.
+
+\section{Irreversible History and Narrative Structure}
+\label{app:narrative}
+
+Event-historical computation is characterized by monotonic accumulation: once a transition occurs, it cannot be deleted without altering the identity of the computation. This property can be formalized as append-only state evolution. Let system history be a sequence
+\[
+h_0 \to h_1 \to \cdots \to h_t,
+\]
+where each $h_{i+1}$ extends $h_i$ via a null-respecting transition. No admissible morphism in $\mathcal{R}$ deletes prior events; history is prefix-closed.
+
+The film \emph{Bullet Train} provides an illustrative structural analogue. The train’s monotone forward motion functions as a physical realization of append-only computation. Stations passed are not revisited; events accumulate irreversibly. The trajectory defines a total order over global time.
+
+Within this global ordering, each compartment constitutes a bounded evaluative scope. Interactions within a compartment resolve locally before propagating consequences into adjacent compartments. This corresponds to nested subcomputations within a larger causal graph. Resolution occurs at maximal depth before effects propagate upward, mirroring the Pop operation introduced earlier.
+
+Formally, let the global computation be represented as a rooted tree $T$. Compartments correspond to subtrees $T_i \subset T$ whose internal transitions resolve prior to upward propagation. The Pop operation enforces causal consistency by descent:
+\[
+\text{Resolve}(v)
+\quad \text{only if} \quad
+\forall u \in \operatorname{Pred}(v), \; \text{Resolve}(u) = 1.
+\]
+No node fires until its predecessors have resolved. This guarantees that each event’s causal ancestry is complete before it enters the global log.
+
+Alliance dynamics in the film exhibit metastable behavior. Characters form temporary coalitions that persist over finite intervals yet remain capable of rapid reconfiguration under perturbation. In dynamical terms, these are transient attractors within a larger phase space. They neither freeze into permanent structure nor dissolve into incoherence. This corresponds to operation within the metastable band described earlier: local stability with retained plasticity.
+
+Compartment boundaries remain structurally stable throughout. While internal configurations fluctuate, the structural separation between compartments persists. This mirrors the institutional design principle of internal plasticity under external coherence: local dynamical freedom combined with global boundary integrity.
+
+The narrative therefore instantiates four formal properties simultaneously: append-only history, nested scope resolution via descent, metastable attractor dynamics, and boundary-stable modular decomposition. Each of these corresponds directly to a structural condition required for null-respecting computation.
+
+Append-only history ensures that state transitions accumulate without erasure, preserving identity through irreversible extension. Nested resolution enforces causal consistency by requiring that dependency structures resolve prior to upward propagation. Metastability permits adaptation while maintaining coherence, allowing transient configurations without global collapse. Boundary stability preserves compositional integrity, ensuring that local plasticity does not dissolve structural separation.
+
+The analogy is therefore structural rather than decorative. It demonstrates how irreversible computation, null preservation, and metastable organization manifest naturally in narrative systems that maintain coherence across accumulating events. The same invariants govern circuit semantics, Bayesian inference, institutional governance, and structured storytelling, differing only in representation rather than in underlying law.
+
+\section{Category-Theoretic Framing of Null Preservation}
+\label{app:category}
+
+\subsection*{A. The Category of Reachable States}
+
+Let $\mathcal{C}$ be a category whose objects are global system states 
+$s \in \Sigma^{|V_G|}$ and whose morphisms 
+\[
+f : s \to s'
+\]
+represent admissible state transitions under the system’s operational semantics.
+
+Let $\mathcal{R} \subseteq \mathcal{C}$ be the full subcategory consisting of 
+objects reachable under delay-insensitive null-respecting propagation. 
+Thus:
+
+\begin{itemize}
+\item Objects of $\mathcal{R}$ are states reachable via null-preserving execution.
+\item Morphisms of $\mathcal{R}$ are composable transitions that respect eligibility and validity propagation.
+\end{itemize}
+
+By construction, $\mathcal{R}$ is closed under composition: if 
+\[
+f : s \to s' \quad \text{and} \quad g : s' \to s''
+\]
+are null-respecting transitions, then
+\[
+g \circ f : s \to s''
+\]
+is also null-respecting and hence remains in $\mathcal{R}$.
+
+\subsection*{B. Null Exposure as Endofunctor}
+
+Define the bounded null exposure operator
+
+\[
+\mathcal{E}_\epsilon : \mathcal{R} \to \mathcal{R}
+\]
+
+as follows:
+
+\begin{enumerate}
+\item On objects:
+\[
+\mathcal{E}_\epsilon(s)
+=
+s'
+\]
+where $s'$ is obtained by setting a subset of components of $s$ to $\varnothing$ such that the resulting state remains reachable, i.e.,
+\[
+\mathcal{E}_\epsilon(s) \in \operatorname{Ob}(\mathcal{R}).
+\]
+
+\item On morphisms:
+\[
+\mathcal{E}_\epsilon(f : s \to s')
+=
+f_\epsilon : \mathcal{E}_\epsilon(s) \to \mathcal{E}_\epsilon(s'),
+\]
+where $f_\epsilon$ is the induced null-respecting transition under masked components.
+\end{enumerate}
+
+Provided exposure respects the reachability constraint 
+$\mathcal{E}_\epsilon(s) \in \mathcal{R}$, this defines an endofunctor on $\mathcal{R}$.
+
+Functoriality follows from preservation of identity and composition:
+
+\[
+\mathcal{E}_\epsilon(\mathrm{id}_s)
+=
+\mathrm{id}_{\mathcal{E}_\epsilon(s)},
+\]
+
+\[
+\mathcal{E}_\epsilon(g \circ f)
+=
+\mathcal{E}_\epsilon(g) \circ \mathcal{E}_\epsilon(f).
+\]
+
+Thus bounded null exposure is structurally compositional.
+
+\subsection*{C. Consolidation as Endomorphism}
+
+Let $\Phi_T : \mathcal{R} \to \mathcal{R}$ denote time-evolution over recovery window $T$ under null-respecting dynamics.
+
+Consolidation following exposure is therefore represented by the composite endomorphism
+
+\[
+\Phi_T \circ \mathcal{E}_\epsilon \in \operatorname{End}(\mathcal{R}).
+\]
+
+Robustness increase corresponds to the property that this composite morphism moves objects deeper into the interior of $\mathcal{R}$, increasing distance from the boundary $\partial \mathcal{R}$ of incoherent states.
+
+\subsection*{D. Premature Collapse as Non-Morphism}
+
+Premature evaluation corresponds to a transition
+
+\[
+\psi : s \to s'
+\]
+
+that treats a null component as valid. Such a transition violates the eligibility condition and produces a state $s' \notin \operatorname{Ob}(\mathcal{R})$.
+
+Therefore $\psi$ is not a morphism in $\mathcal{R}$.
+
+The violation is structural, not merely epistemic. It is not a morphism with incorrect output; it is a morphism absent from the category of admissible transitions.
+
+In categorical terms, premature collapse breaks compositional closure: it attempts to compose transitions that are not arrows in $\mathcal{R}$.
+
+\subsection*{E. Structural Interpretation}
+
+The Null Inoculation Principle can therefore be restated categorically:
+
+For sufficiently small $\epsilon$, the endofunctor
+\[
+\Phi_T \circ \mathcal{E}_\epsilon
+\]
+preserves membership in $\mathcal{R}$ while moving objects away from $\partial \mathcal{R}$. For $\epsilon \geq \epsilon_c$, $\mathcal{E}_\epsilon$ fails to land in $\mathcal{R}$, and functorial closure is lost.
+
+Robustness is thus equivalent to preservation of categorical closure under bounded endofunctor perturbation.
+
+The inequality
+\[
+0 < \epsilon < \epsilon_c
+\]
+is the condition under which null exposure remains an endofunctor on the category of reachable states rather than a map into its complement.
+
+\section{Explicit Threshold Derivation in a Linear--Gaussian Model}
+\label{app:linear_gaussian}
+
+\subsection*{A. Generative Model}
+
+Let latent state $x \in \mathbb{R}^d$ satisfy
+\[
+x \sim \mathcal{N}(0, \Sigma_x),
+\]
+and observations obey the linear model
+\[
+y = Hx + \eta,
+\]
+with observation matrix $H \in \mathbb{R}^{m \times d}$ and noise
+\[
+\eta \sim \mathcal{N}(0, \sigma^2 I_m).
+\]
+
+Under full information, the posterior covariance is
+
+\[
+\Sigma_{\text{post}}
+=
+\left(
+\Sigma_x^{-1}
++
+\frac{1}{\sigma^2} H^\top H
+\right)^{-1}.
+\]
+
+Define robustness as total posterior precision
+
+\[
+\mathcal{U}
+=
+\operatorname{tr}(\Sigma_{\text{post}}^{-1})
+=
+\operatorname{tr}\!\left(
+\Sigma_x^{-1}
++
+\frac{1}{\sigma^2} H^\top H
+\right).
+\]
+
+\subsection*{B. Null Mask and Effective Exposure}
+
+Let $M_\epsilon \in \mathbb{R}^{m \times m}$ be a diagonal mask matrix with
+\[
+\operatorname{tr}(M_\epsilon) = (1-\epsilon)m,
+\]
+so that a fraction $\epsilon$ of measurement channels are null during exposure.
+
+During exposure, effective information contribution becomes
+
+\[
+\frac{1}{\sigma^2} H^\top M_\epsilon H.
+\]
+
+We assume a two-phase process:
+
+\begin{enumerate}
+\item Exposure phase: information is reduced by masking.
+\item Consolidation phase: adaptive reinforcement increases effective precision along resolved directions.
+\end{enumerate}
+
+We model adaptive reinforcement as an additive curvature term proportional to the resolved subspace:
+
+\[
+\alpha H^\top M_\epsilon H,
+\]
+with $\alpha > 0$ measuring learning strength.
+
+Thus post-consolidation effective precision becomes
+
+\[
+\Sigma_{\text{eff}}^{-1}
+=
+\Sigma_x^{-1}
++
+\frac{1}{\sigma^2} H^\top M_\epsilon H
++
+\alpha H^\top M_\epsilon H.
+\]
+
+Factorizing,
+
+\[
+\Sigma_{\text{eff}}^{-1}
+=
+\Sigma_x^{-1}
++
+\left(
+\frac{1}{\sigma^2} + \alpha
+\right)
+H^\top M_\epsilon H.
+\]
+
+\subsection*{C. Expected Precision Under Random Masking}
+
+Assume random masking with independent channel removal probability $\epsilon$.
+
+Then
+
+\[
+\mathbb{E}[M_\epsilon] = (1-\epsilon) I_m.
+\]
+
+Therefore
+
+\[
+\mathbb{E}[\Sigma_{\text{eff}}^{-1}]
+=
+\Sigma_x^{-1}
++
+(1-\epsilon)
+\left(
+\frac{1}{\sigma^2} + \alpha
+\right)
+H^\top H.
+\]
+
+Compare this to full-information baseline precision
+
+\[
+\Sigma_{\text{full}}^{-1}
+=
+\Sigma_x^{-1}
++
+\frac{1}{\sigma^2} H^\top H.
+\]
+
+Robustness increases when
+
+\[
+\operatorname{tr}\big(\mathbb{E}[\Sigma_{\text{eff}}^{-1}]\big)
+>
+\operatorname{tr}\big(\Sigma_{\text{full}}^{-1}\big).
+\]
+
+Substituting,
+
+\[
+(1-\epsilon)
+\left(
+\frac{1}{\sigma^2} + \alpha
+\right)
+>
+\frac{1}{\sigma^2}.
+\]
+
+Expanding,
+
+\[
+\frac{1-\epsilon}{\sigma^2}
++
+\alpha (1-\epsilon)
+>
+\frac{1}{\sigma^2}.
+\]
+
+Rearranging,
+
+\[
+\alpha(1-\epsilon)
+>
+\frac{\epsilon}{\sigma^2}.
+\]
+
+\subsection*{D. Critical Exposure Threshold}
+
+Solving for $\epsilon$,
+
+\[
+\alpha \sigma^2 (1-\epsilon) > \epsilon
+\]
+
+\[
+\alpha \sigma^2 - \alpha \sigma^2 \epsilon > \epsilon
+\]
+
+\[
+\alpha \sigma^2 > \epsilon(1 + \alpha \sigma^2)
+\]
+
+\[
+\epsilon < \frac{\alpha \sigma^2}{1 + \alpha \sigma^2}.
+\]
+
+Define
+
+\[
+\epsilon^*
+=
+\frac{\alpha \sigma^2}{1 + \alpha \sigma^2}.
+\]
+
+Then
+
+\[
+0 < \epsilon < \epsilon^*
+\quad \Longrightarrow \quad
+\mathbb{E}[\mathcal{U}_{\text{eff}}] >
+\mathcal{U}_{\text{full}}.
+\]
+
+This gives a closed-form threshold for inoculation.
+
+\subsection*{E. Phase Structure}
+
+Three regimes follow immediately:
+
+\paragraph{Underexposure.}
+If $\epsilon \ll \epsilon^*$, adaptive reinforcement is small relative to baseline information. Robustness increase is negligible.
+
+\paragraph{Inoculation regime.}
+If $0 < \epsilon < \epsilon^*$, adaptive reinforcement dominates information loss. Posterior precision increases monotonically in expectation.
+
+\paragraph{Overload regime.}
+If $\epsilon > \epsilon^*$, information destruction exceeds adaptive gain. Precision decreases and robustness collapses.
+
+\subsection*{F. Capacity Interpretation}
+
+Observe the limiting behavior:
+
+\[
+\epsilon^* \to 1
+\quad \text{as} \quad
+\alpha \sigma^2 \to \infty.
+\]
+
+Thus systems with high learning gain $\alpha$ and high signal-to-noise ratio $\sigma^{-2}$ tolerate nearly maximal null exposure.
+
+Conversely,
+
+\[
+\epsilon^* \to 0
+\quad \text{as} \quad
+\alpha \sigma^2 \to 0.
+\]
+
+Low-capacity systems cannot tolerate exposure; even small null injection induces degradation.
+
+This model therefore provides an explicit quantitative instantiation of the Null Inoculation Principle in closed form.
+
+\section{Metastable Temperature Correspondence}
+\label{app:temperature}
+
+We now formalize the correspondence between null exposure, effective temperature, spectral curvature, and Bayesian learning capacity within a unified threshold condition.
+
+\subsection*{A. Temperature Parameterization}
+
+Let $\epsilon \in [0,1]$ denote the null exposure rate as defined in Section~\ref{sec:ncl}. Assume exposure induces an effective temperature parameter $\theta$ governing exploratory variance in the metastable regime:
+
+\[
+\theta = k \epsilon,
+\]
+
+for some proportionality constant $k > 0$ determined by system sensitivity to null perturbation.
+
+Let the metastable operating band be defined by
+
+\[
+\theta_{\min} < \theta < \theta_{\max},
+\]
+
+where:
+\begin{itemize}
+\item $\theta_{\min}$ is the rigidity threshold below which exploration collapses and adaptation becomes impossible,
+\item $\theta_{\max}$ is the decoherence threshold above which attractor basins dissolve.
+\end{itemize}
+
+The upper bound on exposure induced by metastability therefore satisfies
+
+\[
+\epsilon < \frac{\theta_{\max}}{k}.
+\]
+
+\subsection*{B. Bayesian Learning Capacity Constraint}
+
+In the linear--Gaussian model of Section~\ref{app:linear_gaussian}, robustness increases if and only if
+
+\[
+\alpha (1-\epsilon) > \frac{\epsilon}{\sigma^2},
+\]
+
+yielding the Bayesian learning threshold
+
+\[
+\epsilon < \frac{\alpha \sigma^2}{1 + \alpha \sigma^2}.
+\]
+
+This bound reflects the ratio of adaptive reinforcement strength $\alpha$ to observational noise variance $\sigma^2$. Systems with higher signal-to-noise ratio or greater structural plasticity tolerate larger null injection.
+
+\subsection*{C. Spectral Curvature Constraint}
+
+From Section~\ref{sec:hessian_jacobian} and Section~\ref{sec:natural_gradient}, stability requires preservation of positive generalized curvature:
+
+\[
+\lambda_{\min}(\epsilon) > 0.
+\]
+
+Under first-order perturbation,
+
+\[
+H_\epsilon = H + \epsilon K,
+\]
+
+and loss of stability occurs when
+
+\[
+\lambda_{\min}(H) + \epsilon \lambda_{\min}(K) = 0.
+\]
+
+More generally, including second-order deformation terms $L$,
+
+\[
+\lambda_{\min}(H) + \epsilon \lambda_{\min}(K) + \epsilon^2 \lambda_{\min}(L) = 0.
+\]
+
+Denoting the spectral margin by
+
+\[
+\epsilon_{\text{spec}} = \frac{\lambda_{\min}(P)}{\lambda_{\max}(Q)},
+\]
+
+where $P$ and $Q$ encode curvature reinforcement and destabilizing deformation respectively, stability requires
+
+\[
+\epsilon < \epsilon_{\text{spec}}.
+\]
+
+This is the spectral contraction constraint.
+
+\subsection*{D. Unified Critical Threshold}
+
+The system must simultaneously satisfy all three independent constraints:
+
+\begin{enumerate}
+\item Metastable temperature bound,
+\item Bayesian reinforcement bound,
+\item Spectral curvature bound.
+\end{enumerate}
+
+Therefore the effective critical exposure threshold is
+
+\[
+\epsilon_c =
+\min\left(
+\frac{\alpha \sigma^2}{1 + \alpha \sigma^2},\,
+\frac{\theta_{\max}}{k},\,
+\frac{\lambda_{\min}(P)}{\lambda_{\max}(Q)}
+\right).
+\]
+
+This minimum arises because violation of any single constraint induces instability in its respective representation.
+
+\subsection*{E. Stability Law}
+
+We therefore obtain the unified stability condition:
+
+\[
+0 < \epsilon < \epsilon_c
+\quad \Longleftrightarrow \quad
+\begin{cases}
+\text{posterior precision increases}, \\
+\text{attractor curvature remains positive}, \\
+\text{temperature remains within metastable band}.
+\end{cases}
+\]
+
+Equivalently,
+
+\[
+0 < \epsilon < \epsilon_c
+\quad \Longleftrightarrow \quad
+\text{robustness increases}.
+\]
+
+\subsection*{F. Structural Interpretation}
+
+The appearance of the minimum operator is not incidental. It reflects the fact that robustness is governed by the most restrictive stability margin across representational domains. A system may possess high Bayesian learning capacity but low spectral margin, or strong curvature but insufficient temperature tolerance. In each case, the tightest bound dominates.
+
+The Null Inoculation Principle is therefore a multi-representation stability theorem: bounded null exposure strengthens robustness only insofar as it preserves positive curvature, finite temperature, and net information gain simultaneously.
+
+The single inequality
+\[
+\epsilon < \epsilon_c
+\]
+is the invariant form of this condition across computational, thermodynamic, geometric, and dynamical descriptions.
+
+\newpage
+\begin{thebibliography}{14}
+
+\bibitem{anderson}
+Monica Anderson.
+\newblock \emph{Experimental Epistemology}.
+\newblock 2022--2026. Available at \url{http://monicaanderson.com}.
+
+\bibitem{kahneman}
+Daniel Kahneman.
+\newblock \emph{Thinking, Fast and Slow}.
+\newblock Farrar, Straus and Giroux, 2011.
+
+\bibitem{norret}
+Tor N{\o}rretranders.
+\newblock \emph{The User Illusion: Cutting Consciousness Down to Size}.
+\newblock Penguin, 1998.
+
+\bibitem{calvin}
+William H. Calvin.
+\newblock \emph{How Brains Think}.
+\newblock Basic Books, 1996.
+
+\bibitem{taleb}
+Nassim Nicholas Taleb.
+\newblock \emph{Antifragile: Things That Gain from Disorder}.
+\newblock Random House, 2012.
+
+\bibitem{pirsig}
+Robert M. Pirsig.
+\newblock \emph{Zen and the Art of Motorcycle Maintenance}.
+\newblock William Morrow, 1974.
+
+\bibitem{quinonero}
+Joaquin Qui{\~n}onero-Candela, Masashi Sugiyama, Anton Schwaighofer, and Neil D. Lawrence, editors.
+\newblock \emph{Dataset Shift in Machine Learning}.
+\newblock MIT Press, 2009.
+
+\bibitem{amari}
+Shun-ichi Amari.
+\newblock \emph{Information Geometry and Its Applications}.
+\newblock Springer, 2016.
+
+\bibitem{langton}
+Christopher G. Langton.
+\newblock Computation at the edge of chaos: Phase transitions and emergent computation.
+\newblock \emph{Physica D: Nonlinear Phenomena}, 42(1--3):12--37, 1990.
+
+\bibitem{friston}
+Karl Friston.
+\newblock The free-energy principle: A unified brain theory?
+\newblock \emph{Nature Reviews Neuroscience}, 11(2):127--138, 2010.
+
+\bibitem{hazentine}
+Karl M. Fant.
+\newblock \emph{Logically Determined Design: Clockless System Design with NULL Convention Logic}.
+\newblock Wiley-Interscience, 2005.
+
+\bibitem{prigogine}
+Ilya Prigogine and Isabelle Stengers.
+\newblock \emph{Order Out of Chaos: Man's New Dialogue with Nature}.
+\newblock Bantam Books, 1984.
+
+\bibitem{lamport}
+Leslie Lamport.
+\newblock Time, clocks, and the ordering of events in a distributed system.
+\newblock \emph{Communications of the ACM}, 21(7):558--565, 1978.
+
+\bibitem{scheffer}
+Marten Scheffer, Stephen R. Carpenter, Timothy M. Lenton, Johan Bascompte, William Brock, Vasilis Dakos, Johan van de Koppel, Ingrid A. van de Leemput, Simon A. Levin, Egbert H. van Nes, Mercedes Pascual, and John Vandermeer.
+\newblock Anticipating critical transitions.
+\newblock \emph{Science}, 338(6105):344--348, 2012.
+
+\end{thebibliography}
+
+\end{document}
