@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>The Comfort Trap of Frictionless Living — Audio Essay</title>
+
+  <meta name="description" content="Friction as Inoculation: The Architecture of Cognitive Resilience." />
+
+  <style>
+    :root { --vh: 1vh; }
+
+    body {
+      margin: 0;
+      min-height: calc(var(--vh) * 100);
+      background: #0a0a0a;
+      color: #e6e6e6;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    canvas {
+      width: 340px;
+      height: 340px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #111 0%, #000 100%);
+      box-shadow: 0 0 25px #fff1;
+      margin-bottom: 15px;
+    }
+
+    h2 { margin-bottom: 6px; }
+
+    .subtitle {
+      opacity: 0.75;
+      font-size: 0.9em;
+      margin-bottom: 14px;
+      max-width: 760px;
+      line-height: 1.45;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      margin-top: 15px;
+    }
+
+    button, select, input[type=range] {
+      background: #111;
+      border: 1px solid #333;
+      color: #eee;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: monospace;
+      cursor: pointer;
+    }
+
+    button:hover, select:hover { background: #181818; }
+
+    .timer {
+      min-width: 120px;
+      font-size: 0.9em;
+    }
+
+    .progress {
+      width: min(700px, 90%);
+      margin-top: 12px;
+    }
+
+    input[type=range] {
+      width: 100%;
+    }
+
+    .glitch-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,0.05) 0 2px,
+        transparent 2px 4px
+      );
+      opacity: 0;
+      mix-blend-mode: screen;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h2>The Comfort Trap of Frictionless Living</h2>
+
+  <div class="subtitle">
+    Friction as Inoculation: The Architecture of Cognitive Resilience.
+    This essay explores how bounded difficulty strengthens organisms,
+    AI systems, and institutions. It argues that frictionless efficiency
+    produces structural fragility, while preserved uncertainty builds
+    long-term epistemic stability.
+  </div>
+
+  <canvas id="turntable"></canvas>
+
+  <div class="controls">
+    <button id="togglePlay">Play</button>
+    <button id="back15">-15s</button>
+    <button id="forward15">+15s</button>
+
+    <div class="timer" id="timer">00:00 / 00:00</div>
+
+    <select id="speed">
+      <option value="0.8">0.8x</option>
+      <option value="0.9">0.9x</option>
+      <option value="1" selected>1.0x</option>
+      <option value="1.2">1.2x</option>
+      <option value="1.5">1.5x</option>
+      <option value="2">2.0x</option>
+    </select>
+
+    <button id="loop">Loop: Off</button>
+
+    <input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+  </div>
+
+  <div class="progress">
+    <input type="range" id="progressBar" min="0" max="100" value="0">
+  </div>
+
+  <div class="glitch-overlay" id="glitch"></div>
+
+  <audio id="audio" src="The_Comfort_Trap_of_Frictionless_Living.mp3" crossorigin="anonymous"></audio>
+
+<script>
+const audio = document.getElementById('audio');
+const toggleBtn = document.getElementById('togglePlay');
+const back15 = document.getElementById('back15');
+const forward15 = document.getElementById('forward15');
+const loopBtn = document.getElementById('loop');
+const timer = document.getElementById('timer');
+const speedSel = document.getElementById('speed');
+const volume = document.getElementById('volume');
+const progressBar = document.getElementById('progressBar');
+const glitch = document.getElementById('glitch');
+
+const canvas = document.getElementById('turntable');
+const ctx = canvas.getContext('2d');
+
+let rotation = 0;
+let pulse = 120;
+
+canvas.width = 340;
+canvas.height = 340;
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+const ctxAudio = new AudioContext();
+const analyser = ctxAudio.createAnalyser();
+analyser.fftSize = 256;
+
+const src = ctxAudio.createMediaElementSource(audio);
+src.connect(analyser);
+analyser.connect(ctxAudio.destination);
+
+const freqData = new Uint8Array(analyser.frequencyBinCount);
+
+function glitchEffect() {
+  analyser.getByteFrequencyData(freqData);
+  let bass = 0;
+  for (let i = 0; i < 32; i++) bass += freqData[i];
+  bass /= 32;
+
+  const brightness = Math.min(1, bass / 180);
+  pulse = 120 + brightness * 40;
+  glitch.style.opacity = brightness > 0.2 ? brightness : 0;
+
+  requestAnimationFrame(glitchEffect);
+}
+
+function draw() {
+  ctx.clearRect(0, 0, 340, 340);
+  ctx.save();
+  ctx.translate(170, 170);
+  ctx.rotate(rotation);
+
+  ctx.beginPath();
+  ctx.arc(0, 0, pulse, 0, Math.PI * 2);
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(0, 0, 20, 0, Math.PI * 2);
+  ctx.fillStyle = '#fff';
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function animate() {
+  rotation += audio.paused ? 0.002 : 0.02;
+  draw();
+  requestAnimationFrame(animate);
+}
+
+function formatTime(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+}
+
+function updateUI() {
+  if (audio.duration) {
+    timer.textContent =
+      formatTime(audio.currentTime) + " / " +
+      formatTime(audio.duration);
+
+    progressBar.value =
+      (audio.currentTime / audio.duration) * 100;
+  }
+  requestAnimationFrame(updateUI);
+}
+
+toggleBtn.onclick = () => {
+  ctxAudio.resume();
+  if (audio.paused) {
+    audio.play();
+    toggleBtn.textContent = "Pause";
+    glitchEffect();
+  } else {
+    audio.pause();
+    toggleBtn.textContent = "Play";
+  }
+};
+
+back15.onclick = () => audio.currentTime = Math.max(0, audio.currentTime - 15);
+forward15.onclick = () => audio.currentTime = Math.min(audio.duration, audio.currentTime + 15);
+
+loopBtn.onclick = () => {
+  audio.loop = !audio.loop;
+  loopBtn.textContent = "Loop: " + (audio.loop ? "On" : "Off");
+};
+
+speedSel.onchange = () => {
+  audio.playbackRate = parseFloat(speedSel.value);
+};
+
+volume.oninput = () => {
+  audio.volume = volume.value;
+};
+
+progressBar.oninput = () => {
+  audio.currentTime = (progressBar.value / 100) * audio.duration;
+};
+
+animate();
+updateUI();
+</script>
+
+</body>
+</html>

@@ -2,6 +2,12 @@
 
 𝘝𝘦𝘯𝘦𝘯𝘶𝘮 𝘴𝘰𝘭𝘢 𝘧𝘢𝘤𝘪𝘵 𝘥𝘰𝘴𝘪𝘴
 
+# The Comfort Trap
+
+[Essay](https://standardgalactic.github.io/antivenom/Friction%20as%20Inoculation.pdf)
+
+[Audio Overview](https://standardgalactic.github.io/antivenom/rhetoric/)
+
 # Escaping Polemic Debt
 
 [Essay](https://standardgalactic.github.io/antivenom/The%20Polemic%20Debt.pdf)
