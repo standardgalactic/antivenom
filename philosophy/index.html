@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Audio Essay</title>
+
+<style>
+
+:root{
+  --bg:#0a0a0a;
+  --fg:#e6e6e6;
+  --accent:#ffffff;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family:monospace;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:20px;
+  text-align:center;
+}
+
+h1{
+  font-size:1.4rem;
+  margin-bottom:6px;
+}
+
+.subtitle{
+  opacity:.75;
+  max-width:700px;
+  line-height:1.5;
+  margin-bottom:20px;
+}
+
+canvas{
+  width:340px;
+  height:340px;
+  border-radius:50%;
+  background:radial-gradient(circle,#111,#000);
+  box-shadow:0 0 30px #fff1;
+}
+
+.controls{
+  margin-top:20px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+}
+
+button,select,input[type=range]{
+  background:#111;
+  border:1px solid #333;
+  color:#eee;
+  padding:8px 12px;
+  border-radius:6px;
+  font-family:monospace;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#181818;
+}
+
+.timer{
+  min-width:120px;
+}
+
+.waveform{
+  width:min(700px,90%);
+  height:60px;
+  margin-top:20px;
+  background:#000;
+  border:1px solid #333;
+  cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1 id="title"></h1>
+
+<div class="subtitle">
+This audio essay presents <em>The Managed Self</em>, an extended analysis of the
+intersection between Christopher Lasch’s critique of the narcissistic
+personality and Günther Anders’ philosophy of technological modernity.
+The essay argues that contemporary narcissism is not merely a moral
+failure but a structural adaptation to a civilization increasingly
+governed by technological systems, algorithmic evaluation, and
+mediated representations of identity.  
+<br><br>
+You can read the full essay here:
+<a href="https://standardgalactic.github.io/antivenom/The%20Managed%20Self.pdf" target="_blank">
+The Managed Self (PDF)
+</a>.
+</div>
+
+<canvas id="visualizer"></canvas>
+
+<div class="controls">
+
+<button id="play">Play</button>
+<button id="back">-15s</button>
+<button id="forward">+15s</button>
+
+<div class="timer" id="timer">00:00 / 00:00</div>
+
+<select id="speed">
+<option value="0.8">0.8x</option>
+<option value="1">1x</option>
+<option value="1.25">1.25x</option>
+<option value="1.5">1.5x</option>
+<option value="2">2x</option>
+</select>
+
+<button id="loop">Loop Off</button>
+
+<input type="range" id="volume" min="0" max="1" step="0.01" value="1">
+
+</div>
+
+<canvas class="waveform" id="waveform"></canvas>
+
+<audio id="audio"
+src="Why_Machines_Turn_Us_Into_Narcissists.mp3"
+crossorigin="anonymous"></audio>
+
+<script>
+
+const audio = document.getElementById("audio")
+
+/* ---------------- Title from filename ---------------- */
+
+const filename = audio.src.split("/").pop()
+const title = filename
+  .replace(".mp3","")
+  .replace(/_/g," ")
+
+document.getElementById("title").textContent = title
+
+document.title = title + " — Audio Essay"
+
+/* ---------------- Audio Context ---------------- */
+
+const AudioContext = window.AudioContext || window.webkitAudioContext
+const ctxAudio = new AudioContext()
+
+const analyser = ctxAudio.createAnalyser()
+analyser.fftSize = 512
+
+const src = ctxAudio.createMediaElementSource(audio)
+src.connect(analyser)
+analyser.connect(ctxAudio.destination)
+
+const data = new Uint8Array(analyser.frequencyBinCount)
+
+/* ---------------- Visualizer ---------------- */
+
+const canvas = document.getElementById("visualizer")
+const ctx = canvas.getContext("2d")
+
+canvas.width = 340
+canvas.height = 340
+
+let rotation = 0
+let radius = 110
+
+function drawVisualizer(){
+
+  analyser.getByteFrequencyData(data)
+
+  let energy = 0
+  for(let i=5;i<40;i++) energy += data[i]
+  energy /= 35
+
+  radius = 110 + energy * .3
+
+  ctx.clearRect(0,0,340,340)
+
+  ctx.save()
+  ctx.translate(170,170)
+  ctx.rotate(rotation)
+
+  ctx.beginPath()
+  ctx.arc(0,0,radius,0,Math.PI*2)
+  ctx.strokeStyle="#fff"
+  ctx.lineWidth=4
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.arc(0,0,20,0,Math.PI*2)
+  ctx.fillStyle="#fff"
+  ctx.fill()
+
+  ctx.restore()
+
+  rotation += audio.paused ? .003 : .02
+
+  requestAnimationFrame(drawVisualizer)
+}
+
+drawVisualizer()
+
+/* ---------------- Timer ---------------- */
+
+function format(t){
+  let m = Math.floor(t/60)
+  let s = Math.floor(t%60)
+  return String(m).padStart(2,"0")+":"+String(s).padStart(2,"0")
+}
+
+const timer = document.getElementById("timer")
+
+function updateTimer(){
+
+  if(audio.duration){
+
+    timer.textContent =
+      format(audio.currentTime) +
+      " / " +
+      format(audio.duration)
+
+  }
+
+  requestAnimationFrame(updateTimer)
+
+}
+
+updateTimer()
+
+/* ---------------- Controls ---------------- */
+
+const playBtn = document.getElementById("play")
+
+playBtn.onclick = () => {
+
+  ctxAudio.resume()
+
+  if(audio.paused){
+    audio.play()
+    playBtn.textContent = "Pause"
+  }else{
+    audio.pause()
+    playBtn.textContent = "Play"
+  }
+
+}
+
+document.getElementById("back").onclick =
+() => audio.currentTime = Math.max(0,audio.currentTime-15)
+
+document.getElementById("forward").onclick =
+() => audio.currentTime = Math.min(audio.duration,audio.currentTime+15)
+
+document.getElementById("speed").onchange =
+e => audio.playbackRate = parseFloat(e.target.value)
+
+document.getElementById("volume").oninput =
+e => audio.volume = e.target.value
+
+const loopBtn = document.getElementById("loop")
+
+loopBtn.onclick = () => {
+  audio.loop = !audio.loop
+  loopBtn.textContent = audio.loop ? "Loop On" : "Loop Off"
+}
+
+/* ---------------- Waveform Progress ---------------- */
+
+const waveCanvas = document.getElementById("waveform")
+const wctx = waveCanvas.getContext("2d")
+
+waveCanvas.width = 700
+waveCanvas.height = 60
+
+function drawWave(){
+
+  analyser.getByteTimeDomainData(data)
+
+  wctx.clearRect(0,0,waveCanvas.width,waveCanvas.height)
+
+  wctx.beginPath()
+
+  let slice = waveCanvas.width / data.length
+
+  for(let i=0;i<data.length;i++){
+
+    let v = data[i] / 128.0
+    let y = v * waveCanvas.height / 2
+
+    if(i===0)
+      wctx.moveTo(0,y)
+    else
+      wctx.lineTo(i*slice,y)
+
+  }
+
+  wctx.strokeStyle="#fff"
+  wctx.lineWidth=1
+  wctx.stroke()
+
+  if(audio.duration){
+
+    let progress =
+      audio.currentTime/audio.duration * waveCanvas.width
+
+    wctx.fillStyle="#fff2"
+    wctx.fillRect(0,0,progress,waveCanvas.height)
+
+  }
+
+  requestAnimationFrame(drawWave)
+
+}
+
+drawWave()
+
+/* click to seek */
+
+waveCanvas.onclick = e => {
+
+  const rect = waveCanvas.getBoundingClientRect()
+
+  const x = e.clientX - rect.left
+
+  const pct = x / waveCanvas.width
+
+  audio.currentTime = pct * audio.duration
+
+}
+
+</script>
+
+</body>
+</html>
