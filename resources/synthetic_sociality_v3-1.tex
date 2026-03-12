@@ -1,0 +1,921 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[margin=1.2in,headheight=15pt]{geometry}
+\usepackage{setspace}
+\usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{hyperref}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{csquotes}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{abstract}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage[numbers,sort&compress]{natbib}
+
+\setcounter{secnumdepth}{3}
+
+\hyphenation{algo-rith-mi-cally neu-ro-psy-cho-ana-ly-sis}
+
+\onehalfspacing
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=black,
+    citecolor=black
+}
+
+\titleformat{\section}
+  {\normalfont\large\bfseries}{\thesection.}{0.75em}{}
+\titlespacing*{\section}{0pt}{2.5ex plus 0.5ex minus 0.2ex}{1.2ex plus 0.2ex}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{Flyxion}
+\fancyhead[R]{\thepage}
+\fancyfoot[C]{\textit{The Hollow Network}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+
+%% ---------------------------------------------------------------
+%%  TITLE PAGE
+%% ---------------------------------------------------------------
+\begin{titlepage}
+\centering
+\vspace*{3cm}
+{\LARGE\bfseries The Hollow Network\par}
+\vspace{1em}
+{\large Synthetic Sociality, Metric Misalignment, and the Politics\\[0.3em]
+of Legibility in Algorithmically Mediated Environments\par}
+\vspace{2em}
+{\large Flyxion\par}
+\vfill
+\end{titlepage}
+
+\setcounter{page}{1}
+
+%% ---------------------------------------------------------------
+%%  ABSTRACT
+%% ---------------------------------------------------------------
+\begin{abstract}
+\small
+This essay traces the emergence of what it calls \emph{synthetic sociality}---communicative
+environments in which the proportion of automated, fabricated, or algorithmically amplified
+activity reaches a threshold at which ordinary users can no longer reliably distinguish human
+interaction from simulation. Beginning with the phenomenological experience of impersonation,
+bot networks, and manufactured content on large social platforms, the essay progressively widens
+its explanatory frame. It argues that synthetic sociality is not primarily the product of malicious
+actors operating against the interests of platforms, but an emergent property of metric-optimization
+systems that treat automated engagement as functionally equivalent to genuine participation. It
+further argues that describing platforms as unified rational maximizers misrepresents the
+organizational dynamics through which these environments are actually produced---a misrepresentation
+compounded, as a structural case study illustrates, by the asymmetry between distributed
+operational responsibility and concentrated strategic authority characteristic of founder-led
+technology firms. Drawing on historical comparison, the essay considers whether present conditions
+represent a novel failure mode or merely the latest iteration of longstanding anxieties about
+mediated communication. Three sections extend the argument into the neuropsychoanalytic register,
+drawing on Karl Friston's Free Energy Principle \citep{friston2010} and Lacanian theory
+\citep{lacan2006,dallaglio2024} to explain why synthetic environments are so effective at
+capturing and organizing human attention. A further section draws a structural analogy from
+recent work in flow-based generative models \citep{gloy2025} to characterize the information
+architecture underlying synthetic social environments. The essay concludes that the central
+problem is not the existence of synthetic activity but its opacity and involuntary character,
+and that the appropriate design response centers on informational legibility, provenance, and
+the transformation of synthetic interaction from a hidden structural condition into a transparent
+and consensual one.
+\end{abstract}
+
+\vspace{1em}
+\noindent\textbf{Keywords:} synthetic sociality, algorithmic platforms, engagement metrics,
+platform governance, online fraud, predictive coding, Free Energy Principle, jouissance,
+neuropsychoanalysis, information flow
+
+\newpage
+
+%% ---------------------------------------------------------------
+%%  SECTION 1
+%% ---------------------------------------------------------------
+\section{The Perceptual Contradiction}
+
+There is a peculiar dissonance at the center of contemporary social media. The largest platforms
+are also, by their own account, among the most sophisticated artificial intelligence laboratories
+in existence. Their research divisions publish widely in machine learning, their infrastructure
+processes billions of interactions daily, and their public communications consistently frame
+artificial intelligence as a transformative project: a technology that will improve content
+moderation, personalize discovery, and deepen the quality of human connection across networks of
+unprecedented scale \citep{zuboff2019,wu2016}.
+
+Yet the everyday experience of using these platforms increasingly consists of something quite
+different. An ordinary user logging into a major social network today is likely to encounter
+impersonation accounts cloning the profile photographs and names of people they know, coordinated
+bot networks producing and amplifying content at velocities no human community could sustain, and
+entire pages or channels composed of synthetic or recycled video assembled by automated pipelines
+optimized not for meaning but for engagement signals. The friend request from a duplicate account,
+the adoption listing that collects a deposit and then vanishes, the comment thread where suspiciously
+similar accounts converge on an identical talking point---these are not marginal experiences but
+routine features of the social environment these platforms have built \citep{gillespie2018}.
+
+I use the term \emph{synthetic sociality} to describe communicative environments in which
+automated, fabricated, or algorithmically amplified actors constitute a sufficiently large
+proportion of visible activity that users can no longer reliably distinguish genuine social
+interaction from simulation. The concept is not evaluative in the first instance: it describes
+a structural condition of the environment rather than a moral failing of any particular actor.
+Its explanatory purpose is to name what users already experience---that interacting on large
+social platforms increasingly resembles navigating a space populated by simulations---and to
+make that experience available for systematic analysis.
+
+This creates an initial puzzle. If a company invests billions in frontier AI research, why does
+its platform feel crowded with crude identity scams? If recommendation algorithms operate at a
+level of sophistication that can model individual attention patterns across hundreds of millions
+of users, why cannot the same organization reliably detect when an account has cloned a photograph
+from another profile and is soliciting money from that person's contacts?
+
+The easy answer---that these are simply different technical problems, and that malicious actors
+are an inevitable presence in any large open system---is not wrong, but it is insufficient. It
+treats the distribution of engineering effort as though it were a natural phenomenon, a consequence
+of difficulty rather than of institutional choice. The harder question is why certain capabilities
+receive resources and others do not, and what those priorities reveal about the actual objectives
+these organizations are designed to pursue \citep{tufekci2015}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 2
+%% ---------------------------------------------------------------
+\section{The Infrastructure Alibi}
+
+The initial explanation most commonly offered for the proliferation of synthetic activity on social
+platforms is structural. Large-scale automation infrastructure, the argument goes, is inherently
+dual-use. The same pipelines that allow legitimate applications---content recommendation,
+advertising targeting, automated customer service---necessarily lower the barrier for actors
+pursuing illegitimate ends. A platform that makes it easy to distribute video at scale makes it
+equally easy for a reel farm to flood the recommendation system with manufactured content. A
+network that allows rapid account creation enables both authentic participation and mass-produced
+impersonation.
+
+This explanation is accurate as far as it goes. The technical infrastructure of large platforms
+does not distinguish, at a fundamental level, between human activity and automated mimicry of
+human activity. Both produce signals---clicks, watch time, shares, follow actions---that the
+system is built to process and respond to. There is no architectural feature of a recommendation
+pipeline that inherently privileges genuine human intention over automated approximation of it
+\citep{pariser2011,vosoughi2018}.
+
+But the structural explanation carries an implicit exculpatory logic. By framing synthetic
+activity as an unfortunate side effect of general-purpose infrastructure, it positions the platform
+as a neutral party whose tools have been turned against it by external malicious actors. The
+platform, in this framing, is struggling with a problem that has been imposed on it from outside---
+adversaries exploiting infrastructure that was designed for better purposes.
+
+This framing has rhetorical utility. It allows companies to speak simultaneously about their
+commitment to safety and their investment in AI without confronting the possibility that these
+two commitments might be in tension. It also determines which interventions appear natural: if
+the problem is external adversaries exploiting legitimate infrastructure, the solution is better
+detection and enforcement---a security problem, technical in character, requiring engineering
+resources but not organizational reflection \citep{gillespie2018}.
+
+What the framing does not address is the prior question of why the infrastructure was built
+without authenticity requirements in the first place, and why it has remained without them as
+the scale and sophistication of synthetic activity has become increasingly legible. The gap
+between organizational rhetoric and platform experience is not incidental; it is, as Zuboff
+observes of surveillance capitalism more broadly, a structural feature of systems whose economic
+logic is oriented around the extraction and monetization of behavioral data rather than around
+the quality of communicative experience \citep{zuboff2019}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 3
+%% ---------------------------------------------------------------
+\section{Metric Indifference and Its Beneficiaries}
+
+A stronger interpretation of the phenomenon requires attending more carefully to what social
+platforms actually optimize and for whom. The dominant metric across large consumer platforms
+is some variant of engagement: click-through rates, watch time, shares, daily active users,
+time on platform. These indicators began as proxies for something that seemed genuinely
+meaningful---evidence that people were finding value in the network, that content was
+resonating, that the platform was doing its job of connecting people with things they wanted
+to see \citep{wu2016}.
+
+The moment these proxies became the primary optimization target of both internal systems and
+external reporting, however, they acquired a different character. Goodhart's Law---the principle
+that when a measure becomes a target, it ceases to be a reliable measure of what it originally
+represented---describes the resulting dynamic with precision \citep{strathern1997}. Once
+engagement metrics entered the objective functions of recommendation algorithms, quarterly
+reports, and engineering performance reviews, the system's behavior reoriented around the
+production of those metrics rather than around whatever underlying quality they were originally
+meant to indicate.
+
+We can formalize the dynamic briefly. Let $E(A)$ denote the engagement produced by activity
+$A$ in the platform environment. The optimization problem the system actually solves is:
+
+\begin{equation}
+\max_{A} \; E(A) \quad \text{subject to operational constraints}
+\label{eq:engmax}
+\end{equation}
+
+The critical observation is that if authenticity---the property that $A$ represents genuine
+human expression or communication---does not appear in $E$, then it is invisible to the
+objective function. An automated account that watches a video long enough to register a
+completion event, triggers a recommendation to another account, and generates a share action
+produces exactly the same signal as a human performing identical interactions. From the
+perspective of the optimization system, these are equivalent \citep{tufekci2015}.
+
+This equivalence is not merely a technical artifact; it has economic consequences. Advertising
+markets are primarily concerned with impressions and interaction signals. An automated impression
+that generates a measurable interaction is, from the standpoint of the advertising transaction,
+indistinguishable from a human one---provided the fraud does not reach a scale that advertisers
+can detect and penalize. At moderate levels, automated activity can actually stabilize platform
+metrics, filling engagement gaps when human participation fluctuates and providing consistent
+throughput for recommendation pipelines \citep{bakshy2015}.
+
+The implication is uncomfortable but analytically unavoidable. Platforms do not merely tolerate
+synthetic activity because it is technically difficult to eliminate. They operate in conditions
+where synthetic activity produces measurable signals that their business model treats as
+positive---at least below whatever threshold would attract regulatory scrutiny or advertiser
+defection. The relationship between the platform and the synthetic activity is therefore not
+cleanly adversarial. It is, at minimum, one of mutual indifference, and in some respects one
+of mutual benefit \citep{zuboff2019}.
+
+This does not require deliberate deception. It can arise from something more mundane: a system
+designed to maximize measurable signals, encountering a class of activity that produces those
+signals, and failing to develop the capacity to distinguish it from the activity the signals
+were meant to represent. The absence of malice does not, however, diminish the structural
+condition. An optimization system that is indifferent to authenticity will produce environments
+in which authenticity is not protected, regardless of what the organization professes in its
+public communications \citep{gillespie2018,noble2018}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 4
+%% ---------------------------------------------------------------
+\section{Against the Unified Maximizer}
+
+There is a danger in the analysis developed so far, which is that it generates too clean a
+picture. Writing the system as~(\ref{eq:engmax}) implies the existence of a coherent agent
+with a well-defined objective function. Large technology companies are not like this. They are
+bureaucratic organizations of tens or hundreds of thousands of people, distributed across
+divisions that have different mandates, different time horizons, and sometimes directly
+competing incentives \citep{gillespie2018}.
+
+An engineering team building recommendation infrastructure is rewarded for model performance
+on engagement metrics. A trust-and-safety team is rewarded for the volume of policy violations
+detected and removed. A product team is rewarded for user growth and retention numbers. A policy
+team responds to regulatory pressure and manages relationships with governments and civil society
+organizations. Each of these teams optimizes for a locally defined objective. The interaction
+of these locally optimized systems produces the overall behavior of the organization---but that
+behavior does not have the coherence one would expect if a single agent were solving a single
+problem \citep{tufekci2015}.
+
+This matters because it changes the diagnosis of why synthetic activity persists. The answer
+may not be that the company has made a strategic decision to tolerate bots because they inflate
+metrics. It may be something more dispersed: that the team with the mandate to address
+coordinated inauthentic behavior has insufficient resources relative to the teams building the
+infrastructure that enables it; that detection of sophisticated synthetic networks requires
+capabilities that cross organizational boundaries and therefore fall into gaps between divisions;
+that the metrics by which senior leadership evaluates platform health do not include indicators
+of synthetic activity that would make its prevalence visible; or simply that the problem is
+technically difficult and the organization's attention is directed elsewhere by immediate
+competitive pressures.
+
+These organizational dynamics are not exculpatory---they explain rather than excuse---but they
+do have implications for how change might occur. An organization that has made a strategic choice
+to prioritize engagement over authenticity might be moved by changes in regulation, advertising
+market pressure, or public discourse to shift that choice. An organization whose behavior toward
+synthetic activity emerges from distributed organizational dysfunction requires different
+interventions: changes to internal measurement systems, resource allocation, and promotion
+criteria that bring the stated commitment to authenticity into alignment with the incentive
+structures that actually govern day-to-day decisions \citep{noble2018,zuboff2019}.
+
+The institutional explanation also draws attention to a pattern that appears across many
+organizations managing complex infrastructures at scale: the gap between what an organization
+publicly commits to and what its internal incentive architecture actually rewards tends to be
+visible precisely in the areas where commitment would be costly. Eliminating synthetic activity
+aggressively might shrink reported user bases, reduce engagement metrics, and create friction
+in content distribution pipelines---all of which would appear as negative signals in the
+reporting structures by which large platforms are evaluated. This is not a conspiracy; it is
+the ordinary operation of institutional incentives \citep{strathern1997}, and it is why
+commitments to authenticity that are not embedded in measurable internal targets tend to
+remain symbolic.
+
+%% ---------------------------------------------------------------
+%%  SECTION 5  [NEW: Distributed Responsibility]
+%% ---------------------------------------------------------------
+\section{Distributed Responsibility and Concentrated Power}
+
+A structural pattern in the governance of large technology firms compounds the organizational
+dynamics described above. Contemporary platform companies have increasingly adopted what might
+be called a portfolio model of technical leadership: distributing operational responsibility
+across multiple semi-autonomous groups while preserving concentrated strategic authority at
+the top of the organizational hierarchy \citep{gillespie2018}.
+
+This arrangement is typically justified on grounds of organizational agility. By distributing
+development work across several teams, a company can pursue parallel approaches, reduce
+dependence on any single technical leader, and avoid the bottlenecks associated with hierarchical
+decision-making. Parallel experimentation is a rational strategy for managing uncertainty in
+domains---such as frontier AI research---where the technical landscape is genuinely unpredictable
+and failure is both common and informative.
+
+The governance implication of this structure, however, is less straightforward than the
+managerial rationale suggests. Operational responsibility is distributed widely across
+specialized groups, but ultimate strategic authority remains tightly concentrated. In founder-led
+technology firms, this concentration is frequently reinforced through voting share arrangements
+and board control that make the formal authority of the founder structurally immune to the
+diffusion of operational risk that other parts of the organization are subject to
+\citep{zuboff2019}.
+
+The result is a characteristic institutional geometry. When initiatives succeed, success accrues
+upward to visionary leadership. When they fail, responsibility is distributed laterally across
+a network of teams whose mandates overlap and whose accountability relationships are genuinely
+complex. This asymmetry between the distribution of operational risk and the concentration of
+strategic power is not unique to technology firms, but it is particularly consequential in
+organizations that govern communicative infrastructures of societal scale.
+
+The asymmetry has a direct bearing on the persistence of synthetic sociality. When no single
+organizational actor bears clear accountability for the aggregate informational environment the
+platform produces, the cumulative effect of many locally optimized decisions---each of which
+may appear defensible in isolation---can produce systemic conditions for which no one is
+institutionally responsible. The impersonation network that exploits the easy account-creation
+pipeline, the coordinated bot farm that games the engagement algorithm, and the scam page that
+exploits the absence of provenance verification are each addressable by specific teams. The
+systemic condition that makes all three simultaneously viable and persistent belongs to no team's
+mandate.
+
+This observation reinforces the argument against treating the platform as a unified maximizer
+while complicating the available remedies. Changing the objective function of a coherent
+organization is challenging but conceptually tractable. Restructuring accountability relationships
+in an organization whose behavior emerges from many semi-independent teams, each optimizing
+locally, and whose ultimate authority is structurally insulated from operational consequences,
+requires intervention at a different level---one that goes beyond internal reform toward
+regulatory frameworks capable of imposing accountability at the point where strategic authority
+and operational impact actually converge \citep{tufekci2015,noble2018}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 6
+%% ---------------------------------------------------------------
+\section{The Externalization of Cost}
+
+The analysis of platform incentives acquires a sharper moral character when considered from
+the perspective of the people who bear the consequences of synthetic activity. The asymmetry
+between those who create fraud and those who experience it is not accidental. It is structured
+by the same institutional indifference that allows synthetic activity to persist within the
+optimization environment \citep{noble2018}.
+
+Consider the range of fraud enabled by the conditions described above. Impersonation accounts
+clone a person's photograph, name, and fragments of their public posts to create convincing
+duplicates, which are then used to solicit money from the original person's contacts or to
+distribute fraudulent links to their audience. Fake rehoming pages for animals accept deposits
+from people seeking to adopt pets and then disappear, with the operator moving to a new page
+or a different regional community group. Rental scams collect deposits on apartments that do
+not exist or are not available for rent, exploiting the trust that platform community membership
+implies. Investment fraud accounts build apparent legitimacy through stolen identity signals
+before promoting schemes to extract money from followers.
+
+These are not sophisticated attacks. They exploit elementary features of platform design: the
+ease of account creation without identity verification, the absence of meaningful history or
+provenance signals for new accounts, the capacity to operate across jurisdictions and communities
+without accountability to any of them, and the availability of algorithmic amplification that
+places new content in front of large audiences before any reputation has been established
+\citep{gillespie2018,tufekci2015}.
+
+The cost of this fraud is borne almost entirely by individuals. A person who has lost a deposit
+to a rental scam must determine, individually, whether and how to pursue recovery---a process
+that is time-consuming, often fruitless, and emotionally taxing. A person whose identity has been
+impersonated must navigate reporting systems that may respond slowly or inconsistently, while
+their contacts continue to receive fraudulent messages from the duplicate account. The platform
+removes an account if and when it violates policy; the network behind it persists and generates
+new accounts.
+
+This pattern reflects a broader principle about the distribution of costs in systems with weak
+accountability mechanisms. In offline contexts, fraud encounters friction: social networks impose
+reputational costs on deception that is discovered, legal systems create deterrence, and the
+geographic and social proximity of fraudulent activity to its victims creates pressure toward
+accountability. None of these friction mechanisms operate effectively in large digital environments
+with low barriers to account creation and identity change \citep{boyd2014}.
+
+The jarring quality of this situation is the contrast between the organizational resources
+directed toward capability development and the relative thinness of basic protective
+infrastructure. It is not primarily a technical problem that a platform investing at scale in AI
+systems cannot build reliable identity verification, enforce against repeat fraudulent operators,
+or surface provenance information for accounts and content. It is an institutional problem: the
+investments that would address these failures do not register as improvements in the metrics by
+which these organizations are governed and evaluated \citep{wu2016,zuboff2019}.
+
+One might observe that analogous dynamics existed long before digital platforms. Gossip and
+rumor in small communities could damage reputations without recourse; fraudulent operators in
+physical marketplaces found ways to exploit trust and disappear. A single piece of misinformation
+circulating through a workplace or neighborhood could undo years of carefully built trust, and
+the individual targeted had no institutional recourse. The platforms are not inventors of social
+deception. What they have done is remove the friction that historically constrained its scale
+\citep{boyd2014}. In a small community, the same social network that transmitted rumor also
+limited its reach and eventually created accountability. On a platform serving hundreds of
+millions of users across thousands of communities, an operator can exploit each community in
+sequence, moving faster than any single community can respond, with no mechanism for coordination
+among victims that would produce collective pressure on the institution hosting the activity.
+
+%% ---------------------------------------------------------------
+%%  SECTION 7
+%% ---------------------------------------------------------------
+\section{The Historical Mirror}
+
+Before concluding that contemporary platforms represent a wholly unprecedented failure, it is
+worth submitting the diagnosis to historical comparison. Anxieties about the authenticity of
+mediated communication have accompanied nearly every significant communication technology.
+The introduction of print raised concerns that the proliferation of texts would overwhelm the
+reader's capacity for critical evaluation. Broadcasting was accused of manufacturing false
+consensus, homogenizing culture, and replacing genuine political participation with the
+appearance of it---a critique developed at length in Debord's analysis of the society of the
+spectacle \citep{debord1967} and in Postman's account of how television restructured public
+discourse around entertainment rather than argument \citep{postman1985}. Early internet forums
+generated extensive discussion about the unreliability of anonymous communication and the
+impossibility of verifying the identity or sincerity of interlocutors \citep{boyd2014}.
+
+In each case, critics worried that technological mediation would displace authentic human contact
+with a cheaper substitute---that the medium would produce environments populated by
+representations and performances rather than genuine persons. And in each case, the prediction
+was partially vindicated and partially refuted: new media did introduce new forms of manipulation
+and inauthenticity, and human communities found ways to develop new norms, literacies, and
+institutions that allowed meaningful interaction to persist alongside the degraded forms.
+
+The question for contemporary platforms is whether they represent merely the latest iteration of
+this recurrent anxiety or whether they introduce failure modes that are qualitatively different
+from what preceded them. There are grounds for arguing that some features of the current
+situation are genuinely novel. Earlier mass media manipulated at scale but lacked personalization:
+a propaganda campaign addressed the same message to a mass audience. Contemporary platforms
+combine algorithmic personalization, granular data about social relationships, and the capacity
+to generate synthetic identities that can operate inside individual social networks rather than
+broadcasting to an undifferentiated public \citep{vosoughi2018,bakshy2015}.
+
+An impersonation account that clones a specific person's identity and operates within that
+person's actual social graph---sending messages to their actual friends and colleagues---is
+categorically different from a mass-media propaganda campaign. It exploits the intimacy of
+personal relationship rather than the diffuse attention of a public audience. It is harder to
+detect because it does not feel like mass communication; it feels like a message from someone
+the recipient knows. And it can be generated at scale with minimal cost, targeting thousands of
+individual social contexts simultaneously in ways that no earlier technology permitted
+\citep{vosoughi2018}.
+
+This qualitative distinction matters because it determines what forms of literacy and institutional
+response are appropriate. Teaching people to be skeptical of anonymous strangers on early internet
+forums was a reasonable response to that environment. Teaching people to suspect messages from
+accounts that appear to be their friends and family members, while not technically unreasonable
+as advice, points toward the collapse of a social environment rather than its maintenance
+\citep{tufekci2015}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 8
+%% ---------------------------------------------------------------
+\section{The Complexity of Desire}
+
+Any account of what has gone wrong with social platforms must grapple honestly with the complexity
+of what users actually want. The analysis so far has implicitly treated the preference for authentic
+human interaction as given, and the proliferation of synthetic activity as a deviation from that
+preference that users would eliminate if given the choice. This is not obviously correct
+\citep{boyd2014}.
+
+Many people engage willingly and knowingly with automated or semi-automated communicative actors.
+Parasocial relationships with content creators who interact with audiences through algorithmically
+optimized posting schedules, brand accounts that communicate through automated responses, and
+entertainment streams produced by coordinated content teams are all widely chosen forms of digital
+interaction \citep{wu2016}. They are often attractive precisely because they require no
+reciprocity: the engagement is one-directional, the social obligation minimal, and the experience
+of connection available without the cost of genuine relationship.
+
+This complexity does not undermine the critique of involuntary synthetic activity, but it refines
+it. The problem users experience is not simply the existence of automated actors in their social
+environments. It is the specific character of that automation: deceptive, opaque, and
+non-consensual. The impersonation account is objectionable not because it is automated but
+because it claims to be something it is not, exploiting the trust that authentic identity implies.
+The coordinated bot network is problematic not because it involves multiple accounts but because
+it simulates the appearance of independent consensus that does not exist. The rental scam is
+harmful not because it uses digital tools but because it exploits the informational asymmetry
+those tools create \citep{gillespie2018,noble2018}.
+
+The distinction between consensual and non-consensual synthetic interaction is therefore crucial.
+A user who knowingly follows an automated entertainment account is making a choice about how to
+allocate their attention. A user who receives a message from what appears to be their colleague
+and is in fact an impersonation account has had that choice made for them---and made against
+their interests. The design challenge is to make the boundary between these two conditions
+visible rather than to eliminate one of them.
+
+%% ---------------------------------------------------------------
+%%  SECTION 9
+%% ---------------------------------------------------------------
+\section{The Predictive Subject}
+
+The institutional critique developed so far explains why synthetic social environments arise.
+To understand why they are so effective, however, we must also consider the structure of the
+human cognitive apparatus that interacts with these environments. The analysis of platform
+incentives is incomplete without a corresponding account of why manufactured signals are so
+difficult to resist, and why the same person who is intellectually aware that engagement-bait
+is manufactured continues to respond to it.
+
+Contemporary computational neuroscience increasingly describes the brain not as a passive
+recorder of sensory data but as a \emph{predictive system} \citep{friston2010,solms2021}.
+Rather than waiting to receive information, the brain continuously generates hypotheses about
+the causes of sensory input and updates these hypotheses when predictions fail. Karl Friston's
+Free Energy Principle (FEP) formalizes this process: biological systems must minimize long-run
+informational surprise in order to remain within the viable states characteristic of their kind
+\citep{friston2010,friston2013}.%
+\footnote{Friston, ``The Free-Energy Principle: A Unified Brain Theory?''
+\emph{Nature Reviews Neuroscience} 11 (2010): 127--138.}
+
+In the FEP framework, let $s$ denote sensory input and $z$ the hidden states of the world
+that generate it. The brain maintains an approximate posterior $q(z)$ over these hidden states.
+Variational free energy $F$ is defined as:
+
+\begin{equation}
+F = D_{\mathrm{KL}}\!\bigl(q(z)\,\|\,p(z|s)\bigr) - \ln p(s)
+\label{eq:fep}
+\end{equation}
+
+where $D_{\mathrm{KL}}$ is the Kullback--Leibler divergence between the brain's approximate
+beliefs and the true posterior, and $-\ln p(s)$ is the log-surprise of sensory observations.
+Because the brain cannot access $p(z|s)$ directly, minimizing $F$ serves as a tractable proxy
+for minimizing surprise itself \citep{friston2010}.
+
+This minimization proceeds through two complementary strategies. The first, \emph{perception},
+involves updating internal beliefs $q(z)$ to better explain incoming sensory signals. The
+second, \emph{action}, involves changing the environment so that sensory signals conform to
+predictions. The brain is therefore not a passive observer but an active inference engine:
+it continuously generates hypotheses and acts to confirm them. Within this architecture,
+emotionally salient signals are assigned \emph{precision}---a weighting that determines which
+prediction errors receive attention and drive behavioral reorganization. High-precision errors
+propagate upward through the predictive hierarchy and compel the system to revise its models
+or act; low-precision errors are treated as noise \citep{friston2013,solms2021}.
+
+The psychoanalytic tradition anticipated aspects of this architecture long before predictive
+coding models existed. Lacan's formulation that the unconscious is structured like a language
+\citep{lacan2006} describes a system organized around chains of signifiers that attempt to
+stabilize experience by providing expectations against which incoming signals are measured.
+These symbolic chains function analogously to the priors of predictive coding: they organize
+perception by supplying expectations against which incoming signals are measured. The
+contemporary neuropsychoanalytic synthesis of Friston and Lacan, developed at length in
+Dall'Aglio \citep{dallaglio2024} and in the clinical work of Solms \citep{solms2021}, treats
+the FEP as providing the neurobiological substrate through which Lacanian structural claims
+can be understood empirically.
+
+The subject that emerges from this architecture is not a unified rational agent. It is a
+predictive system divided between competing sources of expectation, affect, and symbolic meaning.
+The Lacanian notation for this condition is the \emph{barred subject} ($\$$), a formal marker
+indicating that the subject is constitutively split between what it consciously knows and the
+forces that organize its desire from positions it cannot fully occupy \citep{lacan2006,dallaglio2024}.
+This divided predictive subject is particularly vulnerable in environments where informational
+signals are intentionally manipulated. When synthetic actors imitate social cues---identity
+markers, emotional signals, apparent consensus---they exploit precisely the mechanisms through
+which predictive brains construct their models of reality.
+
+Crucially, the brain does not sit behind its Markov blanket as an impartial observer. It
+\emph{self-evidences}: it acts upon the world to produce sensory data that confirms its
+generative models \citep{friston2013}. This means that a platform environment designed to
+elicit high-precision emotional responses does not merely attract attention passively---it
+actively recruits the brain's own inference machinery into the service of engagement
+maximization.
+
+%% ---------------------------------------------------------------
+%%  SECTION 10
+%% ---------------------------------------------------------------
+\section{Jouissance and Surplus Prediction Error}
+
+While predictive models emphasize the brain's tendency to minimize error, psychoanalysis insists
+that human subjects often repeat experiences that generate distress rather than reducing it.
+This paradox was articulated by Freud as the repetition compulsion \citep{freud1920} and later
+formalized by Lacan through the concept of \emph{jouissance}---a paradoxical form of enjoyment
+that persists beyond the pleasure principle. Jouissance is not simply pleasure but a surplus of
+excitation that the subject repeatedly encounters even when, and sometimes especially when, it
+produces suffering \citep{lacan2006,dallaglio2024}.
+
+Within predictive neuroscience, this phenomenon can be understood as a form of \emph{surplus
+prediction error}. The brain's seven basic emotional systems, identified in Panksepp's affective
+neuroscience \citep{panksepp1998}, function as what the FEP framework calls \emph{hyperpriors}:
+innate, high-precision predictions that must be confirmed by experience. These systems---among
+them SEEKING, FEAR, PANIC, RAGE, and CARE---register deviations from socio-emotional homeostasis
+as \emph{felt uncertainty}. Unlike cortical prediction errors, which can be resolved by updating
+beliefs, these subcortical errors demand action: they cannot be ``thought away''
+\citep{panksepp1998,solms2021}.
+
+When a particular emotional uncertainty acquires extremely high precision weighting---when the
+system assigns it disproportionate salience---the entire predictive hierarchy reorganizes around
+resolving it, even when repeated attempts fail. In Lacanian notation, the signifier that carries
+this excessive weight is the \emph{master signifier} $S_1$: a term that does not convey semantic
+content but resonates with the weight of jouissance, organizing the subject's life around a
+kernel of unresolved tension \citep{lacan2006}. The Lacanian \emph{objet~$a$}---the object-cause
+of desire---is not a thing but a formal gap within the predictive model itself: the residual
+uncertainty that cannot be eliminated and that ensures the SEEKING system never fully shuts down
+\citep{dallaglio2024,panksepp1998}.
+
+This structural feature of human cognition has direct implications for the analysis of synthetic
+sociality. Content optimized for engagement does not arbitrarily capture attention; it does so
+by targeting precisely those emotional frequencies that carry the highest natural precision.
+Outrage, fear, the threat of social exclusion, the promise of hidden knowledge---these are
+high-precision prediction errors that the brain is constitutively unable to ignore
+\citep{vosoughi2018,friston2013}. The recommendation algorithm that learns to surface such
+content is not deceiving users in the straightforward sense; it is exploiting the brain's own
+error-prioritization mechanism, causing the brain to repeatedly return to stimuli that produce
+the neurological signature of importance without delivering resolution.
+
+The result is recognizable as what the Lacanian clinic calls jouissance in its mortifying form:
+an enjoyment that immobilizes rather than satisfies, that organizes behavior around a recurring
+gap rather than moving toward closure \citep{dallaglio2024}. The user scrolling through an
+algorithmically curated feed of outrage, anxiety, and manufactured social consensus is not simply
+distracted. They are caught in a loop that exploits the predictive brain's most primitive
+response to unresolved uncertainty---they keep looking because the signal design ensures the
+prediction error never settles \citep{friston2010,vosoughi2018}.
+
+There is also a specifically institutional dimension here. The brain's tendency to automatize
+responses to familiar patterns---to reduce the metabolic cost of conscious processing by
+routinizing interaction \citep{solms2021}---creates an additional vulnerability. Prematurely
+automatized predictions, formed in conditions of comparative helplessness, persist as rigid
+behavioral templates even when they fail to satisfy adult needs \citep{dallaglio2024}. Platform
+environments that continuously reinforce habitual engagement patterns exploit this tendency
+toward automatization, gradually moving interaction from reflective engagement toward compulsive
+behavioral loops.
+
+%% ---------------------------------------------------------------
+%%  SECTION 11
+%% ---------------------------------------------------------------
+\section{Clinical Insight: Precision, Manipulation, and the Analytic Position}
+
+Psychoanalytic practice provides an unexpected perspective on these dynamics, instructive
+precisely because it has developed, over decades of clinical refinement, techniques for
+intervening in the precision-weighting of signifiers---that is, for disrupting the rigid
+assignments of salience that organize symptomatic repetition \citep{lacan2006,dallaglio2024}.
+
+Within the Lacanian clinic, the analyst does not attempt to eliminate the subject's symptoms
+by replacing them with better beliefs, as cognitive-behavioral approaches largely do. Instead,
+analytic technique seeks to intervene in the structure of the subject's predictive hierarchy
+by modulating the precision of specific signifiers. Two classical techniques are illuminating.
+
+\emph{Punctuation} refers to the act of emphasizing particular terms within the patient's
+speech, effectively shifting their symbolic weight. By marking a signifier that the patient
+treats as transparent---one they speak through rather than about---the analyst introduces a
+precision perturbation that forces the predictive system to attend to what it had been silently
+organizing \citep{lacan2006}. \emph{Scansion}, the practice of ending a session at a point of
+unresolved tension, prevents the patient's narrative from achieving the closure that would allow
+the brain's secondary revision to discharge the prediction error and return the system to
+automatized prediction \citep{dallaglio2024}. By holding the uncertainty open, the analyst
+exploits the same principle that platform designers exploit: sustained high-precision prediction
+error demands engagement.
+
+The critical difference is ethical. In the clinical context, these interventions are deliberate,
+transparent in their therapeutic purpose, and directed toward the patient's own singular
+relationship to their desire---toward what Lacan called the \emph{ethics of desire} \citep{lacan2006},
+a non-normative position that does not prescribe what the subject should want but creates
+conditions in which they can encounter what they actually do want. The goal is not to produce a
+subject who conforms to a statistical norm of psychological health but to enable the subject to
+develop what Dall'Aglio describes as a way to manage the structural tension of the drive---to
+find a singular relationship to the irreducible surplus of jouissance rather than being
+organized by it unconsciously \citep{dallaglio2024}.
+
+In algorithmically mediated environments, analogous mechanisms operate without transparency or
+consent, and with the opposite therapeutic orientation \citep{zuboff2019}. Recommendation systems
+continuously amplify the signals that produce highest engagement---which, as argued above,
+correlates strongly with emotionally salient uncertainty \citep{vosoughi2018}. The system
+effectively performs a large-scale experiment in precision manipulation across the entire
+population of users, systematically increasing the salience of specific prediction errors within
+the collective attention economy. The subject thus produced is not one who has developed a
+reflective relationship to their desire but one whose desire has been captured, organized, and
+stabilized around the platform's own optimization target \citep{zuboff2019,dallaglio2024}.
+
+The neuropsychoanalytic perspective therefore converges with the institutional analysis from a
+different direction. Platform environments do not merely expose users to synthetic content; they
+actively reorganize the predictive architectures of their users over time. A person who has
+spent years having their precision-weighting manipulated by algorithmically optimized content is
+not simply better informed about the existence of synthetic sociality. They are a different kind
+of predictive subject---one whose habitual salience assignments have been trained by an environment
+indifferent to their flourishing \citep{solms2021,dallaglio2024}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 12  [NEW: HollowFlow / information architecture]
+%% ---------------------------------------------------------------
+\section{Hollow Flows: The Architecture of Constrained Propagation}
+
+The dynamics described in previous sections---engagement optimization, coordinated synthetic
+activity, and the exploitation of predictive cognitive architectures---are further illuminated
+by a structural analogy from an adjacent technical domain. Recent work in flow-based generative
+modeling has addressed a computational problem whose formal structure bears a suggestive
+resemblance to the informational architecture of large social platforms.
+
+In systems designed to evaluate sample likelihoods over high-dimensional probabilistic graphs,
+a fundamental difficulty arises as dependency structures become dense: evaluating likelihoods
+requires integrating across an exponentially growing set of computational paths, a cost that
+rapidly becomes prohibitive. The approach developed in \citet{gloy2025} addresses this by
+enforcing a \emph{hollow} internal structure---specifically, a block-diagonal Jacobian
+constraint combined with non-backtracking message passing---that restricts the pathways through
+which information can propagate within the model. By preventing recursive loops of mutual
+influence, the architecture ensures that signals move through well-defined forward channels,
+making likelihood evaluation tractable even at large scale.
+
+The relevance of this structure to the argument of this essay is not technical but conceptual.
+Social platforms of the scale under discussion here appear, from the user's perspective, as
+dense communicative networks in which information circulates freely among millions of
+participants. In practice, however, the pathways through which content actually reaches attention
+are highly constrained. Algorithmic ranking systems, recommendation pipelines, and engagement
+optimization mechanisms define narrow channels through which signals are amplified or
+attenuated. The appearance of a rich conversational network conceals an informational
+architecture that is, in the sense made precise by \citet{gloy2025}, effectively hollow: one
+whose visible density masks the structural thinness of the channels through which meaningful
+circulation actually occurs.
+
+This hollowness has two consequences that are directly relevant to the persistence of synthetic
+sociality. First, because the channels through which content propagates are defined by engagement
+optimization rather than by epistemic criteria, synthetic signals---bot posts, reel farms,
+coordinated inauthentic behavior---compete on exactly equal terms with authentic ones. Both enter
+the same constrained amplification channels; both are evaluated by the same engagement metric.
+The architecture provides no internal mechanism for distinguishing a signal that is widely
+amplified because it is genuinely resonant from one that is widely amplified because an automated
+network has been designed to trigger the channel's amplification criteria.
+
+Second, and more subtly, the constrained channel structure means that the apparent diversity of
+information circulating on a large platform substantially overstates the actual diversity of the
+informational environment users encounter. Content that successfully enters the amplification
+channels recirculates widely; content that does not essentially disappears from the social
+surface of the network. The result is an environment that feels saturated with information while
+being, in terms of the pathways through which attention actually flows, quite narrow---one in
+which synthetic actors who have learned to game the amplification criteria can achieve visibility
+disproportionate to their authenticity or epistemic quality \citep{vosoughi2018,tufekci2015}.
+
+The title of this essay is, in part, an allusion to this structural condition. A hollow network
+is not an empty one; it may be densely populated with signals and interactions. What is hollow
+is the relationship between the apparent structure of the network---its visible sociality---and
+the actual architecture of information flow that underlies it. That discrepancy between surface
+and structure is the formal condition that makes synthetic sociality possible at scale.
+
+%% ---------------------------------------------------------------
+%%  SECTION 13
+%% ---------------------------------------------------------------
+\section{Opacity and the Predictive Trap}
+
+The reframing from inauthenticity to opacity---developed in the institutional analysis and now
+deepened by both the neuropsychoanalytic account and the structural analysis of information
+flow---allows a more precise diagnosis of what has gone wrong. The question is not whether
+social platforms should contain automated actors, synthetic content, or algorithmically mediated
+interaction; in some sense they cannot avoid containing all of these. The question is whether
+the nature of the actors and the status of the content are \emph{legible} to users, and whether
+users have the cognitive and informational resources to calibrate their predictive models
+accordingly \citep{gillespie2018}.
+
+Opacity operates at several levels. At the level of identity, accounts that represent automated
+systems or organized promotional campaigns are often indistinguishable from accounts representing
+individual humans, because the platform provides insufficient provenance information to make the
+distinction. At the level of content, media that has been synthetically generated or repurposed
+from other contexts frequently circulates without indicators of origin \citep{vosoughi2018}.
+At the level of behavior, coordinated networks of accounts that simulate independent opinion
+formation are designed to be invisible as networks---their coordination is the feature that makes
+them effective, and the platform's infrastructure does not surface that coordination to users
+encountering their output \citep{tufekci2015}.
+
+From the predictive brain's perspective, opacity is not a neutral condition. The brain calibrates
+precision according to its models of source reliability \citep{friston2013}. A message that
+appears to come from a trusted contact carries higher precision than one from an unknown account,
+precisely because the generative model of ``trusted contact'' includes strong priors about the
+signal's likely accuracy and relevance. Opacity exploits this calibration: by simulating the
+surface features of trusted sources, synthetic actors inherit precision that they have not earned.
+The prediction error they introduce therefore bypasses the skeptical filters that the brain would
+apply to signals from unknown sources \citep{dallaglio2024,solms2021}.
+
+The consequences of opacity for trust are significant. When users cannot determine whether the
+account sending them a message represents a person they know, an automated system, or an
+organized fraud network, the epistemic status of every interaction is degraded. The rational
+response is generalized suspicion---a posture that damages genuine communication alongside
+fraudulent simulation \citep{boyd2014}. The cost of this degradation falls unevenly:
+sophisticated users with the time and resources to investigate suspicious activity bear it
+differently than users who lack those capacities \citep{noble2018}.
+
+The burden of verification has been externalized to individual users in a system that provides
+them with insufficient tools to perform it. This is the institutional failure at the center of
+the problem. A communication infrastructure operating at the scale of the major social platforms
+is not simply a marketplace of ideas in which users are responsible for their own epistemic
+hygiene. It is an environment whose design choices determine what information is available to
+whom, and those choices currently distribute informational disadvantage downward---toward users
+who are least equipped to compensate for it \citep{noble2018,zuboff2019}.
+
+%% ---------------------------------------------------------------
+%%  SECTION 14
+%% ---------------------------------------------------------------
+\section{Legibility as Infrastructure}
+
+The appropriate response to the opacity problem is not to attempt the elimination of synthetic
+activity from social environments---an impossible goal, and arguably not a desirable one given
+that many forms of automation serve genuine user interests. The appropriate response is to treat
+informational legibility as infrastructure: a basic feature of the communicative environment
+that the platform is responsible for providing, in the same way that electrical infrastructure
+is responsible for grounding, or financial infrastructure is responsible for disclosure
+\citep{gillespie2018,zuboff2019}.
+
+Concretely, this means several things. Identity provenance should be surfaced rather than
+obscured: accounts representing individuals, organizations, automated systems, or coordinated
+campaigns should carry indicators that allow users to understand what kind of communicative
+actor they are engaging with. This does not require the elimination of pseudonymity, which serves
+legitimate purposes; it requires distinguishing between human-controlled pseudonymous accounts
+and non-human or coordinated actors. Content origin should be similarly legible: media that has
+been synthetically generated, repurposed from other contexts, or distributed by automated
+pipelines should carry provenance indicators that are visible to the user encountering it
+\citep{tufekci2015}.
+
+Enforcement against repeat fraudulent operators should treat the underlying network, not merely
+the individual account, as the unit of accountability. A scammer who creates a new page after
+having a previous one removed has not been meaningfully deterred; the infrastructure has simply
+absorbed the cost of their continuation. Effective enforcement requires coordinating across
+account histories, behavioral patterns, and network connections in ways that make the operational
+friction of fraud substantially higher than the current environment imposes \citep{gillespie2018}.
+
+User controls should allow people to choose the degree of synthetic interaction they wish to
+engage with. A user who prefers to see only content from verified human accounts should have
+mechanisms to accomplish this. A user who is comfortable engaging with automated entertainment
+accounts should be able to do so knowingly. The goal is not to homogenize the social environment
+but to transform the current condition---in which synthetic interaction is an ambient, hidden
+structural feature---into one in which it is a transparent option \citep{boyd2014}.
+
+These interventions require institutional commitment that goes beyond stated values. They require
+that the measurement systems, promotion criteria, and resource allocation decisions inside large
+platforms treat legibility as a performance indicator in the same way that engagement is currently
+a performance indicator \citep{strathern1997}. They require that the costs of fraud---which are
+currently externalized to individual users---be recognized as costs attributable to platform
+design, and that accountability for those costs be located at the institutional level where the
+relevant design choices are made \citep{noble2018,zuboff2019}.
+
+The neuropsychoanalytic argument adds a further dimension to this demand \citep{dallaglio2024,friston2010}.
+If it is true that sustained exposure to opacity and precision manipulation gradually reorganizes
+the predictive architectures of users, then legibility is not only a matter of fairness in
+individual transactions. It is a matter of the cognitive conditions required for genuine agency.
+A user whose salience-weighting has been trained by years of algorithmically optimized
+manipulation is not simply uninformed about synthetic content; their capacity for the kind of
+reflective self-determination that meaningful choice requires has been partially colonized
+\citep{zuboff2019,dallaglio2024}. Legibility, in this deeper sense, is a precondition for the
+kind of subject who is capable of exercising the consent that the design proposal assumes.
+
+%% ---------------------------------------------------------------
+%%  SECTION 15
+%% ---------------------------------------------------------------
+\section{Conclusion: The Redesign of Trust}
+
+The experience of contemporary social media that motivates this essay---fake accounts, synthetic
+reels, adoption scams, impersonation fraud---is best understood not as the failure of technology
+to catch up with malicious actors but as the emergent property of an optimization system that
+is indifferent to authenticity and organized in ways that externalize the cost of that
+indifference onto ordinary users \citep{zuboff2019,gillespie2018}.
+
+This diagnosis requires widening the frame beyond technical analysis. The problem is economic,
+in that advertising markets reward signals that automated activity can produce as readily as
+human activity \citep{wu2016}. It is organizational, in that the institutional structures of
+large platforms distribute responsibility for synthetic activity across divisions with incompatible
+incentives, producing persistent gaps in which fraud operates without meaningful accountability
+\citep{tufekci2015}. It is architectural, in that the information flow structures of large
+social networks are formally hollow in a sense that makes synthetic signals formally equivalent
+to authentic ones within the amplification pipeline \citep{gloy2025}. It is historical, in that
+the current condition extends longstanding dynamics of mediated communication while introducing
+genuinely novel failure modes at the intersection of personalization, social-graph data, and
+synthetic identity generation \citep{debord1967,postman1985,vosoughi2018}. It is cognitive, in
+that the human predictive brain is constitutively vulnerable to environments designed to exploit
+its own error-prioritization mechanisms \citep{friston2010,panksepp1998}. And it is political,
+in that the costs of the current condition are distributed in ways that track existing
+asymmetries of power and resource---with ordinary users bearing the burden of a degraded
+informational environment that institutions have the capacity but not the incentive to repair
+\citep{noble2018,zuboff2019}.
+
+The neuropsychoanalytic extension of the argument does not soften the institutional critique;
+it sharpens it \citep{dallaglio2024}. If synthetic sociality were merely a question of user
+naivety---if people were simply failing to apply available skeptical resources to obviously
+suspicious content---then the appropriate response might emphasize education and individual
+literacy. But if the vulnerability is structural, rooted in the architecture of the predictive
+brain and deliberately exploited by systems optimized for engagement at any cognitive cost, then
+the responsibility cannot be located at the individual level. The cognitive conditions that make
+synthetic sociality effective are not defects of particular users; they are features of human
+cognition that the platform environment has been designed, whether intentionally or through
+incentive-driven convergence, to instrumentalize \citep{friston2010,zuboff2019}.
+
+The path forward does not lie in nostalgia for a fully authentic social environment that may
+never have existed. Human communities have always contained performance, strategic self-
+presentation, organized influence, and deliberate manipulation \citep{debord1967}. What
+distinguishes the present situation is not the presence of these dynamics but the collapse of
+the friction that historically constrained them, the opacity that prevents users from calibrating
+their predictive models accordingly, and the scale at which cognitive vulnerability is now being
+systematically exploited \citep{vosoughi2018,dallaglio2024}.
+
+Rebuilding trust in digital communicative environments therefore requires neither the elimination
+of synthetic activity nor a retreat from networked sociality. It requires the construction of
+informational legibility as a public good: the design of systems in which the provenance, nature,
+and coordination of communicative signals are visible to those who encounter them
+\citep{gillespie2018,noble2018}. In such an environment, synthetic interaction would remain
+available as a choice rather than being imposed as a condition. The difference between those two
+things is the difference between a communicative environment that users can navigate with
+understanding and one that they must inhabit with ambient suspicion---the difference, in the
+neuropsychoanalytic register, between a subject who has developed a reflective relationship to
+the surplus of jouissance that circulates through their environment and one who is organized by
+it without knowing it \citep{lacan2006,dallaglio2024}.
+
+The challenge is institutional before it is technical, and cognitive before it is institutional.
+The capacity to build more legible communicative infrastructures exists. Whether the
+organizations that control those infrastructures can be moved---through regulation, market
+pressure, or internal reform---to treat legibility as a core commitment rather than a rhetorical
+one is the central political question that the analysis developed here cannot answer, but cannot
+avoid posing.
+
+%% ---------------------------------------------------------------
+%%  BIBLIOGRAPHY
+%% ---------------------------------------------------------------
+\newpage
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
