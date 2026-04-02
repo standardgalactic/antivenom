@@ -2,6 +2,12 @@
 
 𝘝𝘦𝘯𝘦𝘯𝘶𝘮 𝘴𝘰𝘭𝘢 𝘧𝘢𝘤𝘪𝘵 𝘥𝘰𝘴𝘪𝘴
 
+# The Monetization of Redundancy
+
+[Essay](https://standardgalactic.github.io/antivenom/Monetization-of-Redundancy.pdf)
+
+[Audio Overview](https://standardgalactic.github.io/antivenom/processing/)
+
 # The Comfort Trap
 
 [Essay](https://standardgalactic.github.io/antivenom/Friction%20as%20Inoculation.pdf)
