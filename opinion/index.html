@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Minimal Audio Player</title>
+
+<style>
+
+body{
+margin:0;
+background:#000;
+color:#7cff7c;
+font-family:monospace;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+height:100vh;
+text-align:center;
+}
+
+/* ===== canvas ===== */
+
+canvas{
+width:320px;
+height:320px;
+background:#000;
+border-radius:50%;
+box-shadow:0 0 30px #00ff0030 inset;
+margin-bottom:20px;
+}
+
+/* ===== controls ===== */
+
+.controls{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+}
+
+button, select{
+background:#001400;
+border:1px solid #00ff00;
+color:#7cff7c;
+padding:8px 12px;
+cursor:pointer;
+}
+
+.captions{
+margin-top:12px;
+max-width:500px;
+min-height:2em;
+font-size:.9em;
+opacity:.8;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="viz"></canvas>
+
+<div class="controls">
+<button id="toggle">Play</button>
+
+<select id="theme">
+<option value="scope">Scope</option>
+<option value="bars">Bars</option>
+<option value="void">Void</option>
+</select>
+</div>
+
+<div id="captions" class="captions"></div>
+
+<audio id="audio">
+<source src="Why-Social-Media-Is-Ugly-on-Purpose.mp3" type="audio/mpeg">
+<track kind="captions" src="Why-Social-Media-Is-Ugly-on-Purpose.vtt" default>
+</audio>
+
+<script>
+
+/* ===== elements ===== */
+
+const audio = document.getElementById("audio")
+const toggle = document.getElementById("toggle")
+const themeSelect = document.getElementById("theme")
+const captions = document.getElementById("captions")
+
+/* ===== captions ===== */
+
+audio.addEventListener("loadedmetadata", ()=>{
+const t = audio.textTracks[0]
+if(!t) return
+t.mode = "hidden"
+t.oncuechange = ()=>{
+const cue = t.activeCues[0]
+captions.textContent = cue ? cue.text : ""
+}
+})
+
+/* ===== audio ===== */
+
+let ctx, analyser, timeBuf, freqBuf
+
+function initAudio(){
+
+if(ctx) return
+
+ctx = new (window.AudioContext||window.webkitAudioContext)()
+
+analyser = ctx.createAnalyser()
+analyser.fftSize = 1024
+
+const src = ctx.createMediaElementSource(audio)
+src.connect(analyser)
+analyser.connect(ctx.destination)
+
+timeBuf = new Uint8Array(analyser.fftSize)
+freqBuf = new Uint8Array(analyser.frequencyBinCount)
+
+}
+
+toggle.onclick = ()=>{
+initAudio()
+if(audio.paused){
+ctx.resume().then(()=>audio.play())
+toggle.textContent="Pause"
+}else{
+audio.pause()
+toggle.textContent="Play"
+}
+}
+
+/* ===== canvas ===== */
+
+const canvas = document.getElementById("viz")
+const c = canvas.getContext("2d")
+
+const dpr = window.devicePixelRatio || 1
+canvas.width = 320*dpr
+canvas.height = 320*dpr
+c.setTransform(dpr,0,0,dpr,0,0)
+
+/* ===== draw ===== */
+
+let phase = 0
+
+function draw(){
+
+c.fillStyle="rgba(0,0,0,0.2)"
+c.fillRect(0,0,320,320)
+
+if(analyser){
+
+/* ===== scope ===== */
+
+if(themeSelect.value==="scope"){
+
+analyser.getByteTimeDomainData(timeBuf)
+
+c.beginPath()
+
+for(let i=0;i<timeBuf.length;i++){
+
+let t=i/timeBuf.length*2*Math.PI
+let a=(timeBuf[i]-128)/128
+
+let x=Math.sin(3*t+phase)*a*120
+let y=Math.sin(4*t)*a*120
+
+let px=160+x
+let py=160+y
+
+if(i===0) c.moveTo(px,py)
+else c.lineTo(px,py)
+
+}
+
+c.strokeStyle="#00ff88"
+c.lineWidth=1.5
+c.stroke()
+
+}
+
+/* ===== bars ===== */
+
+if(themeSelect.value==="bars"){
+
+analyser.getByteFrequencyData(freqBuf)
+
+let w = 320 / freqBuf.length
+
+for(let i=0;i<freqBuf.length;i++){
+
+let v = freqBuf[i]/255
+let h = v * 140
+
+c.fillStyle="#00ff88"
+c.fillRect(i*w, 320-h, w*0.8, h)
+
+}
+
+}
+
+/* ===== void ===== */
+
+if(themeSelect.value==="void"){
+
+analyser.getByteTimeDomainData(timeBuf)
+
+let energy = 0
+for(let i=0;i<timeBuf.length;i++){
+let d = timeBuf[i]-128
+energy += d*d
+}
+
+energy /= timeBuf.length
+let e = Math.min(energy/5000,1)
+
+let r = 60 + e*80
+
+c.beginPath()
+c.arc(160,160,r,0,Math.PI*2)
+
+c.strokeStyle=`rgba(0,255,120,${0.3+e*0.7})`
+c.lineWidth=2+e*4
+c.stroke()
+
+}
+
+}
+
+phase += 0.01
+
+requestAnimationFrame(draw)
+}
+
+draw()
+
+</script>
+
+</body>
+</html>
