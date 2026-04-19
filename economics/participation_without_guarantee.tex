@@ -1,0 +1,783 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.2in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{mathpazo}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{parskip}
+\usepackage{titlesec}
+
+\setstretch{1.15}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{remark}[theorem]{Remark}
+
+\titleformat{\section}{\large\bfseries}{{\thesection.}}{0.5em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{{\thesubsection.}}{0.5em}{}
+
+\hypersetup{colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black}
+
+\title{Participation Without Guarantee:\\
+A Field-Theoretic Critique of Upwork\\
+as a Probabilistic Marketplace}
+
+\author{Flyxion\\[0.4em]
+\small Independent Researcher}
+
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We model the freelance platform Upwork as a non-equilibrium system within
+the Relativistic Scalar--Vector Plenum (RSVP) framework and analyze its
+epistemic structure using TARTAN (Trajectory-Aware Recursive Tiling with
+Annotated Noise). We demonstrate that the platform monetizes participation
+independently of successful realization, inducing a persistent entropy floor
+in the matching process. Trust signals are shown to constitute a presheaf
+with non-trivial first cohomology, implying global inconsistency despite
+local coherence. We prove that under mild assumptions the system admits a
+stable regime in which expected freelancer value is negative while platform
+revenue remains strictly positive. A Labor Singularity Theorem establishes
+conditions under which the coupling between productive potential and realized
+compensation collapses to zero. The CLIO recursive correction operator is
+shown to fail to converge under entropy injection, preventing stable belief
+formation. A discrete lattice model captures these dynamics in a computable
+form. We further prove a Selection Theorem showing that extractive platforms
+are competitively favored over fair ones under weak market assumptions, and
+introduce a thermodynamic stability parameter classifying platform regimes
+by their ratio of returned to consumed user effort. Identity leasing is
+formalized as a control and observability problem in which risk is transferred
+to the visible account holder while productive control remains hidden.
+Scams and identity arbitrage arise as equilibrium strategies within this
+regime rather than as anomalies.
+\end{abstract}
+
+\newpage
+
+\section{Introduction}
+
+Digital labor platforms present themselves as neutral intermediaries between
+clients and freelancers. In practice, they implement ranking, filtering, and
+monetization mechanisms that fundamentally reshape the structure of labor
+markets by commodifying not work but access to the possibility of work.
+Upwork, one of the largest such platforms, exemplifies this transformation.
+It offers escrow, ratings, and identity verification as proxies for trust
+while simultaneously charging users for visibility through ``Connects,'' a
+proprietary credit system required for proposal submission.
+
+User narratives are often interpreted as isolated failures of individual
+vigilance. The journalist Justin Caffier's account of losing \$475 to a
+fraudulent client---despite following standard procedural guidance---is a
+case in point. We treat such narratives as observational data revealing
+systemic properties: the loss is not anomalous but structurally expected
+under the dynamics formalized here.
+
+A second and analytically distinct phenomenon is the mass solicitation of
+account-sharing arrangements. A solicitor contacts a developer via a public
+repository with a proposal to use their Upwork account via remote desktop
+software, bidding on jobs as that person, and remitting 10--20 percent of
+earnings in exchange. The rationale given is explicit: European or American
+account identities generate higher hourly rates and stronger proposal
+acceptance probabilities than Asian ones. Such solicitations arrive in volume
+and are structurally sophisticated. They reveal something precise about the
+platform's field geometry: identity signals are monetizable because they
+generate differential flow. The solicitation is an informal market for
+visibility anisotropy, and our formal analysis explains why such a market
+arises necessarily.
+
+The paper proceeds as follows. Section~\ref{sec:field} establishes the RSVP
+field representation. Section~\ref{sec:entropy} proves the entropy floor
+theorem. Section~\ref{sec:ev} analyzes the negative expected value regime.
+Section~\ref{sec:sheaf} develops the sheaf-theoretic failure of trust.
+Section~\ref{sec:singularity} proves the Labor Singularity Theorem.
+Section~\ref{sec:clio} introduces the CLIO correction operator and proves
+its non-convergence. Section~\ref{sec:lattice} presents the discrete lattice
+model. Section~\ref{sec:attractors} characterizes exploitative attractors and
+identity anisotropy. Section~\ref{sec:selection} proves the Selection Theorem
+for extractive platforms. Section~\ref{sec:lambda} introduces the
+thermodynamic stability parameter. Section~\ref{sec:leasing} formalizes
+identity leasing as a control problem. Section~\ref{sec:synthesis}
+synthesizes the results, and Section~\ref{sec:conclusion} concludes.
+
+\section{Field Structure}
+\label{sec:field}
+
+Let the platform be a bounded domain $\Omega$ with field:
+\[
+X(x,t) = \bigl(\Phi(x,t),\;\mathbf{v}(x,t),\;S(x,t)\bigr).
+\]
+Here $\Phi : \Omega \times \mathbb{R} \to \mathbb{R}_{\geq 0}$ is a scalar
+field representing productive potential---skill, labor capacity, and domain
+expertise. The vector field $\mathbf{v} : \Omega \times \mathbb{R} \to
+\mathbb{R}^n$ represents flow: visibility, matching probability, and
+opportunity access. The scalar $S : \Omega \times \mathbb{R} \to
+\mathbb{R}_{\geq 0}$ is an entropy field representing systemic uncertainty,
+noise, and adversarial interference.
+
+A classical labor market satisfies $\mathbf{v} \approx \nabla\Phi$ and
+$S \to 0$: productive potential drives flow, and matching noise is
+negligible. Upwork introduces an imposed cost field $C(x) > 0$ that
+modifies flow:
+\[
+\mathbf{v}_{\text{eff}} = \mathbf{v} - \nabla C.
+\]
+
+\begin{proposition}
+If $C(x) > 0$ on a set of nonzero measure, then $\mathbf{v}_{\emph{eff}}$
+is not solely determined by $\nabla\Phi$.
+\end{proposition}
+
+\begin{proof}
+Since $\mathbf{v}_{\text{eff}} = \nabla\Phi - \nabla C$, dependence on
+$\nabla C$ persists unless $C$ is identically constant. Alignment fails
+generically whenever $C$ varies across the domain.
+\end{proof}
+
+The effective flow depends on a composite function of skill, capital, and
+platform-specific rank $\rho$ (Job Success Score, account age, review count):
+$\mathbf{v}_{\text{eff}} \propto f(\Phi, C, \rho)$. Since $\rho$ is a
+path-dependent accumulation and $C$ is a recurring cost, both systematically
+advantage incumbents over newcomers regardless of productive capacity.
+
+\section{Entropy Floor}
+\label{sec:entropy}
+
+Entropy evolves as:
+\[
+\frac{\partial S}{\partial t} = D\,\nabla^2 S + \sigma - \gamma\,\mathcal{C}(X),
+\]
+where $D > 0$ is a diffusion constant, $\sigma \geq 0$ represents the
+continuous influx of low-quality jobs, fraudulent postings, and adversarial
+strategies, and $\mathcal{C}(X) = -\nabla \cdot \mathbf{v}$ is the
+constraint closure functional representing the entropy-suppressing effect of
+successful matches.
+
+\begin{theorem}[Entropy Floor]
+If $\sigma > 0$ and $\gamma\,\mathcal{C}(X)$ is bounded above, then there
+exists $S^* > 0$ such that $S(x,t) \to S^*$ as $t \to \infty$.
+\end{theorem}
+
+\begin{proof}
+At steady state, $\partial S/\partial t = 0$ gives
+$D\,\nabla^2 S^* = \gamma\,\mathcal{C}(X^*) - \sigma$.
+Since $\gamma\,\mathcal{C}(X^*)$ is bounded above and $\sigma > 0$, the
+right-hand side cannot be made arbitrarily positive. A steady-state solution
+$S^*$ exists by elliptic regularity on $\Omega$. If $\gamma\,\mathcal{C}(X^*)
+< \sigma$ on any open set, then $\nabla^2 S^* < 0$ there, and by the maximum
+principle $S^*$ achieves a positive minimum. Thus $S^* > 0$.
+\end{proof}
+
+\begin{remark}
+The suppression term $\gamma\,\mathcal{C}(X)$ depends on the convergence of
+flow at successfully matched pairs. Because platform revenue is decoupled from
+match success---Connects revenue is proportional to proposals submitted, not
+contracts completed---there is no mechanism forcing $\sigma \to 0$ as a
+condition of positive platform revenue. The entropy floor is a structural
+consequence of the revenue model, not a failure of enforcement.
+\end{remark}
+
+\section{Expected Value and Platform Revenue}
+\label{sec:ev}
+
+Let freelancers pay cost $k > 0$ per proposal and receive reward $R$ with
+probability $p \in (0,1)$. The expected value for a freelancer is
+$\mathbb{E}[V] = pR - k$. Platform revenue across $N$ proposals is:
+\[
+U = Nk + \tau pR,
+\]
+where $\tau$ is the platform take rate on completed contracts.
+
+\begin{theorem}[Negative Expectation Regime]
+There exist parameters $(p, k, R, \tau, N)$ such that $\mathbb{E}[V] < 0$
+while $U > 0$.
+\end{theorem}
+
+\begin{proof}
+Choose $k > pR$, so that $\mathbb{E}[V] = pR - k < 0$. Then
+$U = Nk + \tau pR > 0$ since $Nk > 0$. The conditions are simultaneously
+satisfiable for any $N \geq 1$, $\tau \geq 0$.
+\end{proof}
+
+\begin{corollary}
+Rational participation in expectation-negative conditions is sustained by
+variance: if the distribution of $R$ has a positive tail of high-reward
+outcomes, agents whose individual expected value is negative may still
+participate under uncertainty. The platform sustains itself through
+continuous participation under this lottery structure.
+\end{corollary}
+
+
+\subsection{Temporal Inconsistency and Illusory Liquidity}
+
+A structurally distinct exploit arises from mismatched state update times
+across systems. Let $B(t)$ denote the true account balance and
+$\widetilde{B}(t)$ the available balance displayed by a financial interface.
+For a deposited check of amount $C$ at time $t_0$, there exists a clearing
+delay $\Delta > 0$ such that:
+\[
+\widetilde{B}(t_0 + \epsilon) = B(t_0) + C \quad \text{for } \epsilon > 0,
+\]
+while for a fraudulent check:
+\[
+B(t_0 + \Delta) = B(t_0).
+\]
+
+\begin{lemma}[Illusory Liquidity Window]
+There exists a nonempty interval $(t_0,\, t_0 + \Delta)$ on which
+$\widetilde{B}(t) > B(t)$.
+\end{lemma}
+
+\begin{proof}
+Immediate from delayed settlement: availability is granted before
+verification completes.
+\end{proof}
+
+Let transfers $T_i$ occur within this interval. Then:
+\[
+B(t_0 + \Delta^+) = B(t_0) - \sum_i T_i.
+\]
+
+\begin{remark}
+The platform contributes the trust signal that enables acceptance of the
+check---high ratings, verified identity, established history---while the
+financial system contributes the temporal inconsistency. The scam is
+therefore a cross-system exploit of mismatched state update times rather
+than a simple deception. No individual system fails on its own terms; the
+vulnerability exists only in the gap between them. This gap is structurally
+maintained by the sheaf failure of Section~\ref{sec:sheaf}: the trust
+signals local to the platform context do not extend to the financial context,
+and the financial system's clearing delay is not visible to the platform's
+trust field. The Illusory Liquidity Window is the temporal analogue of the
+trust obstruction class.
+\end{remark}
+
+\section{Sheaf-Theoretic Failure of Trust}
+\label{sec:sheaf}
+
+\subsection{TARTAN and the Admissibility Manifold}
+
+Within the TARTAN framework, local plausibility and global realizability are
+distinct. A trajectory may be locally admissible at every patch while failing
+to admit a globally consistent reconstruction. The trust system on Upwork
+exhibits precisely this structure.
+
+\subsection{Trust as a Presheaf}
+
+Let $\mathcal{U} = \{U_\alpha\}$ be an open cover of the interaction space
+$\Omega$, where each $U_\alpha$ corresponds to a local context: a client
+profile, a job posting, or an active contract. The trust presheaf
+$\mathscr{T}$ assigns to each $U_\alpha$ a section $\tau_\alpha =
+(r_\alpha, v_\alpha, h_\alpha)$ encoding rating, verification status, and
+historical activity. Restriction maps $\rho_{U_\alpha U_\beta} :
+\mathscr{T}(U_\alpha) \to \mathscr{T}(U_\beta)$ for $U_\beta \subset
+U_\alpha$ project onto relevant subcomponents.
+
+\begin{definition}
+A global trust section exists if local signals agree on all overlaps and
+glue to a unique element of $\mathscr{T}(\bigcup_\alpha U_\alpha)$.
+\end{definition}
+
+\begin{theorem}[Trust Obstruction]
+\label{thm:obstruction}
+If there exist interactions with consistent local signals but contradictory
+outcomes, then $\mathscr{T}$ has nontrivial first \v{C}ech cohomology:
+$\check{H}^1(\mathcal{U}, \mathscr{T}) \neq 0$.
+\end{theorem}
+
+\begin{proof}
+Let $U_1$ be the context of a client profile and $U_2$ the context of an
+active contract with that client. Let $\tau_1$ assign high rating, positive
+verification, and substantial history. These signals are locally coherent
+within $U_1$, and their restriction to $U_1 \cap U_2$ (contract initiation)
+is consistent with $\tau_1$. The section $\tau_2$ within $U_2$ records the
+post-delivery state: payment withheld, scope dispute, or escrow manipulation.
+Since post-delivery behavior is not determined by pre-contract signals, no
+global section exists restricting to both $\tau_1$ and $\tau_2$. The
+disagreement on the overlap defines a nontrivial \v{C}ech 1-cocycle.
+\end{proof}
+
+\begin{remark}
+This corresponds to TARTAN's admissibility manifold: local plausibility at
+every observed patch coexists with global irrealizability. The trust system
+is not merely imperfect but structurally incapable of providing global
+guarantees.
+\end{remark}
+
+\section{Labor Singularity}
+\label{sec:singularity}
+
+Let $\kappa(x,t) \in [0,1]$ denote the coupling between productive potential
+and realized reward, so that $R = \kappa\,\Phi$.
+
+\begin{definition}
+A \emph{labor singularity} occurs when $\kappa(x,t) \to 0$ while
+$\Phi(x,t) \neq 0$: productive potential exists but cannot be reliably
+converted into income.
+\end{definition}
+
+\begin{theorem}[Labor Singularity Theorem]
+If participation cost $C > 0$, matching probability $p < 1$, and escrow
+coverage is incomplete, then there exists a regime in which
+$\lim_{t \to \infty} \kappa(x,t) = 0$ for a set of participants of
+nonzero measure.
+\end{theorem}
+
+\begin{proof}
+Expected net return per round is $R_{\text{net}} = p\Phi - C$. If
+$C > p\Phi$, accumulated losses over $T$ rounds drive realized reward to
+$-\infty$ relative to effort. The ratio $\kappa = R/\Phi$ therefore converges
+to zero for any participant for whom $C > p\Phi$ holds persistently. Since
+$C$ is a fixed platform cost and $p$ is bounded away from 1 by competition,
+this condition holds on a set of nonzero measure in $(C, p, \Phi)$.
+\end{proof}
+
+\begin{remark}
+Labor singularity is not a failure of labor but a failure of realization. The
+productive capacity $\Phi$ is present and exercised; it simply does not return
+to its bearer. This is distinct from classical unemployment: the worker works
+but the return collapses.
+\end{remark}
+
+\section{CLIO Failure Operator}
+\label{sec:clio}
+
+The CLIO (Constraint-Leveraged Inference Operator) maps a current state
+estimate to a corrected estimate by incorporating new evidence:
+$X_{n+1} = \mathcal{L}(X_n)$.
+In well-behaved inference settings, repeated application converges to a fixed
+point $X^*$ representing an accurate model of the environment.
+
+\begin{definition}
+\emph{CLIO failure} occurs when $X_n \not\to X^*$ as $n \to \infty$,
+oscillating or drifting rather than converging.
+\end{definition}
+
+\begin{theorem}[Non-Convergence Under Entropy Injection]
+If entropy injection $\sigma > 0$ and trust signals are sheaf-inconsistent
+(Theorem~\ref{thm:obstruction}), then $\mathcal{L}$ fails to converge.
+\end{theorem}
+
+\begin{proof}
+Let $\epsilon_n = \|X_n - X^*\|$. Under entropy injection, new noise is
+introduced at rate $\sigma$ per round, while correction reduces error by at
+most $\delta$:
+\[
+\epsilon_{n+1} \leq \epsilon_n + \sigma - \delta.
+\]
+If $\sigma \geq \delta$, then $\epsilon_{n+1} \geq \epsilon_n$, so the
+sequence cannot converge to zero. Since $\sigma > 0$ is structurally
+maintained by the entropy floor theorem and $\delta$ is bounded by the
+information available per round, non-convergence holds generically.
+\end{proof}
+
+\begin{remark}
+In platform terms, freelancers repeatedly update beliefs about clients and
+job quality but cannot reach a stable model. Each engagement introduces noise
+that outpaces individual inference. The system is not merely uncertain but
+actively inference-resistant.
+\end{remark}
+
+\section{Discrete Lattice Model}
+\label{sec:lattice}
+
+We discretize $\Omega$ into a grid $\{(i,j)\}$ with the following update
+rules. The scalar field evolves as:
+\[
+\Phi_{ij}^{t+1} = \Phi_{ij}^t + \alpha\,f(S_{ij}^t) - \beta\,\Phi_{ij}^t,
+\]
+where $\alpha > 0$ governs skill accumulation, $f(S)$ is a decreasing
+function of entropy, and $\beta > 0$ governs depreciation. The vector field
+evolves as:
+\[
+\mathbf{v}_{ij}^{t+1} = \mathbf{v}_{ij}^t - \nabla C_{ij} +
+\eta\,\nabla I_{ij},
+\]
+where $\nabla C_{ij}$ is the local cost gradient and $\eta\,\nabla I_{ij}$
+is the identity gradient encoding geographic and reputational anisotropy.
+The entropy field evolves as:
+\[
+S_{ij}^{t+1} = S_{ij}^t + D\,(\nabla^2 S)_{ij} + \sigma -
+\gamma\,\Phi_{ij}^t,
+\]
+where $(\nabla^2 S)_{ij}$ is the discrete Laplacian and $\sigma > 0$ is the
+uniform noise injection rate.
+
+\begin{proposition}
+The lattice system admits steady states with $S_{ij} > 0$, $\Phi_{ij} > 0$,
+and $R_{ij} \approx 0$.
+\end{proposition}
+
+\begin{proof}
+If $\sigma \approx \gamma\,\Phi_{ij}^*$ at the fixed point, then $S_{ij}^*
+> 0$ by the discrete entropy floor argument. The fixed-point equation
+$\alpha\,f(S^*) = \beta\,\Phi^*$ has a positive solution for any $\alpha,
+\beta > 0$ and $f > 0$. With $\kappa \to 0$ in the labor singularity regime,
+$R_{ij} = \kappa\,\Phi_{ij}^* \approx 0$ despite $\Phi_{ij}^* > 0$.
+\end{proof}
+
+\section{Exploitative Attractors and Identity Anisotropy}
+\label{sec:attractors}
+
+\subsection{Attractor Formation}
+
+Define an attractor region $\mathcal{A} \subset \Omega$ where
+$\nabla \cdot \mathbf{v} < 0$, indicating inward flow of freelancers.
+
+\begin{theorem}
+If enforcement is delayed and entropy is high, exploitative attractors are
+dynamically stable.
+\end{theorem}
+
+\begin{proof}
+Let $\sigma^*$ be a client strategy minimizing escrow while maximizing
+extracted labor. This strategy generates positive expected gain whenever
+enforcement penalty is low. Because dispute resolution is procedurally
+burdensome and ratings update only after completed interactions, the expected
+penalty remains low, making $\sigma^*$ a stable best response. Inflow to
+$\mathcal{A}$ continues as long as negative outcomes are not immediately
+propagated to the trust field---which the sheaf failure of
+Section~\ref{sec:sheaf} prevents.
+\end{proof}
+
+\subsection{Identity Anisotropy}
+
+Let $I(x)$ represent the identity field encoding geographic location, account
+age, and accumulated reputation, with $\mathbf{v} \propto \nabla I$.
+
+\begin{proposition}
+If $I$ varies across regions, flow is anisotropic and identity arbitrage
+is individually rational.
+\end{proposition}
+
+\begin{proof}
+Non-uniform $\nabla I$ produces directional bias in $\mathbf{v}$. A
+participant with identity $I_{\text{native}}$ can increase effective flow by
+borrowing an identity with $I_{\text{borrowed}} > I_{\text{native}}$, gaining
+$\Delta\mathbf{v} = \mathbf{v}(I_{\text{borrowed}}) - \mathbf{v}(I_{\text{native}})
+> 0$. This is individually rational whenever $\Delta\mathbf{v}$ yields
+increased expected reward exceeding the cost of the arrangement. The
+account-sharing solicitations described in Section~1 are precisely this
+adaptation organized as an informal market.
+\end{proof}
+
+\section{Selection Theorem for Extractive Platform Regimes}
+\label{sec:selection}
+
+We now ask a stronger question. Given multiple competing labor platforms,
+some deriving revenue primarily from successful matches and others from
+monetized participation under uncertainty, does the latter possess a
+structural competitive advantage? We show that under weak assumptions,
+extractive platforms can dominate fairer ones in growth and persistence.
+
+For each platform $P$, define gross revenue over $[0,T]$ by
+$U_P(T) = U_P^{\mathrm{match}}(T) + U_P^{\mathrm{access}}(T)$,
+where $U_P^{\mathrm{match}}$ is revenue from completed contracts and
+$U_P^{\mathrm{access}}$ is revenue from participation itself (proposal fees,
+bidding tokens, paid visibility, subscriptions). Define the
+\emph{extractive ratio}:
+\[
+\rho_P = \frac{U_P^{\mathrm{access}}}{U_P^{\mathrm{match}} +
+U_P^{\mathrm{access}}}.
+\]
+A platform with $\rho_P \approx 0$ profits primarily when users succeed;
+a platform with $\rho_P > 0$ monetizes access independently of realization.
+
+Let $M_P(t)$ denote active market interactions at time $t$ and $q_P(t)$
+the realized match quality. A stylized revenue law is:
+\[
+U_P(T) = \int_0^T \bigl( \alpha_P M_P(t) q_P(t) + \beta_P M_P(t)
+\bigr)\,dt,
+\]
+where $\alpha_P \geq 0$ is the revenue coefficient on successful realization
+and $\beta_P \geq 0$ is the revenue coefficient on participation alone. A
+platform with $\beta_P > 0$ can increase revenue by increasing traffic even
+when match quality stagnates or declines. Platform growth obeys:
+\[
+\frac{dG_P}{dt} = \mu U_P - \nu C_P,
+\]
+where $G_P$ is a generalized growth functional, $\mu > 0$ converts revenue
+into growth capacity, and $C_P$ is the cost of operation and trust
+maintenance.
+
+\begin{theorem}[Selection Theorem for Extractive Platforms]
+Assume two platforms $F$ and $E$ with comparable operating costs and
+access to a labor pool, such that $\beta_F \approx 0$ and $\beta_E > 0$.
+Suppose users continue to participate whenever perceived opportunity remains
+positive. Then there exists a nonempty parameter regime in which
+$dG_E/dt > dG_F/dt$ even when $q_E < q_F$: extractive platforms can
+outcompete fairer ones despite producing worse average outcomes for workers.
+\end{theorem}
+
+\begin{proof}
+We have $U_F = \int_0^T \alpha_F M_F q_F\,dt$ and
+$U_E = \int_0^T (\alpha_E M_E q_E + \beta_E M_E)\,dt$.
+For any fixed $q_E < q_F$, choose parameters such that
+$\beta_E M_E > \alpha_F M_F q_F - \alpha_E M_E q_E$,
+which gives $U_E > U_F$. If $C_E - C_F$ is bounded above by
+$\mu(U_E - U_F)/\nu$, then $\mu U_E - \nu C_E > \mu U_F - \nu C_F$,
+hence $dG_E/dt > dG_F/dt$.
+\end{proof}
+
+
+\begin{corollary}[Incentive Misalignment]
+If $\beta_P > 0$, then there exists a regime in which decreasing match
+quality $q_P$ does not decrease revenue and may increase it.
+\end{corollary}
+
+\begin{proof}
+From $U_P = \int_0^T (\alpha_P M_P q_P + \beta_P M_P)\,dt$, if
+$\partial M_P / \partial q_P < 0$ (lower quality induces more repeated
+applications), then the $\beta_P M_P$ term can dominate the loss in
+$\alpha_P M_P q_P$, yielding $\partial U_P / \partial q_P \leq 0$.
+\end{proof}
+
+The theorem requires only that access be monetized, that participation persist
+under uncertainty, and that revenue be partially decoupled from match success.
+This result may be sharpened by noting that if $\partial M_P/\partial S_P > 0$
+(uncertainty drives more repeated applications) and $\partial q_P/\partial
+S_P < 0$ (uncertainty lowers match quality), then:
+\[
+\frac{\partial U_E}{\partial S_E} = \alpha_E \Bigl( q_E
+\frac{\partial M_E}{\partial S_E} + M_E \frac{\partial q_E}{\partial S_E}
+\Bigr) + \beta_E \frac{\partial M_E}{\partial S_E}.
+\]
+If the final term dominates, then $\partial U_E/\partial S_E > 0$: there
+exists an entropy interval on which worsening the informational environment
+is revenue-positive. Introducing the selection functional
+$\Sigma(P) = \mu U_P - \nu C_P$, we obtain $\Sigma(E) > \Sigma(F)$ despite
+$q_E < q_F$. The more extractive system is preferentially selected by market
+competition, and faces no internal pressure to eliminate the uncertainty from
+which it profits.
+
+\section{Thermodynamic Stability Parameter}
+\label{sec:lambda}
+
+We introduce a stability parameter that classifies platforms according to
+whether they are contractive, critical, or expansive with respect to user
+effort and resource flow. Let $E_{\mathrm{in}}(t)$ denote the total effort,
+time, and monetary expenditure contributed by users, and $E_{\mathrm{out}}(t)$
+the realized value returned in the form of completed contracts and durable
+opportunities. Define the \emph{realization ratio}:
+\[
+\lambda_P = \frac{E_{\mathrm{out}}}{E_{\mathrm{in}}}.
+\]
+A platform with $\lambda_P < 1$ is in a \emph{contractive regime}: user
+participation yields less value than it consumes. At $\lambda_P = 1$ the
+system is \emph{critical}, approximately balanced. At $\lambda_P > 1$ the
+system is \emph{expansive}: participation amplifies value, generating surplus
+that sustains long-term engagement.
+
+\subsection{Decomposition of Effort}
+
+We decompose:
+\[
+E_{\mathrm{in}} = E_{\mathrm{labor}} + E_{\mathrm{search}} +
+E_{\mathrm{access}},
+\]
+where $E_{\mathrm{labor}}$ is productive work under contract,
+$E_{\mathrm{search}}$ is effort spent discovering opportunities, and
+$E_{\mathrm{access}}$ is direct monetary expenditure required to participate.
+Similarly, $E_{\mathrm{out}} = E_{\mathrm{paid}} + E_{\mathrm{option}}$,
+where $E_{\mathrm{paid}}$ is realized compensation and $E_{\mathrm{option}}$
+represents future opportunity value. A fair platform minimizes
+$E_{\mathrm{search}} + E_{\mathrm{access}}$ relative to $E_{\mathrm{paid}}$;
+an extractive platform permits growth in $E_{\mathrm{search}}$ and
+$E_{\mathrm{access}}$ without proportional increases in $E_{\mathrm{paid}}$.
+
+\subsection{Persistence of the Contractive Regime}
+
+Suppose $\lambda_P < 1$. Then for a typical user,
+$\frac{d}{dt} E_{\mathrm{user}} = -(1 - \lambda_P)\,E_{\mathrm{in}} < 0$:
+continued participation leads to net depletion of resources. Participation
+persists if users operate under uncertainty or delayed feedback. Let
+$\widehat{\lambda}_P$ denote the perceived ratio. Persistence occurs when
+$\widehat{\lambda}_P \geq 1$ while $\lambda_P < 1$, a mismatch sustained by
+incomplete information, selective success visibility, and stochastic reward
+realization. Even if $\lambda_P^{\mathrm{user}} < 1$, a platform may satisfy
+$dR_P/dt > 0$ provided $E_{\mathrm{access}}$ grows sufficiently, yielding
+the hallmark asymmetry:
+\[
+\lambda_P^{\mathrm{user}} < 1 \quad \text{while} \quad
+\lambda_P^{\mathrm{platform}} > 1.
+\]
+In RSVP terms, this corresponds to a field configuration in which the scalar
+potential $\Phi$ remains high while the vector field $\mathbf{v}$ is
+dissipative, redirecting flows into platform-mediated sinks. The entropy
+field $S$ remains elevated, sustaining uncertainty and repeated engagement.
+The platform maintains controlled disequilibrium rather than converging
+toward equilibrium.
+
+\section{Identity Leasing as a Control and Observability Problem}
+\label{sec:leasing}
+
+In a standard model, there is a one-to-one mapping between account and
+operator: $A \leftrightarrow U$. Identity leasing replaces this with a
+hidden structure in which the visible identity $U_1$ is distinct from the
+actual operator $U_2$. The platform observes only $A$ and partial signals
+from $U_2$ such as typing patterns, deliverables, and communication behavior.
+
+\subsection{State and Observation Model}
+
+Let $x(t)$ denote the internal state including skill level, location, and
+behavioral traits of the true operator $U_2$, and $y(t)$ the observable
+outputs (messages, completed work, response times):
+\[
+y(t) = h(x(t), A) + \epsilon(t).
+\]
+The platform attempts to infer $x(t)$ from $y(t)$ under the assumption that
+$A$ uniquely determines $x(t)$. Identity leasing violates this assumption.
+
+\subsection{Hybrid Control Structure}
+
+Let $u(t)$ denote the control input applied by $U_2$, with the system
+evolving as $dx/dt = f(x, u)$. The account holder $U_1$ provides boundary
+conditions during verification events, yielding a hybrid system:
+\[
+u(t) =
+\begin{cases}
+u_2(t) & \text{most of the time,} \\
+u_1(t) & \text{during verification events.}
+\end{cases}
+\]
+
+\subsection{Observability Failure and Risk Transfer}
+
+The system is observable if $x(t)$ can be reconstructed from $y(t)$.
+Identity leasing induces observability failure because multiple internal
+states produce indistinguishable outputs:
+\[
+\exists\; x_1 \neq x_2 \text{ such that } h(x_1, A) \approx h(x_2, A).
+\]
+This creates an equivalence class of operators behind a single account.
+Under identity leasing, the risk functional satisfies
+$\mathcal{R}(U_2) \to \mathcal{R}(A)$: risk transfers from the hidden
+operator to the visible account holder, who bears full downside while the
+operator captures a fraction $(1-\alpha)$ of earnings.
+
+Identity leasing emerges when three conditions hold simultaneously: accounts
+carry location- or reputation-dependent value, entry barriers prevent certain
+users from accessing high-value accounts, and monitoring is incomplete. Under
+these conditions, accounts become leasable capital assets and labor becomes
+a hidden variable. In RSVP terms, the account $A$ functions as a boundary
+condition on the field while the true operator $U_2$ modifies the internal
+dynamics. The platform enforces constraints only on the boundary, not the
+interior, creating a mismatch between representation and realization.
+Identity leasing is therefore not an aberration but a natural consequence
+of a system in which visibility, rather than capability, is the primary
+scarce resource.
+
+\section{Synthesis}
+\label{sec:synthesis}
+
+The results of the preceding sections are mutually reinforcing and converge
+on a single structural picture. The Connects cost field severs the alignment
+between productive potential and opportunity flow, establishing conditions
+for labor singularity. Once the coupling $\kappa$ collapses, participants
+operate in an expectation-negative regime while platform revenue remains
+positive, sustaining the lottery structure that motivates continued
+participation. The entropy floor theorem establishes that this noise is a
+permanent feature of any individually rational equilibrium. The
+sheaf-theoretic analysis shows that the trust system cannot detect or correct
+the resulting adversarial behavior, since its local signals are consistent
+while its global sections fail to exist. The CLIO operator, confronted with
+this inference-resistant environment, cannot converge to a stable belief,
+leaving participants perpetually vulnerable to the attractor dynamics that
+exploitative strategies generate.
+
+The selection theorem extends the critique from description to evolutionary
+claim: platforms structured this way are not merely exploitative but
+competitively favored. A fair platform that profits only from successful
+matches faces a structural growth disadvantage against one that additionally
+harvests the costs of failed attempts. When entropy enters the revenue
+function with a positive sign---because uncertainty drives repeat
+participation---the system faces no internal pressure to improve match
+quality. The thermodynamic stability analysis quantifies this asymmetry
+through the realization ratio $\lambda_P$: platforms operating in the regime
+$\lambda_P^{\mathrm{user}} < 1$, $\lambda_P^{\mathrm{platform}} > 1$ can
+grow indefinitely by consuming user effort faster than they return value,
+provided the perception gap $\widehat{\lambda}_P - \lambda_P > 0$ is
+maintained. Identity leasing completes the picture as a secondary extraction
+layer: once visibility gradients exist and observability is limited, accounts
+themselves become leasable capital and labor becomes a hidden variable.
+
+The system therefore admits a stable regime characterized by:
+\[
+\Phi > 0, \quad R \approx 0, \quad S > S^* > 0, \quad U > 0, \quad
+\Sigma(E) > \Sigma(F).
+\]
+Productive potential is abundant; realized reward is near zero for a
+significant fraction of participants; entropy is persistent; platform
+revenue is positive; and the more extractive configuration is competitively
+preferred. This is not a market failure departing from an equilibrium that
+would otherwise obtain. It is the equilibrium.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Platform labor markets such as Upwork are best understood not as inefficient
+markets but as non-equilibrium systems in which participation is monetized
+independently of realization. The collapse of coupling between skill and
+compensation, the failure of recursive trust inference, the persistence of
+an entropy floor, the dynamical stability of exploitative attractors, and
+the competitive selection of extractive revenue models produce a coherent
+structural description in which exploitation is not an anomaly but a phase
+of the system.
+
+Individual-level advice---perform more due diligence, choose clients more
+carefully, avoid suspicious postings---operates at the wrong level of
+description. Such advice reduces local exposure while leaving $S^*$, the
+trust obstruction class $\check{H}^1(\mathcal{U}, \mathscr{T})$, and the
+selection differential $\Sigma(E) - \Sigma(F)$ unchanged. These are
+properties of the system, not of any participant's behavior. Structural
+intervention requires altering the decoupling between revenue and outcome:
+specifically, making the platform's revenue contingent on successful
+realization rather than on participation alone.
+
+\begin{thebibliography}{9}
+
+\bibitem{landauer1961}
+Rolf Landauer.
+Irreversibility and heat generation in the computing process.
+\textit{IBM Journal of Research and Development}, 5(3):183--191, 1961.
+
+\bibitem{bennett1982}
+Charles H.\ Bennett.
+The thermodynamics of computation---a review.
+\textit{International Journal of Theoretical Physics}, 21(12):905--940, 1982.
+
+\bibitem{lloyd2000}
+Seth Lloyd.
+Ultimate physical limits to computation.
+\textit{Nature}, 406:1047--1054, 2000.
+
+\bibitem{verlinde2011}
+Erik Verlinde.
+On the origin of gravity and the laws of Newton.
+\textit{Journal of High Energy Physics}, 2011(4):29, 2011.
+
+\bibitem{jacobson1995}
+Ted Jacobson.
+Thermodynamics of spacetime: The Einstein equation of state.
+\textit{Physical Review Letters}, 75(7):1260--1263, 1995.
+
+\bibitem{maclane1998}
+Saunders Mac Lane.
+\textit{Categories for the Working Mathematician}.
+Springer, New York, second edition, 1998.
+
+\bibitem{lurie2009}
+Jacob Lurie.
+\textit{Higher Topos Theory}.
+Princeton University Press, Princeton, 2009.
+
+\end{thebibliography}
+
+\end{document}

@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retro Scope</title>
+<style>
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #041004 0%, #000 70%);
+  color: #8cff8c;
+  font-family: "Courier New", monospace;
+}
+
+body {
+  position: relative;
+}
+
+#stars {
+  position: fixed;
+  inset: 0;
+  display: block;
+}
+
+#scopeWrap {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translate(-50%, -50%);
+  width: min(70vw, 420px);
+  height: min(70vw, 420px);
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(0,255,120,0.08), rgba(0,0,0,0.0) 45%),
+    radial-gradient(circle at center, #031203 0%, #000 82%);
+  box-shadow:
+    0 0 0 2px rgba(120,255,120,0.15),
+    0 0 22px rgba(0,255,120,0.18),
+    inset 0 0 45px rgba(0,255,120,0.08);
+  overflow: hidden;
+}
+
+#scope {
+  width: 100%;
+  height: 100%;
+  display: block;
+  border-radius: 50%;
+}
+
+#scopeGlass {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  pointer-events: none;
+  background:
+    linear-gradient(140deg, rgba(255,255,255,0.08), rgba(255,255,255,0.00) 32%, rgba(255,255,255,0.03) 55%, rgba(255,255,255,0.00) 75%),
+    repeating-linear-gradient(to bottom, rgba(180,255,180,0.018) 0 2px, rgba(0,0,0,0) 2px 4px);
+  mix-blend-mode: screen;
+}
+
+#title {
+  position: absolute;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(140,255,140,0.72);
+  text-align: center;
+}
+
+#tracks {
+  position: absolute;
+  left: 18px;
+  top: 20px;
+  width: min(34vw, 380px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.track {
+  border: 1px solid rgba(0,255,120,0.20);
+  background: rgba(0,32,0,0.24);
+  color: rgba(140,255,140,0.54);
+  padding: 10px 12px;
+  cursor: pointer;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+  user-select: none;
+}
+
+.track:hover {
+  color: rgba(140,255,140,0.90);
+  border-color: rgba(0,255,120,0.55);
+  background: rgba(0,50,0,0.34);
+}
+
+.track.active {
+  color: rgba(170,255,170,0.96);
+  border-color: rgba(0,255,120,0.78);
+  background: rgba(0,72,0,0.30);
+  box-shadow: 0 0 16px rgba(0,255,120,0.12);
+}
+
+#subs {
+  position: absolute;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  width: min(80vw, 900px);
+  min-height: 2.8em;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.45;
+  color: rgba(140,255,140,0.90);
+  text-shadow: 0 0 9px rgba(0,255,120,0.22);
+  white-space: pre-line;
+  pointer-events: none;
+}
+
+#controls {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+#transport {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.ctrl {
+  border: 1px solid rgba(0,255,120,0.22);
+  background: rgba(0,32,0,0.22);
+  color: rgba(140,255,140,0.74);
+  padding: 10px 14px;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ctrl:hover {
+  color: rgba(170,255,170,0.96);
+  border-color: rgba(0,255,120,0.65);
+}
+
+#dialWrap {
+  position: relative;
+  width: 128px;
+  height: 128px;
+}
+
+#dial {
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.08), rgba(255,255,255,0.00) 24%),
+    radial-gradient(circle at center, rgba(0,80,0,0.55) 0%, rgba(0,32,0,0.55) 42%, rgba(0,0,0,0.95) 82%);
+  border: 1px solid rgba(0,255,120,0.28);
+  box-shadow:
+    inset 0 0 22px rgba(0,255,120,0.10),
+    0 0 18px rgba(0,255,120,0.08);
+  cursor: grab;
+  touch-action: none;
+  position: relative;
+}
+
+#dial:active {
+  cursor: grabbing;
+}
+
+#dialMarker {
+  position: absolute;
+  left: 50%;
+  top: 10px;
+  width: 4px;
+  height: 18px;
+  transform: translateX(-50%);
+  border-radius: 3px;
+  background: rgba(190,255,190,0.95);
+  box-shadow: 0 0 8px rgba(0,255,120,0.55);
+}
+
+#dialCenter {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(0,0,0,0.85);
+  border: 1px solid rgba(0,255,120,0.25);
+}
+
+#status {
+  min-width: 170px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: rgba(140,255,140,0.62);
+}
+
+@media (max-width: 820px) {
+  #tracks {
+    width: calc(100vw - 36px);
+    top: 14px;
+  }
+
+  #scopeWrap {
+    top: 39%;
+    width: min(82vw, 380px);
+    height: min(82vw, 380px);
+  }
+
+  #subs {
+    width: 90vw;
+    bottom: 106px;
+    font-size: 14px;
+  }
+
+  #controls {
+    gap: 16px;
+    bottom: 14px;
+  }
+
+  #transport {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #status {
+    min-width: 120px;
+    font-size: 10px;
+  }
+}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div id="title">Retro Scope</div>
+
+<div id="tracks"></div>
+
+<div id="scopeWrap">
+  <canvas id="scope"></canvas>
+  <div id="scopeGlass"></div>
+</div>
+
+<div id="subs"></div>
+
+<div id="controls">
+  <div id="transport">
+    <button class="ctrl" id="playBtn">PLAY</button>
+    <button class="ctrl" id="prevBtn">PREV</button>
+    <button class="ctrl" id="nextBtn">NEXT</button>
+  </div>
+
+  <div id="dialWrap">
+    <div id="dial">
+      <div id="dialMarker"></div>
+      <div id="dialCenter"></div>
+    </div>
+  </div>
+
+  <div id="status">READY</div>
+</div>
+
+<audio id="audio" preload="metadata" playsinline webkit-playsinline>
+  <track id="track" kind="subtitles" default>
+</audio>
+
+<script>
+const FILES = [
+  "Why_Every_Useful_Platform_Becomes_A_Tollbooth",
+  "Why_gig_platforms_profit_from_your_failure",
+  "Why_digital_platforms_mimic_war_economies"
+].sort((a, b) => b.localeCompare(a));
+
+const TRACKS = FILES.map(name => ({
+  name,
+  audio: `${name}.mp3`,
+  vtt: `${name}.vtt`,
+  label: name.replaceAll("_", " ")
+}));
+
+const tracksEl = document.getElementById("tracks");
+const subsEl = document.getElementById("subs");
+const audio = document.getElementById("audio");
+const trackEl = document.getElementById("track");
+const playBtn = document.getElementById("playBtn");
+const prevBtn = document.getElementById("prevBtn");
+const nextBtn = document.getElementById("nextBtn");
+const statusEl = document.getElementById("status");
+const dial = document.getElementById("dial");
+
+let currentIndex = 0;
+let subsOn = true;
+
+TRACKS.forEach((track, i) => {
+  const el = document.createElement("div");
+  el.className = "track";
+  el.textContent = track.label;
+  el.addEventListener("click", () => {
+    loadTrack(i, true);
+  });
+  tracksEl.appendChild(el);
+});
+
+function updateTrackHighlight() {
+  [...tracksEl.children].forEach((child, i) => {
+    child.classList.toggle("active", i === currentIndex);
+  });
+}
+
+function bindSubtitles() {
+  const tt = audio.textTracks[0] || trackEl.track;
+  if (!tt) return;
+  tt.mode = "hidden";
+  tt.oncuechange = () => {
+    if (!subsOn) {
+      subsEl.textContent = "";
+      return;
+    }
+    const cue = tt.activeCues && tt.activeCues[0];
+    subsEl.textContent = cue ? cue.text : "";
+  };
+}
+
+function loadTrack(index, autoplay = false) {
+  currentIndex = (index + TRACKS.length) % TRACKS.length;
+  const t = TRACKS[currentIndex];
+
+  updateTrackHighlight();
+  subsEl.textContent = "";
+  statusEl.textContent = `LOADING ${String(currentIndex + 1).padStart(2, "0")}`;
+
+  trackEl.src = t.vtt;
+  audio.src = t.audio;
+  audio.load();
+
+  audio.onloadedmetadata = () => {
+    bindSubtitles();
+    updateStatus();
+    if (autoplay) {
+      ensureAudioContext().then(() => audio.play()).catch(() => {});
+    }
+  };
+}
+
+function updateStatus() {
+  const t = TRACKS[currentIndex];
+  const cur = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+  const dur = Number.isFinite(audio.duration) ? audio.duration : 0;
+  statusEl.textContent = `${t.label.slice(0, 18).toUpperCase()} ${formatTime(cur)} / ${formatTime(dur)}`;
+}
+
+function formatTime(s) {
+  if (!Number.isFinite(s) || s < 0) return "00:00";
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+}
+
+playBtn.addEventListener("click", async () => {
+  await ensureAudioContext();
+  if (audio.paused) {
+    audio.play().catch(() => {});
+  } else {
+    audio.pause();
+  }
+});
+
+prevBtn.addEventListener("click", () => loadTrack(currentIndex - 1, true));
+nextBtn.addEventListener("click", () => loadTrack(currentIndex + 1, true));
+
+audio.addEventListener("play", () => {
+  playBtn.textContent = "PAUSE";
+  updateStatus();
+});
+
+audio.addEventListener("pause", () => {
+  playBtn.textContent = "PLAY";
+  updateStatus();
+});
+
+audio.addEventListener("ended", () => {
+  loadTrack(currentIndex + 1, true);
+});
+
+audio.addEventListener("timeupdate", updateStatus);
+
+// Audio context / analyser
+let audioCtx = null;
+let analyser = null;
+let timeBuf = null;
+let freqBuf = null;
+
+async function ensureAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const src = audioCtx.createMediaElementSource(audio);
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.84;
+    src.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    timeBuf = new Uint8Array(analyser.fftSize);
+    freqBuf = new Uint8Array(analyser.frequencyBinCount);
+  }
+  if (audioCtx.state === "suspended") {
+    await audioCtx.resume();
+  }
+}
+
+// Stars
+const starsCanvas = document.getElementById("stars");
+const sctx = starsCanvas.getContext("2d");
+let stars = [];
+
+function resizeStars() {
+  starsCanvas.width = innerWidth;
+  starsCanvas.height = innerHeight;
+  stars = Array.from({ length: Math.min(260, Math.floor(innerWidth * innerHeight / 7000)) }, () => ({
+    x: Math.random() * starsCanvas.width,
+    y: Math.random() * starsCanvas.height,
+    z: Math.random(),
+    speed: 0.01 + Math.random() * 0.025
+  }));
+}
+resizeStars();
+window.addEventListener("resize", resizeStars);
+
+function drawStars(energy) {
+  sctx.fillStyle = "rgba(0,0,0,0.32)";
+  sctx.fillRect(0, 0, starsCanvas.width, starsCanvas.height);
+
+  for (const s of stars) {
+    s.z += s.speed * (0.02 + energy * 0.06);
+    if (s.z > 1) {
+      s.z = 0;
+      s.x = Math.random() * starsCanvas.width;
+      s.y = Math.random() * starsCanvas.height;
+    }
+
+    const k = 1 / (1 - s.z + 0.003);
+    const x = (s.x - starsCanvas.width / 2) * k + starsCanvas.width / 2;
+    const y = (s.y - starsCanvas.height / 2) * k + starsCanvas.height / 2;
+    const size = Math.min(1.8, 0.35 + k * 0.65);
+
+    sctx.fillStyle = `rgba(150,255,150,${0.08 + s.z * 0.42})`;
+    sctx.fillRect(x, y, size, size);
+  }
+}
+
+// Scope / Lissajous
+const scope = document.getElementById("scope");
+const c = scope.getContext("2d");
+
+function resizeScope() {
+  const rect = scope.getBoundingClientRect();
+  const dpr = window.devicePixelRatio || 1;
+  scope.width = Math.round(rect.width * dpr);
+  scope.height = Math.round(rect.height * dpr);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+resizeScope();
+window.addEventListener("resize", resizeScope);
+
+let phase = 0;
+
+function drawScope() {
+  const w = scope.clientWidth;
+  const h = scope.clientHeight;
+  const cx = w / 2;
+  const cy = h / 2;
+
+  let energy = 0;
+  let bass = 0;
+  let mid = 0;
+
+  if (analyser) {
+    analyser.getByteTimeDomainData(timeBuf);
+    analyser.getByteFrequencyData(freqBuf);
+
+    for (let i = 0; i < timeBuf.length; i++) {
+      const d = timeBuf[i] - 128;
+      energy += d * d;
+    }
+    energy = Math.min((energy / timeBuf.length) / 7000, 1);
+
+    const n = freqBuf.length;
+    const bEnd = Math.floor(n * 0.12);
+    const mEnd = Math.floor(n * 0.45);
+
+    let bSum = 0;
+    for (let i = 0; i < bEnd; i++) bSum += freqBuf[i];
+    bass = Math.min(bSum / (bEnd * 255), 1);
+
+    let mSum = 0;
+    for (let i = bEnd; i < mEnd; i++) mSum += freqBuf[i];
+    mid = Math.min(mSum / ((mEnd - bEnd) * 255), 1);
+  }
+
+  drawStars(energy);
+
+  c.fillStyle = "rgba(0,0,0,0.16)";
+  c.fillRect(0, 0, w, h);
+
+  // crosshair
+  c.strokeStyle = "rgba(120,255,120,0.07)";
+  c.lineWidth = 1;
+  c.beginPath();
+  c.moveTo(cx, 0);
+  c.lineTo(cx, h);
+  c.moveTo(0, cy);
+  c.lineTo(w, cy);
+  c.stroke();
+
+  if (analyser && timeBuf) {
+    const len = timeBuf.length;
+    const radius = Math.min(w, h) * (0.27 + energy * 0.04);
+    const xFreq = 2.0 + bass * 1.9;
+    const yFreq = 3.0 + mid * 1.6;
+    const phaseShift = phase + bass * Math.PI * 0.9;
+    const lag = Math.max(8, Math.floor(35 + mid * 160));
+
+    c.beginPath();
+
+    for (let i = 0; i < len; i++) {
+      const a = (timeBuf[i] - 128) / 128;
+      const b = (timeBuf[(i + lag) % len] - 128) / 128;
+
+      const t = i / len * Math.PI * 2;
+      const x = cx + Math.sin(t * xFreq + phaseShift) * a * radius * (1 + energy * 0.45);
+      const y = cy + Math.sin(t * yFreq) * b * radius * (1 + energy * 0.45);
+
+      if (i === 0) c.moveTo(x, y);
+      else c.lineTo(x, y);
+    }
+
+    c.strokeStyle = `rgba(0,255,120,${0.60 + energy * 0.28})`;
+    c.lineWidth = 1.1 + energy * 1.0;
+    c.shadowColor = "rgba(0,255,120,0.85)";
+    c.shadowBlur = 10 + energy * 14;
+    c.stroke();
+
+    c.beginPath();
+    for (let i = 0; i < len; i += 8) {
+      const a = (timeBuf[i] - 128) / 128;
+      const b = (timeBuf[(i + lag) % len] - 128) / 128;
+      const t = i / len * Math.PI * 2;
+      const x = cx + Math.sin(t * xFreq + phaseShift) * a * radius * (1 + energy * 0.45);
+      const y = cy + Math.sin(t * yFreq) * b * radius * (1 + energy * 0.45);
+      c.moveTo(x + 0.1, y);
+      c.arc(x, y, 0.65, 0, Math.PI * 2);
+    }
+    c.fillStyle = `rgba(140,255,140,${0.08 + energy * 0.08})`;
+    c.fill();
+    c.shadowBlur = 0;
+  }
+
+  phase += 0.007 + (audio.paused ? 0.0015 : 0.0);
+  requestAnimationFrame(drawScope);
+}
+
+// Inertial dial
+let dialAngle = 0;
+let dialVelocity = 0;
+let dragging = false;
+let lastPointerAngle = 0;
+let lastMoveTime = 0;
+let scrubAccumulator = 0;
+
+function setDialVisual() {
+  dial.style.transform = `rotate(${dialAngle}rad)`;
+}
+
+function getDialPointerAngle(e) {
+  const rect = dial.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  return Math.atan2(e.clientY - cy, e.clientX - cx);
+}
+
+function normalizeAngleDelta(a) {
+  while (a > Math.PI) a -= Math.PI * 2;
+  while (a < -Math.PI) a += Math.PI * 2;
+  return a;
+}
+
+dial.addEventListener("pointerdown", async (e) => {
+  await ensureAudioContext().catch(() => {});
+  dragging = true;
+  dial.setPointerCapture(e.pointerId);
+  lastPointerAngle = getDialPointerAngle(e);
+  lastMoveTime = performance.now();
+  dialVelocity = 0;
+});
+
+dial.addEventListener("pointermove", (e) => {
+  if (!dragging) return;
+  e.preventDefault();
+
+  const now = performance.now();
+  const a = getDialPointerAngle(e);
+  let delta = normalizeAngleDelta(a - lastPointerAngle);
+  const dt = Math.max(1, now - lastMoveTime);
+
+  dialAngle += delta;
+  dialVelocity = delta / dt * 16.0; // rad per frame-ish
+
+  lastPointerAngle = a;
+  lastMoveTime = now;
+
+  scrubByDial(delta);
+});
+
+function endDialDrag(e) {
+  if (!dragging) return;
+  dragging = false;
+  if (e && e.pointerId != null) {
+    try { dial.releasePointerCapture(e.pointerId); } catch {}
+  }
+}
+
+dial.addEventListener("pointerup", endDialDrag);
+dial.addEventListener("pointercancel", endDialDrag);
+
+function scrubByDial(delta) {
+  if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+  const secondsPerRadian = Math.max(6, audio.duration / 9);
+  audio.currentTime = clamp(audio.currentTime + delta * secondsPerRadian, 0, audio.duration);
+  updateStatus();
+}
+
+function clamp(x, a, b) {
+  return Math.max(a, Math.min(b, x));
+}
+
+function animateDial() {
+  if (!dragging) {
+    if (Math.abs(dialVelocity) > 0.0001) {
+      dialAngle += dialVelocity;
+      scrubAccumulator += dialVelocity;
+      dialVelocity *= 0.94;
+
+      if (Math.abs(scrubAccumulator) > 0.002) {
+        scrubByDial(scrubAccumulator);
+        scrubAccumulator = 0;
+      }
+    } else {
+      dialVelocity = 0;
+      scrubAccumulator = 0;
+    }
+  }
+  setDialVisual();
+  requestAnimationFrame(animateDial);
+}
+
+loadTrack(0, false);
+updateTrackHighlight();
+updateStatus();
+drawScope();
+animateDial();
+</script>
+
+</body>
+</html>

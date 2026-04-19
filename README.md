@@ -2,6 +2,12 @@
 
 𝘝𝘦𝘯𝘦𝘯𝘶𝘮 𝘴𝘰𝘭𝘢 𝘧𝘢𝘤𝘪𝘵 𝘥𝘰𝘴𝘪𝘴
 
+[Participation without Guarantee](https://standardgalactic.github.io/antivenom/economics/participation_without_guarantee.pdf)
+
+[The Extraction Attractor](https://standardgalactic.github.io/antivenom/economics/structural_convergence.pdf)
+
+* [Audio Overview](https://standardgalactic.github.io/antivenom/economics/)
+
 # The Monetization of Redundancy
 
 [Essay](https://standardgalactic.github.io/antivenom/Monetization-of-Redundancy.pdf)
