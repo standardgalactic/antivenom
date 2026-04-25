@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lissajous Monitor</title>
+
+<style>
+:root{
+  --green:#00ff88;
+}
+
+html,body{
+  margin:0;
+  height:100%;
+  background:#000;
+  overflow:hidden;
+  font-family:monospace;
+  color:var(--green);
+}
+
+/* CRT scanlines */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.04) 0,
+    rgba(255,255,255,0.04) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  opacity:.15;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+}
+
+/* UI */
+.ui{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+}
+
+select{
+  background:#000;
+  color:var(--green);
+  border:1px solid var(--green);
+  padding:6px;
+}
+
+#sub{
+  margin-top:10px;
+  min-height:2em;
+  text-shadow:0 0 8px var(--green);
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="ui">
+  <select id="track"></select>
+  <div id="sub"></div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+/* TRACKS */
+const TRACKS = [
+  "Why_Detached_Ownership_Guarantees_Systemic_Collapse.mp3",
+  "A_mathematical_proof_against_bullshit_jobs.mp3",
+  "Mathematical_Proof_That_Survival_Is_Insufficient.mp3"
+]
+
+/* DOM */
+const audio = document.getElementById('audio')
+const trackSel = document.getElementById('track')
+const subEl = document.getElementById('sub')
+
+/* populate selector */
+TRACKS.forEach((t,i)=>{
+  const o = document.createElement('option')
+  o.value=i
+  o.textContent=t.replace(".mp3","").replace(/_/g," ")
+  trackSel.appendChild(o)
+})
+
+/* URL start */
+function getStart(){
+  const p = new URLSearchParams(location.search)
+  const q = p.get("track")
+  if(!q) return 0
+
+  if(!isNaN(q)){
+    return Math.max(0,Math.min(TRACKS.length-1,Number(q)))
+  }
+
+  const i = TRACKS.findIndex(t=>t.toLowerCase().includes(q.toLowerCase()))
+  return i>=0 ? i : 0
+}
+
+let current = getStart()
+
+/* load track */
+function load(i){
+  current = i
+  const file = TRACKS[i]
+
+  audio.src = file
+  audio.load()
+
+  while(audio.firstChild) audio.removeChild(audio.firstChild)
+
+  const tr = document.createElement("track")
+  tr.kind="subtitles"
+  tr.src=file.replace(".mp3",".vtt")
+  tr.default=true
+  audio.appendChild(tr)
+
+  trackSel.value = i
+}
+
+/* selector */
+trackSel.onchange = ()=> load(Number(trackSel.value))
+
+/* loop */
+audio.addEventListener("ended",()=>{
+  load((current+1)%TRACKS.length)
+  audio.play()
+})
+
+/* subtitles (robust) */
+audio.ontimeupdate = ()=>{
+  const tt = audio.textTracks && audio.textTracks[0]
+  if(!tt) return
+
+  tt.mode = "hidden"
+
+  const cue = tt.activeCues && tt.activeCues[0]
+  subEl.textContent = cue ? cue.text : ""
+}
+
+/* audio context */
+let ctxA, analyser, buf
+
+function initAudio(){
+  if(ctxA){
+    if(ctxA.state !== "running") ctxA.resume()
+    return
+  }
+
+  ctxA = new (window.AudioContext || window.webkitAudioContext)()
+
+  analyser = ctxA.createAnalyser()
+  analyser.fftSize = 1024
+  buf = new Uint8Array(analyser.fftSize)
+
+  const src = ctxA.createMediaElementSource(audio)
+  src.connect(analyser)
+  analyser.connect(ctxA.destination)
+}
+
+/* click to play/pause */
+document.body.onclick = async ()=>{
+  initAudio()
+
+  if(audio.paused){
+    await audio.play()
+  } else {
+    audio.pause()
+  }
+}
+
+/* canvas */
+const c = document.getElementById('c')
+const g = c.getContext('2d')
+
+let w,h,cx,cy
+function resize(){
+  w=c.width=innerWidth
+  h=c.height=innerHeight
+  cx=w/2; cy=h/2
+}
+resize()
+addEventListener('resize',resize)
+
+/* draw */
+function draw(){
+
+  /* phosphor fade */
+  g.fillStyle='rgba(0,0,0,0.15)'
+  g.fillRect(0,0,w,h)
+
+  if(analyser){
+    analyser.getByteTimeDomainData(buf)
+
+    const len = buf.length
+    const lag = 20
+    const R = Math.min(w,h)*0.35
+
+    g.beginPath()
+
+    for(let i=0;i<len;i++){
+      const a = (buf[i]-128)/128
+      const b = (buf[(i+lag)%len]-128)/128
+      const t = i/len*Math.PI*2
+
+      const x = cx + Math.sin(t*2)*a*R
+      const y = cy + Math.sin(t*3)*b*R
+
+      i ? g.lineTo(x,y) : g.moveTo(x,y)
+    }
+
+    g.strokeStyle = '#00ff88'
+    g.shadowColor = '#00ff88'
+    g.shadowBlur = 12
+    g.stroke()
+    g.shadowBlur = 0
+  }
+
+  requestAnimationFrame(draw)
+}
+
+/* start */
+load(current)
+draw()
+</script>
+
+</body>
+</html>

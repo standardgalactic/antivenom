@@ -1,0 +1,822 @@
+\documentclass[12pt]{article}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{mathrsfs}
+\usepackage{tikz-cd}
+\geometry{margin=1.2in}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+
+\title{Ownership Without Understanding:\\
+Obstruction, Deskilling, and the Sheaf-Theoretic Geometry of Extraction}
+\author{Flyxion}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Contemporary political economy identifies a persistent asymmetry between those who perform generative work and those who capture its returns, but existing accounts tend to remain either descriptive or narrowly Marxian. This paper develops a geometric framework, grounded in sheaf theory, RSVP field dynamics, and Čech cohomology, that gives this asymmetry a precise structural expression. We distinguish three forms of capital---financial, managerial, and embodied ecological---and show that the modern economy systematically rewards them in an order inverse to their contribution to systemic resilience. We formalize deskilling as a sheaf-tearing functor, credential inflation as spectral collapse of the Čech Laplacian, and apprenticeship as an obstruction-reducing homotopy. The central result is a Regeneration--Obstruction Correspondence: a system is regenerative if and only if its average Čech obstruction remains below a computable threshold, a condition that holds precisely when valuation is coupled to compatibility rather than decoupled from it. We conclude by situating the mythic figure of the ``servant of all'' as a compressed attractor in model space, encoding the limiting case of full constraint traversal that no individual can literally achieve but that distributed practice approximates.
+\end{abstract}
+
+\newpage
+\section{Introduction}
+
+A recurring observation in political economy, found in classical sources from David Ricardo~\cite{Ricardo1817} to Karl Marx~\cite{Marx1867} and in more recent work such as Catherine Liu's \emph{Virtue Hoarders}~\cite{Liu2021}, is that the returns to work and the returns to ownership have become structurally decoupled. Those who perform the physical and cognitive labor of transformation---converting raw materials into buildings, organizing care, producing cultural objects---are compensated through bounded wages tied to time and contract. Those who hold title to the assets involved capture returns that are tied not to any single transformation but to the long-run trajectory of the asset's value, which may compound over decades and across contexts entirely disconnected from the original productive act.
+
+Liu's contribution is to extend this observation from the classical labor--capital dyad to a three-way structure that includes a professional--managerial class (PMC) occupying an intermediate position. The PMC neither owns the means of production in the classical sense nor performs the generative labor; it exercises authority through credentialed coordination, institutional gatekeeping, and the management of symbolic legitimacy. Her critique is that this stratum tends to redirect political energy away from material redistribution and toward the performance of moral distinction---what she terms ``virtue hoarding.'' The structural effect, whether or not it is consciously intended, is to stabilize existing economic arrangements by shifting contestation into a register that leaves those arrangements intact.
+
+What Liu's account lacks, and what the present paper attempts to supply, is a geometric substrate. The intuition is clear---positional control over resources and coordination outcompetes generative competence---but the mechanism remains informal. We ask: what exactly is the structure of the knowledge that gets suppressed, what is the formal character of the decoupling, and under what conditions does a system become self-correcting rather than extractive?
+
+The answer we develop draws on three formalisms. First, RSVP field theory provides a state description of production systems in terms of scalar potential, vector flow, and entropy fields. Second, sheaf theory over a cover of production stages provides a precise account of the difference between local specialist knowledge, managerial interface knowledge, and the integrated ``global section'' knowledge that arises from traversal of the full pipeline. Third, Čech cohomology identifies obstruction classes---formal measures of the failure of local sections to glue---and allows us to express deskilling, credential inflation, and regenerative repair as operations on this cohomological structure.
+
+The paper is organized as follows. Section~2 introduces the production field and formalizes the labor--ownership asymmetry in functional-analytic terms. Section~3 develops the sheaf of competencies and the notion of a global section as ecological comprehension. Section~4 identifies obstruction and its sources: managerial blindness as a Čech 1-cocycle, deskilling as a sheaf-tearing functor, and credential inflation as spectral collapse. Section~5 treats repair mechanisms: apprenticeship as an obstruction-reducing homotopy and cooperative ownership as compatibility-coupled valuation. Section~6 states and proves the Regeneration--Obstruction Correspondence. Section~7 situates the mythic attractor within the CLIO learning framework. Section~8 concludes with the anti-detachment thesis in formal terms.
+
+\section{The Production Field and the Labor--Ownership Asymmetry}
+
+\subsection{State Description}
+
+Let $\Omega$ be a social production domain containing materials, agents, tools, legal structures, ecological constraints, and market interfaces. Following the RSVP framework \cite{GeorgescuRoegen1971,Odum1994}, the state of this domain at time $t$ is a triple
+
+\begin{equation}
+X(t) = \bigl(\Phi(t),\, \mathbf{v}(t),\, S(t)\bigr),
+\end{equation}
+
+where $\Phi(t)$ is a scalar field representing stored capacity or productive potential, $\mathbf{v}(t)$ is a vector field representing directed work, routing, and coordination flows, and $S(t)$ is an entropy field measuring disorder, hidden cost, waste, deferred maintenance, and unresolved complexity. The entropy field plays a central role in what follows: increases in $S$ correspond to accumulating liabilities---physical, informational, or ecological---that may not be visible at the point of valuation \cite{Shannon1948,GeorgescuRoegen1971}.
+
+\subsection{Labor as Local Transformation}
+
+A worker $W_i$ applies a transformation to the state field. This is not merely the input of effort in the classical sense; it is a structured map
+
+\begin{equation}
+W_i:\; X_t \longmapsto X_{t+1}
+\end{equation}
+
+that exploits knowledge of local constraint geometry to lower entropy within a bounded region of $\Omega$:
+
+\begin{equation}
+\Delta S_i < 0.
+\end{equation}
+
+The reduction of entropy is not incidental to the work; it is constitutive of it. A structure becomes more ordered---more physically coherent, more code-compliant, more functional---precisely because the worker knows how to sequence constraints. The concrete content of that knowledge (material properties, load paths, regulatory requirements, failure modes, temporal dependencies) is what makes the transformation possible.
+
+The worker's compensation is a local functional of the state and time:
+
+\begin{equation}
+L_i:\; X_t \longmapsto w_i(t),
+\end{equation}
+
+with the defining property that
+
+\begin{equation}
+\frac{\partial w_i(t)}{\partial X_{t+k}} \approx 0 \quad \text{for } k \gg 0.
+\end{equation}
+
+That is, the wage depends on the present state but is decoupled from future realizations of the trajectory. Once a project is complete and the contract is settled, the worker has no ongoing claim on what the transformed object becomes worth.
+
+\subsection{Ownership as Trajectory Claim}
+
+An owner $O_j$ does not primarily apply a transformation to the physical field. Rather, ownership is a claim operator over the trajectory of $X$:
+
+\begin{equation}
+O_j:\; \{X_t\}_{t \ge 0} \longrightarrow \mathcal{V}_j,
+\end{equation}
+
+where the valuation functional is
+
+\begin{equation}
+\mathcal{V}_j = \mathbb{E}\!\left[\int_0^T e^{-rt}\, \pi_j(X_t)\, dt \;+\; e^{-rT}\, P_j(X_T)\right].
+\end{equation}
+
+Here $\pi_j(X_t)$ is the flow payoff (rent, licensing fees, appreciation), $P_j(X_T)$ is the terminal resale price, and $r$ is a discount rate. The crucial feature is that $\mathcal{V}_j$ is defined over the entire future trajectory and includes expectations over exogenous fields: market demand, demographic shifts, zoning changes, and macroeconomic conditions entirely unrelated to the local transformation performed by labor.
+
+This produces a structural asymmetry in long-range sensitivity:
+
+\begin{equation}
+\frac{\delta \mathcal{V}_j}{\delta X_{t+k}} \neq 0 \quad \text{for large } k,
+\qquad\quad
+\frac{\partial w_i(t)}{\partial X_{t+k}} \approx 0.
+\end{equation}
+
+Ownership couples to long-range future states; wages do not. This is not a contingent feature of particular contracts but a structural consequence of how the two income streams are defined. Labor income is a local functional; ownership income is a global one.
+
+\subsection{The Three-Capital Taxonomy}
+
+This asymmetry motivates a distinction between three forms of capital that standard accounts tend to conflate \cite{Piketty2014,Harvey2005}.
+
+\begin{definition}
+\emph{Financial capital} $K_f$ is claim-power: the capacity to command future resource streams through ownership of assets, titles, and contractual rights.
+\end{definition}
+
+\begin{definition}
+\emph{Managerial capital} $K_m$ is routing-power: the capacity to coordinate agents and resources through institutional interfaces, without necessarily engaging the underlying constraint geometry.
+\end{definition}
+
+\begin{definition}
+\emph{Embodied ecological capital} $K_e$ is constraint-knowledge: the integrated capacity to generate, repair, teach, or redesign a production system through direct engagement with its physical, informational, and relational structure.
+\end{definition}
+
+The modern economy tends to reward these in the order $K_f > K_m > K_e$. The central argument of this paper is that systemic resilience---the capacity of a production system to sustain its generative substrate across time---depends on the reverse ordering: $K_e > K_m > K_f$. This inversion, and the mechanisms that produce and sustain it, is the primary object of investigation.
+
+\begin{remark}
+The housing market offers a canonical illustration. A worker who possesses full-pipeline competence---materials procurement, structural sequencing, systems installation, code compliance, finishing---performs a transformation that demonstrably lowers entropy in the domain and produces an object of lasting use. Their compensation is bounded by contract. The owner of the same property captures, through $\mathcal{V}_j$, not only the immediate value added by that transformation but also subsequent appreciation driven by neighborhood development, demographic migration, and speculative demand. At sufficient scale and over sufficient time, this compounding effect can dominate the original productive contribution by orders of magnitude. The worker's knowledge makes the object; the owner's position makes the gain.
+
+Crucially, this is not a criticism of any individual actor's choices. It is a structural description of how claim-power and constraint-knowledge have been formally separated, and of the consequences of that separation for the distribution of returns and the long-run integrity of production systems.
+\end{remark}
+
+
+\section{The Sheaf of Competencies and Ecological Comprehension}
+
+\subsection{The Production Cover}
+
+A complex production process is not a single undifferentiated activity but a sequence of stages, each with its own materials, constraints, tools, and failure modes. We formalize this by introducing an open cover of the production domain.
+
+\begin{definition}
+A \emph{production cover} of $\Omega$ is a finite collection of open subdomains
+\[
+\mathcal{U} = \{U_1, U_2, \ldots, U_n\}
+\]
+such that $\bigcup_i U_i = \Omega$, where each $U_i$ represents a distinct stage or role in the production pipeline.
+\end{definition}
+
+In the housing construction case, a natural cover includes: $U_1$ (design and planning), $U_2$ (materials procurement), $U_3$ (structural framing), $U_4$ (electrical systems), $U_5$ (plumbing), $U_6$ (finishing and weatherproofing), $U_7$ (inspection and compliance), and $U_8$ (sale, maintenance, and resale). Each patch carries its own constraint geometry: load calculations, code requirements, sequencing dependencies, supplier relationships, inspection criteria.
+
+\subsection{The Competency Sheaf}
+
+Over this cover we define a sheaf of competency sections \cite{Bredon1997,KashiwaraSchapira2006}.
+
+\begin{definition}
+The \emph{competency sheaf} $\mathcal{F}$ over $\mathcal{U}$ assigns to each patch $U_i$ the space $\mathcal{F}(U_i)$ of constructive knowledge states over that stage: the set of maps from problem instances to viable solutions that are consistent with the full constraint geometry of $U_i$.
+\end{definition}
+
+A specialist holds a section over a single patch: $s_i \in \mathcal{F}(U_i)$. A manager may know only the interface maps between patches:
+\[
+m_{ij}:\; \mathcal{F}(U_i) \longrightarrow \mathcal{F}(U_j),
+\]
+without holding a constructive section over either. The critical distinction, however, is between both of these and the condition of genuine compatibility across overlaps.
+
+\subsection{Restriction Maps and Gluing}
+
+For a sheaf to be well-defined, sections must satisfy a gluing condition on overlapping patches \cite{Godement1958,MacLane1998}. If $U_i \cap U_j \neq \emptyset$, then sections $s_i \in \mathcal{F}(U_i)$ and $s_j \in \mathcal{F}(U_j)$ are \emph{compatible} if and only if their restrictions to the overlap agree:
+\[
+s_i\big|_{U_i \cap U_j} = s_j\big|_{U_i \cap U_j}.
+\]
+This condition is not merely formal. In practice, it means that the knowledge exercised at one stage must be consistent with the constraints that will be encountered at the next. A framing decision must anticipate inspection requirements; a wiring layout must accommodate plumbing runs; a finishing schedule must respect material cure times. The overlap is precisely where stages constrain each other, and compatibility is the condition that these mutual constraints have been internalized.
+
+A compatible family $\{s_i\}$ that satisfies all pairwise gluing conditions determines a \emph{global section}:
+\[
+s \in \Gamma(\Omega, \mathcal{F}).
+\]
+
+\begin{definition}
+\emph{Ecological comprehension} of a production domain $\Omega$ is the possession of a global section $s \in \Gamma(\Omega, \mathcal{F})$: a coherent state of knowledge that is locally consistent with every stage and globally consistent across all overlaps.
+\end{definition}
+
+\subsection{Three Grades of Knowledge}
+
+The sheaf structure distinguishes three grades of productive knowledge that are often conflated in practice.
+
+\textbf{Specialist knowledge} is a section over a single patch: $s_i \in \mathcal{F}(U_i)$. It is constructive within its domain but makes no claims about compatibility with adjacent stages.
+
+\textbf{Interface knowledge} is knowledge of the maps $m_{ij}$ between patches \cite{Graeber2018}. This is the typical epistemic situation of managerial coordination: one knows what outputs stage $i$ should deliver to stage $j$, without knowing how those outputs are actually produced or what their internal constraint geometry looks like. Interface knowledge is sufficient for routine coordination under stable conditions, but it does not contain the data needed to diagnose or repair failures that cross patch boundaries.
+
+\textbf{Compatibility knowledge} is the possession of restriction data $s_i|_{U_i \cap U_j}$ that allows sections to glue. This is the knowledge acquired by moving through the pipeline---by having worked in, or worked closely with, multiple adjacent stages. It is not merely more information; it is information of a structurally different kind, because it encodes the mutual constraint relationships that make global coherence possible.
+
+The trajectory from specialist to compatibility knowledge is precisely what is accumulated through extended traversal of a production system. Someone who has, over time, engaged with design, procurement, structural work, systems installation, and inspection develops not just the union of those local competencies but the overlap data that connects them. That overlap data is what enables genuine coordination: not routing decisions through abstractions, but decisions grounded in the actual constraint geometry of the system.
+
+\begin{remark}
+This gives a formal reading of the observation that practitioners who have traversed a full production pipeline can coordinate it more efficiently than managers who have not. The advantage is not merely experiential familiarity. It is that the practitioner holds the gluing data---the restriction maps---that the manager lacks. When a problem crosses patch boundaries, the manager must approximate or guess; the practitioner can compute. The asymmetry is cohomological, not merely biographical.
+\end{remark}
+
+\subsection{The Limit Case and Its Symbolic Encoding}
+
+No individual can achieve a literal global section over a domain as large as an entire economy or ecosystem. The cover $\mathcal{U}$ of society has far too many patches, and the constraint geometry of each is far too deep for any single agent to traverse completely. Nevertheless, the concept of a global section serves as a well-defined limiting ideal: the state of knowledge that would result from maximal traversal.
+
+Several cultural traditions encode this limiting ideal in the figure of an agent who serves across all roles---not as a literal possibility but as a symbolic compression of the distributed process by which ecological comprehension is actually generated. We return to this point in Section~7, where the mythic attractor is given a precise formulation within the CLIO learning framework.
+
+\section{Obstruction and Its Sources}
+
+\subsection{The Čech 1-Cocycle as Managerial Blindness}
+
+When sections over adjacent patches fail to satisfy the gluing condition, the failure is measured by a Čech 1-cocycle. For sections $s_i \in \mathcal{F}(U_i)$ and $s_j \in \mathcal{F}(U_j)$, define
+
+\begin{equation}
+\delta(s)_{ij} \;=\; s_i\big|_{U_i \cap U_j} \;-\; s_j\big|_{U_i \cap U_j}.
+\end{equation}
+
+When $\delta(s)_{ij} \neq 0$, the sections are incompatible: the knowledge state operative at stage $i$ is inconsistent with the constraint geometry of stage $j$ on their shared boundary. The collection $\{\delta(s)_{ij}\}$ forms a Čech 1-cochain, and its cohomology class $[\delta(s)] \in \check{H}^1(\mathcal{U}, \mathcal{F})$ is the \emph{obstruction class} of the family $\{s_i\}$.
+
+A nonzero obstruction class is not an abstract algebraic fact; it has direct operational consequences. An action that is locally admissible within one patch may be globally inconsistent with the constraint geometry of an adjacent patch. We formalize this as follows.
+
+Let $A$ be the admissibility manifold of institutionally sanctioned actions within the managerial layer---the set of commands, approvals, and decisions that are valid according to organizational protocol. Let $G$ be the constraint geometry of the actual production process. Then the failure mode of managerial coordination is:
+
+\begin{equation}
+a \in A \quad \text{but} \quad a \notin \Gamma(G),
+\end{equation}
+
+where $\Gamma(G)$ denotes the space of globally coherent sections over the real production process. The action is institutionally valid but geometrically inconsistent.
+
+A concrete instance: suppose $U_i$ is the electrical wiring stage and $U_j$ is the inspection and drywall closure stage. A manager approves closure, inducing local sections $s_i \in \mathcal{F}(U_i)$ and $s_j \in \mathcal{F}(U_j)$. But if wiring has not passed inspection---if there is a code violation or latent fault---then
+
+\[
+s_i\big|_{U_i \cap U_j} \neq s_j\big|_{U_i \cap U_j}.
+\]
+
+The Čech 1-cocycle $\delta(s)_{ij} \neq 0$ is the obstruction: the wiring constraints are incompatible with drywall closure. The managerial approval was admissible in $A$ but not realizable in $\Gamma(G)$. This failure is not a failure of effort or intention; it is a cohomological defect arising from the absence of gluing data in the managerial knowledge state.
+
+\subsection{Deskilling as a Sheaf-Tearing Functor}
+
+Deskilling is the systematic reduction of $K_e$ through the reorganization of production in ways that eliminate the need for workers to possess compatibility knowledge \cite{Braverman1974}. We formalize this as a functor on the sheaf.
+
+\begin{definition}
+The \emph{deskilling functor} $D: \mathcal{F} \to \mathcal{F}'$ is a map of sheaves that collapses sections to interfaces while discarding restriction maps. Concretely, it replaces compatible families $\{s_i\}$ with API-style calls $\{f_{ij}\}$ that encode only input--output specifications, erasing the overlap data needed to verify
+\[
+s_i\big|_{U_i \cap U_j} = s_j\big|_{U_i \cap U_j}.
+\]
+\end{definition}
+
+Under $D$, a worker no longer needs to understand how stage $i$ constrains stage $j$; they need only to know which output format stage $i$ must deliver to stage $j$'s input specification. This is sufficient for routine operation but catastrophically insufficient when conditions deviate from the normal case. When a failure crosses patch boundaries---when the fault in the wiring stage manifests as a problem in the finishing stage---no agent in the deskilled system possesses the restriction data needed to diagnose it. The obstruction is no longer merely present; it is now \emph{invisible}.
+
+More formally, the deskilling functor increases the typical magnitude of obstruction classes:
+
+\begin{equation}
+\bigl\|[\delta(s)]\bigr\| \;\uparrow \quad \text{under } D,
+\end{equation}
+
+because the data needed to compute and correct $\delta(s)_{ij}$ has been removed from the system. Sheaf-tearing is the loss of glue: the cover $\mathcal{U}$ remains, the patches remain, but the restriction maps that allow sections to be compared across patches are no longer held by any agent in the production system.
+
+The economic rationale for deskilling is straightforward: interface knowledge is cheaper to acquire and easier to replicate than compatibility knowledge. A worker trained to a single patch can be substituted more readily than one who holds the full restriction data across multiple overlaps. Deskilling therefore increases the exchangeability of labor---which is advantageous for $K_f$ and $K_m$---while systematically degrading $K_e$.
+
+\subsection{Credential Inflation as Spectral Collapse}
+
+A related but distinct pathology is credential inflation: the proliferation of named competencies that are formally present but substantively empty. Where deskilling removes restriction maps, credential inflation preserves their labels while discarding their content.
+
+\begin{definition}
+The \emph{credential projection} $C: \mathcal{F}(U_i) \to \tilde{\mathcal{F}}(U_i)$ is a map that preserves the name of a competency while replacing constructive sections with formal certificates. Under $C$, restriction maps are nominally present but semantically vacuous: they specify a transfer of credentials rather than a transfer of constraint knowledge.
+\end{definition}
+
+Credential inflation compounds this by increasing the number of named patches without increasing overlap connectivity or restriction fidelity. As the cover $\mathcal{U}$ is refined combinatorially---more job titles, more certified specializations, more credentialed roles---the actual gluing data per overlap thins. This has a precise spectral consequence.
+
+The Čech Laplacian $\Delta_{\check{C}}$ associated to the cover $\mathcal{U}$ and sheaf $\mathcal{F}$ encodes the connectivity of the overlap structure. Its smallest nonzero eigenvalue $\lambda_{\min}$ governs how rapidly obstruction can be corrected through local adjustment (see Section~5). Credential inflation drives a characteristic degeneration:
+
+\begin{equation}
+|\mathcal{U}| \;\uparrow \quad \text{while} \quad \lambda_{\min} \;\downarrow.
+\end{equation}
+
+The cover becomes more granular while the spectral gap closes. More named competencies are present, but the system's capacity to integrate them---to move information across patch boundaries and resolve incompatibilities---declines. This is the cohomological analogue of bureaucratic overfitting: the description of the system becomes increasingly detailed while its operational coherence degrades.
+
+The combined effect of deskilling and credential inflation is a production system in which $K_e$ is systematically depleted, obstruction accumulates invisibly, and the agents nominally responsible for coordination lack the restriction data to detect or repair it. Section~5 addresses the inverse processes.
+
+\section{Repair Mechanisms}
+
+\subsection{Apprenticeship as an Obstruction-Reducing Homotopy}
+
+If deskilling is a functor that increases obstruction by removing gluing data, then repair is a process that restores that data through guided traversal of patch overlaps. Apprenticeship is the canonical such process: a structured exposure to the constraint geometry of adjacent stages, mediated by someone who already holds the relevant restriction maps.
+
+\begin{definition}
+An \emph{apprenticeship homotopy} is a family of sections $\{s^{(t)}\}_{t \ge 0}$ evolving according to
+\begin{equation}
+s^{(t+1)} \;=\; s^{(t)} \;-\; \eta\,\Delta_{\check{C}}\, s^{(t)},
+\end{equation}
+where $\Delta_{\check{C}}$ is the Čech Laplacian induced by the overlap structure of $\mathcal{U}$ and $\eta > 0$ is a learning rate. The homotopy converges to a compatible family:
+\begin{equation}
+\bigl\|\delta(s^{(t)})\bigr\| \;\sim\; e^{-\lambda_{\min} t} \;\longrightarrow\; 0,
+\end{equation}
+at a rate governed by the smallest nonzero eigenvalue $\lambda_{\min}$ of $\Delta_{\check{C}}$.
+\end{definition}
+
+The spectral interpretation is immediately practical \cite{Simon1962,Simon1996}. The convergence rate $\lambda_{\min}$ is determined by the connectivity of the overlap structure: how many patches share boundaries, how richly those boundaries are populated with constraint data, and how faithfully the correction signal from a mentor is transmitted to the learner. A sparse apprenticeship---few overlaps, infrequent correction, shallow engagement with boundary conditions---corresponds to a small spectral gap and slow or stalled convergence. A dense apprenticeship---rich overlap exposure, immediate corrective feedback, sustained engagement across multiple patch boundaries---produces a large spectral gap and rapid convergence toward a compatible family of sections.
+
+This gives a formal account of why mentorship density matters beyond simple exposure time. The relevant quantity is not the number of hours spent in proximity to a skilled practitioner but the spectral richness of the overlap structure that the apprentice is allowed to traverse. A training regime that restricts learners to a single patch, even for a long period, does not increase $\lambda_{\min}$; only genuine cross-boundary exposure does.
+
+\begin{remark}
+The apprenticeship homotopy clarifies the distinction between training and credentialing. Training that increases $\lambda_{\min}$---that exposes the learner to genuine overlap constraints and corrects their sections against real restriction maps---reduces obstruction. Credentialing under the projection $C$ (Section~4.3) does not affect $\lambda_{\min}$ at all; it adds a patch label without adding gluing data. The two processes are formally distinct and should not be conflated in institutional design.
+\end{remark}
+
+\subsection{Cooperative Valuation as Compatibility-Coupled Returns}
+
+The second repair mechanism operates at the level of the claim operator. Recall that standard ownership valuation $\mathcal{V}_j$ is defined over trajectories of $X$ with no sensitivity to the obstruction structure of the competency sheaf. Hidden defects, deferred maintenance, code violations, and accumulated incompatibilities all reside in the entropy field $S(t)$, but they do not appear in $\mathcal{V}_j$ until they manifest as terminal price reductions---which may occur long after the relevant decisions were made and the responsible parties have exited.
+
+Cooperative valuation internalizes obstruction by making returns explicitly sensitive to compatibility across overlaps \cite{Ostrom1990,Coase1937}.
+
+\begin{definition}
+A \emph{cooperative valuation functional} is
+\begin{equation}
+\mathcal{V}_{\mathrm{coop}} \;=\; \sum_i \alpha_i \,\|s_i\|^2 \;-\; \beta \sum_{i < j} \bigl\|\delta(s)_{ij}\bigr\|^2,
+\end{equation}
+where $\alpha_i > 0$ weights productive contribution on each patch and $\beta > 0$ penalizes incompatibility across overlaps.
+\end{definition}
+
+The first term rewards local productivity; the second penalizes Čech 1-cocycles directly. Under this functional, returns are maximized when sections are both locally strong and globally compatible. Setting $\beta = 0$ recovers standard ownership valuation: obstruction is ignored as long as terminal price is achieved. The externalized costs---deferred maintenance, structural failures, ecological degradation---are pushed forward onto future holders or the public. Cooperative valuation sets $\beta > 0$, pricing those costs into the current returns of the current claim holder.
+
+This provides a formal characterization of externalities in the present framework: they are precisely the terms in $\beta\sum_{i<j}\|\delta(s)_{ij}\|^2$ that standard valuation sets to zero. Internalizing them is not merely a normative preference; it is what aligns the incentive structure of ownership with the regenerative maintenance of $K_e$.
+
+\subsection{Dynamical Capital}
+
+The three-capital taxonomy of Section~2.4 can now be made dynamical. Define embodied ecological capital at time $t$ as the inverse of average obstruction across the cover:
+
+\begin{equation}
+K_e(t) \;=\; \int \bigl\|\delta(s^{(t)})\bigr\|^{-1}\, d\mu(U_i),
+\end{equation}
+
+where $\mu$ is a measure over patches weighted by productive centrality. As obstruction accumulates---through deskilling, credential inflation, or practitioner exit---$K_e$ declines. As apprenticeship homotopies converge and cooperative valuation incentivizes compatibility repair, $K_e$ recovers.
+
+Deskilling drives $K_e$ downward while potentially increasing $K_m$ (more scalable coordination through standardized interfaces) and $K_f$ (more extractable surplus from interchangeable labor). Apprenticeship and cooperative ownership do the opposite: they invest in $K_e$ at some cost to short-run $K_f$, but maintain the generative substrate on which long-run production depends.
+
+\section{The Regeneration--Obstruction Correspondence}
+
+\subsection{The Regeneration Parameter}
+
+\begin{definition}
+The \emph{regeneration parameter} $\lambda$ of a production system is
+\begin{equation}
+\lambda \;=\; \frac{\mathbb{E}[\text{extracted value not reinvested in } K_e]}{\mathbb{E}[\text{value produced by } K_e]}.
+\end{equation}
+A system is \emph{regenerative} if $\lambda < 1$ and \emph{extractive} if $\lambda > 1$.
+\end{definition}
+
+When $\lambda < 1$, the system returns more to the generative substrate than it removes: workers acquire skills, tools, and teaching capacity; the knowledge base deepens; the cover $\mathcal{U}$ is maintained with rich overlap data. When $\lambda > 1$, surplus is extracted faster than the substrate is replenished: $K_e$ declines, obstruction accumulates, and productive capacity erodes even as short-run returns remain positive \cite{Piketty2014,GeorgescuRoegen1971}.
+
+\subsection{Average Obstruction}
+
+Define the average obstruction of the system as the expected squared norm of the Čech 1-cocycles across the cover:
+
+\begin{equation}
+\bar{\delta} \;=\; \mathbb{E}\!\left[\bigl\|\delta(s)\bigr\|^2\right].
+\end{equation}
+
+This quantity summarizes the global incompatibility of the competency sheaf: low when sections glue well across all patch boundaries, high when deskilling or practitioner exit has left the system with large unresolved obstruction classes.
+
+\subsection{The Correspondence}
+
+\begin{proposition}[Regeneration--Obstruction Correspondence]
+Let $\delta^\star > 0$ be the obstruction threshold above which accumulated incompatibilities generate systemic failures faster than they can be repaired. Then, under dynamics in which valuation either penalizes or ignores obstruction:
+\begin{equation}
+\lambda < 1 \;\;\Longleftrightarrow\;\; \bar{\delta} < \delta^\star.
+\end{equation}
+Specifically:
+\begin{enumerate}
+\item If valuation includes a compatibility penalty $\beta > 0$, then $\bar{\delta}$ is driven downward, $K_e$ is maintained, and the system is regenerative.
+\item If valuation ignores obstruction ($\beta = 0$), then $\bar{\delta}$ accumulates over time, $K_e$ declines, and the system becomes extractive.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}[Proof sketch]
+In the cooperative case ($\beta > 0$), the compatibility penalty creates a direct incentive to reduce obstruction. Agents maximizing $\mathcal{V}_{\mathrm{coop}}$ invest in apprenticeship homotopies to drive $\|\delta(s^{(t)})\| \to 0$. By the convergence bound of Definition~5.1, this occurs at rate $e^{-\lambda_{\min} t}$. The marginal return to reducing obstruction is $\beta\|\delta(s)_{ij}\|$, which is positive as long as any incompatibility remains. Under these dynamics, $\bar{\delta} < \delta^\star$ is maintained and extracted surplus is bounded below produced value, giving $\lambda < 1$.
+
+In the extractive case ($\beta = 0$), there is no cost to ignoring obstruction in the short run. Deskilling and credential inflation are locally rational for $K_m$ and $K_f$ because they reduce coordination costs and increase labor exchangeability without imposing any valuation penalty. Obstruction therefore accumulates at a rate proportional to the extraction rate until $\bar{\delta}$ crosses $\delta^\star$, at which point systemic failures---structural defects, regulatory violations, loss of maintainability, practitioner exit---begin to outpace residual repair capacity. Extracted value exceeds produced value net of degradation, giving $\lambda > 1$.
+\end{proof}
+
+\subsection{Gentrification as a Xylomorphic Failure}
+
+The housing market case introduced in Section~2 can now be diagnosed precisely. Gentrification is a regime in which $\lambda > 1$ and $\bar{\delta}$ is rising, but the failure is spatially and temporally displaced from its causes \cite{Jacobs1961,Harvey2005,Scott1998}.
+
+The built environment appreciates---terminal prices $P_j(X_T)$ rise---because external demand inflates asset values independently of local constraint knowledge. Meanwhile, the practitioners who hold the gluing data for the local production cover are priced out: their wages $w_i(t)$ do not track asset appreciation $\mathcal{V}_j$, so they cannot acquire property in the domain they maintain. As experienced practitioners exit, $K_e$ declines. New coordination is handled through deskilling and interface calls rather than compatibility knowledge. Obstruction accumulates in deferred maintenance, code workarounds, and the loss of tacit knowledge about the specific constraint geometry of the local housing stock.
+
+The failure is initially invisible in $\mathcal{V}_j$ because terminal prices are rising. It becomes visible only when the local competency sheaf has been sufficiently torn that repair becomes either impossible or extraordinarily costly---at which point the agents who extracted the surplus have typically exited, and the accumulated obstruction is externalized onto future owners, residents, or public maintenance systems. This is the precise formal sense in which gentrification is a xylomorphic failure: the built environment appreciates while the human substrate capable of maintaining it is depleted.
+
+
+\section{The Mythic Attractor and the CLIO Learning Framework}
+
+\subsection{CLIO Dynamics}
+
+The preceding sections have treated knowledge as a static possession---a section held or not held, a restriction map present or absent. In practice, knowledge states are dynamic: agents update their internal models through exposure to constraint feedback, and those updates may converge toward or diverge from genuine compatibility with the production sheaf.
+
+We formalize this through the CLIO (Constraint-Limited Internal Optimization) learning framework. Let $M_t$ be an agent's internal model at time $t$---a representation of the production domain that generates predictions about how actions map to outcomes. The model evolves under gradient correction from constraint feedback:
+
+\begin{equation}
+M_{t+1} \;=\; M_t \;-\; \eta\,\nabla E(M_t;\, U_i),
+\end{equation}
+
+where $E(M_t; U_i)$ is the error between the model's predictions and the actual constraint geometry of patch $U_i$, and $\eta > 0$ is a learning rate. Each patch $U_i$ that the agent traverses supplies a corrective signal proportional to the discrepancy between abstract expectation and lived constraint. The more patches an agent traverses, the more the model is corrected by reality.
+
+The limiting case---a model corrected by all patches simultaneously, with zero error across the full cover---is a fixed point $M^\star$ of the CLIO dynamics:
+
+\begin{equation}
+\nabla E(M^\star;\, U_i) \;\approx\; 0 \quad \text{for all } U_i \in \mathcal{U}.
+\end{equation}
+
+This fixed point is precisely the internal representation of a global section: a model whose predictions are compatible with the constraint geometry of every stage in the production pipeline.
+
+\subsection{Myths as Compressed Attractors}
+
+No individual agent traverses the full cover of a large-scale production system or social ecology. The CLIO dynamics are therefore always partial: agents accumulate corrections from a proper subset of patches, and their models converge toward local rather than global fixed points. Nevertheless, several cultural traditions encode the global fixed point as a symbolic figure---an ideal agent whose knowledge is compatible with every patch simultaneously.
+
+\begin{definition}
+A \emph{mythic attractor} $M^\star$ is a model-space fixed point of the CLIO dynamics satisfying
+\[
+\nabla E(M^\star;\, U_i) \approx 0 \quad \text{for all } U_i \in \mathcal{U}.
+\]
+The \emph{mythic compression operator} $\mathfrak{M}$ maps the distribution of partial traversal trajectories to this fixed point:
+\begin{equation}
+\mathfrak{M}:\; \text{trajectory distribution over } \{U_i\} \;\longrightarrow\; M^\star.
+\end{equation}
+\end{definition}
+
+A myth, in this framework, is not a false statement about the world. It is a low-bandwidth encoding of a high-dimensional convergence process. Where ecological comprehension requires extended traversal across many patches, mentorship relationships, and accumulated correction cycles, the mythic figure compresses this distributed process into a single narrative. The figure does not literally perform all roles; it symbolically represents the limit toward which genuine traversal converges.
+
+This accounts for a structural regularity across cultural traditions: figures of legitimate authority are consistently depicted as having passed through subordinate or labor roles before exercising coordination. The narrative logic is not primarily moral---it is epistemic. Service encodes traversal; traversal encodes correction; correction encodes the reduction of $\bar{\delta}$ toward zero. The figure who has served at every level is the figure whose internal model has been corrected by every patch.
+
+\subsection{Myths as Low-Obstruction Priors}
+
+The mythic attractor serves a further function: it acts as a prior that biases individual learning dynamics toward regions of model space where obstruction is low.
+
+An agent whose initial model $M_0$ is close to $M^\star$ will converge more rapidly and accumulate fewer catastrophic errors than one whose $M_0$ is distant from the low-obstruction region. Cultural transmission of mythic attractors---through narrative, example, apprenticeship structure, and institutional memory---is therefore a mechanism for reducing the expected obstruction of agents who have not yet completed their own traversal. The myth does not replace traversal; it orients it.
+
+More formally, if the prior distribution over initial models $P(M_0)$ is biased toward $M^\star$, then expected CLIO convergence time is reduced and expected obstruction accumulated during the learning trajectory is lower. Cultural traditions that encode constraint-traversal ideals are therefore epistemically functional, not merely normatively appealing: they reduce the average obstruction cost of training new practitioners within the system.
+
+\begin{remark}
+The figure of the ``servant of all'' found in several religious and philosophical traditions is, on this reading, a compressed representation of the ideal limit of CLIO convergence: an agent whose model has been corrected by every patch in the social production cover. The statement is not a literal claim about individual capacities. It is a structural assertion about the source of legitimate coordination authority: not positional control, not credentialed interface knowledge, but maximal correction by constraint reality. No individual achieves this limit, but the limit is well-defined, and distributed practice---across generations, institutions, and overlapping apprenticeship networks---approximates it.
+\end{remark}
+
+\section{Conclusion: The Anti-Detachment Thesis}
+
+The argument of this paper can be summarized in a sequence of formal identifications.
+
+Productive work is local entropy reduction: $\Delta S_i < 0$. Its returns are local functionals of the present state, decoupled from long-range trajectory valuation. Ownership is a trajectory claim: $O_j: \{X_t\}_{t \ge 0} \to \mathcal{V}_j$. Its returns couple to long-range future states through a functional that is systematically insensitive to the obstruction structure of the competency sheaf. The three forms of capital---$K_f$, $K_m$, $K_e$---are rewarded in an order inverse to their contribution to systemic resilience.
+
+The competency sheaf formalizes the difference between specialist knowledge (local sections), interface knowledge (patch-boundary maps), and compatibility knowledge (restriction data at overlaps). Ecological comprehension is a global section: coherent knowledge of the full constraint geometry, accumulated through traversal. Obstruction, measured by Čech 1-cocycles $\delta(s)_{ij}$, is what accumulates when compatibility knowledge is absent. Deskilling is a sheaf-tearing functor; credential inflation is spectral collapse. Both increase $\bar{\delta}$ while remaining locally rational under standard ownership valuation.
+
+Repair requires two coordinated interventions. Apprenticeship homotopies drive obstruction to zero at a rate governed by $\lambda_{\min}$, the spectral gap of the Čech Laplacian, which increases with mentorship density and genuine overlap exposure. Cooperative valuation with compatibility penalty $\beta > 0$ makes obstruction costly to the claim holder, aligning ownership incentives with the maintenance of $K_e$.
+
+The Regeneration--Obstruction Correspondence ties these together: regenerativity ($\lambda < 1$) is equivalent to maintaining $\bar{\delta} < \delta^\star$, a condition that holds if and only if valuation is coupled to compatibility. The mythic attractor $M^\star$ is the CLIO fixed point encoding the ideal limit of full constraint traversal, functioning as a low-obstruction prior that orients learning trajectories before traversal is complete.
+
+The thesis is not anti-capitalist in any simple sense. It does not claim that ownership is illegitimate or that coordination is unnecessary. It claims something more specific: that systems become incoherent when value capture separates too far from constraint knowledge. When the agents who extract returns from a production system no longer hold---and no longer need to hold---the gluing data that makes the system function, obstruction accumulates invisibly until failure becomes catastrophic and its costs are externalized onto those who remain.
+
+The practical implication follows directly from the formalism. Institutions that couple returns to compatibility---cooperative ownership structures, equity participation for practitioners, valuation functionals with obstruction penalties, apprenticeship systems with rich spectral connectivity---are not merely more equitable. They are more stable, because they maintain the generative substrate on which their own operation depends. Institutions that allow returns to detach from compatibility may outperform in the short run, but they do so by accumulating obstruction that will eventually manifest as systemic failure.
+
+The geometry of extraction is, in the end, the geometry of a sheaf being torn faster than it can be repaired.
+
+
+\newpage
+\appendix
+
+\section{The \v{C}ech Laplacian and Spectral Convergence}
+
+\subsection{The \v{C}ech Complex}
+
+Given a production cover $\mathcal{U} = \{U_i\}$, define the \v{C}ech cochain groups
+\[
+\check{C}^0(\mathcal{U}, \mathcal{F}) = \prod_i \mathcal{F}(U_i),
+\qquad
+\check{C}^1(\mathcal{U}, \mathcal{F}) = \prod_{i<j} \mathcal{F}(U_i \cap U_j).
+\]
+The coboundary operator $\delta: \check{C}^0 \to \check{C}^1$ is given by
+\[
+(\delta s)_{ij} = s_i\big|_{U_i \cap U_j} - s_j\big|_{U_i \cap U_j}.
+\]
+A global section corresponds to $\delta s = 0$. Nonzero $\delta s$ encodes obstruction.
+
+\subsection{The \v{C}ech Laplacian}
+
+Define the adjoint $\delta^\ast: \check{C}^1 \to \check{C}^0$ with respect to an inner product on sections. The \v{C}ech Laplacian is
+\[
+\Delta_{\check{C}} = \delta^\ast \delta.
+\]
+Explicitly, for each patch $U_i$,
+\[
+(\Delta_{\check{C}}\, s)_i = \sum_{j:\, U_i \cap U_j \neq \emptyset} \bigl(s_i - s_j\bigr)\big|_{U_i \cap U_j}.
+\]
+This is formally analogous to the graph Laplacian: each patch is a node, overlaps define edges, and incompatibility across overlaps drives diffusion toward agreement \cite{Simon1962}.
+
+\subsection{Spectral Gap and Convergence}
+
+Let $0 = \lambda_0 \le \lambda_1 \le \cdots$ be the eigenvalues of $\Delta_{\check{C}}$. The smallest nonzero eigenvalue $\lambda_{\min} = \lambda_1$ is the spectral gap. Under the apprenticeship dynamics
+\[
+s^{(t+1)} = s^{(t)} - \eta\,\Delta_{\check{C}}\,s^{(t)},
+\]
+we have exponential convergence:
+\[
+\bigl\|\delta(s^{(t)})\bigr\| \;\le\; e^{-\lambda_{\min} t}\,\bigl\|\delta(s^{(0)})\bigr\|.
+\]
+Thus: large $\lambda_{\min}$ implies dense overlaps, strong constraint propagation, and rapid convergence; small $\lambda_{\min}$ implies sparse overlaps, weak propagation, and slow or stalled convergence.
+
+\subsection{Interpretation}
+
+\begin{remark}
+The spectral gap $\lambda_{\min}$ measures the \emph{connectivity of constraint knowledge} across the production system. Apprenticeship increases $\lambda_{\min}$ by enriching overlaps; deskilling and credential inflation decrease it by removing or weakening overlap structure. In this sense, $\lambda_{\min}$ is the quantitative bridge between micro-level learning dynamics and macro-level regenerative capacity.
+\end{remark}
+
+\section{Dynamical Link Between Obstruction and Regeneration}
+
+\subsection{Obstruction--Entropy Coupling}
+
+Recall the entropy field $S(t)$ in the RSVP state $X(t) = (\Phi(t), \mathbf{v}(t), S(t))$. We make explicit the relationship between entropy and \v{C}ech obstruction. Assume that unresolved incompatibilities contribute additively to entropy:
+\begin{equation}
+S(t) = S_0 + \gamma\,\bar{\delta}(t),
+\end{equation}
+where $\bar{\delta}(t) = \mathbb{E}[\|\delta(s^{(t)})\|^2]$ and $\gamma > 0$ is a coupling constant converting incompatibility into latent cost (deferred maintenance, inefficiency, fragility). Thus increases in obstruction directly raise system entropy \cite{Shannon1948,GeorgescuRoegen1971}.
+
+\subsection{Production and Extraction Dynamics}
+
+Let $P(t)$ denote value produced by $K_e$ and $E(t)$ denote value extracted and not reinvested in $K_e$. We model their dependence on obstruction:
+\begin{align}
+P(t) &= P_0 - \alpha\,\bar{\delta}(t), \\
+E(t) &= E_0 + \beta\,\bar{\delta}(t),
+\end{align}
+with $\alpha, \beta > 0$. Higher obstruction reduces productive efficiency ($P$ decreases) while enabling short-run extraction through deferral of defects and simplification of labor ($E$ increases).
+
+\subsection{Regeneration Parameter as a Function of Obstruction}
+
+Substituting into the definition $\lambda = \mathbb{E}[E(t)]/\mathbb{E}[P(t)]$,
+\begin{equation}
+\lambda(\bar{\delta}) = \frac{E_0 + \beta\,\bar{\delta}}{P_0 - \alpha\,\bar{\delta}}.
+\end{equation}
+This function is strictly increasing in $\bar{\delta}$ for admissible parameter ranges, confirming that obstruction accumulation drives the system toward the extractive regime.
+
+\subsection{Threshold Structure}
+
+Define $\delta^\star$ implicitly by $\lambda(\delta^\star) = 1$. Then
+\begin{equation}
+\frac{E_0 + \beta\,\delta^\star}{P_0 - \alpha\,\delta^\star} = 1
+\;\;\Longrightarrow\;\;
+\delta^\star = \frac{P_0 - E_0}{\alpha + \beta}.
+\end{equation}
+Thus $\bar{\delta} < \delta^\star \Rightarrow \lambda < 1$ (regenerative) and $\bar{\delta} > \delta^\star \Rightarrow \lambda > 1$ (extractive).
+
+\begin{remark}
+The threshold $\delta^\star$ is not arbitrary; it is determined by baseline productivity $P_0$, baseline extraction $E_0$, and the sensitivity coefficients $\alpha$ and $\beta$. Systems with high intrinsic productivity and low baseline extraction tolerate higher obstruction before becoming extractive. Systems with aggressive extraction or fragile production cross the threshold rapidly.
+\end{remark}
+
+\subsection{Control via Valuation Coupling}
+
+Incorporating the compatibility penalty $\beta_c > 0$ from cooperative valuation modifies the extraction dynamics:
+\begin{equation}
+E(t) = E_0 + (\beta - \beta_c)\,\bar{\delta}(t).
+\end{equation}
+If $\beta_c \ge \beta$, then $d\lambda/d\bar{\delta} \le 0$, and obstruction no longer drives extraction. In this regime the system self-corrects: $\bar{\delta}(t) \to 0$ implies $\lambda < 1$.
+
+\begin{proposition}
+Under linear coupling assumptions, the regeneration parameter $\lambda$ is a monotone increasing function of average obstruction $\bar{\delta}$, with a computable threshold $\delta^\star = (P_0 - E_0)/(\alpha + \beta)$ separating regenerative and extractive regimes. Cooperative valuation with $\beta_c \ge \beta$ renders $\lambda$ monotone decreasing in $\bar{\delta}$, guaranteeing self-correction to the regenerative regime.
+\end{proposition}
+
+This provides an explicit dynamical realization of the Regeneration--Obstruction Correspondence stated in Proposition~6.1.
+
+\section{CLIO Dynamics, Obstruction Descent, and Fixed Points}
+
+\subsection{Model Space and Error Functional}
+
+Let $\mathcal{M}$ denote the space of internal models. For each patch $U_i \in \mathcal{U}$, define a local error functional
+\[
+E_i(M) = \bigl\|\mathcal{P}_i(M) - s_i^\ast\bigr\|^2,
+\]
+where $\mathcal{P}_i(M)$ is the model's predicted section on $U_i$ and $s_i^\ast$ is the true constraint-consistent section. The global error is
+\[
+E(M) = \sum_i w_i\,E_i(M),
+\]
+with weights $w_i$ reflecting patch importance.
+
+\subsection{Gradient Flow and Induced Sections}
+
+CLIO updates follow
+\[
+M_{t+1} = M_t - \eta\,\nabla E(M_t).
+\]
+Each model $M_t$ induces a family of sections $s^{(t)}_i = \mathcal{P}_i(M_t)$, so the learning dynamics on $\mathcal{M}$ induce dynamics on the sheaf sections.
+
+\subsection{Obstruction Descent}
+
+Define obstruction as a functional on models:
+\[
+\bar{\delta}(M) = \mathbb{E}\bigl[\|\delta(s(M))\|^2\bigr].
+\]
+If the cover satisfies nontrivial spectral gap conditions and the learning rate $\eta$ is sufficiently small, then
+\[
+\frac{d}{dt}\bar{\delta}(M_t) \;\le\; -2\lambda_{\min}\,\bar{\delta}(M_t),
+\]
+yielding
+\[
+\bar{\delta}(M_t) \;\le\; e^{-2\lambda_{\min} t}\,\bar{\delta}(M_0).
+\]
+CLIO is therefore an obstruction-descent process: learning is not merely error reduction in the model space but simultaneous reduction of sheaf-theoretic incompatibility across the production cover.
+
+\subsection{Fixed Points and Global Sections}
+
+A fixed point $M^\star$ satisfies $\nabla E(M^\star) = 0$. If the model class is sufficiently expressive and traversal covers all of $\mathcal{U}$, this implies $\delta(s(M^\star)) = 0$, so $M^\star$ corresponds to a global section of the competency sheaf.
+
+If an agent samples only a subset $\mathcal{U}' \subset \mathcal{U}$, convergence is guaranteed only on $\mathcal{U}'$:
+\[
+\delta(s(M^\star))\big|_{\mathcal{U}'} = 0,
+\qquad
+\delta(s(M^\star))\big|_{\mathcal{U} \setminus \mathcal{U}'} \neq 0.
+\]
+Local minima correspond to partially glued sections---models internally coherent over their traversal domain but globally inconsistent across the full cover.
+
+\subsection{Mythic Attractors as Regularized Fixed Points}
+
+Let $R(M)$ be a regularization term encoding a mythic prior biased toward low-obstruction regions of $\mathcal{M}$. Then CLIO becomes
+\[
+M_{t+1} = M_t - \eta\bigl(\nabla E(M_t) + \lambda_R\,\nabla R(M_t)\bigr).
+\]
+The expected obstruction under this regularized dynamics satisfies
+\[
+\mathbb{E}\bigl[\bar{\delta}(M_t)\bigr]_{\text{with prior}}
+\;<\;
+\mathbb{E}\bigl[\bar{\delta}(M_t)\bigr]_{\text{without prior}}.
+\]
+
+\begin{remark}
+Myths function as regularizers approximating the global section without requiring full traversal. They reduce the expected obstruction accumulated during learning by biasing trajectories toward compatibility-consistent regions of model space---a formal account of how cultural transmission of idealized figures can accelerate genuine skill integration across generations.
+\end{remark}
+
+\begin{proposition}
+CLIO learning is equivalent to gradient descent on an error functional whose induced section dynamics perform exponential obstruction reduction at a rate determined by the \v{C}ech spectral gap $\lambda_{\min}$. Fixed points correspond to globally compatible sections when traversal covers the full production domain. Mythic priors reduce expected convergence time and terminal obstruction.
+\end{proposition}
+
+\begin{thebibliography}{99}
+
+\bibitem{Liu2021}
+C. Liu,
+\textit{Virtue Hoarders: The Case against the Professional Managerial Class},
+Forerunners: Ideas First Series,
+University of Minnesota Press, Minneapolis, 2021.
+
+\bibitem{Ricardo1817}
+D. Ricardo,
+\textit{On the Principles of Political Economy and Taxation},
+John Murray, London, 1817.
+
+\bibitem{Marx1867}
+K. Marx,
+\textit{Capital: Volume I},
+Verlag von Otto Meissner, Hamburg, 1867.
+
+\bibitem{Polanyi1944}
+K. Polanyi,
+\textit{The Great Transformation},
+Beacon Press, Boston, 1944.
+
+\bibitem{Braverman1974}
+H. Braverman,
+\textit{Labor and Monopoly Capital: The Degradation of Work in the Twentieth Century},
+Monthly Review Press, New York, 1974.
+
+\bibitem{Hayek1945}
+F. A. Hayek,
+The Use of Knowledge in Society,
+\textit{American Economic Review}, 35(4):519--530, 1945.
+
+\bibitem{Coase1937}
+R. H. Coase,
+The Nature of the Firm,
+\textit{Economica}, 4(16):386--405, 1937.
+
+\bibitem{AlchianDemsetz1972}
+A. A. Alchian and H. Demsetz,
+Production, Information Costs, and Economic Organization,
+\textit{American Economic Review}, 62(5):777--795, 1972.
+
+\bibitem{Williamson1985}
+O. E. Williamson,
+\textit{The Economic Institutions of Capitalism},
+Free Press, New York, 1985.
+
+\bibitem{Piketty2014}
+T. Piketty,
+\textit{Capital in the Twenty-First Century},
+Harvard University Press, Cambridge, MA, 2014.
+
+\bibitem{Harvey2005}
+D. Harvey,
+\textit{A Brief History of Neoliberalism},
+Oxford University Press, Oxford, 2005.
+
+\bibitem{Ostrom1990}
+E. Ostrom,
+\textit{Governing the Commons: The Evolution of Institutions for Collective Action},
+Cambridge University Press, Cambridge, 1990.
+
+\bibitem{Scott1998}
+J. C. Scott,
+\textit{Seeing Like a State: How Certain Schemes to Improve the Human Condition Have Failed},
+Yale University Press, New Haven, 1998.
+
+\bibitem{Jacobs1961}
+J. Jacobs,
+\textit{The Death and Life of Great American Cities},
+Random House, New York, 1961.
+
+\bibitem{Illich1973}
+I. Illich,
+\textit{Tools for Conviviality},
+Harper \& Row, New York, 1973.
+
+\bibitem{Graeber2018}
+D. Graeber,
+\textit{Bullshit Jobs: A Theory},
+Simon \& Schuster, New York, 2018.
+
+\bibitem{GeorgescuRoegen1971}
+N. Georgescu-Roegen,
+\textit{The Entropy Law and the Economic Process},
+Harvard University Press, Cambridge, MA, 1971.
+
+\bibitem{Daly1996}
+H. E. Daly,
+\textit{Beyond Growth: The Economics of Sustainable Development},
+Beacon Press, Boston, 1996.
+
+\bibitem{Odum1994}
+H. T. Odum,
+\textit{Ecological and General Systems: An Introduction to Systems Ecology},
+University Press of Colorado, Niwot, CO, 1994.
+
+\bibitem{Simon1962}
+H. A. Simon,
+The Architecture of Complexity,
+\textit{Proceedings of the American Philosophical Society}, 106(6):467--482, 1962.
+
+\bibitem{Simon1996}
+H. A. Simon,
+\textit{The Sciences of the Artificial},
+MIT Press, Cambridge, MA, 3rd ed., 1996.
+
+\bibitem{Kauffman1993}
+S. A. Kauffman,
+\textit{The Origins of Order: Self-Organization and Selection in Evolution},
+Oxford University Press, Oxford, 1993.
+
+\bibitem{MacLane1998}
+S. Mac Lane,
+\textit{Categories for the Working Mathematician},
+Springer, New York, 2nd ed., 1998.
+
+\bibitem{Bredon1997}
+G. E. Bredon,
+\textit{Sheaf Theory},
+Springer, New York, 2nd ed., 1997.
+
+\bibitem{Godement1958}
+R. Godement,
+\textit{Topologie Alg\'{e}brique et Th\'{e}orie des Faisceaux},
+Hermann, Paris, 1958.
+
+\bibitem{KashiwaraSchapira2006}
+M. Kashiwara and P. Schapira,
+\textit{Categories and Sheaves},
+Springer, Berlin, 2006.
+
+\bibitem{Hartshorne1977}
+R. Hartshorne,
+\textit{Algebraic Geometry},
+Springer, New York, 1977.
+
+\bibitem{Spivak2014}
+D. I. Spivak,
+\textit{Category Theory for the Sciences},
+MIT Press, Cambridge, MA, 2014.
+
+\bibitem{Lurie2009}
+J. Lurie,
+\textit{Higher Topos Theory},
+Princeton University Press, Princeton, NJ, 2009.
+
+\bibitem{BaezStay2011}
+J. C. Baez and M. Stay,
+Physics, Topology, Logic and Computation: A Rosetta Stone,
+in B. Coecke (ed.), \textit{New Structures for Physics},
+Springer, Berlin, 2011, pp.~95--172.
+
+\bibitem{Shannon1948}
+C. E. Shannon,
+A Mathematical Theory of Communication,
+\textit{Bell System Technical Journal}, 27(3):379--423, 1948.
+
+\bibitem{Landauer1961}
+R. Landauer,
+Irreversibility and Heat Generation in the Computing Process,
+\textit{IBM Journal of Research and Development}, 5(3):183--191, 1961.
+
+\bibitem{Bennett1982}
+C. H. Bennett,
+The Thermodynamics of Computation---A Review,
+\textit{International Journal of Theoretical Physics}, 21(12):905--940, 1982.
+
+\bibitem{Lloyd2000}
+S. Lloyd,
+Ultimate Physical Limits to Computation,
+\textit{Nature}, 406:1047--1054, 2000.
+
+\bibitem{Verlinde2011}
+E. Verlinde,
+On the Origin of Gravity and the Laws of Newton,
+\textit{Journal of High Energy Physics}, 2011(4):29, 2011.
+
+\bibitem{Latour2005}
+B. Latour,
+\textit{Reassembling the Social: An Introduction to Actor-Network-Theory},
+Oxford University Press, Oxford, 2005.
+
+\bibitem{Ayres1998}
+R. U. Ayres,
+Eco-thermodynamics: Economics and the Second Law,
+\textit{Ecological Economics}, 26(2):189--209, 1998.
+
+\end{thebibliography}
+
+\end{document}
+
+

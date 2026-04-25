@@ -1,0 +1,443 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{microtype}
+\usepackage{parskip}
+\usepackage{titlesec}
+\usepackage{abstract}
+\usepackage{booktabs}
+\usepackage{mathtools}
+
+\geometry{
+  paper=letterpaper,
+  top=1.25in,
+  bottom=1.25in,
+  left=1.25in,
+  right=1.25in
+}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  urlcolor=black
+}
+
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.75em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.75em}{}
+
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+
+\title{\textbf{Trajectory and Residue}\\[0.5em]
+\large How Work Becomes What Continues to Hold}
+\author{Flyxion}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+We formalize a selection-theoretic account of why institutions
+systematically reward signal management over real work, and propose an
+alternative infrastructure in which work is evaluated and compensated
+according to what persists under pressure. Modern institutions optimize
+for the management of signals rather than the closure of constraints.
+This produces a stable class of
+roles---identified by David Graeber as ``bullshit jobs''---whose
+function is not to resolve real-world pressures but to mediate,
+translate, and amplify representations of work. This document
+formalizes that diagnosis as a selection problem and proposes an
+alternative infrastructure in which work is evaluated, routed, and
+compensated according to persistent constraint closure. The core shift
+replaces activity-based metrics with trajectory-based residue: evidence
+that a system resisted, was repaired, and remained stable over time.
+Three adversarial refinements---causal dependency, distributed
+attribution, and stress-weighted persistence---are incorporated to
+ensure the residue function cannot be gamed without genuine interaction
+with real constraints. The result is a framework for reorganizing labor
+markets around verifiable interaction with reality rather than
+credentialed coordination.
+\end{abstract}
+
+\section{The Existing Selection Function}
+
+Let a system of work allocation be defined by a selection function
+$\mathcal{S}$ that maps observed signals $\sigma$ to resource allocation
+decisions $R$:
+\[
+  \mathcal{S} : \sigma \rightarrow R
+\]
+In current institutional environments, $\sigma$ consists primarily of:
+\begin{itemize}
+  \item activity counts (tickets, commits, meetings);
+  \item credentials (degrees, titles, affiliations);
+  \item narrative coherence (reports, presentations, alignment language).
+\end{itemize}
+
+These signals are not required to correspond to constraint closure.
+Instead, they are optimized for legibility to management structures.
+The resulting equilibrium is characterized by high signal production,
+low constraint interaction, and stable mediation layers.
+
+This is the formal condition for the persistence of bullshit jobs: roles
+that maximize $\sigma$ without engaging the underlying system
+constraints.
+
+\begin{proposition}
+Under $\mathcal{S}$, the dominant strategy for an agent seeking to
+maximize $R$ is to produce high-volume, low-cost signals rather than to
+close constraints. Signal production and constraint closure are therefore
+decoupled at equilibrium.
+\end{proposition}
+
+The managerial, credentialing, and recruiter layers that characterize
+contemporary labor markets are not inefficiencies---they are stable
+equilibria of $\mathcal{S}$.
+
+\section{Constraint Closure as the Primitive}
+
+\begin{definition}[Constraint]
+A \emph{constraint} is a condition imposed by reality on a system's
+behavior. A constraint $c \in C$ is \emph{closed} when the system
+reaches a state in which $c$ is satisfied and remains satisfied under
+perturbation.
+\end{definition}
+
+Let $C$ be a set of constraints over a system $X$. A closure event is a
+transition:
+\[
+  X_t \rightarrow X_{t+1} \quad \text{such that} \quad C(X_{t+1}) = 0
+\]
+where $C(\cdot) = 0$ indicates satisfaction.
+
+Instantaneous satisfaction is insufficient. A constraint closed at
+$t+1$ may reopen under load, under compositional stress, or as
+downstream systems evolve. The operative notion is therefore not
+satisfaction but \emph{residue}: the durable trace left by a closure
+event in a system subject to ongoing interaction.
+
+\section{Residue: The Basic Definition}
+
+\begin{definition}[Closure Residue]
+Let $r$ be a repair event that closes a constraint $c$ at time $t$.
+The \emph{closure residue} of $r$ over window $[t, t+\Delta]$ is:
+\[
+  \rho(r) = \int_{t}^{t+\Delta}
+    \mathbb{I}\bigl[C(X_\tau) = 0\bigr]
+    \cdot D(\tau)
+    \cdot S(\tau)
+  \, d\tau
+\]
+where $D(\tau)$ is the causal dependency weight at time $\tau$ and
+$S(\tau)$ is the stress intensity at time $\tau$.
+\end{definition}
+
+Each of the three terms requires precise definition to resist strategic
+behavior. The following three sections address them in turn.
+
+\section{Causal Dependency}
+
+The naive reading of $D(\tau)$ is structural: system $B$ \emph{declares}
+that it depends on system $A$. This is exploitable. Agents can inflate
+dependency graphs to amplify residue scores without producing causal
+reliance.
+
+The correct formulation treats dependency as \emph{sensitivity under
+perturbation}. System $B$ causally depends on closure $r$ if and only
+if the removal of $r$ increases the probability of failure in $B$.
+
+\begin{definition}[Causal Dependency Weight]
+\[
+  D(\tau) = \sum_{j \in \mathrm{downstream}}
+    w_j \cdot \Delta P\!\left(\mathrm{failure}_j \mid \neg r,\, \tau\right)
+\]
+where $\Delta P(\mathrm{failure}_j \mid \neg r, \tau)$ is the increase
+in failure probability for downstream system $j$ when the repair $r$ is
+counterfactually removed at time $\tau$, and $w_j$ is a weight
+proportional to the criticality of system $j$.
+\end{definition}
+
+This formulation aligns the framework with interventionist causality.
+Dependency is not declared; it is measured by failure propagation. A
+repair that no downstream system relies on---regardless of how many
+systems annotate it as a dependency---contributes zero to $D(\tau)$.
+
+\section{Distributed Attribution}
+
+The current draft assumes that a repair $r$ can be associated cleanly
+with a single agent. In practice, most nontrivial closures are
+composite: partial fixes, prior groundwork, review interventions, and
+subsequent stabilizations each contribute to the final residue.
+
+Without explicit handling, the system drifts toward last-touch
+attribution: the agent who closes the ticket receives full credit,
+regardless of who performed the diagnostic work, who identified the root
+cause, or who stabilized the environment that made repair possible. This
+is easy to exploit.
+
+The correct approach treats each closure event as a directed acyclic
+graph (DAG) of contributing actions, and assigns credit via marginal
+contribution.
+
+\begin{definition}[Marginal Contribution]
+Let $\mathcal{A} = \{a_1, \ldots, a_n\}$ be the set of actions
+contributing to closure residue $\rho$. The marginal contribution of
+action $a_i$ is:
+\[
+  \rho_i =
+    \mathbb{E}\bigl[\rho \mid \text{with } a_i\bigr]
+    - \mathbb{E}\bigl[\rho \mid \text{without } a_i\bigr]
+\]
+\end{definition}
+
+This is a Shapley-style decomposition over the repair graph. It is
+computationally expensive in the general case, but approximate versions
+operating over observable repair DAGs would substantially improve
+resistance to gaming. The key property is that credit is \emph{marginal
+contribution to closure}, not proximity to the final commit or the final
+ticket resolution.
+
+Agents who perform diagnostic groundwork, stabilize test environments,
+or review repairs that would otherwise have introduced regressions
+accumulate residue proportional to their counterfactual impact.
+Agents who append low-value actions to high-residue repair chains do
+not.
+
+\section{Stress-Weighted Persistence}
+
+Duration alone is insufficient as a persistence measure. A trivial fix
+that is never exercised again will appear persistent simply because
+nothing has reopened the constraint. What matters is not whether a
+closure holds over time, but whether it holds \emph{under conditions
+that would reveal failure}.
+
+\begin{definition}[Stress Term]
+$S(\tau)$ measures the intensity of system interaction, load, or
+adversarial conditions at time $\tau$. Operationally, it can be
+estimated from:
+\begin{itemize}
+  \item throughput and request volume;
+  \item the frequency of adjacent constraint activations;
+  \item the presence of concurrent incidents in dependent systems.
+\end{itemize}
+\end{definition}
+
+With the stress term incorporated, the residue integral rewards closures
+that survive load. A repair holding under high $S(\tau)$ accumulates
+residue rapidly. A repair in a system that has gone dormant accumulates
+little, regardless of how long it nominally persists.
+
+This prevents dead zones---abandoned subsystems, deprecated
+codepaths---from generating artificial residue through inactivity.
+
+\section{The Refined Residue Function}
+
+Assembling the three refinements:
+
+\begin{definition}[Refined Closure Residue]
+\[
+  \rho(r) = \int_{t}^{t+\Delta}
+    \mathbb{I}\bigl[C(X_\tau) = 0\bigr]
+    \cdot
+    \left(
+      \sum_{j \in \mathrm{downstream}}
+        w_j \cdot \Delta P\!\left(\mathrm{failure}_j \mid \neg r,\, \tau\right)
+    \right)
+    \cdot S(\tau)
+  \, d\tau
+\]
+with marginal attribution $\rho_i =
+\mathbb{E}[\rho \mid \text{with } a_i] -
+\mathbb{E}[\rho \mid \text{without } a_i]$
+distributed across the contributing action DAG.
+\end{definition}
+
+This function has the following adversarial properties:
+\begin{itemize}
+  \item \textbf{Dependency must be causal.} Annotating connections that
+    do not correspond to actual failure propagation does not increase
+    $D(\tau)$.
+  \item \textbf{Attribution is distributed.} Last-touch exploitation is
+    suppressed; marginal contribution over the full repair DAG
+    determines credit allocation.
+  \item \textbf{Persistence must be exercised.} Closures accumulate
+    residue only under conditions of real system stress. Dormant fixes
+    do not.
+\end{itemize}
+
+Faking high residue under this function requires actually interacting
+with real constraints under real load. That is not gaming the
+system---it is doing the work.
+
+\section{Trajectories Rather Than Snapshots}
+
+Let a worker's contribution be modeled as a trajectory through
+constraint space:
+\[
+  \gamma : t \mapsto X_t
+\]
+The value of the trajectory is not the number of interventions but the
+cumulative residue of closures along it:
+\[
+  V(\gamma) = \sum_i \rho_i
+\]
+This replaces pointwise metrics with path-dependent evaluation.
+
+Two trajectories with equal activity counts can differ dramatically:
+
+\medskip
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+Trajectory type & Activity & $V(\gamma)$ \\
+\midrule
+High activity, low persistence & High & Low \\
+Low activity, high persistence under stress & Low & High \\
+\bottomrule
+\end{tabular}
+\end{center}
+\medskip
+
+The current selection function $\mathcal{S}$ cannot distinguish these
+trajectories. The replacement function $\mathcal{S}'$ can.
+
+\section{The Replacement Selection Function}
+
+\begin{definition}[Residue-Based Selection Function]
+\[
+  \mathcal{S}' : \rho(\gamma) \rightarrow R
+\]
+Resources---tasks, compensation, authority---are allocated according to
+accumulated and recent closure residue, distributed via marginal
+attribution over contributing action DAGs.
+\end{definition}
+
+The equilibrium under $\mathcal{S}'$ differs from the equilibrium under
+$\mathcal{S}$ in the following respects:
+\begin{itemize}
+  \item Activity without closure is not rewarded.
+  \item Mediation without constraint interaction is not rewarded.
+  \item Credential signaling disconnected from residue production is not
+    rewarded.
+  \item Persistence under stress and causal integration are rewarded.
+\end{itemize}
+
+Bullshit jobs---roles that maximize $\sigma$ under $\mathcal{S}$---do
+not satisfy $\mathcal{S}'$. They are not filtered by gatekeeping; they
+simply fail to accumulate residue.
+
+\section{Economic Routing}
+
+Measurement alone is insufficient unless it controls allocation.
+$\mathcal{S}'$ must route not just evaluation but resources: work
+opportunities, payment, and decision authority.
+
+Without economic routing, the residue framework becomes a descriptive
+overlay---a better dashboard for the same managerial layer it is
+intended to replace. The mechanism must place resource allocation
+decisions downstream of $\rho(\gamma)$, bypassing institutional
+hierarchy.
+
+The near-term viable domain for this is:
+\begin{itemize}
+  \item contract and freelance markets where buyers can observe
+    constraint surfaces directly;
+  \item open systems where incident and dependency graphs are partially
+    public;
+  \item environments where the cost of failure is immediate and
+    attributable.
+\end{itemize}
+
+In these domains, buyers can select contributors based on demonstrated
+closure trajectories without requiring credential intermediaries or HR
+gatekeeping. The recruiter and credentialing layers do not get reformed;
+they get bypassed.
+
+\section{Structural Resistance}
+
+Bullshit jobs persist because they serve real interests. They provide
+control surfaces for institutional hierarchy. They stabilize internal
+power structures by converting uncertain, judgment-dependent work into
+predictable, legible signals. They give institutions a way to manage
+headcount without depending on autonomous technical judgment.
+
+A residue-based system therefore does not merely compete technically
+with existing infrastructure. It competes with existing interests.
+
+Adoption will occur where:
+\begin{itemize}
+  \item constraint visibility is high and incident surfaces are
+    observable;
+  \item the cost of failure is immediate and cannot be absorbed by
+    mediation;
+  \item mediation layers are already thin.
+\end{itemize}
+
+Adoption will be resisted where signaling is more valuable than
+outcomes---which describes most large institutional environments.
+
+This is not an argument against building the system. It is a prediction
+about where it will first take hold and where it will face the most
+friction.
+
+\section{Implementation Sketch}
+
+A minimal viable implementation does not attempt full generality. It
+chooses a domain where the incident surface is observable, the
+dependency structure is partially inferable, and stress signals exist.
+
+The system requires:
+\begin{enumerate}
+  \item Data ingestion from observable systems (repositories, logs,
+    incident trackers).
+  \item Construction of incident and dependency graphs.
+  \item Attribution of repairs to contributing action DAGs.
+  \item Temporal tracking of persistence under stress.
+  \item Computation of residue scores via marginal attribution.
+  \item Interface for querying contributor trajectories.
+  \item Mechanism for routing tasks and payment based on accumulated
+    residue.
+\end{enumerate}
+
+The validation criterion for a first implementation is modest: given
+two contributors with similar activity levels, does the residue-based
+metric separate them in a way that aligns with expert judgment? If that
+holds even weakly, the architecture becomes economically interesting and
+the selection-function argument moves from structural to demonstrable.
+
+\section{Conclusion}
+
+Graeber identified a class of roles that optimize for signal management
+rather than real work. Their persistence is not accidental. It is the
+stable equilibrium of a selection function $\mathcal{S}$ that rewards
+legibility over constraint interaction.
+
+Replacing that function requires three moves: redefining work in terms
+of trajectory and residue; constructing measurement systems that capture
+causal dependency, distributed attribution, and stress-weighted
+persistence; and routing economic decisions through those measurements
+rather than through credential and title hierarchy.
+
+The goal is not to eliminate coordination. Coordination that closes
+constraints accumulates residue. The goal is to subordinate coordination
+to constraint closure, so that roles which exist only to manage
+representations of work can no longer satisfy the selection function
+that allocates resources.
+
+\medskip
+\noindent The next step is a toy model: agents choosing between signal
+production and constraint interaction under $\mathcal{S}$ and
+$\mathcal{S}'$, with equilibria computed explicitly for each. That model
+would make the argument not just structural but demonstrable.
+
+\medskip
+\begin{center}
+\textit{Work becomes not what is reported, but what continues to hold.}
+\end{center}
+
+\end{document}
