@@ -1,5 +1,9 @@
 # Antivenom
 
+[The Meritocracy That Wasn't](https://standardgalactic.github.io/antivenom/sociology/remote_work.pdf)
+
+* [Why Your Remote Job Applications Disappear](https://standardgalactic.github.io/antivenom/sociology/) — *Audio Overview*
+
 [Structural Inversion Series](https://github.com/standardgalactic/antivenom/blob/main/boundaries/README.md)
 
 

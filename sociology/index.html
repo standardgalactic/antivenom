@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audioscope — Remote Work</title>
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#7cff7c;
+  font-family:monospace;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  cursor:pointer;
+}
+
+/* title */
+.title{
+  font-size:14px;
+  letter-spacing:0.2em;
+  color:#00ff88;
+  text-shadow:0 0 10px #00ff66;
+  margin-bottom:10px;
+}
+
+/* portal */
+canvas{
+  width:min(420px,85vw);
+  height:min(420px,85vw);
+  border-radius:50%;
+  border:2px solid rgba(0,255,0,0.5);
+  background:#000;
+  box-shadow:
+    0 0 40px rgba(0,255,120,0.2) inset,
+    0 0 18px rgba(0,255,0,0.7);
+}
+
+/* subtitles */
+.subs{
+  position:fixed;
+  bottom:34px;
+  width:min(520px,92vw);
+  text-align:center;
+  padding:6px 10px;
+  font-size:14px;
+  color:#aaffaa;
+  text-shadow:0 0 6px #00ff66;
+  background:rgba(0,20,0,0.35);
+  border:1px solid rgba(0,255,0,0.2);
+  border-radius:6px;
+  pointer-events:none;
+  min-height:2em;
+}
+
+/* essay link */
+.link{
+  position:fixed;
+  bottom:6px;
+  width:min(520px,92vw);
+  text-align:center;
+  font-size:12px;
+  color:#7cffc4;
+  text-decoration:none;
+  opacity:0.7;
+}
+.link:hover{
+  opacity:1;
+}
+</style>
+</head>
+
+<body>
+
+<div class="title">Remote Work System</div>
+<canvas id="viz"></canvas>
+<div id="subs" class="subs"></div>
+
+<a class="link"
+   href="https://standardgalactic.github.io/antivenom/sociology/remote_work.pdf"
+   target="_blank">
+  The Frictionless Meritocracy That Wasn't
+</a>
+
+<audio id="audio" preload="auto">
+  <source src="Why_your_remote_job_applications_disappear.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+const audio = document.getElementById("audio");
+const subs  = document.getElementById("subs");
+
+/* AUDIO */
+let ctx, analyser, data;
+
+function initAudio(){
+  if(ctx) return;
+
+  ctx = new AudioContext();
+  analyser = ctx.createAnalyser();
+  analyser.fftSize = 2048;
+  data = new Uint8Array(analyser.fftSize);
+
+  const node = ctx.createMediaElementSource(audio);
+  node.connect(analyser);
+  analyser.connect(ctx.destination);
+}
+
+document.body.onclick = async ()=>{
+  initAudio();
+
+  if(ctx.state === "suspended") await ctx.resume();
+
+  if(audio.paused) await audio.play();
+  else audio.pause();
+};
+
+/* prevent link click toggling audio */
+document.querySelector(".link").onclick = e => e.stopPropagation();
+
+/* SUBTITLES */
+let cues = [];
+
+async function loadVTT(){
+  try{
+    const res = await fetch("Why_your_remote_job_applications_disappear.vtt");
+    if(!res.ok) return;
+
+    const text = await res.text();
+    const blocks = text.split(/\n{2,}/);
+
+    for(const block of blocks){
+      const lines = block.trim().split("\n");
+      const ts = lines.find(l=>l.includes("-->"));
+      if(!ts) continue;
+
+      const [s,e] = ts.split("-->").map(x=>x.trim());
+      const txt = lines.slice(lines.indexOf(ts)+1).join(" ");
+
+      cues.push({
+        start: parseTime(s),
+        end: parseTime(e),
+        text: txt
+      });
+    }
+  }catch(e){
+    console.warn("VTT error", e);
+  }
+}
+
+function parseTime(t){
+  const p = t.split(":");
+  return p.length===3
+    ? +p[0]*3600 + +p[1]*60 + +p[2]
+    : +p[0]*60 + +p[1];
+}
+
+audio.ontimeupdate = ()=>{
+  const t = audio.currentTime;
+  const c = cues.find(c=>t>=c.start && t<c.end);
+  subs.textContent = c ? c.text : "";
+};
+
+loadVTT();
+
+/* CANVAS */
+const canvas = document.getElementById("viz");
+const c = canvas.getContext("2d");
+
+const W = 320, H = 320;
+canvas.width = W;
+canvas.height = H;
+
+let t = 0;
+
+/* smooth noise */
+function smoothNoise(x){
+  return Math.sin(x)*0.5 + Math.sin(x*0.7)*0.3;
+}
+
+function draw(){
+  t++;
+
+  /* slow fade = memory */
+  c.fillStyle = "rgba(0,5,0,0.07)";
+  c.fillRect(0,0,W,H);
+
+  const cx = W/2;
+  const cy = H/2;
+  const R  = W*0.42;
+
+  /* ───── PORTAL CLIP ───── */
+  c.save();
+  c.beginPath();
+  c.arc(cx,cy,R,0,Math.PI*2);
+  c.clip();
+
+  /* ───── FAINT GRID (MAP) ───── */
+  c.strokeStyle = "rgba(0,255,120,0.05)";
+  c.lineWidth = 1;
+
+  const gridShiftX = Math.sin(t*0.001)*20;
+  const gridShiftY = Math.cos(t*0.0013)*20;
+
+  for(let x=-W; x<W*2; x+=24){
+    c.beginPath();
+    c.moveTo(x+gridShiftX, -H);
+    c.lineTo(x+gridShiftX, H*2);
+    c.stroke();
+  }
+
+  for(let y=-H; y<H*2; y+=24){
+    c.beginPath();
+    c.moveTo(-W, y+gridShiftY);
+    c.lineTo(W*2, y+gridShiftY);
+    c.stroke();
+  }
+
+  /* ───── TRACE (REALITY) ───── */
+  let buf, len;
+
+  if(analyser){
+    analyser.getByteTimeDomainData(data);
+    buf = data;
+    len = data.length;
+  } else {
+    buf = new Uint8Array(512);
+    for(let i=0;i<512;i++){
+      buf[i] = 128 + Math.sin(i*0.1 + t*0.03)*28;
+    }
+    len = 512;
+  }
+
+  let energy = 0;
+  for(let i=0;i<len;i+=8){
+    energy += Math.abs((buf[i]-128)/128);
+  }
+  energy /= (len/8);
+
+  const driftX = Math.sin(t*0.002)*18;
+  const driftY = Math.cos(t*0.0017)*14;
+
+  const lag = Math.floor(len*(0.12 + smoothNoise(t*0.01)*0.15));
+
+  c.beginPath();
+
+  for(let i=0;i<len;i++){
+    const a = (buf[i]-128)/128;
+    const b = (buf[(i+lag)%len]-128)/128;
+
+    const x = cx + driftX + a * R;
+    const y = cy + driftY + b * R * 0.9;
+
+    if(i===0) c.moveTo(x,y);
+    else c.lineTo(x,y);
+  }
+
+  c.strokeStyle = `rgba(120,255,140,${0.5 + energy*0.5})`;
+  c.lineWidth   = 1.2 + energy*2;
+  c.shadowBlur  = 15 + energy*30;
+  c.shadowColor = "#00ff66";
+  c.stroke();
+  c.shadowBlur = 0;
+
+  /* faint residue */
+  c.strokeStyle = "rgba(120,255,140,0.06)";
+  c.lineWidth = 0.6;
+  c.stroke();
+
+  c.restore(); /* end portal clip */
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+
+</body>
+</html>

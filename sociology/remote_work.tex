@@ -1,0 +1,1349 @@
+%!TEX program = lualatex
+\documentclass[12pt, a4paper]{article}
+
+% ── Font & encoding ──────────────────────────────────────────────────────────
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setsansfont{TeX Gyre Heros}
+\setmonofont{DejaVu Sans Mono}[Scale=0.88]
+
+% ── Mathematics ──────────────────────────────────────────────────────────────
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{unicode-math}
+\setmathfont{Latin Modern Math}
+
+% ── Layout & typography ──────────────────────────────────────────────────────
+\usepackage[margin=1.25in]{geometry}
+\usepackage{microtype}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{parskip}
+\setlength{\parskip}{0.5em}
+\setlength{\parindent}{1.5em}
+
+% ── Sectioning ───────────────────────────────────────────────────────────────
+\usepackage{titlesec}
+\titleformat{\section}{\large\bfseries}{\thesection.}{0.75em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{0.6em}{}
+
+% ── Headers & footers ────────────────────────────────────────────────────────
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textit{The Frictionless Meritocracy That Wasn't}}
+\fancyhead[R]{\small\textit{Flyxion}}
+\fancyfoot[C]{\small\thepage}
+\renewcommand{\headrulewidth}{0.3pt}
+
+% ── Links ────────────────────────────────────────────────────────────────────
+\usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black]{hyperref}
+
+% ── Theorem environments ─────────────────────────────────────────────────────
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}[section]
+
+\theoremstyle{definition}
+\newtheorem{definition}[proposition]{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}[proposition]{Remark}
+
+% ── Epigraph ─────────────────────────────────────────────────────────────────
+\usepackage{epigraph}
+\setlength{\epigraphwidth}{0.6\textwidth}
+\renewcommand{\epigraphflush}{center}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\begin{document}
+
+% ── Title page ───────────────────────────────────────────────────────────────
+\begin{titlepage}
+\centering
+\vspace*{2.5cm}
+
+{\LARGE\bfseries The Frictionless Meritocracy That Wasn't\par}
+\vspace{0.6em}
+{\large\itshape Remote Work, Global Labor Competition,\\
+and the Collapse of the Legibility Signal\par}
+
+\vspace{2.5cm}
+
+{\large Flyxion\par}
+\vspace{0.4em}
+{\normalsize Independent Researcher\par}
+
+\vspace{3cm}
+{\small\today\par}
+\vfill
+\end{titlepage}
+
+\newpage
+
+\begin{abstract}
+\noindent
+Remote work was widely narrated, during and after the pandemic disruption of 2020,
+as the emergence of a frictionless digital meritocracy in which geography disappeared,
+skill alone determined access, and the knowledge economy became universally open.
+This essay argues that the opposite structural transformation occurred.
+The removal of geographic constraint did not flatten competition;
+it globalized it, converting local labor markets with bounded applicant pools
+into winner-take-most global marketplaces with near-zero application barriers.
+The result was a simultaneous collapse in signal legibility on both sides of the labor relation:
+employers could no longer cheaply distinguish genuine competence from performative competence,
+and applicants could no longer cheaply distinguish genuine positions from
+ghost listings, outsourcing funnels, and speculative hiring pools.
+
+The essay analyzes this transformation through several interlocking mechanisms:
+the many-to-one compression of competence onto credential signals;
+the role of tacit knowledge accumulation in making experienced practitioners
+structurally inaccessible to short-course entrants;
+the cultural distortion introduced by survivorship-biased visibility of remote success;
+the reconstitution of trust as a productive skill in asynchronous environments;
+the recursive structure of the aspiration economy that grows in proportion
+to the gap between trained applicant supply and genuine employment demand;
+and the systematic undervaluation, by credential-governed hiring systems,
+of competence accumulated through cross-domain experience in physical,
+social, and artistic environments.
+The central claim is that remote work did not make the labor market more meritocratic.
+It made legibility---the capacity to render genuine competence readable to strangers
+at a distance---the primary scarce resource, and in doing so
+created the conditions for a secondary economy selling projections
+of low-probability outcomes to the population of trained but underemployed candidates
+those conditions inevitably produced.
+\end{abstract}
+
+\newpage
+
+\tableofcontents
+\newpage
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Introduction: The Meritocracy Narrative and Its Discontents}
+\label{sec:intro}
+
+\epigraph{\itshape
+The democratization of access is often the democratization of competition.}{}
+
+When remote work became broadly normalized following the disruptions of 2020,
+a particular narrative achieved rapid cultural dominance.
+In this narrative, remote work represented the maturation of a long-promised
+digital meritocracy: geography, the oldest and most arbitrary barrier in labor markets,
+would finally cease to determine economic fate.
+A skilled programmer in rural Canada, a designer in São Paulo,
+a data analyst in Lagos---all would compete on equal footing with their counterparts
+in San Francisco, London, or New York.
+The knowledge economy would become genuinely global, and talent would flow freely
+to wherever it was valued most.
+
+The narrative was compelling because it contained real partial truths.
+Geographic barriers did fall for a meaningful class of workers.
+Remote work did expand genuine opportunity for some people in some roles.
+And the aspiration toward skill-based meritocracy over arbitrary proximity
+is not wrong in itself.
+
+But the structural transformation that actually occurred was substantially different
+from the narrative, and in important respects its opposite.
+The removal of geographic constraint did not flatten competition into a
+level playing field; it globalized competition while simultaneously collapsing
+the signals that had previously allowed both employers and applicants to
+navigate the market efficiently.
+
+A local in-person job posting in 2015 competed against a labor pool constrained
+by commuting radius, local cost of living, and the friction of physical relocation.
+A remote programming job in 2023 potentially competes against millions of applicants
+distributed across dozens of countries, with varying wage expectations,
+wildly varying levels of genuine specialization, and near-zero application friction.
+The barrier to applying fell toward zero for everyone simultaneously,
+which meant that the ratio of signal to noise in the applicant pool
+collapsed for everyone simultaneously.
+
+This essay traces the structural consequences of that collapse across four domains:
+the labor market dynamics of globalized competition and winner-take-most distributions
+(Section~\ref{sec:competition});
+the legibility problem created by the compression of competence onto credential signals
+(Section~\ref{sec:legibility});
+the cultural distortion introduced by survivorship-biased visibility
+of remote work success (Section~\ref{sec:survivorship});
+and the reconstitution of trust as a productive skill
+in asynchronous environments (Section~\ref{sec:trust}).
+
+The essay concludes by arguing that the primary scarce resource in remote labor markets
+is not technical skill but legibility: the capacity to render genuine competence
+visible to strangers at a distance, without the benefit of social infrastructure
+that local labor markets provide by default.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Globalized Competition and the Winner-Take-Most Structure}
+\label{sec:competition}
+
+\subsection{Local Markets as Bounded Pools}
+
+The structure of local labor markets is shaped by friction.
+Commuting radii, relocation costs, housing market constraints,
+family ties, visa requirements, and the simple unwillingness of many people
+to uproot themselves all create bounded applicant pools.
+A software company in a mid-sized city hiring a mid-level engineer
+in 2015 was drawing from a pool substantially constrained by geography.
+The employer paid a local wage premium; the applicant benefited from
+limited competition within that geographic radius.
+
+This friction was not merely an inefficiency to be optimized away.
+It was also a signal-generating mechanism.
+In local markets, reputation traveled through professional networks
+with manageable density. A referral from a colleague carried weight because
+both parties were embedded in the same social infrastructure.
+An interview process could be calibrated to local norms.
+The employer had access to a form of background legibility---an informal record
+of how a candidate behaved in contexts the employer could access or inquire about---that
+remote markets do not automatically provide.
+
+The geographic labor market was, in this sense, a bounded information ecosystem.
+Its friction was also its epistemic infrastructure.
+
+\subsection{The Boundary Removal and Its Structural Consequences}
+
+Remote work dissolved the geographic constraint, and this had two simultaneous effects
+that compounded each other in ways the meritocracy narrative did not anticipate.
+
+On the supply side, the applicant pool for any remote position expanded dramatically.
+A single posting for a mid-level remote software engineer now potentially
+reaches every English-literate programmer with an internet connection and a portfolio,
+regardless of their location, wage expectations relative to the job's intended market,
+or actual fit for the specific role.
+The marginal cost of submitting an application fell toward zero,
+which predictably drove application volumes to levels that local hiring never encountered.
+
+On the demand side, the employer's task of evaluating that expanded pool
+did not become cheaper. It became more expensive.
+The same screening effort that was once sufficient to identify a competent candidate
+from a local pool of thirty is now grossly inadequate for a remote pool of three thousand.
+Automated filters proliferated in response---keyword matching, algorithmic pre-screening,
+resume parsing---but these filters are imperfect proxies for what employers actually want,
+which is a reliable reduction of uncertainty about whether a given person
+can do a given job without direct supervision.
+
+The result is a market structure that increasingly resembles
+what economists call a winner-take-most distribution---a dynamic
+whose amplifying logic Robert Merton identified as the Matthew Effect~\cite{merton1968}:
+a small number of highly legible candidates capture a disproportionate share of positions,
+while a large number of candidates with genuine but less-visible competence
+compete in an increasingly crowded and signal-saturated middle.
+
+\begin{proposition}[Winner-Take-Most Concentration]
+In a labor market where application friction approaches zero and applicant pool size
+increases without bound, the competitive advantage of legibility---visible proof
+of reliable, self-directed competence---increases superlinearly,
+because each marginal increase in employer uncertainty about a candidate
+now must be resolved against a backdrop of thousands of alternatives
+who have reduced that uncertainty more cheaply.
+\end{proposition}
+
+The proposition captures something counterintuitive.
+In a world of abundant technically skilled applicants,
+the scarce resource is not technical skill itself but the ability to make
+that skill legible to strangers in the absence of shared social context.
+The market rewards not competence per se but \emph{certifiable competence}:
+competence that has been rendered into forms a stranger can evaluate quickly.
+
+\subsection{Multiple Overlapping Phenomena}
+
+Several distinct phenomena co-occur in this transformed market,
+and it is important to distinguish them clearly because they are
+often conflated in both the complaints of frustrated job-seekers
+and the dismissive responses of commentators who attribute all difficulty
+to candidate inadequacy.
+
+The first phenomenon is genuine market tightening at the lower end of the
+experience distribution. Remote positions that were once accessible to
+early-career programmers willing to work in a physical office are now
+competed for by experienced engineers seeking better remote options.
+The competition pool for a remote junior position includes not only other junior
+candidates but senior engineers who prefer the work-from-home arrangement
+and are willing to accept junior compensation for the lifestyle trade-off,
+highly specialized contractors from lower-cost countries whose skills
+may substantially exceed the role's requirements,
+and the full international distribution of applicants for whom
+even a reduced wage in a high-cost currency represents a favorable outcome.
+
+The second phenomenon is the proliferation of non-genuine postings.
+Ghost jobs---positions listed to satisfy internal optics, collect résumés,
+reassure investors about growth trajectories, or maintain a pipeline
+of candidates for roles that do not yet exist---are a structural feature
+of hiring in institutions that face pressure to signal ambition
+without yet having the budget or internal alignment to act on it.
+David Graeber's analysis of performative institutional labor~\cite{davidgraeber2018}
+applies with particular precision here: the posting exists to produce
+the appearance of organizational activity rather than to resolve any
+genuine constraint condition.
+Commission-based recruiting pipelines, outsourcing funnels presenting themselves
+as direct employment, and speculative hiring pools that may or may not resolve
+into actual offers compound the difficulty of navigating the market honestly.
+From the applicant's perspective, the experience of applying to such postings
+is indistinguishable from applying to genuine ones until well into the process.
+
+The third phenomenon is the exhaustion of screening processes themselves.
+As genuine positions receive hundreds or thousands of applications,
+the screening infrastructure necessarily becomes coarser.
+Automated systems apply filters that are calibrated to high-volume environments
+and inevitably exclude qualified candidates who do not conform to filter expectations.
+Interview processes become more elaborate and more standardized simultaneously,
+creating a form of evaluation theater in which the assessed skills
+may bear only loose correspondence to the skills required by the actual job.
+
+These three phenomena are distinct but interact.
+Ghost jobs inflate application volumes, which degrades the signal-to-noise ratio,
+which forces genuine positions to apply coarser filters,
+which advantages candidates who have learned to optimize for filter passage
+rather than actual job performance.
+The market selects for a specific form of meta-competence:
+the ability to navigate hiring processes rather than the ability to do the work.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Legibility, Credential Compression, and Tacit Knowledge}
+\label{sec:legibility}
+
+\subsection{The Compression of Competence onto Credentials}
+
+The fundamental epistemological challenge of remote hiring is legibility at a distance.
+An employer hiring someone who will work physically in the same building
+has access to a continuous stream of informal signal: how the candidate conducts
+themselves in conversation, whether they ask the right questions,
+whether they respond appropriately to ambiguity, whether their peers regard them as reliable.
+This information is not transmitted through resumes or portfolios;
+it accumulates through direct observation within shared social infrastructure.
+
+Remote hiring strips away most of this infrastructure.
+The employer must assess a candidate almost entirely through explicitly produced signals:
+resume contents, portfolio projects, interview performance, references,
+public code repositories, written communication, and certifications.
+Erving Goffman observed that all social interaction involves the management
+of impressions through deliberate self-presentation~\cite{goffman1959};
+remote hiring makes this management the primary --- and nearly only --- medium
+through which competence can be communicated.
+Like all projections, they are many-to-one: many distinct levels of genuine competence
+map to similar credential profiles, and the fiber over any given credential bundle
+contains both highly competent and minimally competent candidates.
+
+\begin{definition}[Credential Compression]
+A credential is a \emph{projection} of a competence trajectory onto a
+representational manifold of observable outputs.
+\emph{Credential compression} occurs when the diversity of the underlying
+competence distribution is substantially greater than the diversity
+representable in the credential manifold,
+such that many distinct competence levels are mapped to identical or
+near-identical credential profiles.
+\end{definition}
+
+Credential compression is not new, but it becomes acute when application volumes rise.
+At low volumes, an employer can afford to look past credential similarity
+and invest in deeper evaluation of individual candidates.
+At high volumes, credential-level filtering becomes the only economically viable
+first pass, and the credential manifold's resolution limitations become
+the primary determinant of which candidates advance.
+
+The result is that the competitive advantage of any given credential is rapidly eroded
+as the credential becomes widely held.
+A bachelor's degree in computer science was once a reliable differentiator;
+it no longer is, because the distribution of actual competence among
+degree-holders is wide and the credential provides limited resolution within that range.
+A portfolio of GitHub projects was a reliable differentiator when few applicants had one;
+it provides less resolution now that tutorial-driven projects are nearly universal.
+A certificate from a recognized bootcamp was once a meaningful signal;
+it has been diluted by the proliferation of bootcamps and the variability of their outcomes.
+
+Each of these differentiators followed the same trajectory:
+adoption drove down the signal value, which drove the adoption of new differentiators,
+which were themselves adopted and diluted.
+The credential arms race is a structural feature of markets
+where the underlying competence distribution is heterogeneous
+but the legible signal space is narrow.
+
+\subsection{Tacit Knowledge and the Depth of Production Systems}
+
+A persistent and consequential misunderstanding in the cultural narrative
+around programming education is the assumption that competence in software development
+is approximable by a bounded and learnable skill set that can be acquired
+through a structured course in a defined time period.
+This is what might be called the trade-certification model of software development:
+complete the program, acquire the certificate, enter the pipeline.
+
+The trade-certification model is an accurate description of some trades,
+where the skill set is genuinely bounded, the tacit knowledge is transmissible
+through apprenticeship in predictable ways, and the variance of real-world environments
+is manageable enough that trained practitioners can navigate novel situations
+using their certified skills.
+
+Software development in production environments is not like this.
+Modern software systems are layered accumulations of technical decisions
+made across years or decades, under varying constraints, by teams with varying
+levels of skill and varying levels of documentation discipline.
+A programmer working on a real production system must navigate distributed systems
+whose failure modes are not documented in any textbook,
+debugging environments where the relevant information is spread across
+logs, metrics, network traces, and the informal memory of colleagues,
+deployment pipelines whose behavior depends on configuration accumulated
+across years of incident responses,
+security constraints that interact with application logic in non-obvious ways,
+and the political and organizational dynamics of teams that must coordinate
+without full shared context.
+
+None of this is transmissible through a programming course.
+It is accumulated through exposure: through the repeated experience of
+systems failing in unexpected ways and requiring diagnosis,
+through the development of intuitions about where problems tend to hide,
+through the calibration of judgment about when to reach for a known solution
+and when to invest in understanding a novel one.
+This form of knowledge is tacit in the precise sense Michael Polanyi established~\cite{polanyi1966}:
+it resides in the practitioner's constraint surface rather than in any explicit representation,
+and it cannot be transferred by transferring the representation alone.
+
+\begin{remark}[Tacit Knowledge as Constraint Surface]
+A senior engineer's value is not primarily the explicit knowledge of technologies
+and patterns that could in principle be written down and transmitted.
+It is the accumulated constraint surface $\Sigma$ shaped by years of
+exposure to production systems---the compressed record of failures debugged,
+decisions made, incidents survived, and patterns internalized.
+This constraint surface cannot be acquired by reading about it.
+It must be grown through trajectory.
+A short course provides an initial segment of that trajectory,
+not the endpoint.
+\end{remark}
+
+The gap between what a short-course graduate and a decade-experienced engineer
+can offer is therefore not primarily a gap in explicit knowledge.
+It is a gap in tacit constraint surfaces---in the density and range
+of situations that have been encountered and encoded into navigational capacity.
+This gap is not visible in credential profiles and is only partially visible
+in portfolios, because portfolios predominantly represent
+the explicit and presentable fraction of competence.
+The tacit fraction remains in the fiber,
+inaccessible to remote evaluation without extended collaboration.
+
+\subsection{The AI-Assisted Workflow Complication}
+
+A further dimension of the legibility problem has emerged with the proliferation
+of AI-assisted coding tools.
+These tools substantially reduce the barrier to producing code that appears competent
+at the level of syntactic and algorithmic correctness.
+A novice programmer using a large language model as a coding assistant
+can produce code that passes surface inspection by a remote evaluator
+who is not also using such tools.
+
+This creates a new form of credential compression.
+The gap between a programmer who genuinely understands the systems they build
+and one who produces plausible outputs through AI assistance is real
+but increasingly difficult to detect through remote evaluation of outputs alone.
+Take-home coding challenges, which rose to prominence as a remote hiring tool
+precisely because they could assess output quality without requiring in-person presence,
+are partially neutralized as legibility mechanisms when the outputs can be produced
+by AI systems regardless of the operator's understanding.
+
+The result is a further escalation of the legibility arms race.
+Genuine competence must now be demonstrated not only in the outputs produced
+but in the demonstrable understanding of those outputs under conditions
+where AI assistance is removed or where the evaluator can probe understanding
+at sufficient depth to distinguish genuine comprehension from
+AI-mediated output reproduction.
+This places additional burden on live technical interviews and
+collaborative problem-solving sessions that assess process rather than product---a development
+that partly re-introduces the requirement for real-time interaction
+that remote hiring had aimed to minimize.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Survivorship Bias and the Distortion of Cultural Visibility}
+\label{sec:survivorship}
+
+\subsection{The Visibility of Successful Remote Workers}
+
+Cultural perception of remote work accessibility is substantially shaped by
+the visibility distribution of outcomes rather than the outcome distribution itself.
+The people who succeed at remote work---who find stable, well-compensated remote positions
+working from locations of their choosing---have both the means and the motivation
+to make their success visible.
+They post about their setups, their lifestyles, their workflows.
+They create content about the path they took.
+They sell courses about the skills they acquired.
+They appear as case studies in aspirational media.
+
+This visibility is not representative.
+It is the visible surface of a distribution whose bulk is entirely elsewhere.
+For every developer working remotely from a café in Lisbon,
+there are many more who applied to dozens of remote positions
+and received no responses, or who received responses only for underpaying contract roles,
+or who found genuine positions only after years of building visible public work,
+or who never found remote work despite genuine competence.
+
+The statistical filtering between aspiration and outcome is enormous,
+but it is structurally invisible in the cultural representation of remote work.
+The filtering happens in private---in rejected applications, in unresponded emails,
+in the quiet accumulation of months of unsuccessful search.
+The success happens in public, where its visibility is amplified by
+social media dynamics that preferentially surface positive, aspirational content.
+
+\begin{proposition}[Survivorship Distortion]
+In a market where successful outcomes are systematically more visible than
+unsuccessful ones, and where the ratio of unsuccessful to successful outcomes
+is high, cultural perception of market accessibility will be positively biased
+relative to actual accessibility by a factor proportional to the
+visibility ratio between success and failure.
+\end{proposition}
+
+The distortion has practical consequences beyond mere misperception.
+It shapes the supply side of the market in ways that amplify the signal-to-noise problem.
+People enter the programming job market---and specifically the remote programming job market---with
+expectations calibrated to the visible surface of the outcome distribution
+rather than to its full extent.
+They invest in short courses marketed as pipelines to remote employment
+because the marketing is backed by visible success stories whose selection mechanism
+is not disclosed.
+They apply to remote positions in volumes that would make sense if the
+success rate matched the visibility of success, but which contribute to
+the application floods that degrade legibility for everyone.
+
+The cultural production of aspirational remote work content is itself
+a significant economic activity.
+Bootcamps, online courses, productivity influencers, and digital nomad content creators
+all have financial incentives to amplify the perception of accessibility
+and to downplay the statistical difficulty of the path.
+This is not necessarily deliberate misrepresentation;
+it is a structural feature of a market in which the providers of preparation
+are not the providers of outcomes and do not bear the costs of misaligned expectations.
+
+\subsection{The Digital Nomad as Cultural Ideal}
+
+The figure of the digital nomad---the location-independent knowledge worker
+moving freely between cities, managing a productive work life from laptops
+in aesthetically pleasing environments---became a particularly potent cultural ideal
+during the period of remote work normalization.
+
+This figure concentrates several aspirational properties: geographic freedom,
+apparent meritocratic success, escape from office politics, and a lifestyle
+that visibly combines work and leisure in ways that the office model explicitly prohibits.
+It is a compelling synthesis of multiple forms of contemporary aspiration.
+
+What the figure obscures is the selection history required to occupy it.
+The visible digital nomad is typically either someone with a decade of prior experience
+that rendered them valuable enough to command fully remote arrangements,
+someone with substantial independent financial resources that allow extended
+experimentation without employment pressure,
+someone whose specific skill combination is sufficiently rare that
+geographic flexibility becomes a viable negotiating chip,
+or someone whose apparent lifestyle is partially or wholly financed
+by content about that lifestyle rather than by remote work per se.
+
+In each case, the current position is the endpoint of a trajectory
+whose constraints are not visible in the representation.
+The Instagram photograph from the Lisbon café is the projected image
+of a constraint surface built over years; it does not transmit the constraint surface itself.
+The aspiring remote worker who models their expectations on the photograph
+is responding to a projection without access to what was projected from.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Trust as Productive Skill in Asynchronous Environments}
+\label{sec:trust}
+
+\subsection{The Nature of In-Person Trust Infrastructure}
+
+In-person work environments generate trust as a by-product of shared presence.
+A manager who can observe a team member working, who can have impromptu conversations,
+who can read non-verbal signals about engagement and difficulty,
+and who can monitor progress through casual interaction
+does not need to solve the problem of trusting a remote worker.
+Trust is continuously updated through the ambient stream of shared presence.
+
+This ambient trust generation is so taken for granted in in-person environments
+that it rarely appears in discussions of what makes in-person work functional.
+It becomes visible only when it is absent---which is precisely what remote work reveals.
+
+In a remote environment, the ambient stream of trust-generating signal disappears.
+The manager cannot observe the team member working.
+Casual interaction requires deliberate scheduling.
+Progress must be explicitly communicated rather than incidentally observed.
+Non-verbal signals are either absent or mediated through video,
+which transmits a partial and easily curated subset of the full signal.
+The result is that trust---which in-person environments generate passively---must
+in remote environments be actively produced.
+
+\begin{definition}[Trust Production]
+In a remote work environment, \emph{trust production} is the explicit generation
+of legible evidence that a worker is reliable, self-directed, progressing appropriately,
+and capable of resolving ambiguity without supervision.
+Trust production is a productive activity with real costs:
+it requires time, communication skill, and calibration of
+how much evidence is sufficient without being performative.
+\end{definition}
+
+Trust production is not simply a matter of sending status updates.
+A worker who sends daily updates that contain no information
+about actual progress, blockers, or decision points is engaging in trust theater---the
+appearance of communication without its substance.
+Genuine trust production requires the capacity to translate internal work state
+into representations that are legible to someone who cannot observe the work directly,
+and to do so at a frequency and in a format calibrated to the specific
+uncertainty-reduction needs of the remote collaboration.
+
+\subsection{Trust as a Skill Set}
+
+The capacity to produce trust effectively in asynchronous environments
+is a skill set with real structure.
+It includes written communication precision---the ability to convey technical state,
+blockers, and decisions clearly and concisely without the clarifying resources
+of real-time dialogue;
+asynchronous coordination competence---the ability to move collaborative work forward
+when responses may be delayed by hours or time zones;
+uncertainty management---the ability to operate effectively in the presence of
+ambiguous requirements without escalating every ambiguity to a meeting;
+and self-calibrated scope management---the ability to accurately estimate
+effort, communicate realistic timelines, and identify when a task has
+expanded beyond its original definition.
+
+These are not soft skills in the dismissive sense that phrase often implies.
+They are cognitive and communicative competencies with real learning curves,
+real variance in natural aptitude, and real consequences when absent.
+An engineer who cannot produce trust effectively in a remote environment
+imposes real costs on their collaborators: increased coordination overhead,
+uncertainty about progress, the need for supervisory investment
+that remote environments are supposed to avoid.
+
+The market prices these competencies, even when it does not explicitly name them.
+The job postings that list ``excellent communication skills''
+as a requirement for senior remote positions are acknowledging,
+in abbreviated form, that trust production capacity is part of the skill set
+being evaluated.
+But the abbreviation conceals the depth of what is actually required,
+and standard hiring processes are not well-designed to assess it.
+
+\subsection{The Legibility of Trust Production Capacity}
+
+The paradox of trust production as a skill is that it is itself a legibility problem.
+The capacity to produce trust effectively in a remote environment
+is precisely the kind of tacit competence that is difficult to demonstrate
+through the mechanisms available in remote hiring.
+
+A portfolio of code demonstrates technical output.
+A cover letter demonstrates written communication at one point in time.
+Neither captures whether a candidate will reliably produce progress updates
+at the right frequency and level of detail,
+manage blockers appropriately without either hiding them or escalating prematurely,
+or maintain productive output during periods of ambiguity and unclear direction.
+
+These capacities can only be fully demonstrated through extended collaboration.
+The hiring process is a compressed simulation of the collaboration it is trying to predict,
+and the simulation is imperfect.
+What experienced remote employers actually look for are proxies:
+evidence of long-running public projects, contributions to open-source repositories
+with visible coordination history, records of sustained engagement in technical communities,
+references from previous remote collaborations who can speak to
+process behavior rather than just output quality.
+
+These proxies are accumulations over time.
+They cannot be fabricated quickly.
+The person who has spent three years contributing to an open-source project
+has a legibility advantage that cannot be replicated in three months of preparation,
+because what the contribution history demonstrates is precisely
+the sustained, self-directed, asynchronous coordination capacity
+that remote work requires---and that is otherwise invisible to remote evaluators.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{What Remote Work Actually Selects For}
+\label{sec:selection}
+
+\subsection{The Portfolio of Differentiators}
+
+The analysis of the preceding sections converges on a consistent picture
+of what distinguishes candidates who succeed in remote labor markets
+from those who struggle despite genuine technical competence.
+
+Remote success is disproportionately captured by candidates with strong specialization
+in domains where demand exceeds supply by a sufficient margin
+that even imperfect legibility is sufficient to attract attention.
+It is captured by candidates with existing professional networks that provide
+referral pathways bypassing open-application processes entirely---what Pierre Bourdieu
+identified as social capital converting into economic advantage through
+preferential access to information and opportunity~\cite{bourdieu1986}.
+It is captured by candidates with prior industry experience whose constraint surfaces
+are deep enough that their value is not easily substituted by lower-cost alternatives.
+It is captured by candidates with visible public work---open-source contributions,
+published writing, conference talks, substantial GitHub histories---that provides
+legibility without requiring the employer to take an inferential risk.
+And it is captured by candidates with rare combinations of skills
+that are difficult to source through standard pipelines
+and therefore command negotiating leverage that typical candidates do not.
+
+None of these differentiators is purely technical.
+All involve some combination of time, investment, social capital,
+and the accumulated visibility that follows from sustained public engagement
+with a field.
+The meritocracy narrative imagined that skill alone would be sufficient.
+What the market actually requires is skill plus legibility,
+and legibility is not equally distributed by skill.
+
+\subsection{Uncertainty Reduction as the Core Offering}
+
+The most precise characterization of what successful remote workers provide
+to their employers is uncertainty reduction.
+In a remote environment, every hire is a bet on a future collaborative relationship
+whose quality cannot be fully observed in advance.
+The employer is committing to a contractual relationship,
+an onboarding investment, and an integration of the new hire
+into existing systems and processes---all on the basis of
+information that is necessarily incomplete.
+
+Candidates who succeed remotely are those who minimize the expected cost of that bet.
+They provide evidence of reliability that reduces the probability
+of the hire being a costly mistake.
+They communicate clearly enough that the employer can model their future behavior.
+They have demonstrated the capacity to resolve ambiguity without supervision,
+which reduces the expected coordination overhead of the relationship.
+They have visible track records that provide base-rate information
+about their likelihood of sustained productive performance.
+
+\begin{proposition}[Uncertainty Reduction as Competitive Advantage]
+In a remote labor market with low application friction and high applicant volume,
+the primary competitive advantage is not technical skill but
+the capacity to reduce employer uncertainty about future collaborative performance.
+Candidates who provide better evidence of reliability, communication,
+and self-directed competence have a competitive advantage over
+technically equal candidates who provide worse evidence of these properties,
+even when the worse-evidenced candidates are genuinely more technically skilled.
+\end{proposition}
+
+The proposition implies a counterintuitive consequence.
+Improving technical skill is not always the highest-return investment
+for a candidate struggling in the remote labor market.
+In many cases, improving the legibility of existing skill---through public work,
+through communication, through the cultivation of a visible professional identity---will
+have higher marginal returns than deepening technical capacity
+that cannot yet be made visible to strangers.
+
+\subsection{The Structural Position of New Entrants}
+
+The foregoing analysis implies a structural difficulty for new entrants
+to the remote software labor market that is not widely acknowledged
+in the cultural narrative around programming education.
+Guy Standing's analysis of the precariat---the growing class of workers
+experiencing chronic labor market insecurity without the protections
+of earlier employment regimes~\cite{standing2011}---describes the structural
+position into which many trained new entrants find themselves placed,
+despite having followed what they were told was a path to stable employment.
+
+A new entrant, by definition, lacks the prior experience that would
+generate the tacit constraint surface valued by employers.
+They lack the professional network that would provide referral pathways
+around the open-application bottleneck.
+They lack the visible public work that would provide legibility
+without requiring inferential risk.
+And they lack the track record of remote collaboration
+that would demonstrate trust production capacity.
+
+The short course or bootcamp addresses none of these deficits.
+It provides a segment of technical knowledge---genuinely useful,
+but insufficient on its own---while leaving the legibility problem entirely unresolved.
+The graduate enters a market that requires legibility above all
+with a credential whose signal value has been diluted by widespread adoption
+and whose fiber contains a wide range of actual competence levels.
+
+The path to successful remote employment for new entrants
+is therefore necessarily longer than the marketing of programming education
+acknowledges.
+It involves the gradual accumulation of public work that builds a visible portfolio
+over months or years rather than weeks.
+It involves contribution to open-source projects that generates coordination history.
+It involves the cultivation of professional relationships in technical communities
+that may eventually provide referral pathways.
+It involves the development of communication and coordination skills
+that are only partially transmissible through formal instruction
+and are primarily built through practice in real collaborative contexts.
+
+None of this is impossible.
+But it is considerably more arduous and time-consuming than the
+trade-certification model of programming education implies,
+and the cultural visibility of rapid success stories
+provides a systematically distorted picture of the statistical reality.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{The Aspiration Economy: Monetizing the Hope of Mobility}
+\label{sec:aspiration}
+
+\subsection{A Pre-Digital Pattern}
+
+The dynamics described in the preceding sections did not originate with the internet.
+They have a longer history that is worth recovering, because that history
+clarifies the structural rather than technological nature of the phenomenon.
+
+Before the internet, markets for aspirational information existed in constrained forms:
+mail-order pamphlets sold through magazine advertisements,
+motivational tape series, late-night infomercials, self-help seminars,
+``work from home'' classified listings, multi-level marketing recruitment materials,
+and correspondence courses promising vocational transformation.
+These products shared a common structure.
+They were marketed to people experiencing genuine economic frustration
+with promises of access to pathways that felt otherwise inaccessible.
+They were delivered as information, presented as secrets or insider knowledge
+unavailable through ordinary channels.
+And they typically disappointed, not because they were entirely false,
+but because they compressed difficult, low-probability, labor-intensive activities
+into the rhetorical form of accessible opportunity.
+
+The pamphlet that cost eight or ten dollars from a magazine advertisement
+and arrived weeks later listing ``ways to make money from home''
+was not lying, exactly.
+Everything listed was technically possible.
+But the pamphlet suppressed the most important information:
+the statistical distribution of outcomes, the required prior conditions,
+the time horizon, the failure rate, and the selection effects
+that determined who the success stories actually were.
+The buyer paid not for knowledge but for the compression of uncertainty
+into hope, and what they received was a repackaging of already-known
+difficult possibilities in a format that felt like revelation.
+
+That experience is structurally identical to what millions of people
+now encounter when they purchase a coding bootcamp, a YouTube membership,
+a course on passive income, or a subscription to a productivity influencer's
+``remote work blueprint.''
+The internet did not invent the aspiration economy.
+It industrialized it, eliminated its distribution costs,
+and gave it algorithmic amplification.
+
+\subsection{The Recursive Displacement Cycle}
+
+The aspiration economy around remote work and programming education
+exhibits a recursive structure that compounds the original market problem.
+
+When genuine pathways to stable remote employment narrow,
+a predictable secondary response emerges: displaced or underemployed people
+begin monetizing the hope of the pathway rather than the pathway itself.
+The product ceases to be remote employment and becomes the imagined future identity
+associated with it.
+Shoshana Zuboff's analysis of behavioral surplus extraction~\cite{zuboff2019}
+is illuminating here: just as platform capitalism extracts value from behavioral data
+generated as a by-product of users pursuing their own ends,
+the aspiration economy extracts revenue from the economic anxiety
+generated as a by-product of labor market scarcity.
+
+The mechanism has several stages.
+First, saturated labor markets reduce genuine opportunity for new entrants,
+producing a population of technically trained people who did not find
+the employment they anticipated.
+Second, some fraction of that population, recognizing that the instructional
+and aspirational market has lower barriers to entry than the employment market itself,
+begins producing content: tutorials, roadmap videos, course curricula,
+motivational narratives about the programming career they nearly achieved or partially achieved.
+Third, this instructional content recruits additional entrants into
+the already-saturated employment market, further increasing competition
+for genuine positions while expanding the supply of instructional products.
+Fourth, the increased saturation reduces genuine opportunity further,
+amplifying the conditions that make the aspiration economy attractive
+relative to the employment economy.
+
+\begin{proposition}[Recursive Aspiration Displacement]
+In a market where genuine employment opportunity is scarce relative to
+trained applicant supply, and where the cost of producing aspirational content
+is low relative to the perceived value of the promised outcome,
+a secondary economy will emerge in which the production and sale of
+aspirational content grows proportionally to the gap between
+trained applicant supply and genuine employment demand,
+potentially becoming economically larger than the underlying employment ecosystem
+it claims to service.
+\end{proposition}
+
+This cycle is especially visible in programming education
+because the cost of producing instructional material is low,
+the perceived value of the promised outcome is high,
+and the barrier between ``person who attempted a programming career''
+and ``person who teaches programming careers'' is lower than
+the barrier between ``person who attempted a programming career''
+and ``person who has a programming career.''
+A person who failed to obtain stable programming employment
+may be fully capable of producing tutorials, roadmap videos,
+and motivational content that attracts aspiring entrants,
+particularly if they are skilled communicators.
+
+The result is an instructional ecosystem partially decoupled from its claimed referent.
+The quality of an online course about remote software careers
+does not track the actual employment outcomes of its graduates,
+because no direct accountability mechanism connects instructional revenue
+to employment outcomes.
+The course is paid for before the outcome is known;
+refund policies, if they exist at all, do not require outcome verification;
+and the producer's revenue is uncorrelated with whether the buyer
+actually finds the remote employment they sought.
+
+\subsection{Sincere Belief and Structural Blindness}
+
+It is important to resist the temptation to explain this ecosystem
+primarily through deliberate deception.
+Many of the people producing aspirational content about remote work and coding careers
+are not consciously misleading their audiences.
+They are subject to the same structural blindness that governs
+the broader survivorship bias problem.
+
+A person who achieved a statistically rare outcome---who did find stable remote employment,
+who did build a sustainable freelance career, who did succeed through the pathway
+they are now teaching---naturally interprets their trajectory through
+narratives of agency, strategy, mindset, and skill.
+They emphasize the decisions they made because decisions are visible in their autobiography.
+They cannot easily perceive the selection effects, timing advantages,
+network contingencies, and counterfactual branches that also shaped their outcome
+but are invisible in any individual trajectory.
+The successful content creator genuinely believes that their ``ten steps''
+or ``learning roadmap'' mattered enormously,
+because those steps are part of their experienced causal history,
+even if millions of people performed similar steps without comparable outcomes.
+
+This connects directly to the projection structure analyzed throughout this essay.
+The visible success story is a projected image of an enormously complex
+generative process involving timing, network topology, macroeconomic conditions,
+platform algorithms, prior advantages, persistence thresholds, and survivorship filtering.
+The audience sees the projection and mistakes it for a reproducible causal template,
+because the projection discards the fiber structure---the full range
+of trajectories that produced similar-looking surface outcomes or failed to
+produce them at all---and presents only the compressed representational image.
+
+The pamphlet was selling a projection.
+The YouTube channel is selling a projection.
+The bootcamp marketing is selling a projection.
+The sincere belief of the seller does not change the structural character
+of what is being sold.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Cross-Domain Competence and the Limits of Credentialism}
+\label{sec:crossdomain}
+
+\subsection{What Credential Pipelines Cannot Capture}
+
+The analysis of the remote labor market has so far focused primarily on
+the software development context.
+But the legibility problem it reveals is a specific instance of a more general
+failure mode in credential-governed evaluation systems:
+the systematic undervaluation of competence accumulated outside
+institutionally legible pathways.
+
+A significant fraction of the tacit knowledge that makes people effective
+in complex, ambiguous, real-world environments is not accumulated
+through institutional pathways at all.
+It accumulates through direct encounter with physical systems,
+social systems, and economic systems under conditions of genuine consequence.
+This kind of knowledge has distinctive properties that make it especially
+resistant to credential representation.
+
+House construction and repair work, for instance, develops a form of systems thinking
+that is structurally similar to---and in some respects deeper than---what
+is cultivated in formal computer science education.
+The carpenter or plumber works constantly at the interface between
+abstract planning and material reality: measurement, sequencing,
+tolerance management, hidden failure modes, budget constraints,
+aesthetic judgment, logistics, safety protocols, and human coordination.
+Mistakes propagate through interconnected physical structures
+in ways that have immediate and unambiguous consequences.
+The feedback loop between decision and outcome is compressed in time
+and unmediated by representation: the pipe either holds or it leaks,
+the wall either stands or it does not.
+
+This kind of work cultivates what might be called \emph{material constraint cognition}:
+the capacity to reason about systems under conditions where
+the gap between model and reality has physical consequences.
+It is a different cognitive mode from the abstract manipulation of representations
+that most credential-governed education primarily trains.
+And it is almost entirely invisible in credential profiles.
+
+\subsection{The Breadth of the Real Competence Distribution}
+
+A person who has worked across physical systems, social systems, artistic systems,
+and computational systems has typically accumulated a more structurally diverse
+constraint surface than someone who has spent the same years
+inside purely institutional and abstract digital environments.
+
+Teaching children, especially in low-resource environments,
+develops calibration, communication, improvisation, emotional regulation,
+and sustained attention under conditions of unpredictability.
+Live performance, whether musical, theatrical, or visual art in public contexts,
+develops the capacity to deliver value under real-time uncertainty
+where failure has visible and immediate social consequences.
+Client-facing service work in skilled trades develops negotiation,
+expectation management, quality judgment, and the navigation of conflicts
+between what clients say they want and what would actually serve them.
+
+None of these experiences are captured by a resume section
+listing programming languages and frameworks.
+None of them appear in GitHub repositories.
+None of them are legible in the credential manifold of remote tech hiring.
+
+Yet they contribute to constraint surfaces that are deeply relevant
+to what makes people effective in complex technical environments:
+the capacity to communicate under ambiguity, to manage expectations honestly,
+to navigate the gap between abstract design and material implementation,
+to remain stable when systems fail unexpectedly, and to coordinate
+effectively with people who have different mental models of the same situation.
+
+\begin{remark}[The Invisible Depth of Cross-Domain Trajectories]
+A candidate whose trajectory includes both formal technical training
+and extensive experience in physical, social, or artistic systems
+has likely accumulated a constraint surface that is richer in
+failure-mode recognition, tolerance for ambiguity, and calibration
+than a candidate whose trajectory is entirely contained within
+credential-governed institutional pipelines.
+This depth is structurally invisible in remote hiring because
+the credential manifold has no dimension for it.
+The legibility problem is therefore not only a problem for the candidate;
+it is an epistemological limitation of the evaluation system itself.
+\end{remark}
+
+\subsection{The Monetization Question and Its Costs}
+
+A related tension that many people with genuine but diffusely distributed competence
+eventually encounter is the pressure to monetize every skill they possess.
+The contemporary economic environment encourages the conversion of capability
+into legible economic products: courses, content, consulting packages, client pipelines.
+
+This pressure is not irrational. Legibility requires visibility,
+and visibility in a credential-governed system often requires the deliberate
+packaging of competence into market-facing artifacts.
+But the pressure to monetize has a known secondary cost:
+it changes one's relationship to the underlying activity.
+Richard Sennett traced this dynamic across multiple domains of skilled work,
+showing how the short-term project culture of flexible capitalism
+tends to corrode the deeper commitments and craft identities
+through which tacit competence is accumulated over time~\cite{sennett1998}.
+
+The painter who begins painting primarily for commissions
+may find that the exploratory, intrinsically motivated dimension of their practice
+diminishes under the pressure of client expectations and revenue optimization.
+The programmer who begins teaching programming primarily for income
+may find that their own learning and exploration slow as their time
+is absorbed by curriculum production and student management.
+The writer who begins writing primarily for platform engagement
+may find that their topics, length, tone, and depth drift toward
+whatever the algorithm surfaces rather than whatever they actually think.
+
+This is not an argument against monetization. It is an observation
+that the conversion of intrinsic practice into legible economic product
+involves a reduction operation with real costs:
+the exploratory, uncommitted, failure-tolerant dimension of a practice
+is partly what generates the tacit depth that makes the practice valuable.
+Systems that optimize entirely for legible output tend to degrade
+the generative substrate from which that output grows.
+
+The most sustainable posture is probably not to refuse monetization
+but to maintain some domain of practice that is structurally protected
+from optimization pressure---where the activity can fail, explore,
+and accumulate tacit knowledge without being immediately evaluated
+against market criteria.
+That protected space is where constraint surfaces actually grow.
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Conclusion: Legibility as the Scarce Resource}
+\label{sec:conclusion}
+
+The transformation of software labor markets by remote work
+was narrated as the arrival of a frictionless digital meritocracy.
+The structural reality was different: the removal of geographic friction
+created a global competition in which the scarce resource
+was not technical skill but legibility.
+
+The collapse of application barriers produced simultaneous floods of applicants
+for every open position, degrading the signal-to-noise ratio for employers
+and forcing the adoption of screening mechanisms that systematically favor
+candidates who have learned to optimize for filter passage
+over those who have developed deep but hard-to-display competence.
+The proliferation of ghost listings, outsourcing funnels,
+and speculative hiring pools made the market opaque from the applicant side,
+distributing the cost of market navigation broadly
+while concentrating the benefit in positions accessible only to the highly legible.
+The cultural visibility of remote success distorted expectations
+by amplifying the visible surface of a distribution
+whose statistical bulk was elsewhere.
+And the genuine value of experienced programmers was not made accessible
+by remote work; if anything, it became more competitive,
+as experienced engineers selectively seeking better remote arrangements
+entered the same application pipelines as new entrants.
+
+Around this transformed market, a secondary aspiration economy grew
+to service the population of trained but underemployed candidates
+who could not find the positions they had been told to expect.
+This economy sold projections: compressed representations of
+low-probability outcomes from which the generative complexity had been removed.
+It was structurally indistinguishable from older forms of the same economy---
+the mail-order pamphlet listing difficult possibilities in the rhetorical form
+of accessible secrets---except that it operated at internet scale,
+with algorithmic amplification of its most emotionally activating content,
+and without the distribution costs that had previously limited its reach.
+The sincerity of many of its producers did not change its structural character.
+
+What succeeded in this market was not the replacement of geography with merit
+but the replacement of proximity-based legibility with deliberate legibility construction.
+The candidates who navigated the transformed market effectively
+were those who had accumulated, over time, the visible evidence of reliable self-direction
+that remote employers could evaluate without the benefit of shared physical presence.
+They had public work. They had professional networks.
+They had demonstrable track records of asynchronous coordination.
+They had specialized enough to reduce the substitutability of their skills.
+And they had developed the communication capacity to produce trust
+in environments where trust is not generated passively.
+
+The lesson is not that remote work is impossible for new entrants.
+It is that the path to remote employment is more accurately described
+as the gradual construction of a legible professional identity
+than as the acquisition of a certified technical skill set.
+The meritocracy is real, but the merit it measures includes dimensions
+that programming education has been slow to acknowledge:
+the capacity to make oneself readable to strangers at a distance,
+to demonstrate reliability through accumulated public record,
+and to reduce employer uncertainty as a deliberate and cultivated skill.
+
+The essay has also argued for a broader point about the distribution of genuine competence.
+Credential-governed evaluation systems systematically undervalue
+constraint surfaces accumulated outside institutionally legible pathways.
+The person who has worked across physical, social, and computational systems
+under conditions of genuine consequence has often grown a richer and
+more failure-resilient tacit knowledge base than the person
+who has navigated purely institutional environments.
+This depth is structurally invisible to remote hiring,
+which is an epistemological limitation of the evaluation system itself,
+not merely a presentation problem for the candidate.
+
+Finally, the pressure to convert all competence into legible market products
+deserves honest acknowledgment.
+Legibility requires visibility, and visibility in credential-governed markets
+often requires the packaging of capability into sellable artifacts.
+But the reduction of practice to product has real costs:
+the generative, exploratory substrate from which tacit knowledge grows
+is precisely what gets degraded when every activity must immediately
+justify itself against market criteria.
+The most sustainable path probably involves maintaining some protected space
+where competence can accumulate without being immediately evaluated---where
+failure is permitted, exploration is unpressured, and the constraint surface
+can grow through trajectory rather than optimization.
+
+Geography disappeared as a constraint.
+Legibility took its place.
+And legibility, unlike geography, is not given by location.
+It must be built---slowly, publicly, through accumulated evidence
+that a stranger at a distance can evaluate without having to trust first.
+
+\vspace{2em}
+\begin{center}
+\rule{0.4\textwidth}{0.3pt}
+\end{center}
+
+\newpage
+
+\begin{thebibliography}{99}
+
+\bibitem{beck1992}
+Ulrich Beck,
+\textit{Risk Society: Towards a New Modernity},
+Sage Publications,
+1992.
+
+\bibitem{berardi2009}
+Franco ``Bifo'' Berardi,
+\textit{The Soul at Work: From Alienation to Autonomy},
+Semiotext(e),
+2009.
+
+\bibitem{bolles2022}
+Richard N. Bolles,
+\textit{What Color Is Your Parachute?},
+Ten Speed Press,
+2022.
+
+\bibitem{bourdieu1986}
+Pierre Bourdieu,
+``The Forms of Capital,''
+in \textit{Handbook of Theory and Research for the Sociology of Education},
+edited by John G. Richardson,
+Greenwood Press,
+1986,
+pp.~241--258.
+
+\bibitem{braverman1974}
+Harry Braverman,
+\textit{Labor and Monopoly Capital: The Degradation of Work in the Twentieth Century},
+Monthly Review Press,
+1974.
+
+\bibitem{brown2015}
+Wendy Brown,
+\textit{Undoing the Demos: Neoliberalism's Stealth Revolution},
+Zone Books,
+2015.
+
+\bibitem{crawford2021}
+Kate Crawford,
+\textit{Atlas of AI: Power, Politics, and the Planetary Costs of Artificial Intelligence},
+Yale University Press,
+2021.
+
+\bibitem{davidgraeber2018}
+David Graeber,
+\textit{Bullshit Jobs: A Theory},
+Simon \& Schuster,
+2018.
+
+\bibitem{debord1967}
+Guy Debord,
+\textit{The Society of the Spectacle},
+Buchet-Chastel,
+1967.
+
+\bibitem{foucault1977}
+Michel Foucault,
+\textit{Discipline and Punish: The Birth of the Prison},
+Pantheon Books,
+1977.
+
+\bibitem{frank2024}
+Adam Frank, Marcelo Gleiser, and Evan Thompson,
+\textit{The Blind Spot: Why Science Cannot Ignore Human Experience},
+MIT Press,
+2024.
+
+\bibitem{gillespie2018}
+Tarleton Gillespie,
+\textit{Custodians of the Internet: Platforms, Content Moderation, and the Hidden Decisions That Shape Social Media},
+Yale University Press,
+2018.
+
+\bibitem{goffman1959}
+Erving Goffman,
+\textit{The Presentation of Self in Everyday Life},
+Anchor Books,
+1959.
+
+\bibitem{graham2022}
+Mark Graham and Fabian Ferrari,
+\textit{Digital Work in the Planetary Market},
+MIT Press,
+2022.
+
+\bibitem{han2015}
+Byung-Chul Han,
+\textit{The Burnout Society},
+Stanford University Press,
+2015.
+
+\bibitem{hochschild1983}
+Arlie Russell Hochschild,
+\textit{The Managed Heart: Commercialization of Human Feeling},
+University of California Press,
+1983.
+
+\bibitem{illich1971}
+Ivan Illich,
+\textit{Deschooling Society},
+Harper \& Row,
+1971.
+
+\bibitem{kalleberg2011}
+Arne L. Kalleberg,
+\textit{Good Jobs, Bad Jobs: The Rise of Polarized and Precarious Employment Systems in the United States},
+Russell Sage Foundation,
+2011.
+
+\bibitem{lanier2013}
+Jaron Lanier,
+\textit{Who Owns the Future?},
+Simon \& Schuster,
+2013.
+
+\bibitem{marx1867}
+Karl Marx,
+\textit{Capital: A Critique of Political Economy, Volume~I},
+Hamburg,
+1867.
+
+\bibitem{merton1968}
+Robert K. Merton,
+``The Matthew Effect in Science,''
+\textit{Science},
+vol.~159, no.~3810,
+1968,
+pp.~56--63.
+
+\bibitem{morozov2013}
+Evgeny Morozov,
+\textit{To Save Everything, Click Here: The Folly of Technological Solutionism},
+PublicAffairs,
+2013.
+
+\bibitem{neff2012}
+Gina Neff,
+\textit{Venture Labor: Work and the Burden of Risk in Innovative Industries},
+MIT Press,
+2012.
+
+\bibitem{newport2016}
+Cal Newport,
+\textit{Deep Work: Rules for Focused Success in a Distracted World},
+Grand Central Publishing,
+2016.
+
+\bibitem{noble2018}
+Safiya Umoja Noble,
+\textit{Algorithms of Oppression: How Search Engines Reinforce Racism},
+NYU Press,
+2018.
+
+\bibitem{piketty2014}
+Thomas Piketty,
+\textit{Capital in the Twenty-First Century},
+Harvard University Press,
+2014.
+
+\bibitem{polanyi1966}
+Michael Polanyi,
+\textit{The Tacit Dimension},
+University of Chicago Press,
+1966.
+
+\bibitem{postman1985}
+Neil Postman,
+\textit{Amusing Ourselves to Death},
+Viking Press,
+1985.
+
+\bibitem{ross2003}
+Andrew Ross,
+\textit{No-Collar: The Humane Workplace and Its Hidden Costs},
+Temple University Press,
+2003.
+
+\bibitem{sennett1998}
+Richard Sennett,
+\textit{The Corrosion of Character: The Personal Consequences of Work in the New Capitalism},
+W.~W.~Norton,
+1998.
+
+\bibitem{srnicek2017}
+Nick Srnicek,
+\textit{Platform Capitalism},
+Polity Press,
+2017.
+
+\bibitem{standing2011}
+Guy Standing,
+\textit{The Precariat: The New Dangerous Class},
+Bloomsbury Academic,
+2011.
+
+\bibitem{turkle2011}
+Sherry Turkle,
+\textit{Alone Together: Why We Expect More from Technology and Less from Each Other},
+Basic Books,
+2011.
+
+\bibitem{weber1905}
+Max Weber,
+\textit{The Protestant Ethic and the Spirit of Capitalism},
+1905.
+
+\bibitem{zuboff2019}
+Shoshana Zuboff,
+\textit{The Age of Surveillance Capitalism},
+PublicAffairs,
+2019.
+
+\end{thebibliography}
+
+\end{document}
