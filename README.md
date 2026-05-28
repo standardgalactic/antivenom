@@ -1,5 +1,15 @@
 # Antivenom
 
+[Proxy Permanence Failure](https://standardgalactic.github.io/antivenom/persistence/proxy_permanence_failure.pdf)
+
+Carbon Governance, Biodiversity, and the Collapse of Admissibility Under Nonstationary Constraint Fields
+
+* [Beyond the Carbon Ledger](https://standardgalactic.github.io/antivenom/persistence/Beyond_the_Carbon_Ledger.pdf)
+
+* [Notes](https://standardgalactic.github.io/antivenom/persistence/proxy_permanence_failure-notes.pdf)
+
+* [Audio Overviews](https://standardgalactic.github.io/antivenom/persistence/)
+
 [The Meritocracy That Wasn't](https://standardgalactic.github.io/antivenom/sociology/remote_work.pdf)
 
 * [Why Your Remote Job Applications Disappear](https://standardgalactic.github.io/antivenom/sociology/) — *Audio Overview*

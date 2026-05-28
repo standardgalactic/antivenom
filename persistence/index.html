@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proxy Permanence Failure Audioscope</title>
+
+<style>
+
+:root{
+  --green:#00ff88;
+  --soft:#dcffee;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#000;
+  color:#00ff88;
+  font-family:monospace;
+  touch-action:manipulation;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:500;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,.03) 0px,
+      rgba(255,255,255,.03) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+  opacity:.12;
+}
+
+#bg{
+  position:fixed;
+  inset:0;
+  z-index:1;
+}
+
+.title{
+  position:fixed;
+  top:14px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(96vw,1100px);
+  text-align:center;
+  font-size:clamp(11px,1.9vw,18px);
+  letter-spacing:.20em;
+  text-transform:uppercase;
+  color:#d7fff0;
+  text-shadow:0 0 14px #00ff88;
+  z-index:100;
+}
+
+.tracks{
+  position:fixed;
+  top:56px;
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  width:min(96vw,900px);
+  justify-content:center;
+  z-index:110;
+}
+
+.track{
+  border:1px solid rgba(0,255,120,.25);
+  background:rgba(0,20,0,.4);
+  color:#baffdd;
+  padding:8px 10px;
+  font-size:10px;
+  letter-spacing:.10em;
+  cursor:pointer;
+  transition:.18s;
+  text-transform:uppercase;
+}
+
+.track:hover{
+  background:rgba(0,80,30,.45);
+}
+
+.track.active{
+  background:rgba(0,255,120,.14);
+  border-color:rgba(0,255,120,.8);
+  color:#fff;
+  box-shadow:0 0 14px rgba(0,255,120,.3);
+}
+
+.status{
+  position:fixed;
+  top:106px;
+  left:50%;
+  transform:translateX(-50%);
+  opacity:.5;
+  font-size:11px;
+  letter-spacing:.16em;
+  z-index:120;
+}
+
+.portal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#viz{
+  width:min(700px,96vw);
+  height:min(700px,96vw);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at center,
+      rgba(0,45,18,.96),
+      rgba(0,0,0,1));
+  border:2px solid rgba(0,255,120,.38);
+  box-shadow:
+    inset 0 0 120px rgba(0,255,120,.06),
+    inset 0 0 40px rgba(0,255,120,.08),
+    0 0 40px rgba(0,255,120,.16);
+  z-index:40;
+}
+
+.subs{
+  position:fixed;
+  bottom:58px;
+  left:0;
+  right:0;
+  margin:auto;
+  width:min(920px,94vw);
+  padding:10px 16px;
+  min-height:3em;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:clamp(13px,3.4vw,17px);
+  line-height:1.5;
+  color:#d9fff0;
+  text-shadow:0 0 10px rgba(0,255,120,.8);
+  background:rgba(0,16,0,.34);
+  border:1px solid rgba(0,255,120,.18);
+  border-radius:8px;
+  pointer-events:none;
+  z-index:70;
+  transition:
+    opacity .15s ease,
+    transform .08s ease;
+}
+
+.essay{
+  position:fixed;
+  bottom:14px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#9effd0;
+  text-decoration:none;
+  letter-spacing:.10em;
+  font-size:11px;
+  opacity:.72;
+  z-index:90;
+}
+
+.essay:hover{
+  opacity:1;
+}
+
+.glitch{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:300;
+  opacity:0;
+}
+
+.glitch.active{
+  animation:glitch .18s linear;
+}
+
+@keyframes glitch{
+  0%{
+    opacity:0;
+    transform:translate(0,0);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.08) 0px,
+        transparent 2px,
+        transparent 5px
+      );
+  }
+
+  25%{
+    opacity:.28;
+    transform:translate(-16px,5px);
+  }
+
+  55%{
+    opacity:.20;
+    transform:translate(18px,-4px);
+  }
+
+  100%{
+    opacity:0;
+    transform:translate(0,0);
+  }
+}
+
+@media(max-width:700px){
+
+  .tracks{
+    top:58px;
+    gap:6px;
+  }
+
+  .track{
+    font-size:8px;
+    padding:7px 6px;
+  }
+
+  .status{
+    top:122px;
+    font-size:9px;
+  }
+
+  .subs{
+    bottom:54px;
+  }
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="title">
+  CARBON MARKETS / PROXY PERMANENCE FAILURE
+</div>
+
+<div class="tracks">
+  <button class="track active">
+    Carbon Markets Fiction
+  </button>
+
+  <button class="track">
+    Broken Math Offsets
+  </button>
+</div>
+
+<div class="status">
+  TOUCH / CLICK ANYWHERE TO PLAY OR PAUSE
+</div>
+
+<div class="portal">
+  <canvas id="viz"></canvas>
+</div>
+
+<div class="subs" id="subs"></div>
+
+<a class="essay"
+href="https://standardgalactic.github.io/antivenom/persistence/proxy_permanence_failure.pdf"
+target="_blank"
+onclick="event.stopPropagation()">
+PROXY PERMANENCE FAILURE
+</a>
+
+<div class="glitch" id="glitch"></div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+
+const TRACKS = [
+  "Why_carbon_markets_are_a_mathematical_fiction.mp3",
+  "The_Broken_Math_of_Carbon_Offsets.mp3"
+]
+
+let currentTrack = 0
+
+const audio =
+  document.getElementById("audio")
+
+const subs =
+  document.getElementById("subs")
+
+const glitch =
+  document.getElementById("glitch")
+
+const buttons =
+  [...document.querySelectorAll(".track")]
+
+let audioCtx
+let analyser
+let data
+
+function initAudio(){
+
+  if(audioCtx) return
+
+  audioCtx =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )()
+
+  analyser =
+    audioCtx.createAnalyser()
+
+  analyser.fftSize = 2048
+
+  const src =
+    audioCtx.createMediaElementSource(audio)
+
+  src.connect(analyser)
+  analyser.connect(audioCtx.destination)
+
+  data =
+    new Uint8Array(
+      analyser.frequencyBinCount
+    )
+}
+
+async function loadTrack(i, autoplay=true){
+
+  currentTrack =
+    ((i % TRACKS.length) + TRACKS.length)
+    % TRACKS.length
+
+  const file =
+    TRACKS[currentTrack]
+
+  audio.src = file
+  audio.load()
+
+  buttons.forEach(
+    b=>b.classList.remove("active")
+  )
+
+  buttons[currentTrack]
+    .classList.add("active")
+
+  await loadVTT(
+    file.replace(".mp3",".vtt")
+  )
+
+  if(autoplay){
+
+    try{
+      await audio.play()
+    }catch(e){}
+  }
+}
+
+buttons.forEach((btn,i)=>{
+
+  btn.onclick = async e=>{
+
+    e.stopPropagation()
+
+    initAudio()
+
+    if(audioCtx.state==="suspended")
+      await audioCtx.resume()
+
+    await loadTrack(i,true)
+  }
+})
+
+audio.addEventListener("ended",()=>{
+
+  loadTrack(currentTrack+1,true)
+
+})
+
+let cues = []
+
+async function loadVTT(file){
+
+  cues = []
+  subs.textContent = ""
+
+  try{
+
+    const r =
+      await fetch(file)
+
+    if(!r.ok){
+      console.warn("Missing VTT:",file)
+      return
+    }
+
+    const txt =
+      await r.text()
+
+    cues =
+      parseVTT(txt)
+
+  }catch(e){
+
+    console.warn(e)
+  }
+}
+
+function parseVTT(txt){
+
+  const lines =
+    txt.split("\n")
+
+  const out = []
+
+  let i = 0
+
+  while(i < lines.length){
+
+    const line =
+      lines[i].trim()
+
+    if(line.includes("-->")){
+
+      const [s,e] =
+        line.split("-->")
+            .map(v=>v.trim())
+
+      i++
+
+      const text = []
+
+      while(
+        i < lines.length &&
+        lines[i].trim()
+      ){
+
+        text.push(
+          lines[i].trim()
+        )
+
+        i++
+      }
+
+      out.push({
+
+        start:toSec(s),
+        end:toSec(e),
+        text:text.join("\n")
+
+      })
+
+    }else{
+
+      i++
+    }
+  }
+
+  return out
+}
+
+function toSec(t){
+
+  const p =
+    t.replace(",",".")
+     .split(":")
+
+  if(p.length===3){
+
+    return (
+      (+p[0])*3600 +
+      (+p[1])*60 +
+      (+p[2])
+    )
+  }
+
+  return (
+    (+p[0])*60 +
+    (+p[1])
+  )
+}
+
+audio.ontimeupdate = ()=>{
+
+  const t =
+    audio.currentTime
+
+  const cue =
+    cues.find(c=>
+      t >= c.start &&
+      t < c.end + .25
+    )
+
+  subs.textContent =
+    cue ? cue.text : ""
+}
+
+document.body.onclick =
+  async ()=>{
+
+    initAudio()
+
+    if(audioCtx.state==="suspended")
+      await audioCtx.resume()
+
+    if(!audio.src){
+
+      await loadTrack(0,true)
+      return
+    }
+
+    if(audio.paused){
+
+      audio.play()
+
+    }else{
+
+      audio.pause()
+    }
+  }
+
+const bg =
+  document.getElementById("bg")
+
+const bgc =
+  bg.getContext("2d")
+
+let SW,SH
+
+function resizeBG(){
+
+  SW =
+    bg.width =
+      innerWidth
+
+  SH =
+    bg.height =
+      innerHeight
+}
+
+resizeBG()
+
+addEventListener(
+  "resize",
+  resizeBG
+)
+
+const particles = []
+
+for(
+  let i=0;
+  i<520;
+  i++
+){
+
+  particles.push({
+
+    x:Math.random()*SW,
+    y:Math.random()*SH,
+
+    vx:
+      (Math.random()-.5)*0.9,
+
+    vy:
+      (Math.random()-.5)*0.9,
+
+    z:
+      Math.random()*2
+  })
+}
+
+function drawBG(){
+
+  bgc.clearRect(
+    0,0,SW,SH
+  )
+
+  for(const p of particles){
+
+    p.x += p.vx
+    p.y += p.vy
+
+    if(p.x < 0) p.x = SW
+    if(p.x > SW) p.x = 0
+
+    if(p.y < 0) p.y = SH
+    if(p.y > SH) p.y = 0
+
+    bgc.fillStyle =
+      `rgba(180,255,220,${
+        .015 + p.z*.06
+      })`
+
+    bgc.fillRect(
+      p.x,
+      p.y,
+      p.z*1.5,
+      p.z*1.5
+    )
+  }
+
+  for(let i=0; i<particles.length; i+=12){
+
+    const a = particles[i]
+    const b = particles[(i+31)%particles.length]
+
+    bgc.beginPath()
+
+    bgc.moveTo(a.x,a.y)
+    bgc.lineTo(b.x,b.y)
+
+    bgc.strokeStyle =
+      "rgba(120,255,180,0.012)"
+
+    bgc.stroke()
+  }
+}
+
+setInterval(()=>{
+
+  glitch.classList.add(
+    "active"
+  )
+
+  setTimeout(()=>{
+
+    glitch.classList.remove(
+      "active"
+    )
+
+  },180)
+
+},18000 + Math.random()*9000)
+
+const canvas =
+  document.getElementById("viz")
+
+const ctx =
+  canvas.getContext("2d")
+
+const size = 820
+
+canvas.width  = size
+canvas.height = size
+
+let phase = 0
+
+let bassSmooth = 0
+let midSmooth  = 0
+let highSmooth = 0
+
+let frame = 0
+
+function drawCarbonField(){
+
+  if(analyser && data){
+
+    analyser.getByteFrequencyData(data)
+
+    let bass = 0
+    let mid  = 0
+    let high = 0
+
+    for(let i=0;i<48;i++)
+      bass += data[i]
+
+    for(let i=48;i<220;i++)
+      mid += data[i]
+
+    for(let i=220;i<640;i++)
+      high += data[i]
+
+    bass /= 48 * 255
+    mid  /= 172 * 255
+    high /= 420 * 255
+
+    bassSmooth +=
+      (bass - bassSmooth) * 0.08
+
+    midSmooth +=
+      (mid - midSmooth) * 0.06
+
+    highSmooth +=
+      (high - highSmooth) * 0.05
+  }
+
+  phase +=
+    0.02 + bassSmooth * 0.05
+
+  const cx = size/2
+  const cy = size/2
+
+  ctx.save()
+
+  ctx.beginPath()
+
+  ctx.arc(
+    cx,
+    cy,
+    size*0.47,
+    0,
+    Math.PI*2
+  )
+
+  ctx.clip()
+
+  ctx.fillStyle =
+    `rgba(0,5,0,${
+      0.08 + bassSmooth*0.06
+    })`
+
+  ctx.fillRect(
+    0,
+    0,
+    size,
+    size
+  )
+
+  /* proxy permanence rings */
+
+  for(let i=0;i<24;i++){
+
+    const r =
+      size *
+      (0.04 + i*0.018)
+
+    ctx.beginPath()
+
+    for(let a=0;a<=Math.PI*2+.02;a+=0.035){
+
+      const instability =
+        Math.sin(
+          a *
+          (9 + i*0.35) +
+          phase *
+          (0.7 + i*0.025)
+        ) *
+        (2 + highSmooth*18)
+
+      const wave =
+        Math.sin(
+          a *
+          (3 + i*0.12) +
+          phase *
+          (0.42 + i*0.02)
+        ) *
+        (4 + midSmooth*16)
+
+      const x =
+        cx +
+        Math.cos(a) * (r + wave + instability)
+
+      const y =
+        cy +
+        Math.sin(a) * (r + wave - instability*.35)
+
+      if(a===0)
+        ctx.moveTo(x,y)
+      else
+        ctx.lineTo(x,y)
+    }
+
+    ctx.strokeStyle =
+      `rgba(120,255,180,${
+        0.006 + i*0.008
+      })`
+
+    ctx.stroke()
+  }
+
+  /* offset vectors */
+
+  for(let i=0;i<120;i++){
+
+    const theta =
+      i/120 * Math.PI*2 +
+      phase*0.13
+
+    const inner =
+      size*0.04
+
+    const outer =
+      size*(
+        0.34 +
+        bassSmooth*0.12
+      )
+
+    const drift =
+      Math.sin(
+        theta*7 +
+        phase*2
+      ) *
+      highSmooth *
+      36
+
+    ctx.beginPath()
+
+    ctx.moveTo(
+      cx + Math.cos(theta)*inner,
+      cy + Math.sin(theta)*inner
+    )
+
+    ctx.lineTo(
+      cx + Math.cos(theta)*(outer + drift),
+      cy + Math.sin(theta)*(outer - drift*.2)
+    )
+
+    ctx.strokeStyle =
+      `rgba(120,255,180,${
+        0.005 + highSmooth*0.045
+      })`
+
+    ctx.stroke()
+  }
+
+  /* main trace */
+
+  const scale =
+    size *
+    (0.13 + bassSmooth*0.10)
+
+  const A =
+    3 + midSmooth*2
+
+  const B =
+    2 + highSmooth*2.4
+
+  ctx.save()
+
+  ctx.translate(
+    cx +
+    Math.sin(frame*0.0003)*22,
+
+    cy +
+    Math.cos(frame*0.0002)*16
+  )
+
+  ctx.rotate(
+    Math.sin(frame*0.0001)*0.25
+  )
+
+  for(let pass=0; pass<5; pass++){
+
+    ctx.beginPath()
+
+    const alpha =
+      pass===0 ? 0.02 :
+      pass===1 ? 0.06 :
+      pass===2 ? 0.14 :
+      pass===3 ? 0.32 :
+      0.95
+
+    const spread =
+      1 + pass*0.055
+
+    for(let i=0;i<=2600;i++){
+
+      const p =
+        i / 2600
+
+      const theta =
+        phase +
+        p * Math.PI * 2.8
+
+      const distortion =
+        Math.sin(
+          theta *
+          (30 + highSmooth*34) +
+          frame * 0.004
+        ) *
+        highSmooth * 34
+
+      const x =
+        Math.sin(
+          A * theta +
+          bassSmooth*2
+        ) *
+        scale *
+        spread +
+        distortion
+
+      const y =
+        Math.sin(
+          B * theta +
+          midSmooth*1.5
+        ) *
+        scale *
+        0.84 *
+        spread
+
+      if(i===0)
+        ctx.moveTo(x,y)
+      else
+        ctx.lineTo(x,y)
+    }
+
+    ctx.strokeStyle =
+      `rgba(120,255,180,${alpha})`
+
+    ctx.lineWidth =
+      pass===4
+        ? 2 + bassSmooth*4.5
+        : .8
+
+    ctx.shadowBlur =
+      pass===4
+        ? 22 + bassSmooth*38
+        : 0
+
+    ctx.shadowColor =
+      "#00ff88"
+
+    ctx.stroke()
+  }
+
+  ctx.restore()
+
+  ctx.restore()
+}
+
+function loop(){
+
+  frame++
+
+  drawBG()
+
+  drawCarbonField()
+
+  if(bassSmooth > .70){
+
+    document.body.style.transform =
+
+      `translate(${
+        (Math.random()-.5)*5
+      }px,${
+        (Math.random()-.5)*5
+      }px)`
+
+  }else{
+
+    document.body.style.transform =
+      "translate(0,0)"
+  }
+
+  subs.style.transform =
+    `scaleY(${1 + bassSmooth*0.05})`
+
+  subs.style.opacity =
+    `${0.7 + bassSmooth*0.3}`
+
+  requestAnimationFrame(loop)
+}
+
+loop()
+
+</script>
+
+</body>
+</html>
+
