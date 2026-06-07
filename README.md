@@ -1,5 +1,7 @@
 # Antivenom
 
+[Xylomorphic Computation](https://github.com/standardgalactic/antivenom/blob/main/futurology/README.md)
+
 [Proxy Permanence Failure](https://standardgalactic.github.io/antivenom/persistence/proxy_permanence_failure.pdf)
 
 Carbon Governance, Biodiversity, and the Collapse of Admissibility Under Nonstationary Constraint Fields
