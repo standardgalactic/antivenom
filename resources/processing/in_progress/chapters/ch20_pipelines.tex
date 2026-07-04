@@ -1,0 +1,138 @@
+\chapter{Media Pipelines: Budget Relays Made Concrete}
+\label{ch:pipelines}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter applies the full framework to a
+real transformation chain: audio recording, signal processing,
+transcription, timestamp generation, summarization, and archiving, each
+analyzed as a stage in a budget relay preserving some distinctions while
+discarding others according to local priorities. The chapter provides a
+concrete, constructive witness for the Composition Failure Theorem by
+exhibiting a distinction lost early in the chain that becomes critical for
+a later task no stage anticipated, and closes with practical
+recommendations for provenance design, root-object preservation, and
+re-derivable archival systems.
+\end{quotation}
+
+\section{The Full Worked Chain, Named and Numbered}
+
+The chain audio $\to$ transcript $\to$ summary $\to$ archive is mapped
+directly onto \cref{def:substrate-chain}'s notation, but rather than
+leave the distinctions involved abstract, as
+Appendix~\ref{app:proof}'s canonical witness does, this section fixes
+concrete, named ones, so that the constructive witness promised by this
+chapter's synopsis is worked with real content rather than only with
+placeholders standing in for it.
+
+\begin{construction}[Named Pipeline Instance]
+\label{con:pipeline-instance}
+Let $A_0$ carry four named distinctions from a recorded utterance:
+lexical content $d_{\mathrm{lex}}$ (cost $3$), timestamp precision
+$d_{\mathrm{time}}$ (cost $1$), sentence-level structure
+$d_{\mathrm{struct}}$ (cost $2$), and emotional tone $d_{\mathrm{tone}}$
+(cost $4$). The transcription stage has task $\tau_0$ requiring exactly
+$\{d_{\mathrm{lex}}, d_{\mathrm{time}}\}$, with budget $\beta_0 = 4$. The
+summarization stage has task $\tau_1$ requiring exactly
+$\{d_{\mathrm{lex}}\}$, with budget $\beta_1 = 3$.
+\end{construction}
+
+\begin{proposition}[The Named Instance Exhibits Composition Failure]
+\label{prop:named-instance-failure}
+In \cref{con:pipeline-instance}, $d_{\mathrm{tone}}$ is dropped at stage
+$0$ under any construction satisfying \cref{def:budget-discard}, and the
+resulting archive is insufficient for any task recovering
+$d_{\mathrm{tone}}$.
+\end{proposition}
+
+\begin{proof}
+The required set at stage $0$, $\{d_{\mathrm{lex}}, d_{\mathrm{time}}\}$,
+has cost $R_0 = 3 + 1 = 4 = \beta_0$ exactly. The non-required
+distinctions have costs $C(d_{\mathrm{struct}}) = 2 > \beta_0 - R_0 = 0$
+and $C(d_{\mathrm{tone}}) = 4 > 0$; by \cref{lem:exhaustion}, both are
+dropped under any construction, so $D_0 = \{d_{\mathrm{struct}},
+d_{\mathrm{tone}}\}$. At stage $1$, $A_1$ retains only
+$\{d_{\mathrm{lex}}, d_{\mathrm{time}}\}$; the required set
+$\{d_{\mathrm{lex}}\}$ has cost $R_1 = 3 = \beta_1$ exactly, and the sole
+non-required distinction present, $d_{\mathrm{time}}$, has cost $1 >
+\beta_1 - R_1 = 0$, so $D_1 = \{d_{\mathrm{time}}\}$ by the same lemma.
+$A_2$ retains only $\{d_{\mathrm{lex}}\}$. Let $\tau^* = \tau_{d_{\mathrm{tone}}}$,
+the recovery task (\cref{def:recovery-task}) for whether the speaker's
+tone on a given claim was, for instance, sincere or sarcastic. Since
+$d_{\mathrm{tone}} \in D_0 \subseteq D(A_0 \Rightarrow A_2)$, by
+\cref{lem:recovery-sufficiency} $A_2$ is insufficient for $\tau^*$.
+Neither $\tau_0$ nor $\tau_1$ is $\tau^*$: both are preservation tasks
+over different, disjoint required sets not including
+$d_{\mathrm{tone}}$'s recovery.
+\end{proof}
+
+This is Appendix~\ref{app:proof}'s abstract construction re-run with
+distinctions a reader can recognize without translation: a transcription
+system tuned for lexical accuracy and rough timing, and a summarizer
+tuned for gist, jointly and irreversibly discard whether a speaker meant
+something sincerely or sarcastically -- not through negligence at either
+stage, but because neither stage's task ever prioritized it, exactly as
+\cref{thm:composition-failure} predicts.
+
+\section{Fan-Out, Concretized}
+
+\cref{con:pipeline-instance} extends directly to the fan-out case of
+Chapter~\ref{ch:fanout} by adding a second branch from $A_0$: an
+acoustic-tone-analysis branch $Y$ with task $\tau_Y$ requiring exactly
+$\{d_{\mathrm{tone}}\}$, budget $\beta_Y = 4$ (funding $d_{\mathrm{tone}}$
+exactly), dropping everything else. This is
+\cref{con:two-branch} instantiated with named distinctions: branch $X$
+(transcription, as above) and branch $Y$ (tone analysis) are both
+locally admissible, both derived from the identical $A_0$, and disagree
+silently in precisely \cref{def:silent-disagreement}'s sense -- a
+consumer relying on the transcript alone has no signal that tone was
+ever at issue, while branch $Y$, unconsulted, would have flagged it
+directly.
+
+\begin{proposition}[Pipeline Witness]
+\label{prop:pipeline-witness}
+There exists an explicit audio $\to$ transcript $\to$ summary chain and a
+task $\tau^*$, constructible without appeal to hypothetical or idealized
+stages, such that $\tau^*$ requires a distinction discarded upstream and
+no downstream stage's loss ledger records enough about that distinction
+for a consumer pursuing $\tau^*$ to detect the gap.
+\end{proposition}
+
+\begin{proofsketch}
+\cref{con:pipeline-instance} together with
+\cref{prop:named-instance-failure} constitutes exactly this witness, with
+$\tau^* = \tau_{d_{\mathrm{tone}}}$ constructed explicitly rather than
+posited. This result was labeled a Theorem in an earlier draft; the
+label has been corrected to Proposition, consistent with the monograph's
+epistemic-labeling discipline, since it is a single explicit
+instantiation of the general result already proved in
+Appendix~\ref{app:proof} rather than an independent derivation.
+\end{proofsketch}
+
+\section{Practical Recommendations}
+
+Preserving the raw audio as a root object (\cref{def:root-object}) and
+treating every downstream rendering as disposable and re-derivable
+directly operationalizes \cref{prop:root-recovery}: a discovered
+insufficiency at the summary or transcript stage can then be repaired by
+re-deriving a new rendering from the root under a revised discard
+policy, rather than requiring recovery of information that no longer
+exists anywhere in the chain. In terms of \cref{con:pipeline-instance},
+this means that discovering $\tau_{d_{\mathrm{tone}}}$'s relevance after
+the fact is recoverable, at the cost of reprocessing, if and only if the
+raw audio was retained; it is permanently unrecoverable if only the
+transcript or summary survived.
+
+A budget-aware loss ledger (\cref{def:loss-ledger}) attached to each
+stage should record not merely that $d_{\mathrm{struct}}$ and
+$d_{\mathrm{tone}}$ were dropped at transcription, but the budget
+$\beta_0 = 4$ and required set $\{d_{\mathrm{lex}}, d_{\mathrm{time}}\}$
+that produced the drop, so a later archivist can distinguish a
+distinction dropped because it was judged irrelevant from one dropped
+purely because the transcription budget was small -- exactly the
+distinction \cref{def:loss-ledger} was built to preserve. Where a
+fan-out structure exists, as in Section~\ref{sec:coord-provenance}'s
+sense of provenance-sharing extended across branches rather than only
+along a single chain, cross-referencing each branch's ledger against the
+others makes \cref{def:silent-disagreement}'s failure mode detectable
+after the fact, even though, as \cref{prop:provenance-insufficient}
+showed, detectability alone does not prevent the original loss.
