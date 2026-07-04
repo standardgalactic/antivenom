@@ -1,0 +1,194 @@
+\chapter{Preservation Mode, Reconstitution Mode, and the Fidelity Continuum}
+\label{ch:fidelity-continuum}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter revisits the traditional
+distinction between direct access and reconstruction and replaces it with a
+single fidelity continuum. Every consumer interacts with some rendering,
+and every rendering preserves only part of the original distinction
+structure, so preservation becomes a limiting case of reconstitution rather
+than a separate ontology. Fidelity is introduced as a measure of how
+closely a rendering preserves an original object's admissible continuation
+space, and the chapter argues that reconstitution does not escape the
+Composition Failure Theorem: a reconstructed trace is simply a new relay
+stage, subject to the same constraints as any other.
+\end{quotation}
+
+\section{The Naive Binary}
+
+An initial formulation of access modes distinguishes preservation mode --
+the consumer has direct causal access to the artifact itself -- from
+reconstitution mode -- the consumer has access only to traces from which
+structure must be regenerated. This chapter shows that the binary does
+not survive scrutiny and replaces it with a single continuous variable.
+
+\begin{remark}
+\label{rem:binary-fails}
+Nearly every case initially classified as preservation is in fact
+mediated by some rendering: a photocopy, a scan, a decoded audio file. A
+photograph of a painting is not the painting; a scan of a manuscript is
+not the manuscript; a decoded audio stream is not the acoustic event it
+encodes. Such cases are already points on the loss spectrum of
+\cref{def:rendering}, not a qualitatively separate category.
+\end{remark}
+
+\section{Fidelity, Defined}
+
+\begin{definition}[Fidelity]
+\label{def:fidelity}
+For a rendering $r$ of an object $e$ and a task $\tau$,
+\[
+\fidelity{r}{\tau} = \frac{\lvert \admis{\tau}{r} \cap \admis{\tau}{e}
+\rvert}{\lvert \admis{\tau}{e} \rvert},
+\]
+a measure of how closely the admissible continuation set available from
+$r$ approximates the admissible continuation set available from the
+original object $e$ itself, for the task $\tau$ in question. Per
+\cref{rem:finite-distinctions}, this is stated only for the finite or
+countable case.
+\end{definition}
+
+\begin{remark}[The Intersection Simplifies]
+\label{rem:fidelity-simplifies}
+By \cref{prop:admissibility-upper-bound}, $\admis{\tau}{r} \subseteq
+\admis{\tau}{e}$ always, so the intersection in \cref{def:fidelity} is
+simply $\admis{\tau}{r}$ itself:
+$\fidelity{r}{\tau} = \lvert\admis{\tau}{r}\rvert / \lvert\admis{\tau}{e}\rvert$.
+The intersection form is retained in the definition because it makes
+explicit, without relying on a separately proved proposition, exactly
+what is being compared; the simplification is used freely from here on.
+\end{remark}
+
+\begin{remark}[A Standing Assumption: Ground-Truth Sufficiency]
+\label{rem:ground-truth-sufficiency}
+Throughout this chapter it is assumed that $\admis{\tau}{e} \subseteq
+\mathcal{C}_\tau(e)$: the true object $e$ is itself always sufficient for
+any task evaluated against it. This is close to definitional given how
+$\mathcal{C}_\tau(e)$ was fixed relative to $e$ in
+\cref{def:correctness-set}, but it is worth stating openly, since
+\cref{cor:fidelity-implies-sufficiency} below depends on it.
+\end{remark}
+
+\begin{proposition}[Preservation as a Limit Case]
+\label{prop:preservation-limit}
+``Preservation mode'' is the limit of reconstitution mode as
+$\fidelity{r}{\tau} \to 1$ for the tasks $\tau$ in question; it is not a
+distinct ontological category but a point on the continuum defined by
+\cref{def:fidelity}.
+\end{proposition}
+
+\begin{proofsketch}
+As $\fidelity{r}{\tau} \to 1$, $\admis{\tau}{r}$ converges to
+$\admis{\tau}{e}$: the continuations available from the rendering become
+indistinguishable, for the purposes of $\tau$, from those available from
+the original. Reconstitution from a sufficiently high-fidelity trace is
+then operationally indistinguishable from direct access, which is what
+``preservation'' was intended to capture.
+\end{proofsketch}
+
+\begin{corollary}[Fidelity One Implies Sufficiency]
+\label{cor:fidelity-implies-sufficiency}
+If $\fidelity{r}{\tau} = 1$, then $r$ is sufficient for $\tau$
+(\cref{def:sufficiency}).
+\end{corollary}
+
+\begin{proofsketch}
+$\fidelity{r}{\tau}=1$ gives $\admis{\tau}{r} = \admis{\tau}{e}$ by
+\cref{rem:fidelity-simplifies}, and $\admis{\tau}{e} \subseteq
+\mathcal{C}_\tau(e)$ by \cref{rem:ground-truth-sufficiency}, so
+$\admis{\tau}{r} \subseteq \mathcal{C}_\tau(e)$, which is exactly
+\cref{def:sufficiency}.
+\end{proofsketch}
+
+This corollary sharpens \cref{prop:preservation-limit}'s informal
+``operationally indistinguishable'' into a precise claim: the fidelity
+continuum's upper limit is not merely subjectively hard to tell apart
+from direct access, it is provably sufficient in the sense
+Chapter~\ref{ch:admissibility} already uses throughout the rest of the
+monograph.
+
+\begin{proposition}[Benign Loss Preserves Perfect Fidelity]
+\label{prop:benign-preserves-fidelity}
+If every distinction in $\discard{r}$ is benign relative to $\tau$
+(\cref{def:benign-loss}), then $\fidelity{r}{\tau} = 1$.
+\end{proposition}
+
+\begin{proofsketch}
+By the same argument as \cref{prop:benign-preserves-sufficiency}: no
+distinction discarded by $r$ is required to determine any continuation's
+membership in $\admis{\tau}{e}$, so no continuation reachable from $e$
+becomes unreachable from $r$ for the purposes of $\tau$, giving
+$\admis{\tau}{r} = \admis{\tau}{e}$ and hence
+$\fidelity{r}{\tau} = 1$ by \cref{rem:fidelity-simplifies}.
+\end{proofsketch}
+
+\cref{prop:benign-preserves-fidelity} is the fidelity-continuum
+counterpart of \cref{prop:benign-preserves-sufficiency}, and the two
+propositions together are why this chapter's continuous measure and
+Chapter~\ref{ch:admissibility}'s binary sufficiency criterion cohere
+rather than compete: perfect fidelity for a task and sufficiency for that
+task are the same claim, viewed through cardinality in one case and
+through set containment in the other.
+
+\section{The Hard Test Case: A Chess Board in Front of You}
+
+A chess board physically present to a player is the strongest available
+candidate for genuine, unmediated preservation. Yet perceiving the board
+is itself a rendering process -- a visual system producing a percept from
+ambient light -- and is therefore, by \cref{rem:binary-fails}, already a
+point on the fidelity continuum rather than a case falling outside it.
+Whether \emph{any} case achieves fidelity exactly equal to $1$, or
+whether the entire category of strictly unmediated access is an
+idealization available only to formal or machine systems (a verifier
+checking a proof directly against explicit axioms, per
+Chapter~\ref{ch:proofs}) and never to embodied perception, is left open
+here.
+
+\begin{openquestion}
+\label{oq:unmediated-access}
+Does any instance of ``direct access'' to an artifact involve strictly
+zero mediation, or is unmediated access an idealization that applies
+cleanly only to formal/machine verification and never to embodied
+perception? Resolving this requires engaging directly with the question
+raised in full in Chapter~\ref{ch:mem8}.
+\end{openquestion}
+
+\section{Recursive Insufficiency}
+
+\begin{proposition}[Recursive Insufficiency]
+\label{prop:recursive-insufficiency}
+If $A_i$ is a trace consumed in reconstitution mode, the act of
+reconstitution -- schema plus trace producing a usable object -- is
+itself a transition $B_i$ in a budget relay in the sense of
+\cref{def:substrate-chain}, and is therefore subject to
+\cref{thm:composition-failure}.
+\end{proposition}
+
+\begin{proofsketch}
+Reconstitution takes a trace $A_i$ and a schema and produces a usable
+object $A_{i+1}$ for continuation. This is not merely analogous to a
+relay transition; it can be given the same triple structure directly.
+The schema's capacity to correctly fill a given gap plays the role of
+$C_i$ (some gaps are cheaply and reliably filled by strong priors, others
+are not); competition among candidate fillings for the same gap, or
+among several gaps drawing on the same limited attention or working
+memory, plays the role of $I_i$; and whatever bounded capacity the
+reconstitution process has available -- time, attention, cognitive
+resources -- plays the role of $\beta_i$. Under this identification,
+$A_i \to A_{i+1}$ satisfies \cref{def:substrate-chain} exactly, not by
+loose analogy, and \cref{lem:exhaustion}'s mechanism applies to
+reconstitution precisely as it applies to any other transition: a
+required feature of the reconstructed object that costs more than the
+reconstitution process's available capacity is not recovered, regardless
+of how the schema is implemented.
+\end{proofsketch}
+
+This corrects a claim made informally in the research program that
+generated this monograph, in which reconstitution appeared briefly to
+``escape'' the insufficiency problem by changing register from
+information recovery to regeneration. \cref{prop:recursive-insufficiency}
+shows this is not the case, and shows it by identification rather than
+metaphor: reconstitution relocates the insufficiency problem to the trace
+and the schema, and \cref{thm:composition-failure} applies to that
+relocation exactly as it applies to any other stage of a relay, because
+it \emph{is} another stage of a relay.
