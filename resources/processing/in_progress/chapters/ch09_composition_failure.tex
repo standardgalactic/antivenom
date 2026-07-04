@@ -1,0 +1,189 @@
+\chapter{The Composition Failure Theorem}
+\label{ch:composition-failure}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter presents the monograph's central
+new result. The Composition Failure Theorem demonstrates that a sequence of
+locally rational transformations can collectively produce a globally
+insufficient outcome, with no stage behaving negligently, incompetently, or
+irrationally: failure emerges because each stage optimizes for its own
+local task while future tasks remain unknown. This formalizes a pattern
+familiar from archival systems, institutions, scientific communication, and
+information-processing pipelines, in which a distinction that seemed
+irrelevant at one stage becomes essential later.
+\end{quotation}
+
+\newresult
+
+\section{Making Local Admissibility Precise}
+
+Before the theorem can be stated, the phrase it turns on --- a transition
+being ``locally admissible with respect to its own stage's task''
+--- needs a definition sharper than \cref{def:budget-discard}'s general
+schema alone provides. \cref{def:budget-discard} says a distinction is
+dropped when funding it exceeds budget or when it interferes too
+strongly with a higher-priority distinction; it does not say how
+priority itself is supposed to track a stage's task. The following
+definition closes that gap, and everything downstream --- the theorem,
+its corollaries, and the proof of Appendix~\ref{app:proof} --- depends on
+exactly this closure.
+
+\begin{definition}[Locally Admissible Transition]
+\label{def:locally-admissible}
+A transition $B_i$ is locally admissible with respect to $\tau_i$ if its
+discard set $D_i$ is produced by a construction satisfying
+\cref{def:budget-discard} in which every distinction required by $\tau_i$
+(\cref{def:benign-loss}) is ranked strictly above every distinction not
+required by $\tau_i$.
+\end{definition}
+
+This definition is deliberately weak in one respect and strong in
+another. It is weak in that it does not choose between
+\cref{con:greedy-discard} and \cref{con:optimal-discard}, or any other
+construction satisfying \cref{def:budget-discard}: any of them counts as
+locally admissible provided the priority ordering they operate on is
+correctly aligned with $\tau_i$. It is strong in that this alignment is
+not optional --- a transition that funds a distinction $\tau_i$ does not
+need ahead of one it does need fails to be locally admissible, regardless
+of how sophisticated the underlying discard construction is. A transition
+satisfying \cref{def:locally-admissible} cannot be accused of
+irrationality relative to $\tau_i$: it funds everything $\tau_i$ needs, in
+full, before spending anything on distinctions $\tau_i$ does not need.
+This is exactly the standard the theorem needs every stage to meet, since
+the entire point of the result is that failure can occur even when no
+stage falls short of it.
+
+\section{Statement}
+
+\begin{theorem}[Composition Failure]
+\label{thm:composition-failure}
+Let $A_0 \xrightarrow{B_0} \cdots \xrightarrow{B_{n-1}} A_n$ be a budget
+relay (\cref{def:budget-relay}) in which each transition $B_i$ is locally
+admissible (\cref{def:locally-admissible}) with respect to its own
+stage's task $\tau_i$. Then there exist open task spaces $T$
+(\cref{prop:task-unavailability}) containing some $\tau^* \notin \{\tau_0,
+\ldots, \tau_{n-1}\}$ such that $A_n$ is insufficient
+(\cref{def:sufficiency}) for $\tau^*$, even though no individual
+transition was locally irrational relative to its own $\tau_i$.
+\end{theorem}
+
+Each clause of this statement is load-bearing, and it is worth checking
+what happens if any one is dropped. Without \cref{def:budget-relay}'s
+independence condition, the chain reduces to a single observer's economy
+and \cref{thm:redistribution} governs it instead, as
+Appendix~\ref{app:comparison} shows concretely. Without local
+admissibility, the theorem would be uninteresting: of course an
+incompetently-run relay can end up insufficient. Without $T$ being open,
+$\tau^*$ could in principle have been anticipated and funded for, and the
+failure would trace back to ordinary negligence rather than to the
+structure of uncoordinated composition itself. The theorem's content is
+precisely that none of these outs are available: the relay is
+uncoordinated by definition, every stage did what it was supposed to do,
+and the task that breaks it was not available to be planned for.
+
+\section{Proof Strategy}
+
+The full proof is given in Appendix~\ref{app:proof}; this section
+previews its shape so the construction does not appear unmotivated when
+read there.
+
+\begin{proofsketch}
+The proof constructs an explicit witness relay using the five-distinction
+instance introduced in \cref{sec:worked-relay} and reused in
+\cref{sec:redistribution-worked}, together with a family of
+\emph{recovery tasks} $\tau_d$ --- one for each named distinction $d$,
+asking only whether $d$ holds in the source
+(\cref{def:recovery-task}) --- which serves as the open task space $T$.
+A stage whose required distinctions exactly, or near-exactly, exhaust its
+local budget is shown (\cref{lem:exhaustion}) to drop every non-required
+distinction \emph{regardless of which construction satisfying
+\cref{def:budget-discard} is used}, which is what allows the witness to
+be locally admissible in the strong sense of \cref{def:locally-admissible}
+without leaving room for a more clever discard policy to have rescued the
+dropped distinction. Some distinction $d^*$ -- concretely, $d_5$ in the
+worked witness -- is required by neither stage's task and is dropped at
+the earliest stage as a direct consequence. By
+\cref{prop:monotonicity}, $d^*$ remains unavailable at every later stage
+absent root recovery (\cref{prop:root-recovery}), which the witness does
+not invoke. Taking $\tau^* = \tau_{d^*}$ then gives insufficiency
+directly, by \cref{lem:recovery-sufficiency}: a rendering is sufficient
+for a recovery task exactly when it has not discarded the distinction in
+question, and $A_n$ has.
+\end{proofsketch}
+
+This preview differs in one respect from an earlier, less precise sketch
+of the same argument, which described $d^*$ as dropped because it
+``interferes with a distinction $\tau_i$ does require.'' The actual
+mechanism proved in Appendix~\ref{app:proof} is sharper and does not rely
+on interference at all: $d^*$ is dropped because, after funding every
+required distinction in full, no budget capable of funding $d^*$ remains
+--- a conclusion that holds regardless of interference structure and
+regardless of which construction satisfying \cref{def:budget-discard}
+produced the allocation. The interference-based mechanism remains
+available in principle for other witnesses, but it is not what the
+canonical witness of this monograph uses, and the sketch above is
+corrected accordingly.
+
+\section{Corollaries}
+
+\begin{corollary}[Local Improvement Does Not Guarantee Global Sufficiency]
+\label{cor:local-improvement}
+Improving any single stage's local budget cannot, by itself, eliminate
+all instances of the failure mode exhibited in
+\cref{thm:composition-failure}.
+\end{corollary}
+
+\begin{proofsketch}
+Verified directly against the witness in Appendix~\ref{app:proof}:
+increasing $\beta_1$ cannot restore a distinction already absent from
+$A_1$ by the time stage $1$ acts, since \cref{prop:monotonicity} forbids
+recovery absent root access. Only an improvement at the specific stage
+where the loss occurred could have prevented it, and even that requires
+knowing, at that stage, that the eventually-relevant task would need the
+distinction in question -- precisely the knowledge
+\cref{prop:task-unavailability} shows is generally unavailable.
+\end{proofsketch}
+
+\begin{corollary}[No Free Lunch for Relays]
+\label{cor:no-free-lunch}
+A budget relay with $n$ uncoordinated stages has cumulative discard
+(\cref{def:cumulative-discard}) that is non-decreasing in $n$
+(\cref{prop:monotonicity}), realized with equality across arbitrarily
+many additional pass-through stages
+(\cref{prop:extension}); the coordination mechanisms of
+Chapter~\ref{ch:coordination} can narrow, but not eliminate, the
+resulting insufficiency (\cref{prop:no-coordination-universal}).
+\end{corollary}
+
+\begin{proofsketch}
+The non-decrease is \cref{prop:monotonicity} directly, and
+Appendix~\ref{app:proof} shows this bound is achieved with equality
+rather than merely respected, since pass-through stages contribute no
+further discard. This corollary should not be read as a claim that
+cumulative discard \emph{risk} grows in some stronger, quantitative
+sense across relays in general; that stronger claim is not established
+here and is recorded as open in Appendix~\ref{app:open-questions}. What
+is established is the existence half only: discard does not shrink, and
+can accumulate to the full extent this chapter's witness demonstrates.
+\end{proofsketch}
+
+\section{Relation to the Redistribution Theorem}
+
+\cref{thm:composition-failure} is not a special case of
+\cref{thm:redistribution}, and is not derivable from it without the
+budget-relay machinery of Chapter~\ref{ch:budget-relay}. The
+Redistribution Theorem concerns simultaneous competition for one
+observer's budget; the Composition Failure Theorem concerns a single
+distinction's fate across a sequence of independent, non-communicating
+budgets. Appendix~\ref{app:comparison} develops this contrast concretely
+rather than only structurally: pooling the witness's two stage budgets
+into a single shared total is shown there
+(\cref{prop:pooling-restores}) not merely to make
+\cref{thm:redistribution} applicable again, but to actually succeed at
+funding the distinction the separated relay was forced to drop, using
+the identical total nominal resource. The insufficiency this chapter's
+theorem exhibits is therefore a consequence specifically of
+\cref{def:budget-relay}'s prohibition on transferring unspent capacity
+across stages, not of any absolute scarcity of resource -- confirming
+that the two theorems occupy genuinely disjoint settings rather than one
+subsuming the other.
