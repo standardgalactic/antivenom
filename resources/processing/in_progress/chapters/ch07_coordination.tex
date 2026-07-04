@@ -1,0 +1,247 @@
+\chapter{Coordination, Its Absence, and Partial Remedies}
+\label{ch:coordination}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter investigates what happens when
+stages within a relay attempt to compensate for the absence of global
+coordination. Augmentation, provenance, priors, adjudication, and revision
+are reinterpreted not as an unrelated list of techniques but as distinct
+strategies for partially coordinating otherwise independent repair
+economies, each addressing a different failure mode: augmentation where
+hidden state is enumerable, provenance where loss can at least be recorded,
+priors where a consumer can plausibly fill a benign gap, adjudication where
+authority can terminate ambiguity without recovering information, and
+revision where the relay itself must be replaced. None fully solves the
+coordination problem; each narrows a specific failure mode.
+\end{quotation}
+
+\section{Why Full Coordination Is Usually Unavailable}
+
+A field-recording engineer, the vendor of a transcription model, and a
+human editor who later summarizes the transcript typically share no
+protocol, no common budget, and often no direct communication at all.
+\cref{def:budget-relay}'s uncoordinated case is not a pathological edge
+case to be assumed away; for most substrate chains of practical interest,
+it is the default condition. This chapter asks what a stage \emph{can} do
+to compensate for that default, given that Chapter~\ref{ch:synchronic-to-diachronic}
+already showed (\cref{prop:no-global-conserved-quantity}) that no
+extension of Chapter~\ref{ch:repair-economics}'s single-observer
+apparatus is available to fall back on.
+
+\begin{definition}[Coordination Mechanism]
+\label{def:coordination-mechanism}
+A coordination mechanism is any deliberate modification to
+\cref{def:budget-relay}'s default independence condition, permitting some
+stage or external party access to information --- a loss ledger, a
+hidden-state enumeration, an authoritative ruling, or the raw root object
+itself --- that a fully uncoordinated relay would not provide.
+\end{definition}
+
+Five such mechanisms recur across the domains treated in
+Part~\ref{part:worked-domains}, and it is worth resisting the temptation
+to treat them as an unrelated list of ad hoc devices collected because
+they happen to be useful. Each addresses a specific, identifiable gap in
+\cref{def:budget-relay}'s independence condition, and organizing them by
+which gap they close is more informative than organizing them
+alphabetically or by domain.
+
+\section{Augmentation}
+\label{sec:coord-augmentation}
+
+Augmentation adds an enumerated hidden-state set $H$ directly to a
+rendering, pre-committing budget to distinctions a stage's own task does
+not itself require, on the strength of knowing in advance that some later
+consumer will. By \cref{prop:sufficiency-closed-only}, this strategy is
+viable only in closed hidden-state domains (\cref{def:closed-open}):
+Chapter~\ref{ch:chess} develops the case in full, where $H$ --- castling
+rights, en passant status, repetition count --- is finite and known at
+the time a position is recorded, so that funding it requires no
+prediction about which future task will need it, only the (comparatively
+modest) foresight that \emph{some} task among a known, finite list might.
+
+\begin{remark}[Augmentation Does Not Solve the Open Case]
+\label{rem:augmentation-limit}
+Augmentation is unavailable, not merely difficult, in open hidden-state
+domains (\cref{def:closed-open}): there is no finite $H$ to pre-commit
+budget to, since \cref{prop:sufficiency-closed-only} shows no finite
+augmentation closes an open domain's hidden-state space. Painting
+(Chapter~\ref{ch:painting}) is not a case where augmentation would help
+if only more budget were available; it is a case where augmentation, as a
+strategy, does not apply regardless of budget.
+\end{remark}
+
+\section{Provenance and Loss-Ledger Sharing}
+\label{sec:coord-provenance}
+
+\begin{definition}[Provenance-Coordinated Relay]
+\label{def:provenance-coordinated}
+A substrate chain is provenance-coordinated if \cref{def:budget-relay}'s
+independence condition is relaxed to permit stage $i$'s transition $B_i$
+to be selected with reference to the loss ledgers $L_0, \ldots, L_{i-1}$
+of every earlier stage, while still forbidding reference to any later
+stage's budget or ledger.
+\end{definition}
+
+This is the weakest relaxation of \cref{def:budget-relay} that still
+qualifies as coordination at all: it requires no advance agreement
+between stages, only that each ledger be produced and made accessible to
+whatever comes after it, and it preserves the chain's directionality ---
+a stage still cannot see the future, only more of the past than
+\cref{def:budget-relay} otherwise allows.
+
+\begin{proposition}[Provenance Sharing Does Not Restore Sufficiency Alone]
+\label{prop:provenance-insufficient}
+A provenance-coordinated relay (\cref{def:provenance-coordinated}) can
+still exhibit the failure mode of \cref{thm:composition-failure}.
+\end{proposition}
+
+\begin{proofsketch}
+Reading $L_0, \ldots, L_{i-1}$ tells stage $i$, and eventually a
+downstream consumer, \emph{what} was discarded and under what budget ---
+but not what a future, unknown $\tau^*$ will require, since
+\cref{prop:task-unavailability} applies to the ledger's reader exactly as
+it applies to the stage that produced the ledger. Knowing that $d^*$ was
+dropped at stage $0$ does not, by itself, supply $d^*$; recovering it
+requires either \cref{prop:root-recovery}'s root access, which
+\cref{def:provenance-coordinated} does not grant, or advance knowledge of
+$\tau^*$, which \cref{prop:task-unavailability} rules out in general.
+Provenance sharing converts an undetectable insufficiency into a
+diagnosable one; it does not convert it into an avoided one.
+\end{proofsketch}
+
+\cref{prop:provenance-insufficient} is why Chapter~\ref{ch:budget-relay}
+described the budget-aware loss ledger (\cref{def:loss-ledger}) as a
+coordination device rather than a solution: it is necessary for a
+downstream party to \emph{diagnose} what happened, which matters a great
+deal for the reasons Chapter~\ref{ch:pipelines} develops, but it is not
+sufficient to \emph{prevent} what happened, which requires the stronger
+and costlier machinery of root preservation.
+
+\section{Priors}
+\label{sec:coord-priors}
+
+A consumer-side substitute for coordination: when a relay supplies no
+interference information, the consumer supplies plausible reconstructions
+of the missing distinction from general knowledge. Painting
+(\cref{ch:painting}) is the paradigm case, and it is available precisely
+because, and only because, the discarded distinction's absence is benign
+(\cref{def:benign-loss}) relative to the consumer's task: the correctness
+set $\mathcal{C}_\tau(e)$ of \cref{def:correctness-set} is large enough
+that a plausible guess, rather than the exact discarded distinction, is
+sufficient to land inside it. Priors are unavailable, or worse than
+unavailable, exactly where \cref{def:corrupting-loss}'s conditions hold:
+a confidently wrong prior substituted for an undisclosed loss is
+corruption compounded by false confidence, not a benign completion.
+
+\section{Adjudication}
+\label{sec:coord-adjudication}
+
+\begin{proposition}[Adjudication Terminates Ambiguity]
+\label{prop:adjudication}
+Let $\mathcal{J}$ be an authority external to a substrate chain.
+Adjudication by $\mathcal{J}$ produces a unique continuation even when the
+distinguishability information available in the chain is incomplete.
+\end{proposition}
+
+\begin{proofsketch}
+Under adjudication, the continuation is selected by an authoritative
+decision procedure rather than inferred from available evidence. The
+underlying information deficit --- the discarded distinctions --- is
+unaffected by the ruling; what changes is that ambiguity is terminated
+procedurally rather than resolved informationally.
+\end{proofsketch}
+
+It is worth stating precisely, in the vocabulary of
+Chapter~\ref{ch:admissibility}, what adjudication actually does to
+\cref{def:correctness-set}'s correctness set. Adjudication does not
+discover which continuation truly belongs to $\mathcal{C}_\tau(e)$; it
+substitutes $\mathcal{J}$'s ruling as the operative correctness set going
+forward, regardless of whether that ruling coincides with whatever the
+undiscoverable true $\mathcal{C}_\tau(e)$ would have contained.
+Chapter~\ref{ch:contracts} treats this substitution as the defining
+feature of legal continuation under irreducible uncertainty: courts do
+not typically claim to have recovered the parties' true intent so much as
+to have settled, bindingly, what will be treated as though it were.
+Adjudication is, in this taxonomy, the only mechanism that terminates
+ambiguity without requiring any additional distinguishability information
+to be recovered or supplied. It trades informational completeness for a
+binding decision.
+
+\section{Revision}
+\label{sec:coord-revision}
+
+\begin{definition}[Relay Revision]
+\label{def:relay-revision}
+Wholesale replacement of an entire substrate chain $A_0 \to \cdots \to
+A_n$ by a new chain built from new production, rather than re-derived
+from the original chain's root object.
+\end{definition}
+
+Revision is easy to confuse with root recovery (\cref{prop:root-recovery}),
+and it is worth being precise about the difference. Root recovery
+re-derives a new downstream rendering $A_i'$ from the \emph{same}
+preserved $A_0$, under a revised discard policy; it presupposes $A_0$
+survived and is available. Revision, as defined here, does not presuppose
+this: it discards the entire existing chain, root included, and begins
+again from new evidence, a new theory, or a new production process
+entirely. Chapter~\ref{ch:science} develops this case in full: a
+superseded scientific theory is not re-derived from some preserved
+``root'' observation set in the way \cref{prop:root-recovery} re-derives
+a rendering; the theory itself, and often the observational framework
+that produced the evidence for it, is replaced.
+
+\section{Coordination Versus Pooling: A Boundary Case}
+\label{sec:coord-vs-pooling}
+
+The five mechanisms above all operate \emph{within} the assumption that
+stages remain separate --- each retains its own local budget, and
+coordination consists of granting limited, structured access across that
+separation (a ledger here, an authority there), not erasing it.
+Appendix~\ref{app:comparison}'s demonstration that pooling the witness's
+stage budgets into one shared total can restore sufficiency
+(\cref{prop:pooling-restores}) is a more radical move than any mechanism
+in this chapter's taxonomy: pooling does not coordinate separate local
+economies, it eliminates the separation itself, collapsing the relay back
+into the single-observer setting Chapter~\ref{ch:repair-economics}
+already covers. None of augmentation, provenance-sharing, priors,
+adjudication, or revision does this; each leaves
+\cref{def:substrate-chain}'s stage structure intact and works within it.
+This is worth flagging explicitly because pooling is, in a precise sense,
+strictly more powerful than anything on this chapter's list --- it is
+what makes \cref{thm:redistribution} available again --- and its absence
+from the taxonomy is not an oversight but a reflection of how rarely it
+is actually achievable: pooling requires exactly the kind of unified,
+advance-negotiated authority over an entire chain's resources that
+Section~\ref{sec:coord-augmentation}'s discussion of augmentation already
+identified as the exception rather than the rule.
+
+\section{The Limits of the Taxonomy}
+
+\begin{proposition}[No Coordination Mechanism Restores Universal Sufficiency]
+\label{prop:no-coordination-universal}
+No coordination mechanism drawn from
+Sections~\ref{sec:coord-augmentation}--\ref{sec:coord-revision} can
+guarantee sufficiency of a substrate chain over an open task space $T$.
+\end{proposition}
+
+\begin{proofsketch}
+This follows directly from \cref{prop:task-unavailability}: each
+coordination mechanism above operates by preserving, recovering, or
+authoritatively resolving \emph{some additional} set of distinctions, but
+$T$'s openness means a task $\tau^*$ can always be constructed requiring a
+distinction outside whatever finite additional set any given mechanism
+supplies. Coordination narrows the gap identified in
+\cref{principle:global-insufficiency-restated}; it does not close it. This
+result was labeled a Theorem in an earlier draft; the label has been
+corrected to Proposition here, consistent with the monograph's
+epistemic-labeling discipline, since the argument is a direct application
+of \cref{prop:task-unavailability} rather than an independent derivation.
+\end{proofsketch}
+
+Chapter~\ref{ch:composition-failure} is, in effect, the sharper and more
+constructive version of \cref{prop:no-coordination-universal}: it does
+not merely state that no mechanism guarantees universal sufficiency, but
+exhibits the mechanism by which locally rational, uncoordinated stages
+compose into global insufficiency in the first place, and
+Appendix~\ref{app:proof} exhibits it with a construction robust to the
+choice of local discard rule.
