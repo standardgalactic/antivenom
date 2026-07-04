@@ -1,0 +1,43 @@
+\chapter{Toward a Simulation Framework}
+\label{app:simulation}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This appendix outlines, without implementing,
+how budget relays could be represented computationally and investigated
+experimentally through simulation.
+\end{quotation}
+
+
+This appendix sketches, without implementing, how a budget relay
+(\cref{def:budget-relay}) could be simulated computationally. It is
+explicitly scoped as a direction for future computational work, not
+as part of the monograph's formal content.
+
+Each stage of a relay would be represented as a process holding a
+declared triple $(C_i, I_i, \beta_i)$, applying
+\cref{def:budget-discard} to a set of input distinctions and producing
+an output rendering together with a loss ledger $L_i$ per
+\cref{def:loss-ledger}. A downstream query interface would then test
+\cref{thm:composition-failure}'s failure mode directly, by
+constructing task instances $\tau^*$ outside the set of tasks any
+stage was configured to anticipate, and checking whether the final
+rendering's admissible continuation set $\admis{\tau^*}{A_n}$ contains
+the correct continuation.
+
+Such a framework would allow empirical (rather than purely
+constructive) exploration of \cref{cor:no-free-lunch}'s conjectured
+growth bound across relays of varying length, branching factor
+(\cref{ch:fanout}), and coordination mechanism
+(\cref{ch:coordination}), which is currently stated only as a
+conjecture in this monograph.
+
+The monograph's own worked constructions supply natural first test
+cases rather than requiring new ones to be invented: \cref{con:witness}
+and its extension (\cref{prop:extension}) give an exact, small
+instance against which a simulator's discard behavior could be checked
+directly, \cref{con:pipeline-instance} gives a named, domain-flavored
+instance of the same size, and \cref{con:two-branch} gives the minimal
+fan-out case. A useful early milestone for any implementation would be
+reproducing these four constructions' discard sets exactly, before
+attempting the larger, randomized relays needed to explore
+\cref{cor:no-free-lunch}'s growth-rate question empirically.
