@@ -1,0 +1,1596 @@
+1
+00:00:00,000 --> 00:00:05,080
+imagine um you're walking through this three-dimensional landscape okay it's strictly
+
+2
+00:00:05,080 --> 00:00:11,320
+geometric very structured you know built on this completely uncompromising grid like a classic
+
+3
+00:00:11,320 --> 00:00:17,500
+platformer kind of vibe exactly yeah but you're walking along this flat plane and up ahead you
+
+4
+00:00:17,500 --> 00:00:23,840
+see a glowing string of characters just suspended in physical space literally etched into the floor
+
+5
+00:00:23,840 --> 00:00:29,980
+you're standing on you walk up to it and you what you pull out a sword see that's the thing you don't
+
+6
+00:00:29,980 --> 00:00:36,200
+you don't pull out a weapon you don't get a little uh contextual press x to interact prompt right
+
+7
+00:00:36,200 --> 00:00:44,640
+instead you arm this highly specific combinatorial grammar sequence like you basically cast a um a
+
+8
+00:00:44,640 --> 00:00:50,460
+delete word spell oh wow okay and instantly the physical platform that holds that specific data
+
+9
+00:00:50,460 --> 00:00:56,580
+block just vanishes it just disappears poof and the gap in the physical world smoothly snaps closed
+
+10
+00:00:56,580 --> 00:01:01,900
+right in front of your eyes like the geometry is recalculating itself in real time yes exactly
+
+11
+00:01:01,900 --> 00:01:07,580
+you're not just playing some you know abstract puzzle game yeah where you are actually doing
+
+12
+00:01:07,580 --> 00:01:14,940
+is physically inhabiting one of the most notoriously steep unforgiving computer interfaces ever created
+
+13
+00:01:14,940 --> 00:01:21,200
+you're playing vim you are learning vim yeah that is i mean anyone who codes knows vim's legendary
+
+14
+00:01:21,200 --> 00:01:27,880
+learning curve oh yeah we've all felt that absolute panic of like being trapped in normal mode frantically
+
+15
+00:01:27,880 --> 00:01:32,960
+hitting the escape key well the terminal just dings at you just aggressively ringing that bell at you
+
+16
+00:01:32,960 --> 00:01:39,240
+yeah but the fascinating design problem here isn't just um creating a tutorial right it's a massive
+
+17
+00:01:39,240 --> 00:01:44,160
+architectural challenge because today in this deep dive we are looking at the technical specification
+
+18
+00:01:44,160 --> 00:01:50,340
+for this unreleased 3d spatial video game called buffer world buffer world which is just such a cool concept
+
+19
+00:01:50,340 --> 00:01:56,080
+it really is and the core mission of this spec is to take a grammar that was designed explicitly for
+
+20
+00:01:56,080 --> 00:02:01,560
+a flat two-dimensional matrix of characters right literally just text on a screen exactly and force
+
+21
+00:02:01,560 --> 00:02:07,280
+it to obey the physics of a 3d game engine without ever like breaking or dumbing down its core logic and
+
+22
+00:02:07,280 --> 00:02:12,060
+the spec actually has a name for this right the uh the fidelity principle the fidelity principle yes
+
+23
+00:02:12,060 --> 00:02:19,360
+and the mandate there is just absolute like no compromises none if a keystroke sequence produces a certain
+
+24
+00:02:19,360 --> 00:02:26,260
+state mutation in a regular terminal it has to produce the exact same physical topological result
+
+25
+00:02:26,260 --> 00:02:34,240
+in buffer world that's wild right so the visual intuition of a game designer um it never gets to
+
+26
+00:02:34,240 --> 00:02:41,280
+override the actual behavior of the underlying text parser which is so backwards for game dev like it
+
+27
+00:02:41,280 --> 00:02:48,100
+forces us to ask this really weird ui question how on earth do you translate purely abstract mental states
+
+28
+00:02:48,100 --> 00:02:52,720
+like modes and registers yeah how do you turn those into physical constraints in a 3d world
+
+29
+00:02:52,720 --> 00:02:58,320
+well normally game designers rely on heuristics right to make mechanics feel satisfying right the
+
+30
+00:02:58,320 --> 00:03:03,780
+game feel yeah game feel like if a jump arc feels a bit too heavy they artificially tweak the gravity
+
+31
+00:03:03,780 --> 00:03:08,420
+float at the apex oh sure coyote time all those little tricks exactly if a collision box is frustrating
+
+32
+00:03:08,420 --> 00:03:14,100
+they just round the corner so you slide past it big and forgiving right but here the collision boxes
+
+33
+00:03:14,100 --> 00:03:19,620
+the gravity they're dictated by a parser that was written in the 1990s oh my gosh the developers of
+
+34
+00:03:19,620 --> 00:03:25,460
+buffer world have to bend the 3d environment to match the software not the other way around so every
+
+35
+00:03:25,460 --> 00:03:31,220
+polygon generated is it's basically just a visual manifestation of a c struct running in the background
+
+36
+00:03:31,220 --> 00:03:39,220
+precisely which introduces um the very first massive translation problem the dimension the dimensions yeah
+
+37
+00:03:39,220 --> 00:03:46,660
+because vim operates on a 2d plane you have your x-axis which is the column index right moving left
+
+38
+00:03:46,660 --> 00:03:51,220
+and right across a string and you have your y-axis which is the row index moving up and down between
+
+39
+00:03:51,220 --> 00:03:57,540
+lines which gives you a nice flat floor to walk on exactly but a 3d game engine intrinsically requires
+
+40
+00:03:57,540 --> 00:04:07,060
+a z-axis depth depth so if you're mapping a purely 2d text buffer into say unity or unreal what on earth does
+
+41
+00:04:07,060 --> 00:04:11,860
+that depth axis actually represent because you can't just extrude text for no reason right it has
+
+42
+00:04:11,860 --> 00:04:16,820
+to carry semantic rate it has to mean something so what do they decide because i know the spec debated
+
+43
+00:04:16,820 --> 00:04:23,220
+this quite a bit they debated it heavily and they actually landed on three distinct options for this
+
+44
+00:04:23,220 --> 00:04:29,060
+spatio-semantic mapping okay leave them out for me so the first one option a maps the z-axis to the
+
+45
+00:04:29,060 --> 00:04:35,300
+buffer stack the buffer stack meaning like your open files yes so the x and y plane remains your active
+
+46
+00:04:35,300 --> 00:04:40,340
+document floor but the z-axis represents window splits and parallel file oh that makes so much
+
+47
+00:04:40,340 --> 00:04:47,460
+sense so if you issue a command like a c-trial well wv to vertically split your viewport right a very
+
+48
+00:04:47,460 --> 00:04:55,220
+common vim command the game engine would physically fracture the floor geometry yeah and spawn a parallel
+
+49
+00:04:55,220 --> 00:05:01,860
+platform along the z-axis exactly you literally sidestep through depth to switch contexts like jumping
+
+50
+00:05:01,860 --> 00:05:07,620
+from your html file over to your css file that physically anchors the concept of multitasking
+
+51
+00:05:07,620 --> 00:05:13,220
+into the geography i love that it's very intuitive but then we look at option b which is um a bit
+
+52
+00:05:13,220 --> 00:05:20,660
+wilder okay what's option b option b suggests mapping depth to document structure structure yeah so the z-axis
+
+53
+00:05:20,660 --> 00:05:26,340
+encodes the abstract syntax tree oh wow okay wait break that down for you and me so imagine you're reading a
+
+54
+00:05:26,340 --> 00:05:32,820
+python script the global scope the top level code is the top floor okay the moment you enter a function
+
+55
+00:05:32,820 --> 00:05:39,460
+definition you physically descend a level down a vertical shaft in the game world whoa so it's
+
+56
+00:05:39,460 --> 00:05:47,060
+like a dungeon basically and entering a nested loop inside that function drops you down again okay i see
+
+57
+00:05:47,060 --> 00:05:54,180
+the appeal of that for like visualizing scope but from an engine architecture standpoint wouldn't that
+
+58
+00:05:54,180 --> 00:06:00,660
+introduce massive overhead oh huge overhead because if the z-axis represents the syntax tree
+
+59
+00:06:01,300 --> 00:06:05,860
+the game engine can't just read the raw characters anymore right and it has to parse the grammar of
+
+60
+00:06:05,860 --> 00:06:11,060
+the programming language in real time on every single frame yeah it'd have to run a live language server
+
+61
+00:06:11,060 --> 00:06:16,900
+protocol or a tree sitter parser just to generate the physical floor you're standing on which is incredibly
+
+62
+00:06:16,900 --> 00:06:22,900
+computationally expensive and what if you delete a bracket like if you break the syntax does the floor beneath you just
+
+63
+00:06:22,900 --> 00:06:27,780
+suddenly collapse into the void because the ast can't resolve that is the exact computational
+
+64
+00:06:27,780 --> 00:06:34,500
+nightmare the spec authors realized they'd face yeah i bet tying physical collision meshes to a syntax tree
+
+65
+00:06:34,500 --> 00:06:40,820
+means your frame rate is permanently bound to your parser's error recovery speed yikes that sounds
+
+66
+00:06:40,820 --> 00:06:48,660
+unplayable which naturally leads us to option c okay hit me option c maps depth to time time wait like a
+
+67
+00:06:48,660 --> 00:06:54,580
+physical manifestation of the undo tree yes because you have to remember vim doesn't use a linear undo
+
+68
+00:06:54,580 --> 00:07:00,500
+stack like standard software right right like in ms word if i undo three times and type a new word
+
+69
+00:07:00,500 --> 00:07:07,220
+those original three futures are just gone forever exactly they're overwritten but vim uses a directed
+
+70
+00:07:07,220 --> 00:07:15,860
+acyclic graph a branching tree of changes right and option c envisions this as a literal physical tower oh that
+
+71
+00:07:15,860 --> 00:07:21,460
+is so cool undoing a change means walking down a spiral staircase to a previous state floor and
+
+72
+00:07:21,460 --> 00:07:26,820
+making a new change after an undo it branches a brand new bridge out into the void it's less like
+
+73
+00:07:26,820 --> 00:07:32,500
+time travel and more like i don't know git version control rendered in physical concrete that's a perfect
+
+74
+00:07:32,500 --> 00:07:37,460
+way to describe it every time you mutate the buffer you pour a new layer of the floor undoing is stepping
+
+75
+00:07:37,460 --> 00:07:43,380
+down a floor okay so out of a b and c which one does the pedagogical layout of the spec actually
+
+76
+00:07:43,380 --> 00:07:48,580
+recommend they firmly recommend starting with option a for the core engine the buffer stack one yeah
+
+77
+00:07:49,300 --> 00:07:54,580
+and it comes down to cognitive load that makes sense a new user doesn't understand branching
+
+78
+00:07:54,580 --> 00:08:01,300
+undue graphs or ast generation yet taking the abstract concept of a hidden file buffer and making
+
+79
+00:08:01,300 --> 00:08:07,700
+it a literal adjacent platform is a massive win for spatial learning so they relegate the syntax shafts
+
+80
+00:08:07,700 --> 00:08:14,100
+and the time travel towers to like advanced late game environments exactly areas where the engine is
+
+81
+00:08:14,100 --> 00:08:19,220
+allowed to consume more processing overhead because the player is ready for it okay so building on that
+
+82
+00:08:19,220 --> 00:08:26,500
+the spec mandates this strict one-way data flow to maintain engine stability right yes the 3d graphics
+
+83
+00:08:26,500 --> 00:08:33,700
+engine only visualizes the parser state so the player sends an input the headless vim parser processes it
+
+84
+00:08:33,700 --> 00:08:39,060
+mutates its internal 2d array and then the renderer forces that array and draws to the physical world
+
+85
+00:08:39,060 --> 00:08:45,300
+exactly the renderer never ever influences the logic the 3d world is basically just an incredibly
+
+86
+00:08:45,300 --> 00:08:52,100
+elaborate gpu accelerated monitor display for the invisible terminal running underneath that strip
+
+87
+00:08:52,100 --> 00:08:59,380
+decoupling is brilliant because it solves a huge problem for new players mode confusion oh mode confusion
+
+88
+00:08:59,380 --> 00:09:06,820
+the bane of every beginner's existence right because vim is a state machine the same exact key press
+
+89
+00:09:06,820 --> 00:09:11,940
+executes entirely different commands depending on your active mode it's so frustrating at first you
+
+90
+00:09:11,940 --> 00:09:16,260
+think you're typing a variable name but you're actually like deleting lines and jumping around
+
+91
+00:09:16,260 --> 00:09:21,060
+the document because you didn't realize you were in normal mode it's like driving a car where the
+
+92
+00:09:21,060 --> 00:09:26,340
+steering wheel suddenly becomes the volume dial and you crash because the interface lied to you about its
+
+93
+00:09:26,340 --> 00:09:32,740
+state that is a terrifying analogy but incredibly accurate so by tying the rendering pipeline directly
+
+94
+00:09:32,740 --> 00:09:40,180
+to the parser state buffer world turns those abstract mental states into inescapable physical realities okay
+
+95
+00:09:40,180 --> 00:09:44,980
+give me an example what does normal mode look like normal mode operates basically like a standard
+
+96
+00:09:44,980 --> 00:09:50,500
+third-person controller okay pretty standard the world is fully lit the collision meshes are solid
+
+97
+00:09:50,500 --> 00:09:56,660
+and your h jk and l keys apply physical vector forces to your character so you can navigate the text
+
+98
+00:09:56,660 --> 00:10:02,500
+grid so you're just running around yeah but what happens when you press i to drop into insert mode
+
+99
+00:10:02,500 --> 00:10:09,300
+the rendering pipeline aggressively shifts okay the ambient lighting instantly drops the color palette
+
+100
+00:10:09,300 --> 00:10:16,900
+desaturates by like 30 percent oh wow so it feels moody yeah and the animation state literally anchors your
+
+101
+00:10:16,900 --> 00:10:22,500
+character in place your avatar's hands physically plunge into the wall or the floor geometry their
+
+102
+00:10:22,500 --> 00:10:28,260
+hands go into the geometry yes visually confirming that you are now writing into the structural fabric
+
+103
+00:10:28,260 --> 00:10:33,140
+of the level that is so visceral it forces you to understand that you're no longer navigating
+
+104
+00:10:33,140 --> 00:10:39,300
+you are mutating the world exactly and the engineering behind the input blocking in the state is completely
+
+105
+00:10:39,300 --> 00:10:45,460
+fascinating oh i was reading this part the spec explicitly states that while you're in insert mode
+
+106
+00:10:45,460 --> 00:10:51,620
+pressing the h jk or l keys must do absolutely nothing to the character's position nothing at all the
+
+107
+00:10:51,620 --> 00:10:57,700
+camera doesn't move you just type those literal letters into the geometry right which i mean a
+
+108
+00:10:57,700 --> 00:11:02,340
+traditional game designer would scream at this they'd argue that disabling character movement when a
+
+109
+00:11:02,340 --> 00:11:08,100
+player hits the directional keys is a cardinal sin of ux oh a traditional designer would immediately try
+
+110
+00:11:08,100 --> 00:11:13,140
+to fix it they'd make those keys act like arrow keys during insert mode so the player doesn't get frustrated
+
+111
+00:11:13,140 --> 00:11:18,340
+right but that violates the fidelity principle yes buffer world uses the physical constraint of the
+
+112
+00:11:18,340 --> 00:11:24,820
+character's immobility to enforce the behavioral constraints of the software it deliberately relies
+
+113
+00:11:24,820 --> 00:11:30,980
+on negative feedback we want you to feel trapped like if you type a word and then try to navigate using
+
+114
+00:11:30,980 --> 00:11:36,900
+the home row keys without hitting escape first you just end up injecting a bunch of garbage characters
+
+115
+00:11:36,900 --> 00:11:43,220
+into the wall exactly the game flat out refuses to accommodate the bad habit you have to physically
+
+116
+00:11:43,220 --> 00:11:49,860
+hit escape to pull your avatar's hands out of the architecture resaturate the lighting and get your
+
+117
+00:11:49,860 --> 00:11:55,380
+movement vectors back it builds physical muscle memory for that modal boundary i love that and this
+
+118
+00:11:55,380 --> 00:12:00,820
+visual translation gets even more sophisticated when you look at visual mode okay because selecting text in
+
+119
+00:12:00,820 --> 00:12:06,500
+a 2d terminal is just what highlighting character cells right right but in 3d you're dealing with
+
+120
+00:12:06,500 --> 00:12:14,500
+volumes okay the spec outlines how visual mode ray casts a translucent selection volume live from an anchor
+
+121
+00:12:14,500 --> 00:12:19,380
+coordinate to your current character coordinate so as you walk away from where you started highlighting
+
+122
+00:12:19,380 --> 00:12:26,900
+this glowing box stretches out behind you and when you trigger visual block mode like ctrl vv it gets
+
+123
+00:12:26,900 --> 00:12:32,500
+mathematically really complex why because in a terminal visual block selects a rectangle of text
+
+124
+00:12:32,500 --> 00:12:38,180
+regardless of line endings it ignores the sequential nature of characters and operates purely on grid
+
+125
+00:12:38,180 --> 00:12:45,940
+coordinates oh rendering that means the 3d engine has to enforce a strictly monospaced physical grid layout
+
+126
+00:12:45,940 --> 00:12:52,580
+oh i didn't even think about that yeah because if the font metrics map to the 3d geometry were proportional like
+
+127
+00:12:52,580 --> 00:12:58,180
+if an eye was physically thinner than a redaway your block selection would generate these warped
+
+128
+00:12:58,180 --> 00:13:04,100
+non-euclidean collision boxes that would clip right through adjacent words that would look terrible yeah
+
+129
+00:13:04,100 --> 00:13:12,740
+so by forcing a monospace grid the game renders visual block mode as a perfect glowing 3d rectangular prism
+
+130
+00:13:13,380 --> 00:13:19,540
+you are quite literally drawing a bounding box in physical space exactly it takes the most conceptually
+
+131
+00:13:19,540 --> 00:13:26,260
+difficult selection paradigm for beginners and turns it into intuitive spatial geometry what about command
+
+132
+00:13:26,260 --> 00:13:32,900
+mode like when you press colon to save or quit command mode is great the moment you press colon the world
+
+133
+00:13:32,900 --> 00:13:39,140
+simulation pauses entirely time freezes oh that's dramatic and a console interface drops down from the top
+
+134
+00:13:39,140 --> 00:13:45,620
+of the screen it separates systemic commands like saving a file or running a search from localized physical
+
+135
+00:13:45,620 --> 00:13:50,660
+manipulation okay so we've got this incredibly responsive visually distinct environment right
+
+136
+00:13:51,220 --> 00:13:56,420
+but an environment is just a museum until you can actually alter it right the core gameplay loop of
+
+137
+00:13:56,420 --> 00:14:02,340
+buffer world isn't about mashing a basic attack button no not at all the game engine has to ingest and
+
+138
+00:14:02,340 --> 00:14:09,060
+parse vims verb noun grammar in real time so let's break that grammar down okay so if the operators are the
+
+139
+00:14:09,060 --> 00:14:16,580
+verbs the actions you take then the text objects and motions have to be the nouns right but in a 3d space
+
+140
+00:14:16,580 --> 00:14:23,140
+you don't just like trigger a canned animation the game has to calculate actual state changes let's look at
+
+141
+00:14:23,140 --> 00:14:30,100
+how it visualizes the verbs first sure when you press date for delete y for yank or c for change you aren't
+
+142
+00:14:30,100 --> 00:14:35,540
+doing anything yet you're just queuing an operation right the state machine shifts into an operator pending
+
+143
+00:14:35,540 --> 00:14:41,540
+mode so how does the game show that it visualizes it by generating a persistent particle system
+
+144
+00:14:41,540 --> 00:14:47,860
+attached to the player rig like a magic aura exactly a red aura for delete a blue aura for yank
+
+145
+00:14:47,860 --> 00:14:52,100
+you're walking around the map with an armed state mutation just waiting for a target vector and the
+
+146
+00:14:52,100 --> 00:14:58,660
+nouns provide that vector so if i arm my red delete aura and i press w for word the parser combines the
+
+147
+00:14:58,660 --> 00:15:04,100
+operator with the motion it calculates the vector from my current physical coordinate to the start of the
+
+148
+00:15:04,100 --> 00:15:10,180
+next word object selects that bounding box and triggers the deletion event and the geometry just
+
+149
+00:15:10,180 --> 00:15:18,100
+vanishes poof but where this gets mechanically intense i think is the implementation of multipliers
+
+150
+00:15:18,100 --> 00:15:22,980
+the counts oh yeah because it's a grammar it's mathematically composable you can prepend integers
+
+151
+00:15:22,980 --> 00:15:30,660
+to anything right so typing 3dw cues the engine to multiply the motion vector by three before applying the
+
+152
+00:15:30,660 --> 00:15:36,740
+operator the parser looks ahead calculates the bounding box spanning the next three word platforms and
+
+153
+00:15:36,740 --> 00:15:42,340
+destroys them simultaneously what i love about this is this specific edge case the spec calls out
+
+154
+00:15:42,340 --> 00:15:47,140
+count multiplication yes because you can inject a count before the verb and account before the noun
+
+155
+00:15:47,140 --> 00:15:53,060
+you can literally tie 3dw and the internal parser actually intercepts both of those integers multiplies
+
+156
+00:15:53,060 --> 00:15:57,940
+them three times two and outputs a resolved intent of six so the engine then executes the exact
+
+157
+00:15:57,940 --> 00:16:06,980
+equivalent of d6w exactly but i have to ask why bother engineering the parser to handle that no human
+
+158
+00:16:06,980 --> 00:16:13,620
+realistically types 3d2w during their normal workflow right they just type 6tw it's about proving the
+
+159
+00:16:13,620 --> 00:16:19,220
+systemic integrity of the engine to the player if a player is experimenting with the grammar and
+
+160
+00:16:19,220 --> 00:16:25,860
+discovers that the math actually computes correctly even in that weird edge case it built profound trust in
+
+161
+00:16:25,860 --> 00:16:31,700
+the underlying physics of the game oh i see it proves that vim is a composable equation not just a
+
+162
+00:16:31,700 --> 00:16:38,500
+brittle list of hard-coded hotkeys precisely but ensuring that systemic integrity means hard coding
+
+163
+00:16:38,500 --> 00:16:44,260
+some incredible technical debt from the 90s just to maintain muscle memory fidelity definitely like
+
+164
+00:16:44,260 --> 00:16:50,900
+sectioning off motions into exclusive and inclusive vectors makes sense if i use a motion like e to jump to
+
+165
+00:16:50,900 --> 00:16:56,820
+the end of a word it's inclusive the operation affects the destination character if i use w to
+
+166
+00:16:56,820 --> 00:17:01,860
+jump to the start of the next word it's exclusive it stops right before the destination that math works
+
+167
+00:17:01,860 --> 00:17:06,980
+perfectly right up until you hit the craver site exception right changing a word versus changing to
+
+168
+00:17:06,980 --> 00:17:13,860
+the end of a word right logically based on the strict grammar rules if w deletes a word and the trailing
+
+169
+00:17:13,860 --> 00:17:19,220
+white space leaving you at the start of the next word then kree should delete the word delete the space and
+
+170
+00:17:19,220 --> 00:17:24,180
+drop you into insert mode right up against the first letter of the subsequent word but that
+
+171
+00:17:24,180 --> 00:17:29,540
+feels claustrophobic and ergonomically wrong to a human typist you almost always want to keep the
+
+172
+00:17:29,540 --> 00:17:35,140
+trailing space when you're changing a word yeah that makes sense so vim's original developers simply
+
+173
+00:17:35,140 --> 00:17:42,100
+broke their own mathematical rules they secretly hard-coded crew to act exactly like shoe it just ignores
+
+174
+00:17:42,100 --> 00:17:48,340
+the white space and the game agent has to explicitly intercept the true input block the standard grammar
+
+175
+00:17:48,340 --> 00:17:53,700
+resolution path and manually route it to the sea logic block exactly if buffer world didn't
+
+176
+00:17:53,700 --> 00:17:59,300
+replicate this deliberate algorithmic flaw an experienced developer playing the game would
+
+177
+00:17:59,300 --> 00:18:05,700
+immediately feel that the combat was subtly broken the pedantry is a whole point it really is and that
+
+178
+00:18:05,700 --> 00:18:11,060
+pedantry scales up significantly when the player stops targeting simple directional vectors and starts
+
+179
+00:18:11,060 --> 00:18:16,260
+targeting structural boundaries text object text objects they completely change the computational load
+
+180
+00:18:16,900 --> 00:18:23,780
+because instead of just tracing a linear raycast along the x-axis the engine has to parse nested hierarchies
+
+181
+00:18:23,780 --> 00:18:30,740
+in physical space oh right like the distinction between inner and around yes so if i arm my delete spell
+
+182
+00:18:30,740 --> 00:18:37,620
+and target an inner parenthesis object using i the parser has to hollow out the contents of the structure
+
+183
+00:18:37,620 --> 00:18:44,900
+while leaving the structural walls the parentheses themselves intact but if i use a it destroys the walls too
+
+184
+00:18:45,540 --> 00:18:50,100
+but the algorithmic implementation for finding those walls is where the engine design gets
+
+185
+00:18:50,100 --> 00:18:56,420
+really heavy isn't it extremely heavy the specification actually breaks text object resolution down into two
+
+186
+00:18:56,420 --> 00:19:03,140
+fundamentally distinct algorithms okay where are they the bracket search and the quote search and
+
+187
+00:19:03,140 --> 00:19:08,580
+crucially they cannot share the same code base really let's talk about the bracket search first and this
+
+188
+00:19:08,580 --> 00:19:13,940
+applies to parentheses curly braces square brackets html tags right and it uses a nested
+
+189
+00:19:13,940 --> 00:19:19,060
+balanced bi-directional search training when you trigger a bracket object the game doesn't just look at the characters
+
+190
+00:19:19,060 --> 00:19:21,220
+immediately adjacent to your avatar
+
+191
+00:19:21,220 --> 00:19:26,980
+it casts a search outward in both directions simultaneously okay scanning for the nearest
+
+192
+00:19:26,980 --> 00:19:33,220
+enclosing pair of matching delimiters and crucially it ignores line boundaries wow so
+
+193
+00:19:33,220 --> 00:19:39,620
+from a 3d rendering perspective that means the raycast has to traverse up and down the z-axis crossing
+
+194
+00:19:39,620 --> 00:19:45,700
+gaps between platforms just to find a matching bracket that might be like 50 feet in the air above your
+
+195
+00:19:45,700 --> 00:19:51,780
+character exactly and if you add a count like 2i it doesn't just look for two sets of parentheses
+
+196
+00:19:51,780 --> 00:19:57,540
+in front of you what does it do it acts as an outward expansion multiplier oh cool the algorithm
+
+197
+00:19:57,540 --> 00:20:03,380
+finds the innermost enclosing pair registers those coordinates and then expands the search boundary
+
+198
+00:20:03,380 --> 00:20:09,140
+outward to find the next enclosing structural shell it's like dropping a stone in a pond and calculating
+
+199
+00:20:09,140 --> 00:20:14,100
+the success of ripples that's a great analogy it allows a player standing in the absolute center of a
+
+200
+00:20:14,100 --> 00:20:20,580
+deeply nested function to target the entire outer scope block perfectly that is so elegant but then you
+
+201
+00:20:20,580 --> 00:20:27,220
+contrast that you know multi-line structural awareness with the quote search algorithm the quote search
+
+202
+00:20:27,220 --> 00:20:32,660
+is special it governs single quotes double quotes and back ticks and it is incredibly restrictive in
+
+203
+00:20:32,660 --> 00:20:39,460
+what way first the algorithm is explicitly forbidden from crossing line boundaries if the parser hits a
+
+204
+00:20:39,460 --> 00:20:44,980
+new line character before finding a matching quote it just aborts the operation which means if you're
+
+205
+00:20:44,980 --> 00:20:52,660
+looking at a string literal that spans multiple physical platforms in the game world the quote search will
+
+206
+00:20:52,660 --> 00:20:59,220
+just silently fail right but the truly bizarre behavior happens if your avatar is standing before any quotes
+
+207
+00:20:59,220 --> 00:21:04,980
+on a given line wait what happens with a bracket search if you are standing outside the brackets it fails to
+
+208
+00:21:04,980 --> 00:21:11,220
+find an enclosing structure right right but the quote search has a forward-seeking heuristic if you aren't
+
+209
+00:21:11,220 --> 00:21:17,940
+enclosed by quotes the algorithm immediately jumps the raycast forward along the x-axis finds the first string
+
+210
+00:21:17,940 --> 00:21:23,300
+literal on that specific line and targets it remotely wait really so you can physically stand in the
+
+211
+00:21:23,300 --> 00:21:29,380
+beginning of a hallway type a command and watch a glowing string literal 20 feet down the corridor just
+
+212
+00:21:29,380 --> 00:21:35,620
+explode yes even though you weren't inside it that is wild and because of that forward jumping nature the
+
+213
+00:21:35,620 --> 00:21:42,260
+quote search cannot support the outward expanding ripple effect that brackets use the topology just
+
+214
+00:21:42,260 --> 00:21:47,540
+doesn't nest the same way a modern software engineer looking at this spec would be begging to refactor
+
+215
+00:21:47,540 --> 00:21:53,780
+right absolutely like why not unify the search algorithms yeah why not make quotes multi-line and
+
+216
+00:21:53,780 --> 00:22:00,260
+nested for the sake of clean object-oriented game design because if a player learns in buffer world
+
+217
+00:22:00,260 --> 00:22:06,020
+that quote objects can cross lines they will build muscle memory for a lie oh right when they go to their
+
+218
+00:22:06,020 --> 00:22:12,260
+actual ide the next day and try it it will fail they will lose trust in the simulation the spec literally
+
+219
+00:22:12,260 --> 00:22:17,460
+warns that a from scratch clone that unifies these algorithms will feel quote almost but
+
+220
+00:22:17,460 --> 00:22:23,780
+not quite right it's the uncanny valley of text editing okay so we have this incredibly robust
+
+221
+00:22:23,780 --> 00:22:31,060
+highly pedantic spatial querying system but querying and manipulating one structural block at a time
+
+222
+00:22:31,060 --> 00:22:37,300
+still requires localized manual positioning if you're refactoring a massive level you need automation
+
+223
+00:22:37,300 --> 00:22:43,620
+how does the engine handle state machine replication for repetitive tasks it introduces the two primary
+
+224
+00:22:43,620 --> 00:22:50,820
+automation mechanics the dot command and macros the heavy hitters yeah and the engine must manage their
+
+225
+00:22:50,820 --> 00:22:56,100
+memory completely differently they are not just two versions of a repeat button let's trace the data
+
+226
+00:22:56,100 --> 00:23:03,140
+structure of the dot command first when i execute a complex edit like 3d2w and then move to a new
+
+227
+00:23:03,140 --> 00:23:09,060
+platform and hit the period key what exactly is the engine recalling from memory the engine is recalling a
+
+228
+00:23:09,060 --> 00:23:15,300
+resolved abstract syntax tree node it does not remember the raw input stream okay so it doesn't
+
+229
+00:23:15,300 --> 00:23:22,260
+know that you press 3 then d then 2 then w exactly during the initial execution the parser digested those
+
+230
+00:23:22,260 --> 00:23:28,100
+raw inputs calculated the mathematical product and stored a structured intent object in a dedicated
+
+231
+00:23:28,100 --> 00:23:36,500
+memory register so the object simply says like yep operator delete target word count six spot on it's clean
+
+232
+00:23:36,500 --> 00:23:41,780
+isolated state replication when you press not it just drops that pre-compiled intent object onto your
+
+233
+00:23:41,780 --> 00:23:47,220
+new coordinates got it but a macro operates at the complete opposite end of the software stack right
+
+234
+00:23:47,220 --> 00:23:53,060
+totally opposite when you start recording a macro into a register the engine isn't storing resolved
+
+235
+00:23:53,060 --> 00:24:00,660
+intents it is opening a raw event stream buffer it's basically acting like a keylogger yes if i move
+
+236
+00:24:00,660 --> 00:24:07,140
+down a line jump to the end and delete a word it records the literal navigation vectors
+
+237
+00:24:08,820 --> 00:24:14,100
+so it has zero memory of what those keystrokes accomplished the first time none whatsoever when
+
+238
+00:24:14,100 --> 00:24:20,020
+you replay the macro the engine simply dumps that raw character buffer back into the parser queue forcing
+
+239
+00:24:20,020 --> 00:24:25,380
+the simulation to reevaluate every single movement and operator relative to whatever new geometry you happen
+
+240
+00:24:25,380 --> 00:24:30,500
+to be standing on visually this is where the game must shift from a puzzle platformer into a total
+
+241
+00:24:30,500 --> 00:24:36,900
+spectacle oh yeah because you aren't just dropping a single resolved intent object you can type 100
+
+242
+00:24:36,900 --> 00:24:42,980
+at a banner to dump that event stream into the queue a hundred times it's incredible to watch the spec
+
+243
+00:24:42,980 --> 00:24:48,020
+describes it like casting a chain lightning spell your avatar darts across the terrain at accelerated
+
+244
+00:24:48,020 --> 00:24:53,540
+engine speeds executing the exact sequence of navigation and demolition across a massive field of
+
+245
+00:24:53,540 --> 00:25:00,420
+data it turns tedious data entry into a visual reward for mastering the logic but the spec highlights
+
+246
+00:25:00,420 --> 00:25:06,580
+a fascinating edge case regarding how counts interact with the dot commands memory register doesn't it
+
+247
+00:25:06,580 --> 00:25:12,820
+it does let's say the dot commands memory register stores count six from our earlier example okay what
+
+248
+00:25:12,820 --> 00:25:19,380
+happens if you supply a new multiplier right before hitting dot like if you type five does the parser
+
+249
+00:25:19,380 --> 00:25:25,540
+multiply them to achieve 30 well logic would suggest it does but based on what we've seen so far i'm
+
+250
+00:25:25,540 --> 00:25:31,700
+guessing the parser's rules dictate otherwise you'd be right a new count provided at dot time entirely
+
+251
+00:25:31,700 --> 00:25:37,460
+overwrites the stored count variable for that single execution cycle it replaces the memory it doesn't
+
+252
+00:25:37,460 --> 00:25:43,540
+accumulate so five executes a deletion of five words completely ignoring the stored six but here is the
+
+253
+00:25:43,540 --> 00:25:49,700
+critical secondary behavior the spec notes that overwrite is temporary oh really yeah it does not mutate
+
+254
+00:25:49,700 --> 00:25:55,540
+the underlying stored intent object if you follow up that five with a bearing cap the parser reverts
+
+255
+00:25:55,540 --> 00:26:02,260
+back to the previously established state it's a volatile memory overwrite oh wow and the spec insists
+
+256
+00:26:02,260 --> 00:26:09,860
+this specific easily missed terminal behavior must be hard-coded into the game as a core puzzle mechanic
+
+257
+00:26:09,860 --> 00:26:17,620
+absolutely i can easily picture a level where multiplying the count would cause your avatar to like
+
+258
+00:26:17,620 --> 00:26:23,300
+delete a critical load-bearing platform and plunge into the void the puzzle physically enforces your
+
+259
+00:26:23,300 --> 00:26:27,940
+understanding of volatile memory replacement exactly it makes you test your assumption okay so up to
+
+260
+00:26:27,940 --> 00:26:35,140
+this point all of these mechanics dot commands macros operators operate on a localized philosophy
+
+261
+00:26:35,140 --> 00:26:40,340
+your avatar is a physical agent moving through a space acting on geometry relative to your coordinates
+
+262
+00:26:40,980 --> 00:26:46,740
+but the mid-game introduces a paradigm shift that fundamentally alters how the engine queries data
+
+263
+00:26:46,740 --> 00:26:51,380
+let's talk about the search works yes the search works this introduces the x command family
+
+264
+00:26:51,380 --> 00:26:57,140
+specifically substitution and the global dodgy command so how does the 3d engine handle a command
+
+265
+00:26:57,140 --> 00:27:01,940
+that doesn't rely on character proximity at all it requires a completely different visual and
+
+266
+00:27:01,940 --> 00:27:07,220
+algorithmic language when you open the console and type a search pattern the engine halts local ray
+
+267
+00:27:07,220 --> 00:27:13,780
+casting entirely okay what does it do instead it sweeps the entire buffer array and memory running a
+
+268
+00:27:13,780 --> 00:27:20,340
+rejects engine against every single string visually the player's perspective must shift drastically it
+
+269
+00:27:20,340 --> 00:27:26,500
+does instead of a single localized target aura around your character every single matching string
+
+270
+00:27:26,500 --> 00:27:32,740
+literal across the entire visible landscape illuminates simultaneously you transition from a localized
+
+271
+00:27:32,740 --> 00:27:38,660
+agent to an omniscient orchestrator you're viewing a selected population right but the true engineering
+
+272
+00:27:38,660 --> 00:27:44,660
+challenge is how the engine handles the execution phase of that g command because the global command
+
+273
+00:27:44,660 --> 00:27:50,260
+allows you to execute an operator on every line that matches a specific pattern so if i tell it to
+
+274
+00:27:50,260 --> 00:27:56,340
+delete every line containing the word error does the engine just rapidly teleport my avatar to each
+
+275
+00:27:56,340 --> 00:28:02,900
+illuminated platform and run a delete macro no and doing so would actually corrupt the buffer state really
+
+276
+00:28:02,900 --> 00:28:09,380
+why because the gauchy command is not a macro loop the specification mandates a strict two-pass algorithm two
+
+277
+00:28:09,380 --> 00:28:15,940
+passes break that down pass one the engine scans the entire document from top to bottom and places a
+
+278
+00:28:15,940 --> 00:28:23,220
+hidden marker on every single matching line okay pass two it iterates through those markers in sequence
+
+279
+00:28:23,220 --> 00:28:29,940
+and executes the command why is that two-pass separation so critical though why not just execute the command
+
+280
+00:28:29,940 --> 00:28:35,140
+the moment the scanner finds a match because executing commands mutates the length and index
+
+281
+00:28:35,140 --> 00:28:42,740
+of the buffer array no if you are on line 10 and you delete it line 11 instantly becomes line 10 right
+
+282
+00:28:42,740 --> 00:28:49,140
+if your scanner is running concurrently of your execution the index shift will cause the scanner to skip lines
+
+283
+00:28:49,140 --> 00:28:55,700
+or process the wrong data entirely so by separating the scan and mark phase entirely from the execution phase
+
+284
+00:28:55,700 --> 00:29:00,980
+the target population remains mathematically stable regardless of how the geometry shifts underneath it
+
+285
+00:29:00,980 --> 00:29:06,260
+exactly the spec provides the classic vim idiom for reversing a document to prove this
+
+286
+00:29:06,260 --> 00:29:12,020
+dacgm0 global command ranch the start of every line move it to line zero right if we trace the memory
+
+287
+00:29:12,020 --> 00:29:17,380
+execution of that command through the two-pass algorithm it's brilliant pass one marks every single
+
+288
+00:29:17,380 --> 00:29:24,420
+line pass two begins execution at the top it takes line one and moves it to the top then it takes line
+
+289
+00:29:24,420 --> 00:29:30,180
+two and moves it to the top physically pushing line one down oh i see where this is going it iterates
+
+290
+00:29:30,180 --> 00:29:35,460
+through the markers constantly stacking the current line on top of the previous ones by the time it
+
+291
+00:29:35,460 --> 00:29:42,180
+processes the final marker the entire geometry of the level has been perfectly inverted if the visual
+
+292
+00:29:42,180 --> 00:29:48,420
+engine rendered that as a macro loop it would look like a chaotic mess of teleportation that'd be nauseating
+
+293
+00:29:48,420 --> 00:29:54,100
+but instead the game renders the highlighted population resolving towards the zero coordinate
+
+294
+00:29:54,100 --> 00:30:01,220
+in one coordinated synchronized architectural shift it teaches the player the absolute stability of the
+
+295
+00:30:01,220 --> 00:30:06,900
+two-pass algorithm it's beautiful to watch but introducing these omniscient level altering commands
+
+296
+00:30:06,900 --> 00:30:12,180
+raises a massive pedagogical risk overwhelming the player right if a new player is fumbling with the
+
+297
+00:30:12,180 --> 00:30:17,220
+keyboard on level one and accidentally triggers a reject substitution that corrupts the entire map
+
+298
+00:30:17,220 --> 00:30:23,140
+they are going to quit instantly so the engine needs safety rails it implements a curriculum system
+
+299
+00:30:23,140 --> 00:30:30,180
+the opening area the plaza disables everything except core navigation no operators no insert mode
+
+300
+00:30:30,180 --> 00:30:37,700
+exactly you are just forcing your brain to accept h j k and l as spatial vectors from there you move to
+
+301
+00:30:37,700 --> 00:30:42,260
+the word foundry where they introduce insert mode and the hard boundary of the escape key
+
+302
+00:30:42,260 --> 00:30:48,340
+then grammar works which unlocks the operator pending states and finally the archive stacks
+
+303
+00:30:48,340 --> 00:30:54,180
+which introduce registers for memory management and marks for spatial teleports this gradual unlocking
+
+304
+00:30:54,180 --> 00:31:00,020
+makes perfect sense for a game but from a software engineering perspective how does the underlying parser
+
+305
+00:31:00,020 --> 00:31:06,020
+handle a locked command that's a great question because if i press beat in the plaza it's supposed to be
+
+306
+00:31:06,020 --> 00:31:12,180
+disabled does the engine just wrap a simple if level is greater than three boolean check around the input
+
+307
+00:31:12,180 --> 00:31:17,140
+listener and drop the key press a lazy engine would do exactly that okay so what's the problem with that
+
+308
+00:31:17,140 --> 00:31:22,820
+short-circuiting the input listener creates a testing blind spot oh interesting if the parser never
+
+309
+00:31:22,820 --> 00:31:30,980
+sees the t press in the early levels that code pathway is dead it's untested during runtime buffer world spec
+
+310
+00:31:30,980 --> 00:31:37,220
+demands that the engine utilizes a locked state that is vastly more complex don't tell me the engine
+
+311
+00:31:37,220 --> 00:31:42,500
+actually parses the locked command in the background it doesn't just parse it it fully executes it within
+
+312
+00:31:42,500 --> 00:31:48,500
+a virtual memory sandbox you're kidding if a player types a locked command the engine forks the buffer
+
+313
+00:31:48,500 --> 00:31:54,500
+state runs the full algorithmic resolution calculating motions object boundaries applying the state
+
+314
+00:31:54,500 --> 00:32:00,580
+mutation and verifies that the resulting shadow buffer is mathematically sound so it does all the
+
+315
+00:32:00,580 --> 00:32:06,020
+heavy lifting to delete the word in a parallel universe yes and then on the very next frame it
+
+316
+00:32:06,020 --> 00:32:12,180
+drops the shadow buffer garbage collects the memory and pushes an educational ui queue to the renderer
+
+317
+00:32:12,180 --> 00:32:18,020
+saying you'll unlock this syntax soon the computational overhead to run a shadow simulation just to throw
+
+318
+00:32:18,020 --> 00:32:24,660
+it away is staggering it's massive but i see the logic it keeps the parser running at 100 capacity at all
+
+319
+00:32:24,660 --> 00:32:30,500
+times it guarantees that the entire grammar engine is continuously battle tested preventing
+
+320
+00:32:30,500 --> 00:32:36,180
+state corruption bugs from hiding and locked away code paths which brings us to the most paranoid
+
+321
+00:32:36,180 --> 00:32:42,580
+hardcore engineering requirement in this entire specification the differential oracle testing yes
+
+322
+00:32:42,580 --> 00:32:49,380
+because building a 3d engine that perfectly replicates the esoteric undocumented edge cases of a 30 year
+
+323
+00:32:49,380 --> 00:32:56,100
+old c code base is nearly impossible right if the game's parser hallucinates a behavior the player learns a lie
+
+324
+00:32:56,820 --> 00:33:02,980
+takes that lie into a production environment at their job and drops a database table exactly the simulation must be
+
+325
+00:33:02,980 --> 00:33:08,420
+mathematically flawless but you can't rely on handwritten unit tests for this right no because the developer
+
+326
+00:33:08,420 --> 00:33:14,340
+writing the test shares the same cognitive blind spots as the developer who wrote the parser right if they forgot how the
+
+327
+00:33:14,340 --> 00:33:22,100
+quote search algorithm handles a line break they just won't write a test for it to eliminate human bias you have to use an oracle an oracle like the
+
+328
+00:33:22,100 --> 00:33:30,500
+source of absolute truth yes and the game uses neo vim's embed remote procedure call api for this for
+
+329
+00:33:30,500 --> 00:33:37,540
+those who don't know neo vim is a modern aggressively refactored fork of vim designed specifically for headless
+
+330
+00:33:37,540 --> 00:33:44,740
+integration right exactly inside this 3d unity or unreal engine the developers are literally spawning a
+
+331
+00:33:44,740 --> 00:33:51,060
+silent invisible instance of real neo vim as a background process it has no ui it's just a raw
+
+332
+00:33:51,060 --> 00:33:56,740
+text processing brain running parallel to the game loop yeah but how do they synchronize the two they use a generative
+
+333
+00:33:56,740 --> 00:34:02,340
+fuzzer okay break that down the testing suite generates massive strings of highly randomized
+
+334
+00:34:02,340 --> 00:34:09,300
+chaotic keystrokes it serializes those keystrokes and broadcasts them simultaneously to two distinct
+
+335
+00:34:09,300 --> 00:34:14,500
+targets target one being the game's custom-built c-sharp parser and target two is the headless
+
+336
+00:34:14,500 --> 00:34:20,660
+neobin process over a local socket wow so the game engine processes the input and mutates its internal
+
+337
+00:34:20,660 --> 00:34:26,980
+state neovim processes the input and mutates its c-struck buffer then neovim emits an update event
+
+338
+00:34:26,980 --> 00:34:33,700
+back over the socket the testing suite catches that emitted event deserializes neovim's final state
+
+339
+00:34:33,700 --> 00:34:39,380
+and runs a strict memory comparison against the game engine's final state checking what exactly it checks
+
+340
+00:34:39,380 --> 00:34:46,660
+character arrays cursor coordinates register contents and undo tree branches so if the fuzzer throws a bizarre
+
+341
+00:34:46,660 --> 00:34:53,700
+combination of macros global searches and multiplied text objects and the game engine's cursor ends up
+
+342
+00:34:53,700 --> 00:34:59,540
+exactly one column to the left of where neovim's cursor landed the test fails the build breaks it is
+
+343
+00:34:59,540 --> 00:35:05,300
+continuous cryptographically enforced fidelity they blast the engine with millions of permutations
+
+344
+00:35:05,300 --> 00:35:10,820
+relying on network latency asynchronous keystroke buffering and state synchronization to guarantee
+
+345
+00:35:10,820 --> 00:35:15,860
+that the custom parser is structurally identical to the source material before a single polygon is
+
+346
+00:35:15,860 --> 00:35:20,260
+even rendered that is just it's breathtaking engineering and once you have achieved that
+
+347
+00:35:20,260 --> 00:35:25,460
+level of systemic perfection you no longer just have a puzzle game do you no you have a verified
+
+348
+00:35:25,460 --> 00:35:31,620
+computational platform which brings us to the final phase of the spec user generated levels turning
+
+349
+00:35:31,620 --> 00:35:37,540
+the game into an arena for pipeline golf i love this part because the 3d world is generated purely from
+
+350
+00:35:37,540 --> 00:35:43,860
+the text buffer users don't need a complex 3d level editor to create content they only need to provide two
+
+351
+00:35:43,860 --> 00:35:50,660
+text files right a start state and an end state right and the spec mentions using unified diffs to optimize
+
+352
+00:35:50,660 --> 00:35:57,460
+this so if a user encounters a massive 10 000 line json file at work that needs complex structural
+
+353
+00:35:57,460 --> 00:36:03,940
+formatting they don't upload the entire file twice no they upload the broken state and a patch file of
+
+354
+00:36:03,940 --> 00:36:10,500
+the solution the engine ingests the diff generates the sprawling 3d architecture and challenges the community
+
+355
+00:36:10,500 --> 00:36:16,900
+to transform state a into state b using the absolute minimum number of keystrokes this introduces the
+
+356
+00:36:16,900 --> 00:36:23,380
+concept of par like in golf but calculating the mathematically perfect shortest path for a complex
+
+357
+00:36:23,380 --> 00:36:28,980
+text transformation through an infinitely composable grammar system is basically a traveling salesperson
+
+358
+00:36:28,980 --> 00:36:33,620
+problem right a supercomputer would choke on the permutation tree exactly so the engine sidesteps the
+
+359
+00:36:33,620 --> 00:36:40,340
+calculation entirely by mandating author plays first you can't just upload a corrupted file and demand a solution
+
+360
+00:36:40,500 --> 00:36:46,100
+to establish the baseline par the author must physically run through their own level and solve
+
+361
+00:36:46,100 --> 00:36:52,100
+it so if the author fumbles their way through the level in 200 keystrokes that becomes the bounty on
+
+362
+00:36:52,100 --> 00:36:58,260
+the global leaderboard and then the optimum path is discovered organically through human ingenuity
+
+363
+00:36:58,260 --> 00:37:04,420
+and crowdsource optimization exactly a player on the other side of the world spots a structural pattern
+
+364
+00:37:04,420 --> 00:37:11,540
+writes a highly optimized reject substitution records it into a macro and solves the level in 14 keystrokes
+
+365
+00:37:11,540 --> 00:37:17,140
+but wait the security implications of executing community submitted macros are terrifying how do you
+
+366
+00:37:17,140 --> 00:37:22,340
+prevent arbitrary code execution on the leaderboard that is precisely why the headless oracle parser is so
+
+367
+00:37:22,340 --> 00:37:29,700
+critical the spec mandates verified replays meaning what when a player submits their 14 keystroke high score
+
+368
+00:37:29,700 --> 00:37:34,500
+they aren't just passing an integer to a database they're submitting the raw event stream buffer of
+
+369
+00:37:34,500 --> 00:37:41,860
+their inputs the literal keystroke receipts yes the server takes that raw input buffer spins up an
+
+370
+00:37:41,860 --> 00:37:48,660
+isolated sandboxed instance of the headless parser and independently simulates the entire run so it
+
+371
+00:37:48,660 --> 00:37:55,140
+verifies that those exact 14 keystrokes mathematically result in the target diff without triggering any illegal
+
+372
+00:37:55,140 --> 00:38:00,420
+system calls right and only after the simulation confirms the state change does the leaderboard
+
+373
+00:38:00,420 --> 00:38:06,660
+actually update it transforms the solitary often highly frustrating act of learning terminal commands
+
+374
+00:38:06,660 --> 00:38:12,420
+into a globally synchronized cryptographically verified optimization engine you aren't just learning to
+
+375
+00:38:12,420 --> 00:38:18,980
+edit text you are participating in a massive distributed computation to find the most elegant pathways
+
+376
+00:38:18,980 --> 00:38:24,180
+through complex data structures it takes the sheer hostile cliff face of vim's learning curve and
+
+377
+00:38:24,180 --> 00:38:29,060
+engineers it into an interactive physics engine it's just a brilliant concept from start to finish we
+
+378
+00:38:29,060 --> 00:38:35,060
+have dug incredibly deep today into how buffer world tackles spatial translation we explored the memory
+
+379
+00:38:35,060 --> 00:38:41,300
+management implications of mapping the z-axis to buffer stacks versus syntax trees we examined how the
+
+380
+00:38:41,300 --> 00:38:47,700
+rendering pipeline uses physical immobilization to enforce modal boundaries and the pedantic necessity of
+
+381
+00:38:47,700 --> 00:38:53,540
+hard coding historical exceptions into the composable grammar right we dissected the multi-line
+
+382
+00:38:53,540 --> 00:38:59,540
+raycasting of bracket searches versus the forward-seeking restriction of quote searches we separated the
+
+383
+00:38:59,540 --> 00:39:05,620
+isolated intent memory of the dot command from the volatile raw event streams of macros and analyzed how
+
+384
+00:39:05,620 --> 00:39:11,620
+the two-pass scan and execute algorithm prevents global search commands from corrupting shifting buffer
+
+385
+00:39:11,620 --> 00:39:17,540
+arrays and finally we explored the sheer computational paranoia required to maintain a background shadow buffer for
+
+386
+00:39:17,540 --> 00:39:23,700
+locked commands all verified by spawning headless instances of real terminal software via rpc
+
+387
+00:39:23,700 --> 00:39:29,700
+to guarantee absolute simulation fidelity it truly is a master class in treating abstract software
+
+388
+00:39:29,700 --> 00:39:35,060
+architecture as physical geography which leaves you the listener with a final thought to mull over
+
+389
+00:39:36,420 --> 00:39:42,660
+if an interface is hostile dense and abstractly complex as vim can be successfully compiled down into a
+
+390
+00:39:42,660 --> 00:39:49,300
+tangible physical 3d world with rigid physics and gravity what other invisible digital structures govern
+
+391
+00:39:49,300 --> 00:39:55,300
+our lives that are just waiting to be spatialized i mean imagine debugging a sprawling aws cloud
+
+392
+00:39:55,300 --> 00:40:01,460
+infrastructure by physically mapping the flow of server traffic like an aqueduct system oh wow or
+
+393
+00:40:01,460 --> 00:40:06,580
+visualizing a machine learning neural network as an explorable three-dimensional nervous system where you can
+
+394
+00:40:06,580 --> 00:40:11,620
+physically pinch and reroute the weights think about the software that defines your daily workflow
+
+395
+00:40:11,620 --> 00:40:16,500
+the massive spreadsheets the tangled code bases the endless directories if you could strip away the
+
+396
+00:40:16,500 --> 00:40:22,980
+flat interface and render that data as physical terrain what would your data feel like to walk through
+
+397
+00:40:22,980 --> 00:40:24,980
+thank you for taking this deep dive
+
+398
+00:40:24,980 --> 00:40:32,980
+thank you for taking this deep dive
+
+399
+00:40:32,980 --> 00:40:34,980
+you
+
