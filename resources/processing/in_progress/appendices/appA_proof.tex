@@ -1,0 +1,277 @@
+\chapter{Full Proof of the Composition Failure Theorem}
+\label{app:proof}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This appendix gives a complete proof of
+Theorem~\ref{thm:composition-failure}, together with the explicit
+construction on which it rests. The proof is built to satisfy the
+robustness requirement raised in \cref{rem:discard-rules-diverge}: rather
+than exhibiting a witness that happens to work under one convenient local
+discard rule, \cref{lem:exhaustion} below shows that the witnessing
+relay's key discard is forced under \emph{any} construction obeying
+\cref{def:budget-discard}, closing that specific open question for the
+purposes of this theorem even though the broader question of whether
+every claim in this monograph enjoys the same robustness remains open
+(\cref{app:open-questions}).
+\end{quotation}
+
+\section{Recovery Tasks and the Witnessing Task Family}
+
+The theorem requires an explicit, non-enumerable-in-advance family of
+tasks $T$, together with a specific $\tau^* \in T$ for which insufficiency
+can be verified directly rather than merely asserted. Both are supplied by
+a single, simple family of tasks built directly from the minimal-pair
+machinery of Chapter~\ref{ch:distinctions}.
+
+\begin{definition}[Recovery Task]
+\label{def:recovery-task}
+For a named distinction $d$ with minimal pair $\{x_d, x_{\neg d}\}$
+(\cref{def:minimal-pair}), the recovery task $\tau_d$ is the task of
+correctly reporting, given a substrate, whether the source object $e$
+satisfies $x_d$ or $x_{\neg d}$. Its correctness set
+(\cref{def:correctness-set}) is the singleton containing whichever of the
+two reports matches $e$'s actual state.
+\end{definition}
+
+\begin{lemma}[Sufficiency for a Recovery Task Iff No Discard]
+\label{lem:recovery-sufficiency}
+A rendering $r$ is sufficient (\cref{def:sufficiency}) for $\tau_d$ if and
+only if $d \notin \discard{r}$.
+\end{lemma}
+
+\begin{proof}
+If $d \notin \discard{r}$, the pair $\{x_d, x_{\neg d}\}$ is not
+identified by $r$ (\cref{def:discarded-pair}, \cref{def:discard-set}), so
+$r$ distinguishes which of the two states $e$ occupies, and the correct
+report is the unique continuation reachable: $\admis{\tau_d}{r} =
+\mathcal{C}_{\tau_d}(e)$, satisfying \cref{def:sufficiency}. If $d \in
+\discard{r}$, the pair is identified, so a consumer with access only to
+$r$ cannot rule out either report: both the correct and the incorrect
+report are reachable, $\admis{\tau_d}{r} \supsetneq \mathcal{C}_{\tau_d}(e)$,
+and \cref{def:sufficiency}'s containment fails.
+\end{proof}
+
+\begin{definition}[Witnessing Task Family]
+\label{def:witnessing-family}
+$T_{\mathrm{rec}} := \{\tau_d : d \text{ ranges over the open-ended space
+of possible named distinctions}\}$.
+\end{definition}
+
+$T_{\mathrm{rec}}$ is open in the sense required by
+\cref{prop:task-unavailability}: the argument given there --- that a task
+requiring a distinction not represented in a fixed candidate list can
+always be constructed after the fact --- applies verbatim to
+$T_{\mathrm{rec}}$, since the space of possible minimal pairs
+(\cref{def:minimal-pair}) that might later be named as relevant is not
+fixed in advance by any finite specification of a substrate chain's
+producers.
+
+\section{A Construction-Independent Exhaustion Lemma}
+
+\cref{rem:discard-rules-diverge} showed that \cref{def:budget-discard} is
+satisfied by more than one non-equivalent construction. The following
+lemma isolates a sufficient condition for a discard to be forced under
+every such construction, so that the theorem's witness does not depend on
+which one a given stage happens to use.
+
+\begin{lemma}[Exhaustion Forces Discard]
+\label{lem:exhaustion}
+Fix a stage with budget $\beta_i$ and suppose the distinctions required by
+$\tau_i$ (in the sense of \cref{def:benign-loss}) have total cost
+$R_i = \sum_{d \text{ required}} C_i(d) \le \beta_i$. If every
+non-required distinction $d'$ satisfies $C_i(d') > \beta_i - R_i$, then
+every non-required distinction is dropped -- $d' \in D_i$ for every such
+$d'$ -- under \emph{any} construction satisfying \cref{def:budget-discard}
+together with the requirement that required distinctions are ranked
+strictly above non-required ones.
+\end{lemma}
+
+\begin{proof}
+Any construction satisfying \cref{def:budget-discard} must respect the
+budget constraint $\sum_{d \in S} C_i(d) \le \beta_i$ for the funded set
+$S$, and, by hypothesis, must rank every required distinction above every
+non-required one. Since the required distinctions have total cost
+$R_i \le \beta_i$, funding all of them is feasible and, given their
+priority, is favored by both \cref{con:greedy-discard} (which processes
+higher-priority items first and encounters no obstruction, since $R_i \le
+\beta_i$) and \cref{con:optimal-discard} (for which funding every required
+item dominates any allocation that sacrifices one, provided required
+items are assigned value strictly exceeding any combination of
+non-required items, which the priority requirement above entails). After
+funding the required set, the remaining budget is exactly $\beta_i - R_i$.
+By hypothesis, $C_i(d') > \beta_i - R_i$ for every non-required $d'$, so
+no non-required distinction can be funded in addition to the required set
+under either construction, nor under any construction obeying the same
+budget constraint, since funding any single such $d'$ alongside the
+required set would require total expenditure exceeding $\beta_i$. Hence
+$d' \in D_i$ for every non-required $d'$, regardless of which construction
+produced the allocation.
+\end{proof}
+
+\cref{lem:exhaustion} is the appendix's answer to the robustness question
+raised in Chapter~\ref{ch:budget-relay}: it does not show that every
+budget relay behaves identically under every construction, but it
+identifies a class of stages -- those where the required set exactly, or
+near-exactly, exhausts the budget -- whose discard behavior is
+construction-independent, and the witness built below is chosen to fall
+into exactly this class.
+
+\section{Recalling Local Admissibility}
+
+Chapter~\ref{ch:composition-failure} makes precise, in
+\cref{def:locally-admissible}, what Theorem~\ref{thm:composition-failure}
+means by a transition being ``locally admissible with respect to its own
+stage's task $\tau_i$.'' That definition does not privilege
+\cref{con:greedy-discard} over \cref{con:optimal-discard}, or vice versa;
+it constrains only the priority ordering's relationship to $\tau_i$'s own
+stated requirements, consistent with \cref{rem:discard-rules-diverge}'s
+observation that \cref{def:budget-discard} constrains outcomes, not
+procedures. It is used throughout the remainder of this appendix exactly
+as stated there.
+
+\section{The Canonical Witness}
+
+\begin{construction}[Two-Stage Witness]
+\label{con:witness}
+Let $A_0$ carry five distinctions $d_1, \ldots, d_5$ with costs
+$C(d_1)=1$, $C(d_2)=2$, $C(d_3)=3$, $C(d_4)=2$, $C(d_5)=4$ -- the same
+instance introduced in \cref{sec:worked-relay} and
+\cref{sec:redistribution-worked}. Let $\tau_0$ require exactly $\{d_1,
+d_2\}$, with $\beta_0 = 4$. Let $\tau_1$ require exactly $\{d_1, d_2\}$
+as well, with $\beta_1 = 3$.
+\end{construction}
+
+\begin{proposition}[The Witness Is Locally Admissible and Forces the Same Discard Under Any Construction]
+\label{prop:witness-properties}
+In \cref{con:witness}: (a) $B_0$ and $B_1$ are locally admissible
+(\cref{def:locally-admissible}) with respect to $\tau_0$ and $\tau_1$
+respectively, under any construction satisfying \cref{def:budget-discard};
+and (b) $D_0 = \{d_3, d_4, d_5\}$ and $D_1 = \emptyset$ regardless of
+which such construction is used.
+\end{proposition}
+
+\begin{proof}
+For stage $0$: the required set $\{d_1, d_2\}$ has total cost $R_0 =
+1 + 2 = 3 \le \beta_0 = 4$. Every non-required distinction has cost
+exceeding $\beta_0 - R_0 = 1$: $C(d_3)=3>1$, $C(d_4)=2>1$, $C(d_5)=4>1$.
+\cref{lem:exhaustion} applies directly, giving $D_0 = \{d_3,d_4,d_5\}$
+under any construction satisfying \cref{def:budget-discard} with required
+distinctions ranked above non-required ones -- which is exactly
+\cref{def:locally-admissible}'s condition, so (a) and (b) both hold for
+stage $0$.
+
+For stage $1$: $A_1$ retains only $\{d_1, d_2\}$ (nothing else survived
+stage $0$), both required by $\tau_1$, with total cost $R_1 = 3 = \beta_1$
+exactly. There are no non-required distinctions present at this stage to
+consider, so the exhaustion hypothesis of \cref{lem:exhaustion} is
+vacuously about an empty set, and any construction funds $\{d_1,d_2\}$ in
+full (the only feasible allocation using the entire budget), giving
+$D_1 = \emptyset$ regardless of construction. Local admissibility for
+stage $1$ follows immediately, since there is nothing non-required
+present to rank incorrectly.
+\end{proof}
+
+\section{Extension to Arbitrary Relay Length}
+
+\begin{construction}[Pass-Through Stage]
+\label{con:pass-through}
+A stage $j$ is a pass-through stage if $\tau_j$ requires exactly the
+distinctions present in $A_j$, and $\beta_j$ equals their total cost
+exactly.
+\end{construction}
+
+\begin{proposition}[Extension to Arbitrary Length]
+\label{prop:extension}
+For every $n \ge 2$, there is an $n$-stage budget relay, every transition
+of which is locally admissible, with $D(A_0 \Rightarrow A_n) =
+\{d_3,d_4,d_5\}$ exactly as in \cref{con:witness}.
+\end{proposition}
+
+\begin{proof}
+Take \cref{con:witness}'s two stages as stages $0$ and $1$, and insert
+$n-2$ pass-through stages (\cref{con:pass-through}) at positions $2,
+\ldots, n-1$, each requiring exactly $\{d_1,d_2\}$ at cost $3$, matching
+$A_1$'s (and every subsequent stage's) content exactly. Each pass-through
+stage is locally admissible by the same vacuous argument given for stage
+$1$ in the proof of \cref{prop:witness-properties}, and discards nothing,
+so $D_j = \emptyset$ for $j \ge 2$. By \cref{def:cumulative-discard},
+$D(A_0 \Rightarrow A_n) = D_0 \cup D_1 \cup \cdots \cup D_{n-1} =
+\{d_3,d_4,d_5\} \cup \emptyset \cup \cdots \cup \emptyset =
+\{d_3,d_4,d_5\}$.
+\end{proof}
+
+\section{Proof of Theorem~\ref{thm:composition-failure}}
+
+\begin{proof}
+Fix any $n \ge 2$ and take the $n$-stage relay of
+\cref{prop:extension}, with every transition locally admissible by
+construction. Let $\tau^* := \tau_{d_5} \in T_{\mathrm{rec}}$
+(\cref{def:recovery-task}, \cref{def:witnessing-family}). By
+\cref{prop:witness-properties} and \cref{prop:extension}, $d_5 \in
+D(A_0 \Rightarrow A_n)$, so $d_5 \in \discard{A_n}$ relative to $A_0$. By
+\cref{lem:recovery-sufficiency}, $A_n$ is insufficient for $\tau_{d_5}$.
+
+It remains to check $\tau^* \notin \{\tau_0, \ldots, \tau_{n-1}\}$. Every
+$\tau_i$ in the construction is a preservation task, requiring exactly
+$\{d_1,d_2\}$, with correctness set consisting of continuations that
+retain both; $\tau^* = \tau_{d_5}$ is a recovery task in the sense of
+\cref{def:recovery-task}, with correctness set consisting of a single
+report about $d_5$ alone. These are distinct formal objects with distinct
+correctness sets for any nontrivial choice of underlying object $e$, so
+$\tau^* \neq \tau_i$ for any $i$.
+
+$T_{\mathrm{rec}}$ is an open task space containing $\tau^*$, as argued
+following \cref{def:witnessing-family}. This exhibits, for every $n \ge
+2$, a budget relay and an open task space $T = T_{\mathrm{rec}}$ satisfying
+every clause of Theorem~\ref{thm:composition-failure}.
+\end{proof}
+
+\section{Verifying the Corollaries}
+
+\begin{proof}[Verification of \cref{cor:local-improvement}]
+Suppose $\beta_1$ is increased in the witness of \cref{con:witness},
+holding $\beta_0 = 4$ fixed. Stage $1$ receives only $A_1 = \{d_1,d_2\}$
+regardless of $\beta_1$'s value, since $d_3, d_4, d_5$ were already
+absent from $A_1$ by the time stage $1$ acts; no increase in $\beta_1$
+can fund a distinction that is not present to be funded. $D(A_0
+\Rightarrow A_n)$ is therefore unaffected by any change to $\beta_1$ (or
+to any $\beta_j$ for $j \ge 1$), confirming that only an improvement to
+$\beta_0$ specifically -- the stage where the loss actually occurred --
+could have prevented the eventual insufficiency, and even that requires
+$\tau_0$'s producer to have known, at stage $0$, that $d_5$ would later
+matter: precisely the knowledge \cref{prop:task-unavailability} shows is
+unavailable in general.
+\end{proof}
+
+\begin{proof}[Partial verification of \cref{cor:no-free-lunch}]
+The existence half of \cref{cor:no-free-lunch} -- that cumulative discard
+is non-decreasing in relay length -- is exactly
+\cref{prop:monotonicity}, and \cref{prop:extension} shows this bound is
+not merely non-strict but can be realized with equality across
+arbitrarily many additional stages (the pass-through stages contribute
+no further discard). This appendix does not, however, establish the
+stronger, quantitative claim that cumulative discard \emph{risk} grows
+across relays in general, only that it does not shrink in this
+particular family of constructions. The tightness question --- whether a
+sharper growth bound holds under specific coordination mechanisms --
+remains open, exactly as flagged in Appendix~\ref{app:open-questions},
+and is not resolved here.
+\end{proof}
+
+\section{What This Proof Does Not Establish}
+
+This appendix proves Theorem~\ref{thm:composition-failure} and
+\cref{cor:local-improvement} in full, and establishes the existence half
+of \cref{cor:no-free-lunch}. It does not establish that every budget
+relay of practical interest falls into the construction-independent class
+identified by \cref{lem:exhaustion}; relays in which the required set
+does not closely exhaust the local budget may genuinely behave
+differently under \cref{con:greedy-discard} than under
+\cref{con:optimal-discard}, and nothing here rules that out for such
+cases. It also does not establish \cref{cor:no-free-lunch}'s quantitative
+tightness, address the infinite-relay case flagged in
+Chapter~\ref{ch:budget-relay}, or extend to the branching relays of
+Chapter~\ref{ch:fanout}, whose fan-out structure introduces the further
+complication of \cref{prop:silent-disagreement} and is not treated by the
+linear construction given here. Appendix~\ref{app:open-questions} is
+updated to reflect exactly this scope.
