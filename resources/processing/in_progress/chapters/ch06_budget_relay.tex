@@ -1,0 +1,487 @@
+\chapter{Defining the Budget Relay}
+\label{ch:budget-relay}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter introduces the budget relay, the
+monograph's primary new theoretical object: a chain of renderings connected
+by independent local repair economies, each governed by its own costs,
+priorities, and constraints. The chapter formalizes how distinctions are
+discarded under local budget pressure and why such losses become
+irreversible once no record of them remains. Root objects and
+budget-aware loss ledgers are introduced as the mechanisms for measuring,
+and in some cases recovering from, downstream insufficiency; preserving a
+root object is shown to be fundamentally different from preserving every
+downstream rendering, since it alone permits re-derivation under newly
+discovered tasks.
+\end{quotation}
+
+This chapter carries disproportionate weight in the monograph relative to
+its length. The object defined in \cref{def:budget-relay} is the only
+genuinely new mathematical object this book introduces; every later
+theorem is, in an important sense, a property of this definition rather
+than an independent contribution. If this definition is not judged
+inevitable and useful on its own terms, no proof in
+Chapter~\ref{ch:composition-failure} will rescue it. The chapter is
+therefore written at a slower pace than its material would otherwise
+require, and it deliberately stress-tests the definition against a fully
+worked numerical instance before the rest of the monograph is permitted to
+build on it. Two genuine gaps surface in the course of this stress-testing
+--- the underdetermination of the local discard rule, and the bootstrapping
+cost of preserving a root object --- and both are carried forward
+explicitly into Appendix~\ref{app:open-questions} rather than quietly
+absorbed into the definition.
+
+\section{Why a Chain, and Not Just a Rendering}
+
+Chapter~\ref{ch:distinctions} defined a rendering as a single projection
+from a source's distinction space to a smaller one, and
+Chapter~\ref{ch:admissibility} asked, of a single such rendering, whether
+it is sufficient for a given task. Neither chapter had reason to ask what
+happens when a rendering is itself produced from an earlier rendering, and
+that one from a still earlier one, with a different party responsible for
+each step and no party responsible for the sequence as a whole. This is
+not a generalization added for its own sake. It is the ordinary condition
+of almost every substrate a real consumer actually encounters: a
+transcript is produced from a recording, not from the recorded event
+itself; a textbook's account of a proof is produced from the proof, not
+independently derived; a legal memorandum summarizing a contract is
+produced from the contract, which was itself drafted from negotiation
+notes that no longer exist. Treating each of these as an isolated
+rendering of some single, fixed original -- as Chapters~\ref{ch:distinctions}
+and~\ref{ch:admissibility} implicitly do when they speak of ``the''
+discard set of ``a'' rendering $r$ of ``an'' object $e$ -- silently assumes
+that $e$ itself, and not some intermediate rendering of it, is always
+available to compare against. That assumption is false for essentially
+every substrate chain of practical interest, and its falsity is precisely
+what Chapter~\ref{ch:synchronic-to-diachronic} identified as the reason
+the repair-budget apparatus of Chapter~\ref{ch:repair-economics} does not,
+by itself, resolve the continuation problem of
+Chapter~\ref{ch:continuation-problem}.
+
+\section{The Substrate Chain}
+
+\begin{definition}[Substrate Chain]
+\label{def:substrate-chain}
+A substrate chain is a sequence
+\[
+A_0 \xrightarrow{B_0} A_1 \xrightarrow{B_1} \cdots \xrightarrow{B_{n-1}} A_n
+\]
+where each $A_i$ is a rendering (\cref{def:rendering}) and each transition
+is governed by a local budget triple $B_i = (C_i, I_i, \beta_i)$: a local
+repair cost function, a local interference function, and the budget
+available at that stage.
+\end{definition}
+
+Two restrictions are built into \cref{def:substrate-chain} and are worth
+stating openly rather than leaving implicit. First, the chain is linear
+and finite: each $A_i$ has exactly one predecessor and one successor, and
+there are finitely many stages. The branching generalization, in which a
+single $A_i$ gives rise to several independent successors, is deferred to
+Chapter~\ref{ch:fanout}, where it is shown to introduce a genuinely new
+failure mode (silent cross-branch disagreement) rather than being a
+straightforward extension of what follows here. Whether a substrate chain
+with infinitely many stages behaves differently in kind, and not merely in
+degree, from the finite case treated throughout this monograph is left
+unaddressed and is recorded as an open question in
+Appendix~\ref{app:open-questions}. Second, $A_0$ is not assumed to be the
+original object $e$ of Chapter~\ref{ch:distinctions}; it is only assumed to
+be the earliest rendering the chain's analysis takes as given. A substrate
+chain is therefore always relative to a choice of starting point, and
+nothing in this chapter's machinery requires that starting point to be
+loss-free relative to whatever preceded it.
+
+\subsection{Local Budgets as Stage-Local Repair Economies}
+
+The triple $B_i = (C_i, I_i, \beta_i)$ is not an unrelated new primitive.
+It is Chapter~\ref{ch:repair-economics}'s repair-economic apparatus,
+restricted to a single stage and to that stage's own repair-stable domain.
+Concretely, $C_i$ is the restriction of the repair cost function
+$\repcost{\cdot}$ of \cref{def:sharpness} to the distinctions present at
+stage $i$; $I_i$ is the restriction of the interference functional
+$\interf{\cdot}{\cdot}$ of \cref{def:interference} to pairs of distinctions
+competing for stage $i$'s budget; and $\beta_i$ plays the role, at stage
+$i$ alone, that the total budget $\Phi_{\mathrm{tot}}$ plays for a single
+observer in \cref{thm:redistribution}. The relationship between $\beta_i$
+and $\Phi_{\mathrm{tot}}$ is best understood by contrast rather than by
+analogy: $\Phi_{\mathrm{tot}}$ is conserved across an observer's entire,
+simultaneous distinction space, so that \cref{thm:redistribution} can speak
+of resources being redistributed \emph{within} it. No such global quantity
+is conserved across a substrate chain's stages. $\beta_0, \beta_1, \ldots,
+\beta_{n-1}$ are, in general, entirely independent numbers set by
+independent parties for independent reasons, and nothing in
+\cref{def:substrate-chain} relates $\beta_i$ to $\beta_j$ for $i \neq j$.
+This is the formal expression of the distinction drawn informally in
+Chapter~\ref{ch:synchronic-to-diachronic}: the Redistribution Theorem
+governs one $\Phi_{\mathrm{tot}}$ shared by many distinctions; a substrate
+chain has many $\beta_i$, each shared by nothing beyond its own stage.
+
+\section{Budget-Constrained Discard, and Its Underdetermination}
+
+\begin{definition}[Budget-Constrained Discard]
+\label{def:budget-discard}
+A distinction $d$ present in $A_i$ is dropped in $A_{i+1}$ if maintaining
+$d$ exceeds $\beta_i$, or if maintaining $d$ interferes too strongly, per
+$I_i$, with a higher-priority distinction competing for the same stage's
+budget.
+\end{definition}
+
+\cref{def:budget-discard} is deliberately schematic, and it is worth being
+honest, before building anything further on it, about exactly what the
+schema leaves open. The phrase ``higher-priority distinction'' presupposes
+a priority ordering over the distinctions present at stage $i$, and
+\cref{def:budget-discard} does not say where that ordering comes from or
+what happens when two admissible orderings would license different
+discards under the same budget $\beta_i$. This is not a minor omission to
+be patched in passing. Two natural instantiations of
+\cref{def:budget-discard} exist, they are not equivalent, and the
+monograph's later theorems need to be checked against both rather than
+silently assumed to hold for whichever one is easiest to compute with.
+
+\begin{construction}[Greedy Priority Discard]
+\label{con:greedy-discard}
+Fix a priority ordering $d_{(1)} \succ d_{(2)} \succ \cdots \succ d_{(m)}$
+over the distinctions present at stage $i$, reflecting their importance to
+the stage's own task $\tau_i$. Process the distinctions in this order,
+maintaining a running total of committed budget. A distinction is funded,
+and hence preserved into $A_{i+1}$, if the remaining budget after funding
+every higher-priority distinction is at least $C_i(d)$; otherwise it is
+dropped, and processing continues to the next distinction in the ordering
+without returning to reconsider a dropped distinction later.
+\end{construction}
+
+\begin{construction}[Cost-Optimal Discard]
+\label{con:optimal-discard}
+Given the same priority ordering interpreted now as a value assignment
+$v(d_{(k)})$ decreasing in $k$, select the subset $S$ of stage $i$'s
+distinctions maximizing $\sum_{d \in S} v(d)$ subject to $\sum_{d \in S}
+C_i(d) \le \beta_i$, breaking ties in favor of higher-priority
+distinctions.
+\end{construction}
+
+\begin{remark}[The Two Constructions Diverge]
+\label{rem:discard-rules-diverge}
+\cref{con:greedy-discard} and \cref{con:optimal-discard} are the discard
+rule and the knapsack-optimal packing of the same underlying priorities and
+costs, respectively, and they can select different subsets for the same
+$(C_i, I_i, \beta_i)$ and the same priority ordering. A single
+low-priority, low-cost distinction that the greedy rule would skip in
+order to fund several higher-priority items may be exactly the distinction
+a global optimization would sacrifice one mid-priority item to include,
+whenever doing so raises the total value funded. Neither construction is
+privileged by \cref{def:budget-discard} as stated; the definition is a
+constraint on the \emph{outcome} of a stage's discard decision, not a
+specification of the \emph{procedure} that produces it.
+\end{remark}
+
+This divergence is not a defect to be resolved before the theory can
+proceed. It is the correct level of generality for a schema meant to cover
+discard decisions made by a codec's rate-control algorithm, a human
+editor's judgment, a court's interpretation of relevance, and an
+institution's retention policy, none of which can be assumed to implement
+the same procedure. What it does mean, and what is recorded explicitly
+here so that it cannot be forgotten by the time Appendix~\ref{app:proof} is
+drafted, is that any theorem claiming to hold for \emph{every} budget relay
+--- including the Composition Failure Theorem of
+Chapter~\ref{ch:composition-failure} --- must hold under both
+\cref{con:greedy-discard} and \cref{con:optimal-discard}, and ideally under
+any construction satisfying only the qualitative constraint of
+\cref{def:budget-discard}. This robustness requirement is added to
+Appendix~\ref{app:open-questions} as a condition Appendix~\ref{app:proof}'s
+eventual proof must be checked against, not assumed to satisfy by
+construction.
+
+\section{The Budget Relay, Defined}
+
+\begin{definition}[Budget Relay]
+\label{def:budget-relay}
+A substrate chain (\cref{def:substrate-chain}) is a \emph{budget relay} if,
+for every stage $i$, the transition $B_i$ is selected using only the
+current rendering $A_i$ and the stage's own local task $\tau_i$ --- that
+is, without reference to the loss ledgers $L_0, \ldots, L_{i-1}$ of any
+earlier stage, without reference to the budget triple $B_j$ of any other
+stage $j \neq i$, and without appeal to any interference term spanning
+distinctions held at different stages.
+\end{definition}
+
+This restates, and sharpens, an earlier and vaguer formulation of the same
+condition. The earlier formulation spoke of stages having no ``shared
+interference term or shared discard record\ldots by default,'' which left
+unclear exactly what a stage is and is not permitted to consult when
+setting its own budget. \cref{def:budget-relay} as now stated answers that
+question directly: a stage may see the rendering handed to it and may know
+its own task, and nothing else about the chain's history or future. This
+is doing the real work of the definition, and it is worth dwelling on why.
+A substrate chain in which every stage consults a common ledger and a
+common, chain-wide interference functional before setting its own budget
+is, for the purposes of this monograph's apparatus, indistinguishable from
+a single observer's economy distributed across time: its total behavior is
+governed by \cref{thm:redistribution} rather than by anything new. That
+case is not excluded from consideration --- Chapter~\ref{ch:coordination}
+treats exactly this kind of shared-ledger access as one point on a
+spectrum of partial-coordination mechanisms --- but it is not the default
+case, and \cref{def:budget-relay} is written to isolate the default case
+cleanly: a relay in which coordination, if it exists at all, must be added
+back in deliberately and explicitly, rather than assumed from the outset.
+
+\begin{remark}[Degenerate Cases]
+\label{rem:degenerate-relay}
+A substrate chain with $n = 1$ satisfies \cref{def:budget-relay} vacuously,
+since there is only one stage and no other stage's budget or ledger to
+consult; this case reduces to the single rendering already treated in
+Chapters~\ref{ch:distinctions}--\ref{ch:admissibility} and adds nothing new.
+The genuinely new content of \cref{def:budget-relay} appears only once
+$n \ge 2$, and the sharpest illustrations of that content, developed in
+\cref{sec:worked-relay} below, use $n = 3$.
+\end{remark}
+
+\section{The Root-Object Move}
+
+\cref{prop:task-unavailability} showed that sufficiency cannot be
+certified at the time a substrate is produced, because the relevant future
+task space is generally unknown then. Within a budget relay this
+observation sharpens into a design question rather than remaining a mere
+impossibility result: since no stage can know which of its discards a
+future, unanticipated task will need reversed, is there anything a relay's
+earliest stage can do that does not require anticipating the future task
+space at all?
+
+\begin{definition}[Root Object]
+\label{def:root-object}
+A distinguished rendering $A_0$ in a substrate chain, treated as the
+reference point against which all downstream loss is measured. Where
+possible, ingestion-time policy should optimize for re-derivability of
+downstream renderings from $A_0$, rather than for sufficiency relative to
+an as-yet-unknown $\tau$.
+\end{definition}
+
+\begin{proposition}[Root Recovery]
+\label{prop:root-recovery}
+If the root object $A_0$ survives unaltered, any downstream rendering
+$A_i$ can be regenerated under an alternative budget allocation $B_i'$.
+\end{proposition}
+
+\begin{proofsketch}
+By \cref{def:substrate-chain}, every $A_i$ for $i>0$ is generated from
+$A_0$ via some composition of transitions. If $A_0$ persists, the
+transition $B_i$ can be replaced with $B_i'$ and $A_i'$ recomputed
+directly from $A_0$; the loss incurred under $B_i$ is therefore reversible
+whenever $A_0$ is available. Without a preserved $A_0$, distinctions
+discarded at any stage are permanently unavailable to every later stage,
+since \cref{def:budget-discard} provides no mechanism for a distinction to
+reappear once dropped.
+\end{proofsketch}
+
+\cref{prop:root-recovery} is easy to overstate, and it is worth being
+precise about what it does not claim. It does not claim that preserving
+$A_0$ is free. Preserving a root object is itself a repair decision --
+$A_0$ must be maintained against whatever perturbations threaten it
+(storage degradation, format obsolescence, simple deletion under
+retention-policy pressure) -- and that maintenance itself has a cost that
+must be funded by \emph{some} budget, decided by \emph{someone}, before any
+downstream task requiring it is known to exist.
+
+\begin{remark}[The Root-Preservation Bootstrapping Problem]
+\label{rem:root-bootstrap}
+Preserving $A_0$ so that \cref{prop:root-recovery} remains available is
+itself an instance of \cref{prop:task-unavailability}: the decision to fund
+$A_0$'s preservation must be made before the future task space that would
+justify the expense is known, by definition of that task space being open.
+An institution cannot, even in principle, calculate the return on
+archiving a root object against tasks that do not yet exist. This does not
+undermine \cref{def:root-object}'s recommendation so much as clarify its
+status: root preservation is not a solution to the sufficiency problem of
+\cref{ch:admissibility}, but a wager that re-derivability will be worth
+more, in expectation, than whatever the preservation itself costs. Whether
+this wager can be given a more precise decision-theoretic treatment,
+rather than being left at the level of a design recommendation, is left
+open in Appendix~\ref{app:open-questions}.
+\end{remark}
+
+\section{Cumulative Discard and Its Monotonicity}
+
+The claim that loss compounds along an uncoordinated chain has been used
+informally since Chapter~\ref{ch:synchronic-to-diachronic}. Making it
+precise requires first defining what ``cumulative'' discard means for a
+chain of more than one transition, since \cref{def:discard-set} was stated
+only for a single rendering.
+
+\begin{definition}[Cumulative Discard Set]
+\label{def:cumulative-discard}
+For a substrate chain and indices $i \le j$, write $D_k := \discard{A_k
+\to A_{k+1}}$ for the discard set of the single transition $B_k$. The
+cumulative discard set between stages $i$ and $j$ is
+\[
+D(A_i \Rightarrow A_j) \;:=\; \bigcup_{k=i}^{j-1} D_k.
+\]
+\end{definition}
+
+\begin{proposition}[Monotonicity of Cumulative Discard]
+\label{prop:monotonicity}
+For any substrate chain in which the root object is not available for
+recovery (\cref{prop:root-recovery} does not apply), and for any $i \le j
+\le l$,
+\[
+D(A_i \Rightarrow A_j) \;\subseteq\; D(A_i \Rightarrow A_l).
+\]
+\end{proposition}
+
+\begin{proofsketch}
+Immediate from \cref{def:cumulative-discard}: $D(A_i \Rightarrow A_l)$ is a
+union over a strictly larger index range than $D(A_i \Rightarrow A_j)$,
+and a union over a superset of index terms contains the union over the
+subset. No further argument is required once cumulative discard is defined
+as a union of per-transition discard sets, since \cref{def:budget-discard}
+supplies no operation by which a distinction can be re-added to a later
+$A_l$ once absent from an intermediate $A_k$ for $k < l$.
+\end{proofsketch}
+
+This result was labeled a Theorem in an earlier draft of this chapter, and
+it is worth recording explicitly why that label has been withdrawn.
+\cref{prop:monotonicity}'s inequality is, once
+\cref{def:cumulative-discard} is stated correctly, an immediate consequence
+of set union rather than a substantive derivation, and the monograph's own
+epistemic-labeling discipline reserves the word ``Theorem'' for results
+whose proof carries independent weight. The genuine content of the claim
+that loss compounds along a chain is not the inclusion itself but the
+prior, harder-won observation that \cref{def:budget-discard} provides no
+mechanism for reversal absent \cref{prop:root-recovery} -- and that
+observation is a modeling commitment built into
+\cref{def:substrate-chain}, not a theorem about it.
+
+\section{The Loss Ledger, Upgraded}
+
+\begin{definition}[Budget-Aware Loss Ledger]
+\label{def:loss-ledger}
+The loss ledger $L_i$ attached to transition $B_i$ records not merely the
+discard set $D_i = \discard{A_i \to A_{i+1}}$, but the pair $L_i = (D_i,
+B_i)$: the discarded distinctions \emph{together with} the local budget
+that produced the discard. This allows a downstream consumer to
+distinguish a distinction dropped because it was irrelevant to that
+stage's own purpose from one dropped because that stage's budget was
+simply small -- a distinction with different implications for whether the
+loss might be recoverable elsewhere in the relay.
+\end{definition}
+
+\cref{def:loss-ledger} is what separates a budget relay's provenance
+machinery from the plain loss ledger of Chapter~\ref{ch:distinctions}: it
+is a coordination device, not merely a passive record, and its role as
+such is developed fully in Chapter~\ref{ch:coordination}. It is worth
+noting immediately, however, a limitation that \cref{def:budget-relay}
+itself imposes on $L_i$'s usefulness: because a budget relay's stage $i+1$
+does not consult $L_j$ for $j < i$ when setting $B_{i+1}$, the mere
+existence of a loss ledger at every stage does not, by itself, prevent the
+composition failures analyzed in Chapter~\ref{ch:composition-failure}. A
+loss ledger is a necessary condition for a downstream consumer, arriving
+after the fact and inspecting the whole chain, to diagnose what happened;
+it is not, on its own, a mechanism by which an intermediate stage avoids
+causing the problem in the first place.
+
+\section{A Fully Worked Instance}
+\label{sec:worked-relay}
+
+The definitions above are abstract enough that their consequences are easy
+to state and easy to misjudge. This section fixes one small, fully
+explicit numerical relay and works every definition above against it by
+hand, so that later chapters -- particularly the proof of
+Chapter~\ref{ch:composition-failure} and its constructive witness in
+Chapter~\ref{ch:pipelines} -- have a concrete instance to generalize from
+rather than only an abstract schema.
+
+Consider a source rendering $A_0$ carrying five distinctions, $d_1,
+\ldots, d_5$, with repair costs $C(d_1) = 1$, $C(d_2) = 2$, $C(d_3) = 3$,
+$C(d_4) = 2$, and $C(d_5) = 4$, and suppose interference among them is
+negligible, so that $I \approx 0$ throughout and the greedy construction
+(\cref{con:greedy-discard}) and the optimal construction
+(\cref{con:optimal-discard}) can be compared directly against the same
+numbers.
+
+\subsection{Stage \texorpdfstring{$0 \to 1$}{0 to 1}}
+
+Suppose stage $0$'s task $\tau_0$ ranks the distinctions by priority
+$d_1 \succ d_2 \succ d_4 \succ d_5 \succ d_3$, and that $\beta_0 = 4$.
+Applying \cref{con:greedy-discard}: $d_1$ is funded (cost $1$, remaining
+budget $3$); $d_2$ is funded (cost $2$, remaining budget $1$); $d_4$
+cannot be funded (cost $2 > 1$ remaining) and is dropped; $d_5$ cannot be
+funded (cost $4 > 1$ remaining) and is dropped; $d_3$ cannot be funded
+(cost $3 > 1$ remaining) and is dropped. Thus $A_1$ retains $\{d_1, d_2\}$
+and $D_0 = \{d_3, d_4, d_5\}$. Applying \cref{con:optimal-discard} to the
+same priorities and budget yields the identical subset in this instance,
+since $\{d_1, d_2\}$ is in fact the value-maximizing feasible set here;
+\cref{rem:discard-rules-diverge}'s divergence is real in general but does
+not arise for every choice of numbers, and this instance was chosen partly
+to establish a clean baseline before a divergent case is considered
+elsewhere.
+
+The loss ledger at this stage is $L_0 = (\{d_3, d_4, d_5\}, B_0)$, with
+$B_0$ recording $\beta_0 = 4$ against the priority ordering above -- so
+that a downstream consumer inspecting $L_0$ can see that $d_3$, $d_4$, and
+$d_5$ were dropped because $\tau_0$ ranked them low and $\beta_0$ was
+small relative to their combined cost, not because they were judged
+worthless in any absolute sense.
+
+\subsection{Stage \texorpdfstring{$1 \to 2$}{1 to 2}}
+
+Suppose stage $1$'s task $\tau_1$ requires only $\{d_1, d_2\}$, exactly
+what survived into $A_1$, and that $\beta_1 = 3$ -- exactly sufficient to
+fund both at cost $1 + 2 = 3$. Then $A_2$ retains $\{d_1, d_2\}$ and $D_1 =
+\emptyset$. By \cref{def:cumulative-discard}, $D(A_0 \Rightarrow A_2) =
+D_0 \cup D_1 = \{d_3, d_4, d_5\}$, unchanged from $D(A_0 \Rightarrow A_1)$
+-- an explicit instance of \cref{prop:monotonicity}'s inclusion, here
+realized as equality rather than strict containment, since stage $1$
+happened to discard nothing further.
+
+\subsection{A Task Neither Stage Anticipated}
+
+Suppose a task $\tau^*$ is later discovered, requiring recovery of $d_3$
+-- some distinction, present in $A_0$, that neither $\tau_0$ nor $\tau_1$
+had reason to prioritize. Since $d_3 \notin A_1$ and $A_2$ is derived only
+from $A_1$, $d_3$ is unrecoverable from $A_2$ by
+\cref{def:budget-discard}'s irreversibility and confirmed unrecoverable in
+general by \cref{prop:monotonicity}. Neither $B_0$ nor $B_1$ was
+irrational relative to its own task: $\beta_0$ was spent optimally against
+$\tau_0$'s stated priorities, and $\beta_1$ was spent optimally, indeed
+exactly, against $\tau_1$'s. $A_2$ is nonetheless insufficient
+(\cref{def:sufficiency}) for $\tau^*$. This four-paragraph construction is
+already, in miniature, the mechanism that Chapter~\ref{ch:composition-failure}
+formalizes as Theorem~\ref{thm:composition-failure} and that
+Chapter~\ref{ch:pipelines} exhibits again at full scale against a real
+media pipeline; nothing about the general theorem's proof will do more
+than what has already happened here with five distinctions and two
+stages.
+
+\subsection{Root Recovery, Demonstrated}
+
+Suppose, finally, that $A_0$ itself was preserved as a root object
+(\cref{def:root-object}) rather than discarded once $A_1$ was produced.
+Upon discovering $\tau^*$, a new transition $B_0'$ can be computed directly
+from $A_0$ using a revised priority ordering that ranks $d_3$ above $d_4$,
+yielding a new rendering $A_1'$ retaining $\{d_1, d_2, d_3\}$ and
+satisfying $\tau^*$. This is \cref{prop:root-recovery} made concrete: the
+insufficiency exhibited above was permanent for the original chain
+$A_0 \to A_1 \to A_2$, but not permanent for the underlying situation,
+precisely because $A_0$, and not merely $A_1$ or $A_2$, remained available
+to be re-derived from.
+
+\section{What This Definition Commits Us To}
+
+It is worth closing this chapter with an explicit account of exactly what
+has been assumed, so that later chapters relaxing any one of these
+assumptions can be read as deliberate extensions rather than silent
+changes of subject. A substrate chain, as defined here, is linear rather
+than branching (relaxed in Chapter~\ref{ch:fanout}); finite rather than
+unbounded (left open in Appendix~\ref{app:open-questions}); governed at
+each stage by a discard rule whose outcome, but not procedure, is
+constrained by \cref{def:budget-discard} (with the resulting
+underdetermination flagged in \cref{rem:discard-rules-diverge} as a
+robustness condition the proofs of Chapter~\ref{ch:composition-failure}
+must satisfy); irreversible in its losses except through the specific,
+costly mechanism of root recovery (\cref{prop:root-recovery}, itself
+subject to the bootstrapping problem of \cref{rem:root-bootstrap}); and
+uncoordinated by default, in the precise sense given in
+\cref{def:budget-relay}, with coordination treated in
+Chapter~\ref{ch:coordination} as something that must be added back in
+deliberately rather than assumed. Every one of these five commitments is a
+modeling choice, not a discovered fact about the world, and the worked
+instance of \cref{sec:worked-relay} was constructed specifically to make
+each commitment's consequences visible in a case small enough to check by
+hand before trusting the general theory built on top of it.
