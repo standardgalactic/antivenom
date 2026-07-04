@@ -1,0 +1,190 @@
+\chapter{Distinctions and Distinguishability Loss}
+\label{ch:distinctions}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter establishes the formal vocabulary
+used throughout the book. Drawing on Distinguishability Geometry, it treats
+information as a structured space of distinctions and describes renderings
+as projections that preserve some distinctions while collapsing others. The
+chapter's central move is the distinction between benign underdetermination
+and corruption: not all loss is harmful, and corruption arises not from
+loss alone but from \emph{undeclared} loss that obscures what has been
+discarded. This reframes information quality around disclosure rather than
+preservation alone.
+\end{quotation}
+
+\section{Distinguishability Geometry, Imported}
+
+Distinguishability Geometry supplies this monograph's most basic object: a
+space of distinctions $(X,\sim_X)$, together with an equivalence structure
+recording what is and is not told apart within it. Nothing in this section
+modifies that prior formalism; it is specialized here to the case where
+$X$ is the distinction-space of an object $e$ under transformation.
+
+\begin{remark}[A Standing Simplification]
+\label{rem:finite-distinctions}
+Throughout this monograph, distinction spaces are treated as finite or
+countable, and the cardinality-based measures used later
+(\cref{def:fidelity} in particular) are stated only for that case. This is
+a simplification made for tractability, not a claim that every domain of
+interest is discrete in the relevant sense; a painting's causal-history
+space, for instance, is arguably continuous rather than merely large. Where
+this matters, it is flagged again locally (\cref{ch:painting}); it is not
+resolved here.
+\end{remark}
+
+\section{Renderings as Projections}
+
+\begin{definition}[Rendering as Projection]
+\label{def:rendering}
+A rendering $r$ of an object $e$ is a map $(X,\sim_X) \to (Y,\sim_Y)$
+under which some distinctions separated in $X$ become identified in $Y$.
+\end{definition}
+
+This definition is stated at the level of Distinguishability Geometry's
+own primitives: $X$ and $Y$ are sets of possible states, and $\sim_X$,
+$\sim_Y$ record which pairs of states are, and are not, told apart within
+each. This is the correct level of generality for the formalism, but it is
+not the level at which the rest of this monograph actually talks. From
+Chapter~\ref{ch:admissibility} onward, and especially throughout
+Chapter~\ref{ch:budget-relay}, this book speaks of \emph{a} distinction
+$d$ -- ``distinction $d_3$,'' ``the repair cost of $d$,'' ``$d$ is dropped
+at stage $i$'' -- as though a distinction were a single named thing, not a
+pair of states. Reconciling these two ways of talking, rather than
+quietly switching between them, is this chapter's principal piece of
+technical work.
+
+\subsection{From Pairs to Named Distinctions}
+
+\begin{definition}[Discarded Pair]
+\label{def:discarded-pair}
+Given a rendering $r: (X,\sim_X) \to (Y,\sim_Y)$ realized by an underlying
+map $\varphi: X \to Y$, an unordered pair $\{x, x'\} \subseteq X$ is a
+\emph{discarded pair} of $r$ if $x \not\sim_X x'$ (the pair is told apart
+in the source) but $\varphi(x) \sim_Y \varphi(x')$ (the pair becomes
+indistinguishable under $r$).
+\end{definition}
+
+\cref{def:discarded-pair} is the pair-level primitive Distinguishability
+Geometry actually provides, and it is the correct formal object underlying
+everything that follows. It is, however, an awkward unit to reason about
+directly: nobody asks whether ``the pair \{recording with emphasis on the
+third syllable, recording without it\}'' was preserved; they ask whether
+\emph{emphasis} was preserved. The bridge from pairs to named features is
+given by treating a feature as the thing that distinguishes a minimal pair.
+
+\begin{definition}[Minimal Pair for a Distinction]
+\label{def:minimal-pair}
+A named distinction $d$ is represented, relative to a source $(X,\sim_X)$,
+by a minimal pair $\{x_d, x_{\neg d}\} \subseteq X$: two states differing
+exactly in whether the feature named by $d$ holds, and told apart in the
+source ($x_d \not\sim_X x_{\neg d}$).
+\end{definition}
+
+\begin{definition}[Discarded Distinction Set, Revised]
+\label{def:discard-set}
+Given a rendering $r$ and a fixed assignment of minimal pairs to named
+distinctions (\cref{def:minimal-pair}), the discarded distinction set
+$\discard{r}$ is the set of named distinctions $d$ whose minimal pair
+$\{x_d, x_{\neg d}\}$ is a discarded pair of $r$ (\cref{def:discarded-pair}):
+\[
+\discard{r} \;=\; \{\, d \;:\; \{x_d, x_{\neg d}\} \text{ is discarded by } r \,\}.
+\]
+\end{definition}
+
+\cref{def:discard-set} supersedes an earlier, looser formulation of the
+same definition, which described $\discard{r}$ directly as ``the set of
+distinction-pairs separated in the source but identified in $r$'' and was
+consequently ambiguous between the pair-level and feature-level readings
+used elsewhere in the book. Every later chapter's usage --
+\cref{def:benign-loss} and \cref{def:corrupting-loss} below,
+Chapter~\ref{ch:repair-economics}'s treatment of $\repcost{d}$ for a named
+$d$, and the entire apparatus of Chapter~\ref{ch:budget-relay} -- presumes
+the feature-level reading given here, and \cref{def:discard-set} is stated
+so as to make that presumption explicit and correct rather than
+convenient and unexamined.
+
+\begin{remark}[When the Bridge Is Clean]
+\label{rem:bridge-clean}
+The identification in \cref{def:discard-set} between a discarded pair and
+a discarded feature is unproblematic exactly when $X$ factors, at least
+locally, as a product of independent feature-dimensions -- so that varying
+$d$ alone, holding everything else fixed, is a meaningful operation on $X$
+and produces a genuine minimal pair rather than an artifact of an
+arbitrary choice of coordinates. This holds cleanly for the toy and
+worked examples used throughout this monograph (a transcript's lexical
+content and prosodic emphasis are reasonably treated as independent
+dimensions of an audio recording) and is assumed as a standing
+simplification rather than argued for in general. Domains where features
+are not independently variable in this sense -- where, for instance, no
+change to one property is possible without simultaneously changing
+another -- are not treated here.
+\end{remark}
+
+\section{Underdetermination Versus Corruption}
+
+The distinction developed in this section is used, in one form or
+another, in every subsequent chapter of the monograph, and is the closest
+thing this book has to a single organizing move.
+
+\begin{definition}[Benign Loss]
+\label{def:benign-loss}
+A discarded distinction $d \in \discard{r}$ is benign relative to a task
+$\tau$ if $d$ is not required to perform $\tau$ correctly.
+\end{definition}
+
+\begin{definition}[Corrupting Loss]
+\label{def:corrupting-loss}
+A discarded distinction $d \in \discard{r}$ is corrupting relative to
+$\tau$ if $\tau$ requires $d$ and the rendering's presentation obscures
+that $d$ was discarded, as opposed to openly declaring the gap.
+\end{definition}
+
+\begin{proposition}[Corruption Requires Undeclared Loss]
+\label{prop:corruption-undeclared}
+Let $r$ be a rendering with discard set $\discard{r}$. If every
+distinction in $\discard{r}$ is declared -- that is, made available to the
+consumer as a known gap rather than presented as preserved -- then loss
+alone does not imply corruption. Corruption requires both (i) the loss of
+a task-relevant distinction, and (ii) failure to disclose that loss.
+\end{proposition}
+
+\begin{proofsketch}
+Corruption, per \cref{def:corrupting-loss}, is task-relative by
+construction. If $d\in\discard{r}$ is declared, a consumer pursuing a task
+requiring $d$ can compensate for its absence, decline to rely on $r$ for
+that task, or seek an alternative rendering; the distinction remains
+unavailable, but the consumer's belief-state about $r$'s sufficiency is
+not falsified by $r$ itself. Undeclared loss is therefore necessary for
+corruption in the sense of \cref{def:corrupting-loss}, though not
+sufficient, since a task not requiring $d$ is unaffected regardless of
+disclosure.
+\end{proofsketch}
+
+\cref{def:benign-loss} and \cref{def:corrupting-loss} are stated here in
+terms of ``required to perform $\tau$ correctly'' without yet saying
+precisely what correctness of performance means, since that requires the
+apparatus of admissible continuation sets developed in
+Chapter~\ref{ch:admissibility}. \cref{prop:benign-preserves-sufficiency}
+there closes the loop, restating both definitions in the sharper,
+task-relative vocabulary Chapter~\ref{ch:admissibility} provides.
+
+\section{A Toy Example}
+
+\begin{example}
+\label{ex:jpeg}
+Lossy image compression discards high-frequency detail below a
+quantization threshold. When the compression ratio and quantization
+parameters are attached to the file as metadata, the loss is declared: a
+consumer needing pixel-exact reproduction can detect, before relying on
+the image, that it will not get it. When the same file is relabeled as a
+lossless master, an identical discard set becomes corrupting under
+\cref{def:corrupting-loss}, though nothing about the image data itself has
+changed. In the vocabulary of \cref{def:minimal-pair}, each discarded
+high-frequency component corresponds to a minimal pair of source images
+differing only in that component, rendered indistinguishable once
+quantized; the metadata either does or does not disclose that this
+minimal pair has been collapsed. The example is deliberately kept toy at
+this stage; it is developed properly, without simplification, in the
+media-pipeline case of Chapter~\ref{ch:pipelines}.
+\end{example}
