@@ -1,0 +1,125 @@
+\chapter{Chess: The Closed Hidden-State Case}
+\label{ch:chess}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} Chess serves as the canonical closed
+hidden-state domain. This chapter examines the gap between the visible
+board and the additional state required for correct continuation, such as
+castling rights and the repetition count, and shows that because this
+hidden state is finite and enumerable, augmentation restores sufficiency in
+principle. Chess offers a clean illustration of the framework's core
+concepts without the complications introduced by open-ended real-world
+domains, and the chapter closes by revisiting, through the case of a
+physical board, the question of what direct access actually means.
+\end{quotation}
+
+\section{The Board as Substrate}
+
+A chess position's visible state -- piece placement -- omits castling
+rights, en passant eligibility, and the repetition count, each of which
+is required to determine legal continuations in some positions. This is
+the canonical witness for \cref{def:closed-open}'s closed case: the
+omitted variables are drawn from a short, enumerable list, in sharp
+contrast to painting's open causal space (Chapter~\ref{ch:painting}).
+
+\begin{example}
+\label{ex:castling-position}
+Two positions can have identical piece placement -- the same pieces on
+the same squares -- while differing in whether either player retains the
+right to castle, if one position arose from a king or rook having moved
+and moved back while the other did not. A rendering that records only
+piece placement cannot distinguish these; a rendering that also records
+castling rights can. This is a minimal pair in the exact sense of
+\cref{def:minimal-pair}: two source states differing in one named
+distinction, told apart in the source, and identified by a rendering
+that omits it.
+\end{example}
+
+\section{Augmentation Worked in Full}
+
+Augmenting the visible board with $H = \{\text{castling rights, en
+passant status, repetition count}\}$ satisfies \cref{prop:closed-sufficiency}:
+the augmented rendering $r' = (r, H)$ is sufficient for determining every
+legal continuation, since $H$ exhausts the game's hidden state relevant
+to legality. This can be stated even more precisely using
+Appendix~\ref{app:proof}'s recovery-task machinery: each element of $H$
+corresponds to a recovery task $\tau_h$ (\cref{def:recovery-task}) --
+``does this side retain castling rights,'' say -- and
+\cref{lem:recovery-sufficiency} gives directly that $r'$ is sufficient
+for $\tau_h$ if and only if $h \notin \discard{r'}$. Since $H$ is
+included in full, every such $\tau_h$ is satisfied simultaneously, which
+is exactly what \cref{prop:closed-sufficiency}'s conclusion amounts to
+once stated at the level of individual recovery tasks rather than only
+at the level of the augmented rendering as a whole. Chess is, in this
+sense, the domain where the recovery-task family $T_{\mathrm{rec}}$
+introduced to construct Appendix~\ref{app:proof}'s witness happens to be
+finite and known in advance, rather than open -- the one condition
+under which \cref{prop:task-unavailability}'s impossibility result does
+not bind.
+
+\section{The Simul Player as a Degenerate Relay}
+
+A simultaneous-exhibition player moving between boards is formalized as a
+degenerate one-stage relay in which $B_0$ is deliberately reapplied fresh
+at each encounter with a given board, rather than carried forward across
+encounters: the player reads the current position cold and acts on it,
+with no continuity of an internal working state between visits.
+
+\begin{proposition}[Stateless Re-Entry Is Sufficient When the Board Is]
+\label{prop:stateless-reentry}
+If the augmented rendering $r' = (r, H)$ of a chess position is
+sufficient for the task of determining the best legal move
+(\cref{prop:closed-sufficiency}), then a player re-entering the game
+statelessly at that position -- with no memory of how it arose -- can
+determine the same best move as a player with full continuous memory of
+the game.
+\end{proposition}
+
+\begin{proofsketch}
+By \cref{prop:closed-sufficiency}, $r'$ is sufficient for the task, so
+$\admis{\tau}{r'} \subseteq \mathcal{C}_\tau(e)$ regardless of which
+consumer is evaluating it or what that consumer's history has been. A
+continuously-present player's continuation is computed from
+$\admis{\tau}{r'}$ exactly as a freshly re-entering player's is, since
+neither player has access to information beyond $r'$ once castling
+rights, en passant status, and repetition count are included in it. The
+game's history matters only insofar as it determines $H$'s current
+values, and $H$ is, by hypothesis, already reflected in $r'$.
+\end{proofsketch}
+
+\cref{prop:stateless-reentry} is what licenses treating the simul player
+as a legitimate limiting case rather than a curiosity: the entire reason
+walking a circle of boards and reading each one cold works at all is that
+chess's hidden state is closed and, when augmented, fully captured in the
+position itself, exactly as \cref{sec:coord-augmentation}'s discussion of
+augmentation as a coordination mechanism requires. This contrasts sharply
+with the genuine multi-stage relays of Chapter~\ref{ch:pipelines}, where
+state \emph{is} intended to carry forward across stages that do not share
+a single fixed task, and where \cref{thm:composition-failure}'s failure
+mode becomes possible precisely because that carried-forward state is
+uncoordinated across stages with differing priorities -- a condition that
+does not arise in the simul case because every visit to a given board
+shares exactly one task.
+
+\section{Revisiting the Hard Test Case}
+
+The physical board in front of a player is, per
+\cref{oq:unmediated-access}, the strongest available candidate for
+fidelity $\fidelity{r}{\tau} = 1$ under \cref{def:fidelity}. In the
+vocabulary of Chapter~\ref{ch:mode-relativity}, the question is precisely
+what $r_{c,t}$ is for a player $c$ at the moment of moving: is it the
+board itself, or is it $c$'s visual percept of the board, already
+processed by whatever mechanism governs perception? If the narrow reading
+of \cref{ch:mem8} is correct, this distinction can be drawn cleanly and
+$r_{c,t}$ can be treated as the board itself for practical purposes,
+recovering the naive intuition that a player has direct access to the
+game. If the broad reading is correct, $r_{c,t}$ is already a
+reconstructive product of the player's perceptual system, and the
+question of whether fidelity ever actually reaches $1$ here --- rather
+than merely approaching it closely enough for chess's purposes --- is
+left open pending resolution of \cref{oq:mem8-fork}. Nothing in this
+chapter's treatment of augmentation and stateless re-entry depends on
+settling that question: \cref{prop:stateless-reentry} holds given
+whatever $r_{c,t}$ turns out to be, provided it includes $H$, and the
+fork bears only on how literally ``the board itself'' can be taken as
+that substrate.
