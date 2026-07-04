@@ -1,0 +1,229 @@
+\chapter{Admissibility and the Space of Continuations}
+\label{ch:admissibility}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} Having defined what can be lost, this chapter
+turns to what remains possible. Using concepts imported from Admissibility
+Theory, it defines admissible continuation sets and task-relative
+sufficiency: a substrate is never sufficient in the abstract, only relative
+to a particular task. The chapter argues that sufficiency cannot generally
+be certified at creation time, since future tasks are often unknown then,
+and introduces the distinction between closed hidden-state domains, where
+omitted information can in principle be enumerated and restored, and open
+domains, where no finite augmentation can exhaust future informational
+needs. This distinction becomes one of the framework's central organizing
+principles.
+\end{quotation}
+
+\section{Admissibility Theory, Imported and Specialized}
+
+Admissibility Theory supplies the second basic object this monograph
+needs: given a substrate, the set of continuations still reachable from
+it. As with Distinguishability Geometry in Chapter~\ref{ch:distinctions},
+nothing in the prior formalism is altered here; it is specialized to the
+continuation problem of \cref{ch:continuation-problem}.
+
+\begin{definition}[Admissible Continuation Set]
+\label{def:admissible-set}
+$\admis{\tau}{r}$, the admissible continuation set of task $\tau$ given
+rendering $r$, is the set of continuations of $\tau$ that remain reachable
+given only $r$.
+\end{definition}
+
+This definition leaves the internal structure of a ``continuation''
+deliberately unspecified, and deliberately so: a continuation is a legal
+move in Chapter~\ref{ch:chess}'s setting, a plausible causal narrative in
+Chapter~\ref{ch:painting}'s, a verified-or-rejected verdict in
+Chapter~\ref{ch:proofs}'s, and a binding ruling in
+Chapter~\ref{ch:contracts}'s. The formalism is domain-agnostic on purpose;
+each worked domain in Part~\ref{part:worked-domains} supplies its own
+concrete continuation space rather than inheriting one from this chapter.
+
+\begin{proposition}[Admissibility Bounded by Full Access]
+\label{prop:admissibility-upper-bound}
+For any rendering $r$ of an object $e$ and any task $\tau$,
+$\admis{\tau}{r} \subseteq \admis{\tau}{e}$.
+\end{proposition}
+
+\begin{proofsketch}
+A rendering (\cref{def:rendering}) can only identify distinctions present
+in the source, never introduce new ones; any continuation reachable using
+only $r$ is therefore reachable using the full source $e$ as well, since
+$e$ determines everything $r$ does and possibly more. The reverse
+containment need not hold, which is exactly what makes discard
+consequential.
+\end{proofsketch}
+
+\begin{proposition}[Admissibility Is Monotone Under Further Rendering]
+\label{prop:admissibility-monotone}
+If $r'$ is itself a rendering of $r$ -- that is, $r'$ is obtained from $r$
+by a further projection in the sense of \cref{def:rendering} -- then
+$\admis{\tau}{r'} \subseteq \admis{\tau}{r}$.
+\end{proposition}
+
+\begin{proofsketch}
+Immediate from \cref{prop:admissibility-upper-bound} applied with $r$
+playing the role of the source and $r'$ the rendering of it: $r'$ can only
+identify distinctions already present or absent in $r$, and cannot
+recover any continuation $r$ itself could not reach.
+\end{proofsketch}
+
+\cref{prop:admissibility-monotone} is the admissibility-theoretic
+counterpart of Chapter~\ref{ch:budget-relay}'s
+\cref{prop:monotonicity}: continuation possibilities can only shrink or
+stay level as a substrate is further rendered, never expand, in the
+absence of a preserved earlier stage to re-derive from
+(\cref{prop:root-recovery}).
+
+\section{What a Task Requires}
+
+Chapter~\ref{ch:distinctions} spoke of a distinction being ``required'' by
+a task $\tau$ without saying precisely what that means. The remainder of
+this chapter makes that precise, and in doing so corrects an
+oversimplification present in an earlier formulation of task-relative
+sufficiency: that formulation spoke of ``the true or intended
+continuation'' of a task, in the singular, which is adequate for tasks
+like verification that admit exactly one correct outcome but is not
+adequate for tasks like Chapter~\ref{ch:painting}'s evocative
+reconstruction, which by design tolerates more than one acceptable
+completion.
+
+\begin{definition}[Correctness Set]
+\label{def:correctness-set}
+A task $\tau$, evaluated against an object $e$, determines a nonempty
+correctness set $\mathcal{C}_\tau(e)$: the set of continuations that count
+as successfully performing $\tau$. $\mathcal{C}_\tau(e)$ is a singleton for
+tasks demanding a unique correct outcome (verification against a fixed
+proof, say) and may contain many continuations for tasks tolerating
+multiple acceptable completions (evocative reconstruction from a
+painting, say, where several causal histories are equally acceptable).
+\end{definition}
+
+\begin{definition}[Task-Relative Sufficiency, Revised]
+\label{def:sufficiency}
+$r$ is sufficient for $\tau$ (evaluated against the true object $e$) iff
+\[
+\admis{\tau}{r} \;\subseteq\; \mathcal{C}_\tau(e).
+\]
+\end{definition}
+
+This revises, and is intended to supersede, the earlier singular-outcome
+phrasing. The subset formulation in \cref{def:sufficiency} is chosen
+because it correctly unifies the two cases an adequate definition needs to
+cover simultaneously. For a verification-type task, $\mathcal{C}_\tau(e)$
+is a singleton, and \cref{def:sufficiency} demands that $r$ pin down
+exactly that outcome: $\admis{\tau}{r}$ must not merely intersect the
+correct answer but be contained in it, ruling out any admissible but wrong
+continuation being reachable alongside the right one. For a task
+tolerating multiple acceptable completions, $\mathcal{C}_\tau(e)$ is
+larger, and \cref{def:sufficiency} only requires that every continuation
+$r$ makes reachable falls inside that larger acceptable set -- which is
+satisfied even when several distinct, mutually incompatible continuations
+remain open, exactly the situation Chapter~\ref{ch:painting} calls benign
+underdetermination.
+
+\begin{proposition}[Benign Loss Preserves Sufficiency]
+\label{prop:benign-preserves-sufficiency}
+If every distinction in $\discard{r}$ is benign relative to $\tau$
+(\cref{def:benign-loss}), and $e$ itself would be sufficient for $\tau$,
+then $r$ is sufficient for $\tau$.
+\end{proposition}
+
+\begin{proofsketch}
+By \cref{def:benign-loss}, no distinction required to determine membership
+in $\mathcal{C}_\tau(e)$ is among those $r$ discards; hence every
+continuation in $\admis{\tau}{r}$ is also determinable from $e$ as
+belonging to $\mathcal{C}_\tau(e)$, since the discarded distinctions play
+no role in that determination. $\admis{\tau}{r} \subseteq
+\admis{\tau}{e} \cap (\text{continuations consistent with } \tau)
+\subseteq \mathcal{C}_\tau(e)$ whenever $e$ is itself sufficient, giving
+\cref{def:sufficiency} directly.
+\end{proofsketch}
+
+\cref{prop:benign-preserves-sufficiency} is the formal statement of the
+coherence this monograph's two central chapters are supposed to have with
+each other: Chapter~\ref{ch:distinctions}'s loss-level vocabulary
+(benign versus corrupting) and this chapter's continuation-level
+vocabulary (admissible versus sufficient) are not two independent
+frameworks that happen to agree on examples; benign loss is, by
+construction, exactly the kind of loss that cannot violate sufficiency.
+
+\section{Why Sufficiency Cannot Be Verified at Production Time}
+
+\begin{proposition}[Task Unavailability at Ingestion]
+\label{prop:task-unavailability}
+If the future task space $T$ relevant to a substrate is open -- unbounded,
+not fixed at the time the substrate is produced -- then sufficiency of a
+rendering $r$ relative to $T$ cannot be certified when $r$ is produced.
+\end{proposition}
+
+\begin{proofsketch}
+Suppose otherwise: suppose $r$ could be certified sufficient for every
+$\tau \in T$ at production time. Then $\admis{\tau}{r} \subseteq
+\mathcal{C}_\tau(e)$ for every $\tau \in T$, which requires $r$ to have
+preserved every distinction any such $\tau$ might need to rule out an
+incorrect continuation. Since $T$ is open, a task $\tau^*$ can always be
+constructed, after the fact, requiring a distinction not represented in
+$r$ -- for instance, a distinction $r$'s producer had no reason to
+anticipate -- for which $\admis{\tau^*}{r} \not\subseteq
+\mathcal{C}_{\tau^*}(e)$. This contradicts the certification assumed
+above. Hence no such certification is available in general.
+\end{proofsketch}
+
+This result is the formal version of \cref{principle:global-insufficiency}
+for a single substrate. It motivates the shift, completed in
+\cref{def:root-object}, from optimizing a rendering for sufficiency --
+which \cref{prop:task-unavailability} shows to be generally impossible to
+verify -- to optimizing it for re-derivability from a preserved root
+object.
+
+\section{Closed and Open Hidden-State Domains}
+
+\begin{definition}[Closed versus Open Hidden-State Domain]
+\label{def:closed-open}
+A domain has \emph{closed} hidden state if the distinctions omitted from a
+given state are drawn from a finite, enumerable list -- for instance, a
+chess position's castling rights, en passant eligibility, and repetition
+count. A domain is \emph{open} otherwise -- for instance, the causal
+history of a depicted configuration in a painting, which is compatible
+with an unbounded and non-enumerable set of candidate causes.
+\end{definition}
+
+\begin{proposition}[Closed Hidden-State Sufficiency]
+\label{prop:closed-sufficiency}
+In a domain with a finite hidden-state set $H$, the augmented rendering
+$r' = (r, H)$ is sufficient for any task $\tau$ whose correctness set
+$\mathcal{C}_\tau(e)$ is determined by distinctions drawn from $H$,
+provided all task-relevant elements of $H$ are included.
+\end{proposition}
+
+\begin{proofsketch}
+Since $H$ is finite, exhaustive enumeration eliminates ambiguity about
+which hidden variables are missing: every continuation's membership in
+$\mathcal{C}_\tau(e)$ becomes computable from $r'$ once the enumerated
+variables are fixed, so $\admis{\tau}{r'} \subseteq \mathcal{C}_\tau(e)$
+as required by \cref{def:sufficiency}. Chess serves as a witness
+(Chapter~\ref{ch:chess}): a board position augmented with castling rights,
+en passant status, and repetition count is sufficient for determining
+every legal continuation of the game, whereas the visible board alone is
+not.
+\end{proofsketch}
+
+\begin{proposition}[Sufficiency Achievable Only in the Closed Case]
+\label{prop:sufficiency-closed-only}
+Sufficiency in the sense of \cref{prop:closed-sufficiency} -- achieved by
+finite augmentation of the hidden state -- is available only in closed
+hidden-state domains.
+\end{proposition}
+
+\begin{proofsketch}
+In an open hidden-state domain (\cref{def:closed-open}), no finite set $H$
+exhausts the candidate causes or hidden variables relevant to a given
+task, by definition of openness; hence no finite $H$ makes
+\cref{prop:closed-sufficiency}'s hypothesis satisfiable. Painting
+(Chapter~\ref{ch:painting}) is the canonical witness to this proposition's
+converse case, and there $\mathcal{C}_\tau(e)$ is typically large rather
+than singleton, which is exactly what allows sufficiency to be achieved by
+other means (\cref{prop:benign-preserves-sufficiency}) even though
+augmentation specifically is unavailable.
+\end{proofsketch}
