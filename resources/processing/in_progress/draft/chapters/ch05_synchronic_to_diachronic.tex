@@ -1,0 +1,124 @@
+\chapter{From Synchronic Budgets to Diachronic Chains}
+\label{ch:synchronic-to-diachronic}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter identifies the conceptual gap that
+motivates the monograph's primary contribution. Existing repair-budget
+theory describes tradeoffs among distinctions maintained by one observer at
+one moment; real information systems instead consist of chains of
+transformations performed by many independent agents across time. Local
+repair-budget reasoning cannot simply be applied stage by stage, because no
+global coordination mechanism exists and each stage acts with incomplete
+knowledge of future tasks and other stages' decisions. This motivates the
+new formal object introduced in Part~\ref{part:budget-relay}.
+\end{quotation}
+
+\section{The Mismatch, Stated Precisely}
+
+\cref{thm:redistribution} governs competition among distinctions
+maintained by one observer at one time. The continuation problem of
+Chapter~\ref{ch:continuation-problem} concerns a single distinction, or a
+bounded cluster of distinctions, whose status must survive transmission
+across a sequence of observers or processes over time. These are
+different objects, and the difference is not cosmetic.
+
+\section{Why This Is Not a Trivial Relabeling}
+
+Three features of the continuation problem have no counterpart in the
+Redistribution Theorem's setting. First, no single global budget
+functional constrains an entire chain of independently operating stages;
+each stage's budget is its own. Second, each stage's repair decisions are
+typically made without visibility into any other stage's decisions, past
+or future. Third, the chain is directional: a later stage cannot
+un-discard a distinction an earlier stage has already collapsed, whereas
+\cref{thm:redistribution}'s variational argument implicitly allows
+reallocation in any direction within a single observer's simultaneous
+budget.
+
+The temptation to treat these as differences of degree rather than of
+kind is worth resisting directly, since a natural first response to the
+continuation problem is to try applying \cref{thm:redistribution}
+stage-by-stage -- to ask what a ``local Redistribution Theorem'' at each
+$B_i$ would say, and to hope that composing $n$ local instances yields
+something like a global conservation law across the whole chain. The
+remainder of this section shows why that hope fails, and why it fails for
+a structural reason rather than merely a technical one.
+
+\begin{proposition}[No Global Conserved Quantity Across a Relay]
+\label{prop:no-global-conserved-quantity}
+There is, in general, no functional $\Phi_{\mathrm{relay}} =
+f(\beta_0, \ldots, \beta_{n-1})$ of a budget relay's stage budgets
+satisfying an analogue of \cref{thm:redistribution}'s conservation law
+under variation of any single $\beta_i$.
+\end{proposition}
+
+\begin{proofsketch}
+\cref{thm:redistribution}'s conservation law depends essentially on the
+interference functional $I(\cdot,\cdot)$ being defined over pairs of
+distinctions competing within a \emph{single} repair-stable domain
+$\restdomain$, so that a variation in the repair investment devoted to
+one distinction has a well-defined, computable effect on the repair cost
+of another via $\interf{\cdot}{\cdot}$ (\cref{def:interference}). Under
+\cref{def:budget-relay}, however, stage $i$'s interference function $I_i$
+is defined only over distinctions present at stage $i$; no interference
+term $I(d, d')$ is defined, or is even well-typed, for $d$ a distinction
+competing for $\beta_i$ and $d'$ a distinction competing for $\beta_j$ at
+a different stage $j$, since the two distinctions need not both survive
+to be simultaneously present at any single stage for such a term to be
+evaluated. A variation $\delta\beta_i$ therefore has no defined effect on
+$\beta_j$ for $j \neq i$ within this formalism, not merely an
+uncoordinated or unobserved one: the mathematical object
+$\cref{thm:redistribution}$'s proof varies -- a single $\Phi$ built from
+terms sharing one common domain $\restdomain$ -- has no counterpart
+spanning stages, since $\restdomain$ itself is stage-local by
+\cref{def:substrate-chain}. No conservation law can be stated for a
+quantity that has not been defined, and $\Phi_{\mathrm{relay}}$ has not
+been defined for exactly this reason.
+\end{proofsketch}
+
+\cref{prop:no-global-conserved-quantity} sharpens the informal claim made
+in earlier drafts of this argument -- that ``no global coordination
+mechanism exists'' -- into a specific mathematical reason rather than a
+description of a missing institutional arrangement. It is not merely that
+no one has coordinated the stages of a typical relay; it is that the
+formal object a coordination claim would need to be about does not exist
+under \cref{def:budget-relay}'s stage-local interference structure. This
+is also why Chapter~\ref{ch:coordination}'s partial-coordination
+mechanisms cannot simply consist of ``computing $\Phi_{\mathrm{relay}}$
+and applying \cref{thm:redistribution} to it'': that theorem is
+unavailable in this setting not because the chain is uncoordinated but
+because the relevant conserved quantity has no definition to conserve.
+Coordination mechanisms must therefore do something other than extend
+Chapter~\ref{ch:repair-economics}'s apparatus outward; they must
+introduce new machinery, which is exactly what
+Chapter~\ref{ch:coordination}'s taxonomy does.
+
+\section{Statement of the Extension Task}
+
+The remainder of this monograph is organized around building a formal
+object capable of expressing ``locally rational, globally uncoordinated''
+loss accumulation -- the budget relay of Chapter~\ref{ch:budget-relay} --
+and proving a composition result analogous in spirit to
+\cref{thm:redistribution} but diachronic in structure: the Composition
+Failure Theorem of Chapter~\ref{ch:composition-failure}. Given
+\cref{prop:no-global-conserved-quantity}, that theorem cannot be obtained
+by generalizing \cref{thm:redistribution}'s variational argument to a
+larger domain; it must be proved directly against
+\cref{def:substrate-chain} and \cref{def:budget-discard}'s irreversibility,
+as it is in Appendix~\ref{app:proof}.
+
+\begin{principle}[Global Insufficiency, restated]
+\label{principle:global-insufficiency-restated}
+A substrate chain in which each transformation is locally
+budget-rational can nonetheless become globally insufficient for an open
+task space, without any single stage being negligent.
+\end{principle}
+
+This sentence is, in an important sense, the actual center of the
+monograph -- more so than any single theorem statement that follows from
+it. It is stated here informally, and precisely, because everything in
+Part~\ref{part:budget-relay} exists to make it rigorous, and
+\cref{prop:no-global-conserved-quantity} is the first indication that
+making it rigorous will require genuinely new machinery rather than a
+larger application of what Chapter~\ref{ch:repair-economics} already
+provides.

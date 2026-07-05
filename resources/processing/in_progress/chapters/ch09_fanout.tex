@@ -1,0 +1,278 @@
+\chapter{Fan-Out: Parallel Budget Relays and Cross-Branch Disagreement}
+\label{ch:fanout}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} The framework is extended here from linear
+chains to branching structures, where a single source generates multiple
+downstream renderings optimized for different purposes. Branch agreement
+and silent disagreement are introduced to describe situations in which
+branches appear compatible while relying on incompatible assumptions about
+discarded information. Confidence and quality estimates are shown to be
+renderings in their own right, subject to the same limitations as the
+artifacts they describe, motivating a trust boundary as the practical
+stopping point that prevents an infinite regress in evaluating confidence
+and provenance systems. The chapter closes by asking what happens when
+branches are brought back together rather than left to diverge:
+reconciliation can recover distinctions no single branch preserved alone,
+though it does not resolve genuine conflicts between branches that
+disagree about the same distinction rather than merely discarding
+different ones.
+\end{quotation}
+
+\section{From Chains to Graphs}
+
+\begin{definition}[Fan-Out Relay]
+\label{def:fanout-relay}
+A fan-out relay is a directed graph of renderings with a single source
+$A_0$ and two or more independent successor branches
+$A_0 \xrightarrow{B^{(1)}} A^{(1)}$, $A_0 \xrightarrow{B^{(2)}} A^{(2)}$,
+\ldots, each governed by its own local budget triple and each satisfying
+\cref{def:budget-relay}'s independence condition with respect to every
+other branch: branch $k$'s transition is selected without reference to
+any other branch's budget or ledger.
+\end{definition}
+
+\cref{def:fanout-relay} generalizes \cref{def:substrate-chain} directly:
+audio rendered in parallel into a transcript, an acoustic-feature
+analysis, and an emotion analysis is the paradigm case, and each branch
+may itself continue as a linear substrate chain of arbitrary length
+beyond the point of divergence. What is new here is not the branching
+structure by itself, but what it makes possible: two renderings that
+both trace back to the same source, and that a downstream party might
+reasonably expect to agree with each other, can instead diverge in ways
+that neither branch's own local admissibility (\cref{def:locally-admissible})
+does anything to prevent.
+
+\begin{example}[Version Control as a Fan-Out Relay]
+\label{ex:git-fanout}
+A version-control branch structure is a fan-out relay in essentially
+undisguised form: a shared commit $A_0$ gives rise to independent
+branches, each accumulating its own history of transitions governed by
+whichever contributor is working on it, with no requirement that any
+branch consult another's changes before committing its own. Two branches
+independently editing the same function for different purposes -- one
+optimizing it for speed, one adding a safety check -- are exactly
+\cref{def:fanout-relay}'s two-branch case, and a downstream party merging
+both branches later is performing, in effect, an ad hoc instance of the
+reconciliation problem taken up in \S\ref{sec:reconciliation}.
+\end{example}
+
+\section{Branch Agreement and Silent Disagreement}
+
+\begin{definition}[Branch Agreement]
+\label{def:branch-agreement}
+Two renderings $A^{(i)}, A^{(j)}$ derived from a common ancestor are in
+agreement on a distinction $d$ if neither branch's discard set
+contradicts the other's claims about $d$.
+\end{definition}
+
+\begin{definition}[Silent Disagreement]
+\label{def:silent-disagreement}
+Branches disagree silently when each branch's confidence or quality
+profile $Q$ fails to flag that another branch depended on a distinction
+that the first branch discarded or rendered unstable.
+\end{definition}
+
+The definitions above are easy to accept in the abstract and easy to
+under-examine in practice, so this section works a single construction
+in full, in the same style as Appendix~\ref{app:proof}'s canonical
+witness, rather than resting on a description of the transcript/acoustic
+case alone.
+
+\subsection{A Minimal Two-Branch Witness}
+
+\begin{construction}[Two-Branch Witness]
+\label{con:two-branch}
+Let $A_0$ carry two distinctions: $d$, the resolved identity of an
+ambiguous phoneme, with cost $C(d) = 2$; and $q_d$, a meta-distinction
+recording whether the source evidence for $d$ is stable or unstable, with
+cost $C(q_d) = 1$. Branch $X$ (a transcript) has task $\tau_X$ requiring
+exactly $\{d\}$, with budget $\beta_X = 2$. Branch $Y$ (an
+acoustic-stability analysis) has task $\tau_Y$ requiring exactly
+$\{q_d\}$, with budget $\beta_Y = 1$.
+\end{construction}
+
+\begin{proposition}[The Witness Produces Silent Disagreement]
+\label{prop:witness-silent-disagreement}
+In \cref{con:two-branch}, branch $X$ is locally admissible with respect
+to $\tau_X$ and discards $q_d$; branch $Y$ is locally admissible with
+respect to $\tau_Y$ and discards $d$; and a consumer with access only to
+branch $X$ cannot detect that $q_d$ -- and hence the instability branch
+$Y$ would have reported -- was ever at issue.
+\end{proposition}
+
+\begin{proof}
+For branch $X$: the required distinction $\{d\}$ has cost $R_X = C(d) = 2
+= \beta_X$ exactly. The only non-required distinction present, $q_d$, has
+cost $C(q_d) = 1 > \beta_X - R_X = 0$. By \cref{lem:exhaustion}, $q_d$ is
+dropped under any construction satisfying \cref{def:budget-discard} with
+$d$ ranked above $q_d$, so $X$ is locally admissible
+(\cref{def:locally-admissible}) and $D_X = \{q_d\}$.
+
+For branch $Y$: symmetric. The required distinction $\{q_d\}$ has cost
+$R_Y = C(q_d) = 1 = \beta_Y$ exactly, and the non-required $d$ has cost
+$C(d) = 2 > \beta_Y - R_Y = 0$, so by \cref{lem:exhaustion}, $d$ is
+dropped under any construction, $Y$ is locally admissible, and $D_Y =
+\{d\}$.
+
+By \cref{prop:confidence-renderings}, $X$'s confidence profile $Q_X$ is
+itself a rendering, produced from whatever $X$ retains; since $q_d \notin
+A^{(X)}$, $Q_X$ has no distinction available from which to construct an
+instability flag, and $X$'s output presents $d$'s resolved value without
+qualification. A consumer relying on branch $X$ alone therefore receives
+no signal --- not a low-confidence flag, not a declared gap, nothing ---
+indicating that $q_d$ was ever a live consideration, even though branch
+$Y$, derived from the identical source $A_0$, would have reported it as
+unstable. This is exactly \cref{def:silent-disagreement}'s condition:
+$Q_X$ fails to flag that another branch's finding (instability, via
+$q_d$) bears on distinction $d$, which $X$ itself depended on.
+\end{proof}
+
+This construction is deliberately built to reuse
+Appendix~\ref{app:proof}'s exhaustion lemma rather than argue the point
+freshly, and the reuse is informative in its own right: the same
+mechanism that forces a construction-independent discard within a single
+linear chain (\cref{lem:exhaustion}) forces construction-independent,
+\emph{asymmetric} discard across two branches of a fan-out, and it is
+precisely this asymmetry --- $X$ drops what $Y$ keeps, and vice versa ---
+that produces silent disagreement rather than mere independent loss.
+
+\begin{proposition}[Silent Disagreement Exists in General]
+\label{prop:silent-disagreement}
+Given two branches produced independently (\cref{def:fanout-relay}) from
+a common source, there exist source distinctions whose instability is
+reported by one branch and concealed by the other.
+\end{proposition}
+
+\begin{proofsketch}
+\cref{con:two-branch} together with \cref{prop:witness-silent-disagreement}
+constitutes an existence proof: at least one pair of branches, with at
+least one such distinction, is exhibited explicitly and shown to satisfy
+\cref{def:silent-disagreement} under a construction-independent argument.
+This result was labeled a Theorem in an earlier draft; the label has been
+corrected to Proposition, consistent with the monograph's
+epistemic-labeling discipline, since an existence claim witnessed by one
+explicit construction is not of the same weight as
+\cref{thm:composition-failure}'s general composition result.
+\end{proofsketch}
+
+\section{The Regress Inside the Confidence Profile}
+
+\begin{proposition}[Confidence Profiles Are Renderings]
+\label{prop:confidence-renderings}
+A confidence or quality profile $Q$ attached to a rendering $A$ is itself
+produced by a projection, and therefore has its own discard set
+$\discard{Q}$.
+\end{proposition}
+
+\begin{proofsketch}
+Confidence estimation maps source evidence -- acoustic likelihoods, model
+logits, annotator judgments -- into a finite label or score. Any such
+finite mapping collapses distinctions in the sense of
+\cref{def:rendering}; $Q$ therefore satisfies the definition of a
+rendering and inherits a discard set like any other.
+\end{proofsketch}
+
+\cref{prop:confidence-renderings} produces a regress: trusting $Q$
+requires trusting the process that produced $Q$, which has its own
+confidence measure $Q'$, and so on. This regress does not resolve within
+the formalism; it is cut off by convention rather than by argument, and
+it is worth being explicit about the cost of extending it even one level
+further. Verifying $Q$ against a further $Q'$ is itself a repair
+decision in the sense of Chapter~\ref{ch:repair-economics}: it consumes
+budget that could otherwise be spent on the object-level distinctions
+$Q$ was meant to qualify, and \cref{prop:no-global-conserved-quantity}'s
+argument applies just as well to a chain of nested confidence measures as
+to a chain of substantive renderings. Real systems stop extending this
+chain not because the regress terminates on its own but because someone
+decides, by convention, where it is no longer worth the expenditure.
+
+\begin{definition}[Trust Boundary]
+\label{def:trust-boundary}
+A designated layer -- for instance, a fixed, versioned confidence model
+-- beyond which a relay does not recursively question its own
+loss-accounting. The trust boundary is a declared convention, not a
+theorem; \cref{prop:confidence-renderings}'s regress is halted by
+stipulation at this layer, and an auditor of the relay is, in effect,
+trusting the boundary itself rather than anything beyond it.
+\end{definition}
+
+\begin{definition}[Boundary-Relative Sufficiency]
+\label{def:boundary-sufficiency}
+A rendering is boundary-sufficient for a task if it is sufficient
+(\cref{def:sufficiency}) conditional on every confidence and quality
+profile at or beyond the declared trust boundary
+(\cref{def:trust-boundary}) being accepted without further verification.
+\end{definition}
+
+\cref{def:boundary-sufficiency} names what practitioners actually rely
+on, as distinct from the stronger and generally unattainable notion of
+unconditional sufficiency: a system is almost never verified all the way
+down to its source distinctions, and boundary-sufficiency makes explicit
+exactly how much trust that verification is quietly resting on.
+
+\section{Reconciliation}
+\label{sec:reconciliation}
+
+Everything so far in this chapter has treated branches as diverging and
+stopping there. Branches are also, routinely, brought back together, and
+it is worth asking what a fan-out relay's apparatus says about that.
+
+\begin{definition}[Reconciliation]
+\label{def:reconciliation}
+Given branches $A^{(1)}, A^{(2)}$ derived independently from a common
+source $A_0$, a reconciliation is a rendering $A^{\mathrm{merge}}$
+derived from both, attempting
+$\discard{A^{\mathrm{merge}}} = \discard{A^{(1)}} \cap \discard{A^{(2)}}$:
+only what \emph{both} branches lost is treated as genuinely lost, and
+anything either branch preserved is carried into the merge.
+\end{definition}
+
+\begin{proposition}[Reconciliation Can Recover What No Branch Preserved Alone]
+\label{prop:reconciliation-recovers}
+If $d$ is preserved by $A^{(1)}$ but not $A^{(2)}$, and $d'$ is preserved
+by $A^{(2)}$ but not $A^{(1)}$, a reconciliation combining both branches
+can preserve both $d$ and $d'$, which neither branch achieves alone.
+\end{proposition}
+
+\begin{proofsketch}
+By \cref{def:reconciliation}, $A^{\mathrm{merge}}$'s discard set is the
+\emph{intersection} of the two branches' discard sets, not the union of
+their preserved sets alone but a genuine combination: $d \notin
+\discard{A^{(1)}}$ and $d' \notin \discard{A^{(2)}}$ together give $d,
+d' \notin \discard{A^{(1)}} \cap \discard{A^{(2)}} = \discard{A^{\mathrm{merge}}}$,
+so both survive the merge even though each was absent from one of the
+two source branches.
+\end{proofsketch}
+
+This is the positive counterpart to \cref{def:silent-disagreement}'s
+negative result, and it is worth being precise about why the two do not
+contradict each other. Silent disagreement is what happens when a
+downstream consumer relies on \emph{one} branch alone; reconciliation is
+available only to a party with access to \emph{both}, and
+\cref{prop:reconciliation-recovers} presupposes exactly the access
+Chapter~\ref{ch:fanout}'s worked witness (\cref{con:two-branch}) showed a
+single-branch consumer lacks.
+
+\begin{remark}[Genuine Conflicts Are Not Solved by Reconciliation]
+\label{rem:reconciliation-conflict}
+\cref{def:reconciliation} presupposes the two branches' discard sets are
+the only source of disagreement between them. This fails whenever both
+branches preserve the \emph{same} distinction $d$ but disagree about its
+value -- branch $X$ from \cref{ex:git-fanout} optimizing a function one
+way, branch $Y$ optimizing it incompatibly -- since $d \notin
+\discard{A^{(1)}} \cup \discard{A^{(2)}}$ in this case, and
+\cref{def:reconciliation}'s intersection rule gives no guidance about
+which branch's value of $d$ the merge should adopt. This is a merge
+conflict in the ordinary sense, and \cref{def:reconciliation} does not
+resolve it automatically; resolving it requires falling back on one of
+Chapter~\ref{ch:coordination}'s mechanisms -- adjudication by whichever
+party owns the merge, or a prior favoring one branch's convention over
+the other's -- rather than treating reconciliation as a fully general,
+conflict-free operation. Reconciliation recovers what non-overlapping
+loss destroyed; it does not adjudicate what overlapping, incompatible
+preservation produced. Whether the boundary between these two cases can
+be characterized in advance is recorded as open in
+Appendix~\ref{app:open-questions} rather than left implicit here.
+\end{remark}
+

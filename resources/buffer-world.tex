@@ -1,0 +1,1569 @@
+\documentclass[11pt]{article}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\setmonofont{DejaVu Sans Mono}[Scale=0.85]
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{parskip}
+\usepackage{amsmath,amssymb}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+\usepackage{seqsplit}
+
+% pandoc emits \tightlist for compact list items; needs defining since
+% we're not using pandoc's own default template.
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+% longtable columns produced by pandoc sometimes need slightly relaxed
+% column-width arithmetic; this keeps them from overflowing the margin.
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+
+\title{\textbf{Buffer World}\\
+\large A 3D Spatial Tutorial for Real Vim Motions\\
+\normalsize Concept and Technical Specification}
+\author{Flyxion\\\small Independent Researcher}
+\date{July 2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+\part{Concept and Design}
+
+\hypertarget{sec-elevator-pitch}{%
+\section{Elevator Pitch}\label{sec-elevator-pitch}}
+
+Vim Adventures (2011) teaches \texttt{hjkl} and friends by turning a 2D tile grid into an
+overworld: you move the way you'd move the cursor, and the game only lets you
+progress by learning the next motion. This project asks what changes if the
+buffer isn't a flat grid but a navigable 3D space --- where ``the text'' is
+something you walk through, climb, and reshape, rather than something you look
+at from directly above.
+
+The goal stays disciplined: every mechanic maps to a \textbf{real, unmodified Vim
+command}. Nothing is vim-\emph{flavored}; it's vim, wearing a world.
+
+\hypertarget{sec-design-pillars}{%
+\section{Design Pillars}\label{sec-design-pillars}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{No invented commands.} If it's not a real Vim motion, operator, or mode,
+  it doesn't go in the game. The temptation to add a ``jump boot'' power-up that
+  isn't tied to an actual keystroke is the thing to resist hardest.
+\item
+  \textbf{The 3D-ness has to earn its keep.} A 3D game that plays exactly like the
+  2D original with better lighting isn't worth building. Section~\ref{sec-the-core-translation-what-is-3d-space-of-here} below is
+  the actual pitch: which Vim concepts \emph{only} make sense once you have a third
+  axis.
+\item
+  \textbf{Mistakes should look wrong, not just fail silently.} In real Vim, a
+  mistyped command either does something confusing or nothing at all --- the
+  worst possible teacher. The game's job is to make the \emph{consequence} of a
+  command visible immediately, in space, before the player has to reason
+  about it abstractly.
+\item
+  \textbf{Keystrokes stay real keystrokes.} No on-screen button mashing. The player
+  types \texttt{3dw} on a real keyboard and watches it happen. The game is a skin
+  over an actual modal input system, not a simulation of one.
+\end{enumerate}
+
+\hypertarget{sec-the-core-translation-what-is-3d-space-of-here}{%
+\section{\texorpdfstring{The Core Translation: What Is 3D Space \emph{Of}, Here?}{The Core Translation: What Is 3D Space Of, Here?}}\label{sec-the-core-translation-what-is-3d-space-of-here}}
+
+This is the one decision everything else depends on, so it's worth spelling
+out three candidate mappings before picking one.
+
+\textbf{Option A --- Depth as buffer stack.} X/Y is the familiar row/column plane
+(rendered as a walkable floor grid, one tile per character), and Z is \emph{which
+buffer or split you're in}. Switching windows (\texttt{Ctrl-w} family) becomes
+physically walking between elevated platforms; \texttt{:vsplit} cracks the floor open
+into a new platform beside you.
+
+\textbf{Option B --- Depth as document structure.} X/Y is still row/column, but Z
+encodes nesting --- indentation level, or brace/paren depth. Diving into a
+function body means descending a level. \texttt{\%} (jump to matching bracket) becomes
+a vertical teleport between the top and bottom of a shaft.
+
+\textbf{Option C --- Depth as time (undo tree).} X/Y is the buffer as usual; Z is the
+undo history, rendered as a tower you can walk down (\texttt{u}) and back up
+(\texttt{Ctrl-r}), with branches for \texttt{g-}/\texttt{g+} if the undo tree forked.
+
+\textbf{Recommendation: build A first, and treat B and C as world-specific level
+gimmicks rather than the permanent camera model.} A is the least conceptually
+demanding --- most new Vim users don't yet think about splits, so making splits
+\emph{physical} rather than abstract is a genuine teaching win. B and C are
+excellent later-level material precisely because they're harder ideas
+(nesting, undo trees) that benefit from being made concrete, but building the
+whole game around them first would front-load the hardest concepts.
+
+\hypertarget{sec-mode-system-as-world-state}{%
+\section{Mode System as World State}\label{sec-mode-system-as-world-state}}
+
+Vim's biggest early confusion for new users isn't any single motion, it's that
+\textbf{the same key does different things depending on mode.} This is the single
+best argument for going 3D at all: mode can be a \emph{visible property of the
+world}, not a mental flag the player has to track.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Normal mode} --- default lighting, the player-character is solid, movement
+  keys move the character.
+\item
+  \textbf{Insert mode} --- the world desaturates or dims at the edges, the
+  character's ``hands'' visibly extend into the floor/wall in front of them
+  (they're now writing into the structure itself), and \texttt{hjkl} stop moving the
+  camera and start doing nothing (exactly as in real Vim) --- which the game
+  should let happen and let feel \emph{wrong}, rather than intercepting it.
+\item
+  \textbf{Visual mode} (\texttt{v}, \texttt{V}, \texttt{Ctrl-v}) --- a glowing selection volume appears and
+  grows as the player moves, previewing exactly what an operator will act on
+  before they commit. This is the mode 3D helps most: \texttt{Ctrl-v} (visual block
+  mode) is notoriously hard to picture in 2D tutorials and is trivial to
+  picture as a literal 3D selection box.
+\item
+  \textbf{Command mode} (\texttt{:}) --- the world freezes and a console overlay drops down,
+  visually distinct from gameplay, reinforcing that \texttt{:} commands are a
+  different register of action (save, quit, search-and-replace) from
+  buffer editing.
+\end{itemize}
+
+\hypertarget{sec-the-verb-noun-grammar-as-the-core-combat-puzzle-loop}{%
+\section{The Verb--Noun Grammar as the Core Combat/Puzzle Loop}\label{sec-the-verb-noun-grammar-as-the-core-combat-puzzle-loop}}
+
+Vim's real genius is that operators (\texttt{d}, \texttt{y}, \texttt{c}, \texttt{\textgreater{}}, \texttt{=}) compose with
+motions (\texttt{w}, \texttt{\$}, \texttt{\}}, \texttt{f\ x}) and text objects (\texttt{iw}, \texttt{a(}, \texttt{it}) into a small
+grammar that generates a huge command space from a few primitives. This
+grammar \emph{is} the game's mechanical depth, and should be treated as such rather
+than smoothed over:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Operators} are ``verbs'' the player selects or holds (functionally: the
+  first keystroke of a pending command). Visually, this could be a glow or
+  particle effect anchored to the player, signaling ``an action is armed and
+  waiting for a target.''
+\item
+  \textbf{Motions and text objects} are ``nouns'' --- literally the things in the world
+  the glowing verb can be pointed at. \texttt{diw} (delete inner word) becomes: arm
+  ``delete,'' point it at a word-object, watch the word-platform vanish and the
+  gap close.
+\item
+  \textbf{Counts} (\texttt{3dw}, \texttt{5j}) become visible charge-up: a numeral appears in the
+  HUD as it's typed, and the resulting action visibly happens N times in quick
+  succession, so the player \emph{sees} why \texttt{3dw} differs from \texttt{d3w} differs from
+  \texttt{3d2w} (they're all the same in real Vim --- 30, and this equivalence is a
+  great early puzzle/gotcha for the game to demonstrate rather than explain).
+\end{itemize}
+
+This mirrors the same ``verb applied to an addressable target'' grammar already
+used elsewhere in your own work --- text objects are exactly a \emph{reach} into a
+structured space, the same shape as targeting a coordinate for a rendering
+request, just here the space being addressed is a text buffer instead of a
+provenance graph.
+
+\hypertarget{sec-advanced-systems}{%
+\section{Advanced Systems}\label{sec-advanced-systems}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Registers} (\texttt{"ayy}, \texttt{"ap}) as an inventory system: named slots the player
+  fills by yanking, and can later ``spend'' by pasting from. A level built
+  around juggling three registers to rearrange three objects is a natural
+  boss puzzle.
+\item
+  \textbf{Marks} (\texttt{ma}, \texttt{\textasciigrave{}a}) as placeable waypoint beacons the player drops and
+  teleports back to --- useful the moment levels get large enough that walking
+  back is tedious, which is also exactly when real Vim users start wanting
+  marks.
+\item
+  \textbf{Macros} (\texttt{qa\ ...\ q}, \texttt{@a}, \texttt{10@a}) as a ``record a spell, then recast it''
+  mechanic --- record a sequence of actions once, then unleash it N times on a
+  row of identical obstacles. This is probably the single most satisfying
+  mechanic to render in 3D: watching a recorded macro auto-replay across a
+  field of targets is inherently more dramatic in 3D than in a flat grid.
+\item
+  \textbf{Search} (\texttt{/pattern}, \texttt{n}, \texttt{N}) as a radar/highlighting pulse that lights
+  up matching objects across the visible world, with \texttt{n}/\texttt{N} snapping the
+  camera to the next/previous hit.
+\item
+  \textbf{Undo/redo} (\texttt{u}, \texttt{Ctrl-r}) as a visible rewind/fast-forward of the last
+  action, not just a state change --- the player should \emph{see} the platform they
+  just deleted rebuild itself.
+\end{itemize}
+
+\hypertarget{sec-level-world-structure}{%
+\section{Level \& World Structure}\label{sec-level-world-structure}}
+
+Following the original's proven shape (new mechanic gated behind a small,
+forced-practice arena before it's allowed to mix with prior mechanics), but
+organized as a small set of ``documents'' (worlds) rather than one continuous
+overworld:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{The Plaza} --- \texttt{hjkl}, \texttt{0}/\texttt{\$}, \texttt{gg}/\texttt{G}. Pure movement, no operators yet.
+\item
+  \textbf{The Word Foundry} --- \texttt{w}/\texttt{b}/\texttt{e}/\texttt{ge}, introduces the word as the atomic
+  object the rest of the grammar will operate on.
+\item
+  \textbf{The Editing Yards} --- \texttt{i}/\texttt{a}/\texttt{o}/\texttt{O}, first exposure to mode-switching,
+  deliberately includes a puzzle solvable only by \emph{escaping} insert mode
+  (teaching that \texttt{Esc} is not optional).
+\item
+  \textbf{The Grammar Works} --- operators (\texttt{d}/\texttt{y}/\texttt{c}) combined with everything
+  learned so far. This is where the verb--noun system in Section~\ref{sec-the-verb-noun-grammar-as-the-core-combat-puzzle-loop} becomes
+  the primary loop.
+\item
+  \textbf{Searchworks} --- \texttt{:s}/\texttt{:\%s} and \texttt{:g}/\texttt{:v}, the selection-and-transformation
+  family that sits alongside operators and text objects rather than above
+  them, since it depends on neither registers, marks, macros, nor undo.
+  Placed here rather than later specifically because it doesn't need
+  anything the later worlds teach. Every match highlights as a population
+  simultaneously, not one at a time, and a substitution or \texttt{:g}-driven
+  action resolves that whole population toward its result in one
+  coordinated motion --- the world's visual realization of
+  match-set → operation → result, letting a player see the population
+  before committing to transform it, the same way Visual mode previews an
+  operator's effect before it lands.
+\item
+  \textbf{The Archive Stacks} --- registers, marks, and the buffer-stack Z-axis from
+  Option A above; splits and windows become physically real.
+\item
+  \textbf{The Loop Chamber} --- macros, counts, and repeat (\texttt{.}), building toward
+  puzzles only efficiently solvable by recording and replaying a macro.
+\item
+  \textbf{The Undo Spire} --- the undo-tree-as-tower idea from Option C, offered as
+  an optional late-game area for players who want the harder conceptual
+  payoff rather than a mandatory main-path level.
+\end{enumerate}
+
+\hypertarget{sec-scoring-a-par-system}{%
+\section{Scoring: A Par System}\label{sec-scoring-a-par-system}}
+
+Vim Adventures already implicitly rewards fewer keystrokes; making this
+explicit as a \textbf{par score per puzzle} (fewest keystrokes to solve, shown
+alongside the player's actual count) gives skilled players a reason to replay
+early levels with newly learned tricks --- solving Level 1 in 3 keystrokes once
+you know \texttt{.} and counts, instead of the 12 it took the first time through, is
+its own kind of satisfying. This is the same competitive-efficiency shape as
+``pipeline golf'' --- judging a transformation by how few steps it takes to
+faithfully reach a target --- just applied to keystrokes instead of rendering
+pipelines.
+
+\hypertarget{sec-technical-approach}{%
+\section{Technical Approach}\label{sec-technical-approach}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Engine:} Three.js is the pragmatic choice for a browser-playable
+  prototype --- no install friction, and the mechanics here (grid-aligned
+  movement, simple selection volumes, particle effects for verbs/macros)
+  don't need a heavier engine.
+\item
+  \textbf{Input layer:} the actual hard part is not the 3D rendering, it's a
+  correct modal-keystroke parser --- normal/insert/visual/command mode
+  dispatch, pending-operator state, count-prefix accumulation, and the
+  motion/text-object grammar. This should be built and tested as a
+  standalone, headless module \emph{before} any 3D work starts, so the ``is this
+  real Vim behavior'' question is answered independently of how it's rendered.
+\item
+  \textbf{World representation:} a buffer is a 2D array of characters plus
+  metadata (word boundaries, indentation, bracket matching) computed once per
+  edit; the 3D scene is a pure function of that array, regenerated on change
+  rather than hand-animated per keystroke. This keeps the renderer honest ---
+  if the buffer state doesn't change, nothing in the world should either.
+\end{itemize}
+
+\hypertarget{sec-open-design-questions}{%
+\section{Open Design Questions}\label{sec-open-design-questions}}
+
+\begin{itemize}
+\tightlist
+\item
+  How much of real Vim's \emph{modal escape-hatch chaos} (pressing \texttt{Esc} twice,
+  accidentally triggering \texttt{ZZ}, etc.) should the game protect against versus
+  let happen? Protecting too much undercuts the ``this is real Vim'' pillar;
+  protecting too little risks frustrating brand-new players in a way the
+  original 2D game's simpler visual grammar didn't.
+\item
+  Should text objects beyond \texttt{iw}/\texttt{aw} (e.g.~\texttt{it}/\texttt{at} for tags, \texttt{i"}/\texttt{a"} for
+  quotes) require the world to render visible tag/quote structure, or would
+  that only make sense in a ``the buffer is actual code'' late-game world
+  rather than the more abstract early plaza?
+\item
+  Multiplayer/co-op is tempting given the macro-replay and register-passing
+  mechanics (one player records, another triggers) but adds real complexity
+  and isn't needed for the core teaching goal --- worth treating as a stretch
+  feature, not a v1 pillar.
+\end{itemize}
+
+\hypertarget{sec-what-this-adds-over-the-original}{%
+\section{What This Adds Over the Original}\label{sec-what-this-adds-over-the-original}}
+
+Not ``better graphics'' --- the specific things a third dimension makes possible
+that a top-down grid cannot: mode as visible world-state rather than a
+tracked mental flag, visual-block mode as a literal volume instead of a
+description, splits/windows as physically real places instead of a toggled
+UI panel, and macros as something dramatic to \emph{watch} replay across a field
+of targets rather than a log of keystrokes scrolling past.
+
+\part{Technical Specification}
+\setcounter{section}{-1}
+
+\hypertarget{a-3d-spatial-tutorial-for-real-vim-motions-v0.3-merged-with-the-concept-sketch-into-a-single-latex-document}{%
+\subsection{A 3D spatial tutorial for real Vim motions --- v0.3, merged with the concept sketch into a single LaTeX document}\label{a-3d-spatial-tutorial-for-real-vim-motions-v0.3-merged-with-the-concept-sketch-into-a-single-latex-document}}
+
+This supersedes the earlier concept sketch's prose sections with precise
+specifications, and is merged with it as a single document; heading numbers
+below are illustrative in this markdown source and are superseded by
+automatic numbering in the merged document.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-non-negotiables}{%
+\section{Non-Negotiables}\label{sec-non-negotiables}}
+
+These are the correctness bar, not aspirations. A build that violates any of
+these has failed the project's actual goal, regardless of how the 3D world
+looks.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Every keystroke sequence the player can type must produce \textbf{exactly} the
+  buffer state real Vim would produce for the same sequence on the same
+  input, including the specific off-by-one and edge-case behaviors in
+  Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact}.
+\item
+  The input parser (Section~\ref{sec-mode-state-machine}--4) must be implemented and unit-tested as a
+  \textbf{headless module with zero rendering dependencies}, before any Three.js
+  code is written. The renderer consumes parser output; it never influences
+  parser behavior.
+\item
+  No command, mode, or key that doesn't exist in real Vim is ever bound to
+  anything. Cosmetic-only extensions (camera shortcuts, menu keys) must use
+  keys Vim itself doesn't bind, and must be documented as out-of-grammar.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-formal-command-grammar}{%
+\section{Formal Command Grammar}\label{sec-formal-command-grammar}}
+
+A Normal-mode command, in the fragment this project targets for v1, is
+generated by the following grammar. This intentionally mirrors the style of
+a BNF specification rather than prose, for the same reason a prose
+description of Vim's grammar tends to hide exactly the ambiguities that
+matter.
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+<command>       ::= <prefix>* <operator-cmd> | <prefix>* <motion-cmd> | <prefix>* <action>
+<prefix>        ::= <count> | "\"" <register>
+<operator-cmd>  ::= <operator> <count>? ( <motion> | <text-object> )
+                   | <self-apply>                        ; see self-application list below
+<motion-cmd>    ::= <motion>
+<count>         ::= [1-9][0-9]*
+<operator>      ::= "d" | "y" | "c" | ">" | "<" | "=" | "g~" | "gu" | "gU" | "!"
+<self-apply>    ::= "dd" | "yy" | "cc" | ">>" | "<<" | "=="
+                   | "guu" | "gugu" | "gUU" | "gUgU" | "g~~" | "g~g~"
+<motion>        ::= "h" | "l" | "j" | "k"
+                   | "0" | "^" | "$" | "gg" | "G"
+                   | "w" | "W" | "b" | "B" | "e" | "E" | "ge" | "gE"
+                   | "f" <char> | "F" <char> | "t" <char> | "T" <char> | ";" | ","
+                   | "{" | "}" | "(" | ")" | "%"
+                   | "H" | "M" | "L"
+<text-object>   ::= ("i" | "a") <object-kind>
+<object-kind>   ::= "w" | "W" | "(" | ")" | "b" | "{" | "}" | "B"
+                   | "[" | "]" | "<" | ">" | "\"" | "'" | "t" | "p" | "s"
+<action>        ::= "i" | "a" | "I" | "A" | "o" | "O"      ; enter Insert mode
+                   | "v" | "V" | "\x16"                    ; enter Visual (char/line/block)
+                   | "x" | "X" | "~" | "r" <char>
+                   | "u" | "\x12"                          ; undo / redo (Ctrl-r)
+                   | "." | "p" | "P"
+                   | "q" <register> ... "q"                ; macro record
+                   | "@" <register>
+                   | "m" <mark> | "`" <mark> | "'" <mark>
+                   | "/" <pattern> <CR> | "?" <pattern> <CR> | "n" | "N"
+                   | ":" <ex-command> <CR>
+\end{Verbatim}
+
+Three properties of this grammar drive most of the parser's complexity and
+are worth stating outside the grammar itself:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Register and count prefixes are order-independent.} The previous
+  revision of this grammar attached the register prefix only to the
+  outside of an already-complete command (\texttt{"a} followed by a whole
+  \texttt{\textless{}operator-cmd\textgreater{}}), which cannot generate \texttt{"a3yy} and \texttt{3"ayy} as the same
+  command --- real Vim accepts both, with identical effect. The
+  \texttt{\textless{}prefix\textgreater{}*} rule above fixes this: \texttt{\textless{}count\textgreater{}} and \texttt{"} \texttt{\textless{}register\textgreater{}} may
+  appear in either order, zero or one of each, before the core command.
+  If a count appears in a \texttt{\textless{}prefix\textgreater{}} and a second count appears later
+  inside \texttt{\textless{}operator-cmd\textgreater{}} (e.g.~\texttt{3"a2yy}), the two counts multiply per the
+  existing count-multiplication rule below --- \texttt{3"a2yy} yanks 6 lines into
+  register \texttt{a}, the same as \texttt{"a6yy}. Resolution into a \texttt{ResolvedCommand}
+  (Section~\ref{sec-command-objects-and-replay-semantics}) discards ordering entirely: the resolved \texttt{count} and
+  \texttt{register} fields are the same regardless of which order they were
+  typed in.
+\item
+  \textbf{Count multiplication.} \texttt{\textless{}count\textgreater{}} may appear before the operator \emph{and}
+  before the motion in the same command, and the two multiply:
+  \texttt{3d2w} deletes \texttt{3\ ×\ 2\ =\ 6} words, identically to \texttt{d6w} or \texttt{6dw}. This is a
+  real Vim behavior, not a simplification, and Section~\ref{sec-text-objects} lists it as a
+  required test case precisely because it's the first thing an incorrect
+  implementation gets wrong.
+\item
+  \textbf{Operator self-application is linewise, and the v1 grammar fixes the
+  full supported set explicitly} rather than leaving it as a ``such as''
+  list: \texttt{dd}, \texttt{yy}, \texttt{cc}, \texttt{\textgreater{}\textgreater{}}, \texttt{\textless{}\textless{}}, \texttt{==}, and the case-changing doubles
+  \texttt{guu}/\texttt{gugu}, \texttt{gUU}/\texttt{gUgU}, \texttt{g\textasciitilde{}\textasciitilde{}}/\texttt{g\textasciitilde{}g\textasciitilde{}} (both the doubled-letter and
+  doubled-operator spellings are accepted for the case operators, matching
+  real Vim). Each is grammatically distinct from \texttt{\textless{}operator\textgreater{}\textless{}motion\textgreater{}} and
+  always means ``apply linewise to \texttt{\textless{}count\textgreater{}} lines starting at the cursor
+  line,'' not ``apply the operator to itself as a motion.'' No other operator
+  combination self-applies; \texttt{!!}, \texttt{d=}-style speculative doubles, and
+  anything not in \texttt{\textless{}self-apply\textgreater{}} above are simply not valid commands.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-mode-state-machine}{%
+\section{Mode State Machine}\label{sec-mode-state-machine}}
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+                    ┌─────────────┐
+        Esc/Ctrl-[  │             │  i,a,I,A,o,O
+       ┌────────────┤   NORMAL    ├────────────┐
+       │            │             │            │
+       │            └──┬───┬───┬──┘            ▼
+       │               │   │   │         ┌───────────┐
+       │      v/V/^V   │   │   │  :      │  INSERT   │
+       │        ┌──────┘   │   └──────┐  └─────┬─────┘
+       │        ▼          │          ▼        │ Esc
+       │  ┌───────────┐    │    ┌───────────┐  │
+       └──┤  VISUAL   │    │    │  COMMAND  │  │
+          │ (3 kinds) │    │    │   LINE    │  │
+          └─────┬─────┘    │    └─────┬─────┘  │
+                │ operator │          │ CR/Esc │
+                │ applied  │          └────────┤
+                └──────────┴───────────────────┘
+                           │
+                    (back to NORMAL)
+
+  Additional transition, not drawn above to keep the box diagram legible:
+  VISUAL (any kind) --Esc--> NORMAL, canceling the selection with no
+  operator applied and no buffer change. This is a frequent, ordinary
+  transition — not an edge case — and is listed here rather than boxed
+  above only because a second exit arrow crowded exactly the corner of the
+  diagram already carrying the "operator applied" path, making the
+  diagram harder to read than it clarified.
+
+  Sub-state of NORMAL, not a separate top-level mode:
+  PENDING-OPERATOR — entered after an operator key with no motion yet
+  (e.g. "d" alone). Accepts: count, motion, text-object, or the same
+  operator again (linewise self-application). Times out to nothing on Esc.
+\end{Verbatim}
+
+State is represented as:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+type Mode = "NORMAL" | "INSERT" | "VISUAL_CHAR" | "VISUAL_LINE"
+          | "VISUAL_BLOCK" | "COMMAND_LINE";
+
+interface ParserState {
+  mode: Mode;
+  pendingOperator: Operator | null;   // e.g. "d", null if none pending
+  pendingCount: number | null;        // count typed before operator
+  pendingRegister: string | null;     // "a in "ayy
+  countBuffer: string;                // digits typed so far, this command
+  visualAnchor: Position | null;      // fixed end of visual selection
+  lastFindChar: { cmd: "f"|"F"|"t"|"T"; char: string } | null; // for ; and ,
+  lastChange: RecordedCommand | null; // for "."
+  recordingMacro: string | null;      // register name, or null
+  macroRecording: KeyEvent[];
+}
+\end{Verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-buffer-model}{%
+\section{Buffer Model}\label{sec-buffer-model}}
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+interface Position { line: number; col: number; }  // 0-indexed internally
+
+interface Buffer {
+  lines: string[];                 // one string per line, no trailing \n
+  cursor: Position;
+  marks: Map<string, Position>;    // 'a'-'z' local, "'" and "`" implicit marks
+  undoTree: UndoNode;              // see Section 3.2
+  currentUndoNode: UndoNode;
+}
+
+interface Register {
+  text: string;
+  kind: "charwise" | "linewise" | "blockwise";
+}
+// registers: Map<string, Register>, keys 'a'-'z' (append with 'A'-'Z'),
+// '"' (unnamed, implicit target of any yank/delete without explicit register),
+// '0' (last yank specifically), '1'-'9' (delete history ring)
+\end{Verbatim}
+
+\hypertarget{sec-word-classification}{%
+\subsection{Word Classification}\label{sec-word-classification}}
+
+Vim's \texttt{w}/\texttt{b}/\texttt{e} and \texttt{W}/\texttt{B}/\texttt{E} differ in exactly one respect: lowercase
+motions treat three character classes as boundaries (\textbf{word-chars}
+\texttt{{[}A-Za-z0-9\_{]}}, \textbf{punctuation} \texttt{{[}\^{}A-Za-z0-9\_\textbackslash{}s{]}}, and \textbf{whitespace}), while
+uppercase motions collapse word-chars and punctuation into one class
+(\textbf{WORD}, anything non-whitespace) and only whitespace is a boundary. This
+single classification function is shared by \texttt{w}, \texttt{b}, \texttt{e}, \texttt{ge}, and by the
+\texttt{iw}/\texttt{aw} text objects, so it should be implemented exactly once:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+type CharClass = "word" | "punct" | "space";
+function classify(ch: string): CharClass { /* per rule above */ }
+\end{Verbatim}
+
+\hypertarget{sec-undo-tree}{%
+\subsection{Undo Tree}\label{sec-undo-tree}}
+
+Vim's undo is a tree, not a stack --- a new edit made after undoing does not
+delete the redo branch, it forks it, reachable via \texttt{g-}/\texttt{g+} (time-travel
+through \emph{all} states in the order visited) or \texttt{u}/\texttt{Ctrl-r} (parent/last-child
+only). This is exactly the ``World D --- Undo Spire'' content, and the data
+structure should be built as a tree from the start rather than retrofitted:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+interface UndoNode {
+  id: number;
+  bufferSnapshot: string[];   // full snapshot; diffing is an optimization, not v1
+  parent: UndoNode | null;
+  children: UndoNode[];
+  seq: number;                // global sequence number, for g-/g+ ordering
+  timestamp: number;
+}
+\end{Verbatim}
+
+\hypertarget{sec-command-objects-and-replay-semantics}{%
+\subsection{Command Objects and Replay Semantics}\label{sec-command-objects-and-replay-semantics}}
+
+Macros and \texttt{.} look similar from the outside --- both ``do something again'' --- but
+they replay at two different levels of representation, and conflating them
+is a reliable source of bugs.
+
+\textbf{\texttt{.} replays a resolved command, not keystrokes.} The parser must retain a
+structured record of the last change, not the raw keys that produced it.
+The previous revision of this document gave \texttt{ResolvedCommand} a single
+shape built around \texttt{operator} and \texttt{target}, which has no room for
+count-prefixed insertions (\texttt{3ohello\textless{}Esc\textgreater{}}, \texttt{3ihello\textless{}Esc\textgreater{}}) or simple
+repeated actions (\texttt{3x}, \texttt{5\textasciitilde{}}) --- neither has an operator or a
+motion/text-object target in the sense Section~\ref{sec-formal-command-grammar}'s grammar defines. The
+corrected shape is a tagged union:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+type ResolvedCommand =
+  | {
+      kind: "operator-motion";
+      operator: Operator;
+      count: number;              // fully multiplied — 6, not "3" and "2" separately
+      target: Motion | TextObject;
+      insertedText?: string;      // present only for c-style changes
+      register?: string;
+    }
+  | {
+      kind: "insert-action";
+      action: "i" | "a" | "I" | "A" | "o" | "O";
+      count: number;
+      insertedText: string;       // captured verbatim between entering Insert and Esc
+    }
+  | {
+      kind: "simple-action";
+      action: "x" | "X" | "~" | "r" | "J" | "gJ";
+      count: number;
+      char?: string;               // present only for "r"
+      register?: string;
+    };
+\end{Verbatim}
+
+\texttt{3d2w} and \texttt{d6w} resolve to the identical \texttt{\{kind:\ "operator-motion",\ operator:\ "d",\ count:\ 6,\ target:\ "w"\}}, and it is this resolved form --- not
+either surface spelling --- that \texttt{.} replays, at whatever position the
+cursor currently occupies. This is also why \texttt{.} after a \texttt{c}-style change
+retypes \texttt{insertedText} verbatim rather than re-entering Insert mode for the
+player to retype.
+
+\textbf{Count semantics differ by insert-action, and this difference is not
+optional to get right.} \texttt{i}, \texttt{a}, \texttt{I}, and \texttt{A} repeat the \emph{inserted text in
+place}: \texttt{3ihello\textless{}Esc\textgreater{}} on an empty line produces a single line reading
+\texttt{hellohellohello} --- the count multiplies how many times the same text is
+appended at the insertion point, not how many separate edits occur. \texttt{o} and
+\texttt{O} repeat the \emph{whole open-line-and-insert operation}: \texttt{3ohello\textless{}Esc\textgreater{}}
+produces three new lines, each independently containing \texttt{hello}, because
+each repetition opens its own new line before inserting. A \texttt{ResolvedCommand}
+of \texttt{kind:\ "insert-action"} must therefore branch on \texttt{action} at replay
+time --- the same \texttt{count} field means two structurally different replays
+depending on whether \texttt{action} is in \texttt{\{i,\ a,\ I,\ A\}} or \texttt{\{o,\ O\}} --- rather than
+being interpreted uniformly the way \texttt{count} is for \texttt{operator-motion}.
+
+\textbf{\texttt{J}'s count means something different from every other simple action's
+count.} For \texttt{x}, \texttt{X}, \texttt{\textasciitilde{}}, and \texttt{r}, \texttt{count} means ``repeat this action N
+times'' in the ordinary sense (\texttt{3x} deletes 3 characters). For \texttt{J}, \texttt{count}
+means ``join this many lines total, counting the current line'' --- \texttt{3J} joins
+the current line with the next 2, not the current line with the next 3.
+This mirrors \texttt{G}'s count meaning ``go to line N'' rather than ``repeat G N
+times'' (Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact}), and should be implemented as the same kind of named
+special case, not derived from the general repeat-N-times rule.
+
+\textbf{A new count given at \texttt{.}-time replaces, not multiplies.} If the player
+types a count immediately before \texttt{.} (e.g.~\texttt{5.} following an earlier \texttt{3dw}),
+the stored count is \emph{replaced} by 5 for this one replay --- the result is
+\texttt{d5w}, not \texttt{d15w}, and the replacement does not persist: a bare \texttt{.}
+afterward reuses whichever count last stood, following the same
+replace-not-accumulate rule. This is a real, easily-missed Vim behavior and
+belongs in the Section~\ref{sec-testing-plan} test suite as its own case.
+
+\textbf{Macros replay raw keystrokes, not resolved commands.} A macro register
+(\texttt{qa\ ...\ q}) stores the literal \texttt{KeyEvent} sequence typed during recording,
+and \texttt{@a} re-feeds that sequence through the ordinary parser from scratch ---
+it does not store or replay \texttt{ResolvedCommand} objects. This is why a macro
+built around \texttt{dw} deletes whatever word is actually under the cursor at each
+replay site, rather than a fixed span: the macro has no memory of what the
+first replay resolved to, only of which keys were pressed. \texttt{10@a} repeats
+the whole recorded sequence ten times, not any single command within it six
+or ten times.
+
+\hypertarget{sec-cursor-invariants}{%
+\subsection{Cursor Invariants}\label{sec-cursor-invariants}}
+
+Most bugs in a from-scratch Vim clone are cursor bugs, not edit bugs --- the
+edit itself lands correctly and the cursor ends up somewhere Vim would never
+put it. The invariants below should be enforced as a single clamping
+function called after every buffer mutation, not re-derived ad hoc per
+command.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{cursor.line} is always in \texttt{{[}0,\ lines.length\ -\ 1{]}}.
+\item
+  In \texttt{NORMAL}, \texttt{VISUAL\_*}, and \texttt{COMMAND\_LINE} modes, \texttt{cursor.col} is
+  clamped to \texttt{{[}0,\ max(0,\ lineLength\ -\ 1){]}} --- the cursor may never rest one
+  past the last character of a non-empty line. An empty line clamps to
+  column 0.
+\item
+  In \texttt{INSERT} mode only, \texttt{cursor.col} may equal \texttt{lineLength} (one position
+  past the last character), since that is where typed text would be
+  appended. Leaving Insert mode re-applies rule 2 immediately, which is why
+  the cursor visibly steps back one column on \texttt{Esc} at end-of-line --- this
+  is correct behavior to replicate, not a bug to fix.
+\item
+  After a linewise delete, the cursor is not preserved at its prior column;
+  it moves to the first non-blank column of whichever line now occupies
+  the cursor's old line index.
+\item
+  After a charwise delete that removes the character the cursor was on,
+  the cursor clamps left under rule 2 if the deletion shortened the line
+  below the old column.
+\item
+  \texttt{J} (join) leaves the cursor at the join point --- the single space
+  inserted between the two joined lines (or, for \texttt{gJ}, at the exact
+  boundary, since \texttt{gJ} does not insert a space).
+\item
+  A mark referencing a line that has since been deleted is cleared, not
+  left dangling. Jumping to a cleared mark (\texttt{\textasciigrave{}a} or \texttt{\textquotesingle{}a}) is a
+  documented no-op, not an error condition the parser needs to surface.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-motion-operator-semantics-the-part-that-must-be-exact}{%
+\section{Motion \& Operator Semantics (the part that must be exact)}\label{sec-motion-operator-semantics-the-part-that-must-be-exact}}
+
+Every motion has a \textbf{type} that determines how an operator combined with it
+behaves. Getting this table wrong is the single most common way a
+from-scratch Vim clone feels almost-but-not-quite right.
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+type MotionKind = "exclusive" | "inclusive" | "linewise";
+\end{Verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Exclusive} --- the operator's range is \texttt{{[}start,\ destination)}: the
+  character the motion lands the cursor on is not included.
+\item
+  \textbf{Inclusive} --- the range is \texttt{{[}start,\ destination{]}}: the destination
+  character is included.
+\item
+  \textbf{Linewise} --- the range expands to whole lines regardless of the columns
+  either endpoint's motion actually computed, from the first line touched
+  through the last, newline characters included on both ends.
+\end{itemize}
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Motion
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Type
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Notes
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{h}, \texttt{l} & exclusive & won't cross line boundaries \\
+\texttt{j}, \texttt{k} & linewise & \\
+\texttt{0} & exclusive & \\
+\texttt{\^{}} & exclusive & first non-blank \\
+\texttt{\$} & inclusive & \textbf{special-cased}: \texttt{d\$} deletes to end of line \emph{and} the type is inclusive, unlike most exclusive-by-default column motions \\
+\texttt{w} & exclusive & \textbf{special-cased}: if \texttt{w} is the object of an operator and lands on the first non-blank of a new line, it's pulled back to end of previous line (\texttt{dw} at end of line does not delete the newline) \\
+\texttt{W} & exclusive & same special case as \texttt{w} \\
+\texttt{b}, \texttt{B} & exclusive & \\
+\texttt{e}, \texttt{E} & inclusive & \\
+\texttt{ge}, \texttt{gE} & inclusive & \\
+\texttt{f\{c\}}, \texttt{t\{c\}} & inclusive & \\
+\texttt{F\{c\}}, \texttt{T\{c\}} & exclusive & \\
+\texttt{gg}, \texttt{G}, \texttt{\{count\}G} & linewise & \\
+\texttt{\{}, \texttt{\}} & exclusive & \\
+\texttt{(}, \texttt{)} & exclusive & \\
+\texttt{\%} & inclusive & \\
+\texttt{H}, \texttt{M}, \texttt{L} & linewise & \\
+\end{longtable}
+\endgroup
+
+\textbf{The \texttt{cw}/\texttt{ce} special case.} By Vim's documented behavior, if the cursor
+is on a non-blank character, \texttt{cw} behaves like \texttt{ce} (changes to the end of
+the current word, not to the start of the next one) --- the one deliberate
+exception carved out of the ``operator + motion'' composition rule, added
+specifically because \texttt{dw}'s ``don't eat the trailing whitespace into the next
+word'' behavior felt wrong for \texttt{c}. This must be implemented as an explicit
+special case, not derived from the general rule, because it isn't derivable
+from it.
+
+\textbf{Linewise operator range.} When an operator combines with a linewise
+motion (\texttt{dj}, \texttt{d\}} is \emph{not} linewise --- \texttt{\}} is exclusive; \texttt{dG}, \texttt{dgg} \emph{are}),
+the operator acts on whole lines, including the newline character, and the
+cursor lands on the first non-blank of the resulting line --- not at the
+column it started on.
+
+\textbf{Required test cases} (Section~\ref{sec-testing-plan} formalizes this as an actual test
+suite; this is the minimum set that must pass before any 3D work begins):
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+buffer: "The quick brown fox"     cursor col 0
+  dw   → "quick brown fox"
+  de   → "The quick brown fox" minus "The" but with trailing space (differs from dw!)
+  cw   → behaves as ce: enters insert with " quick brown fox" and cursor after "The"
+
+buffer: "foo"                      cursor col 0  (word at end of buffer, no trailing word)
+  dw   → "" (does not error, does not hang)
+
+buffer: "foo\nbar"                 cursor at end of "foo"
+  dw   → deletes to end of "foo" only; does NOT pull "bar" up (newline preserved)
+
+count multiplication:
+  3d2w  ==  d6w  ==  6dw   (must all produce identical results)
+
+linewise self-application:
+  3dd   deletes 3 lines starting at cursor line, cursor lands at first non-blank
+        of the line that shifts into the cursor's old position
+\end{Verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-text-objects}{%
+\section{Text Objects}\label{sec-text-objects}}
+
+Text objects only ever appear as the target of an operator or in Visual
+mode; they are never standalone motions. \texttt{i} (``inner'') excludes the
+delimiter/surrounding whitespace; \texttt{a} (``a'', i.e.~``around'') includes it.
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Object
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\texttt{i} behavior
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+\texttt{a} behavior
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{iw} / \texttt{aw} & current word, no surrounding space & word plus one side of adjacent whitespace \\
+\texttt{i(} \texttt{i)} \texttt{ib} & contents between nearest enclosing \texttt{(} \texttt{)} & includes the parens themselves \\
+\texttt{i\{} \texttt{i\}} \texttt{iB} & contents between nearest enclosing \texttt{\{} \texttt{\}} & includes the braces \\
+\texttt{i"} / \texttt{a"} & contents between nearest quote pair on the line & includes the quotes \\
+\texttt{it} / \texttt{at} & contents between nearest enclosing HTML/XML tag pair & includes the tags \\
+\texttt{ip} / \texttt{ap} & current paragraph (blank-line delimited) & paragraph plus one trailing blank line \\
+\end{longtable}
+\endgroup
+
+Nesting matters for \texttt{i(}/\texttt{a(} etc.: with the cursor inside nested
+parentheses, the object is always the \emph{nearest enclosing} pair, and
+\texttt{2i(} (a count before a text object) walks outward one level per count.
+
+\hypertarget{sec-text-object-resolution}{%
+\subsection{Text Object Resolution}\label{sec-text-object-resolution}}
+
+Text object resolution is not one uniform algorithm --- it is two, selected
+by object kind, and the spec should say so explicitly rather than imply a
+single flowchart covers every row of the table above.
+
+\textbf{Bracket and tag objects} (\texttt{(} \texttt{)} \texttt{b}, \texttt{\{} \texttt{\}} \texttt{B}, \texttt{{[}} \texttt{{]}}, \texttt{\textless{}} \texttt{\textgreater{}}, \texttt{t})
+resolve by nested balanced search:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  If the cursor sits on the opening or closing delimiter itself, that pair
+  is treated as the innermost enclosing pair.
+\item
+  Otherwise, search outward from the cursor for the nearest pair of
+  matching delimiters that encloses the cursor's position; this search may
+  cross line boundaries.
+\item
+  Apply the count: each additional count expands one level further
+  outward (\texttt{2i(} means the pair enclosing the pair found in step 2).
+\item
+  Apply \texttt{i}/\texttt{a}: \texttt{a} includes the delimiters themselves; \texttt{i} excludes them
+  and, in the documented special case where the interior spans multiple
+  full lines on its own, also trims the newline immediately inside each
+  delimiter, yielding a linewise rather than charwise range for that case
+  specifically.
+\end{enumerate}
+
+\textbf{Quote objects} (\texttt{i"} \texttt{a"}, \texttt{i\textquotesingle{}} \texttt{a\textquotesingle{}}, \texttt{i\textasciigrave{}} \texttt{a\textasciigrave{}}) resolve
+differently, and this difference is not an oversight to reconcile with the
+bracket algorithm:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The search is restricted to the cursor's current line only --- quotes are
+  not treated as nesting across lines the way brackets do.
+\item
+  If the cursor is already inside a quoted span on that line, that span is
+  the object.
+\item
+  If the cursor sits before the first quote on the line, Vim selects the
+  \emph{first} quoted string on the line, rather than searching backward from
+  the cursor.
+\item
+  There is no expand-outward behavior for counts on quote objects, since
+  there is nothing for a count to expand into --- a line has no nesting of
+  quoted spans in the sense brackets nest.
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}{%
+\section{Rendering Mapping (renderer consumes parser state; never the reverse)}\label{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}}
+
+\hypertarget{sec-fidelity-principle}{%
+\subsection{Fidelity Principle}\label{sec-fidelity-principle}}
+
+The world exists solely to visualize parser state. Where visual intuition
+and actual Vim behavior conflict, Vim behavior wins, unconditionally --- a
+world redesign to make some interaction feel more natural is never a
+license to change what a keystroke does. Data flows one way:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+Parser  →  BufferModel / ParserState  →  Renderer
+\end{Verbatim}
+
+and never the reverse. No rendering-layer code may write to \texttt{ParserState},
+\texttt{Buffer}, or \texttt{UndoNode}; the renderer's only inputs are read-only snapshots
+of parser output. This restates Section~\ref{sec-non-negotiables}'s second non-negotiable as a
+concrete data-flow rule specifically so that a violation is visible on
+sight in code review --- a pull request containing a call from renderer code
+into parser or buffer state is wrong by inspection, without needing the
+Section~\ref{sec-testing-plan} test suite to catch it at runtime.
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 2\tabcolsep) * \real{0.5000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Parser state
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Visual representation
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{mode:\ NORMAL} & full lighting, player mesh solid and idle-animated \\
+\texttt{mode:\ INSERT} & scene desaturates \textasciitilde30\%, player mesh extends a ``writing'' appendage into the nearest surface, \texttt{hjkl} visibly do nothing when pressed (no camera response) \\
+\texttt{mode:\ VISUAL\_CHAR/LINE/BLOCK} & translucent selection volume grows live from \texttt{visualAnchor} to cursor; block mode renders as an actual rectangular prism, not a flat highlight \\
+\texttt{pendingOperator\ ≠\ null} & particle glow around player, color-coded per operator (\texttt{d} red, \texttt{y} blue, \texttt{c} yellow), persists until a motion/text-object resolves it or Esc cancels it \\
+\texttt{countBuffer\ ≠\ ""} & numeral rendered above player HUD-style, not in-world \\
+\texttt{recordingMacro\ ≠\ null} & a visibly rotating recording icon above player; on \texttt{@a} playback, the recorded action sequence visibly re-executes at accelerated but perceptible speed across each target in sequence \\
+mark set (\texttt{ma}) & a small labeled beacon placed at that world position, persistent until overwritten \\
+search active (\texttt{/pattern}) & all matching objects pulse/outline in the world simultaneously; \texttt{n}/\texttt{N} snaps camera focus to next/previous match in document order \\
+undo/redo & the affected region visibly reverts/reapplies over \textasciitilde200ms, not an instant cut, so the causal link between \texttt{u} and the specific change is legible \\
+\end{longtable}
+\endgroup
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-level-data-format}{%
+\section{Level Data Format}\label{sec-level-data-format}}
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+{
+  "id": "grammar-works-03",
+  "title": "The Grammar Works — Room 3",
+  "initialBuffer": ["The quick brown fox", "jumps over the lazy dog"],
+  "initialCursor": { "line": 0, "col": 0 },
+  "allowedCommands": ["h","l","j","k","w","b","e","d","y","c","p","P","0","$"],
+  "goal": {
+    "type": "bufferEquals",
+    "target": ["quick brown", "jumps over the lazy dog"]
+  },
+  "par": 5,
+  "hints": [
+    { "afterKeystrokes": 15, "text": "You don't need to delete word by word." }
+  ]
+}
+\end{Verbatim}
+
+\texttt{allowedCommands} gates which keys the parser will accept in this level
+(unrecognized-but-otherwise-valid Vim commands should give an in-world
+``not yet unlocked'' cue, not silently fail) --- this is how the progressive
+teaching curve from the concept doc is actually enforced, rather than left
+as a level-design convention.
+
+\texttt{goal.type} should support at minimum \texttt{bufferEquals} (exact match),
+\texttt{bufferMatches} (regex, for goals with multiple valid solutions), and
+\texttt{cursorAt} (motion-only levels where the buffer never changes).
+
+\hypertarget{sec-pedagogical-layer}{%
+\subsection{Pedagogical Layer}\label{sec-pedagogical-layer}}
+
+\texttt{allowedCommands} implies a binary available/unavailable split; the actual
+teaching design needs a third state, and the three should not be
+implemented the same way:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+type CommandAvailability = "unsupported" | "locked" | "unlocked";
+\end{Verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{\texttt{unsupported}} --- not implemented by the parser in this version at all
+  (see Section~\ref{sec-future-vim-coverage-explicitly-out-of-scope-for-v1}'s roadmap). Typing it is a no-op with a generic
+  not-available cue.
+\item
+  \textbf{\texttt{locked}} --- fully implemented and semantically correct in the parser,
+  but withheld from the player by the current level's \texttt{allowedCommands}.
+  Critically, a locked command must still be \emph{parsed and resolved in full}
+  by the engine, and only then have its resulting state change discarded in
+  favor of a specific educational cue (``you'll unlock delete-word soon'') ---
+  never short-circuited before parsing. Implementing it this way keeps the
+  parser's grammar coverage complete and independently testable against
+  Section~\ref{sec-testing-plan}'s oracle even for commands no level has unlocked yet, rather
+  than leaving locked commands as untested dead code until the level that
+  first exposes them.
+\end{itemize}
+
+\textbf{Gating happens at the resolved-command level, not at the keystroke
+level, and this is a decision rather than an implementation detail.}
+Individual key-presses are never blocked or intercepted as they're typed ---
+a player can freely type any sequence Section~\ref{sec-formal-command-grammar}'s grammar accepts,
+including the leading keys of a locked command, exactly as they could in
+real Vim. The check happens once a full \texttt{ResolvedCommand} (Section~\ref{sec-command-objects-and-replay-semantics})
+exists: only then is its availability looked up, and only a \texttt{locked} or
+\texttt{unsupported} result triggers the discard-and-cue behavior described above.
+The alternative --- refusing individual keystrokes that could only ever lead
+to a locked command --- was considered and rejected, because it would mean
+the game's input handling diverges from Section~\ref{sec-formal-command-grammar}'s grammar depending on
+which level is loaded, which is exactly the kind of renderer/level-specific
+special-casing Section~\ref{sec-fidelity-principle}'s Fidelity Principle rules out for rendering and
+should equally be ruled out for input handling.
+- \textbf{\texttt{unlocked}} --- available, and behaves exactly per Sections~\ref{sec-formal-command-grammar}--\ref{sec-text-objects}, with no
+further distinction from ordinary Vim behavior.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-testing-plan}{%
+\section{Testing Plan}\label{sec-testing-plan}}
+
+The parser module ships with a table-driven test suite before any rendering
+work starts:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+interface ParserTestCase {
+  initialBuffer: string[];
+  initialCursor: Position;
+  keys: string;              // raw keystrokes, e.g. "3dw"
+  expectedBuffer: string[];
+  expectedCursor: Position;
+  expectedMode?: Mode;       // default NORMAL
+}
+\end{Verbatim}
+
+The Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact} ``required test cases'' become the seed set; coverage should
+expand to include every row of the Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact} and Section~\ref{sec-text-objects} tables at least
+once, plus the count-multiplication identities as property-based tests
+(generate random \texttt{(a,\ b)} and assert \texttt{a*b\ da*b\ w} ≡ \texttt{d(a*b)w} for small
+values) rather than a handful of hand-picked examples.
+
+\hypertarget{sec-differential-testing-against-real-vim}{%
+\subsection{Differential Testing Against Real Vim}\label{sec-differential-testing-against-real-vim}}
+
+Hand-written expected outputs, however careful, will not catch the edge
+cases that matter most, precisely because the person writing the test case
+and the person writing the parser share the same blind spots. The stronger
+design is an oracle: run the same buffer and keystrokes through real Vim
+semantics and assert Buffer World's parser agrees.
+
+The concrete mechanism should be \textbf{Neovim's \texttt{-\/-embed} RPC API}, not a
+shelled-out terminal Vim with output scraped from a pseudo-terminal. The
+RPC approach avoids ANSI/terminal-emulation fragility entirely and gives
+exact, structured buffer and cursor state directly:
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+interface OracleTestCase {
+  initialBuffer: string[];
+  initialCursor: Position;
+  keys: string;   // raw keystrokes, exactly as Section 1's grammar would parse them
+}
+
+async function runOracle(tc: OracleTestCase): Promise<{ buffer: string[]; cursor: Position }> {
+  // 1. spawn `nvim --embed --headless`
+  // 2. attach via the msgpack-RPC client (the `neovim` npm package)
+  // 3. nvim_buf_set_lines(0, 0, -1, false, tc.initialBuffer)
+  // 4. nvim_win_set_cursor(0, [tc.initialCursor.line + 1, tc.initialCursor.col])  // nvim rows are 1-indexed
+  // 5. nvim_input(tc.keys)
+  // 6. read back nvim_buf_get_lines + nvim_win_get_cursor
+  // 7. shut the embedded instance down
+}
+\end{Verbatim}
+
+Given this harness, the test suite becomes generative rather than purely
+curated: run a large corpus of keystroke sequences --- both the curated cases
+from Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact}/5 and randomly generated sequences over a range of seed
+buffers --- through both \texttt{runOracle} and Buffer World's own parser, and assert
+equality. Any mismatch is either a genuine parser bug, or a deliberate,
+documented divergence where v1 intentionally doesn't implement something
+real Vim does (an \texttt{unsupported} command per Section~\ref{sec-pedagogical-layer} and Section~\ref{sec-future-vim-coverage-explicitly-out-of-scope-for-v1}). The
+harness needs a way to mark specific oracle mismatches as known and
+intentional rather than treating 100\% oracle agreement as the bar for every
+possible input, since that bar is equivalent to reimplementing all of Vim.
+
+This is a \textbf{Phase 0 requirement}, not a later hardening pass: Section~\ref{sec-build-phases}'s
+gate from Phase 0 to Phase 1 should require the oracle suite passing (net of
+documented divergences) alongside the hand-written Section~\ref{sec-testing-plan} cases, since
+oracle testing is what catches the mismatches a spec document --- including
+this one --- cannot anticipate by construction.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-build-phases}{%
+\section{Build Phases}\label{sec-build-phases}}
+
+The ordering below follows increasing abstraction rather than the order
+features were specified in this document: move, edit, select, transform,
+store, repeat, time-travel, create. Selection-and-transformation
+(\texttt{:s}/\texttt{:g}, Phase 4) is placed immediately after Grammar Works and before
+registers, marks, macros, or the undo tree, because it does not
+conceptually depend on any of them --- it is a second grammar family
+alongside operators and text objects, not an advanced feature layered on
+top of the systems that follow it.
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Phase
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Deliverable
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Gate to next phase
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & Headless parser + full Section~\ref{sec-testing-plan} test suite passing, including the Section~\ref{sec-differential-testing-against-real-vim} oracle harness & 100\% of Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact}/5 required cases pass, and the oracle suite passes net of documented divergences \\
+1 & Three.js renderer, Plaza world only (\texttt{hjkl}, \texttt{0}, \texttt{\$}, \texttt{gg}, \texttt{G}) & movement feels correct, no operators yet \\
+2 & Word Foundry + Editing Yards (\texttt{w/b/e}, \texttt{i/a/o/O}, Esc) & mode visualization (Section~\ref{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}) implemented \\
+3 & Grammar Works (\texttt{d/y/c} × all Section~\ref{sec-motion-operator-semantics-the-part-that-must-be-exact} motions + Section~\ref{sec-text-objects} text objects) & full operator-motion grammar passes in-world \\
+4 & Searchworks (\texttt{:s}, \texttt{:\%s}, \texttt{:g}/\texttt{:v} per Section~\ref{sec-global-commands-and-substitute}) & Section~\ref{sec-global-commands-and-substitute}'s grammar passes its own test cases and oracle agreement, independent of registers/macros/undo \\
+5 & Archive Stacks (registers, marks, \texttt{Ctrl-w} splits as Z-axis) & Option A from the concept doc realized \\
+6 & Loop Chamber (macros, counts, \texttt{.} repeat) & macro replay visualization (Section~\ref{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}) shipped \\
+7 & Undo Spire (Section~\ref{sec-undo-tree} tree, \texttt{g-}/\texttt{g+}) & Section~\ref{sec-undo-tree}'s tree structure and \texttt{g-}/\texttt{g+} ordering verified against the oracle \\
+8 & User-generated/editable levels (Section~\ref{sec-user-generated-and-editable-levels}), using the Section~\ref{sec-global-commands-and-substitute} global/substitute grammar & leaderboard verification (13.3) passes against the Section~\ref{sec-differential-testing-against-real-vim} oracle harness \\
+\end{longtable}
+\endgroup
+
+\hypertarget{sec-searchworks}{%
+\subsection{Searchworks}\label{sec-searchworks}}
+
+Searchworks is the first world built around a different mental model than
+everything before it. Plaza through Grammar Works are all \emph{move-and-act-on-
+one-thing-at-a-time}; Searchworks introduces \emph{select-a-population, then
+transform it}. The visual language should mark this shift rather than
+reuse the single-target glow from Section~\ref{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}'s operator visualization:
+
+\begin{itemize}
+\tightlist
+\item
+  A search or pattern (\texttt{/pattern}, or the search side of \texttt{:s}/\texttt{:g})
+  highlights every matching object across the visible world
+  \textbf{simultaneously}, not one at a time --- this is the population being
+  selected, and it should read as a population, not a sequence of
+  individually-found targets.
+\item
+  A substitution or \texttt{:g}-driven action then visibly resolves that entire
+  highlighted population toward a fixed point in one coordinated motion ---
+  every matching object transforming together --- rather than replaying the
+  same animation once per match in sequence, which would misrepresent
+  \texttt{:g}'s actual scan-then-act-once semantics from Section~\ref{sec-the-global-command-family} as something
+  closer to a loop the player is watching iterate.
+\item
+  This is the concrete world-level realization of the
+  match-set → operation → result model that Section~\ref{sec-global-commands-and-substitute} specifies formally:
+  the world shows the match set as a visible population before any operation
+  is applied, exactly so that the player can predict the result before
+  committing to \texttt{:s} or \texttt{:g}, the same way Visual mode's selection volume
+  (Section~\ref{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}) lets a player preview an operator's effect before applying it.
+\end{itemize}
+
+Par scores and per-level best-keystroke tracking (Section~\ref{sec-level-data-format}'s \texttt{par} field)
+can be persisted via the artifact storage API discussed for other projects
+(\texttt{window.storage}, keyed per level id) once this moves from a standalone
+prototype into a Claude-artifact build --- worth deferring until Phase 1 is
+playable, since a persistence layer with no game to persist state for is
+premature.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-future-vim-coverage-explicitly-out-of-scope-for-v1}{%
+\section{Future Vim Coverage (Explicitly Out of Scope for v1)}\label{sec-future-vim-coverage-explicitly-out-of-scope-for-v1}}
+
+This section exists so that a missing feature reads as a decision, not an
+oversight. Anything not named in Sections~\ref{sec-formal-command-grammar}--\ref{sec-testing-plan} or listed below as a future
+family is out of scope for v1, and a reviewer or contributor proposing it
+should check this list before assuming it was simply forgotten.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Window and tab management beyond Section~\ref{sec-buffer-model}'s Z-axis splits} --- \texttt{:tabnew},
+  tab navigation, and window-layout commands beyond the basic split model
+  Phase 5 implements.
+\item
+  \textbf{Replace mode (\texttt{R})} --- sticky multi-character replace, where typed
+  characters overwrite existing ones until \texttt{Esc}, is excluded for v1. This
+  is a deliberate exclusion, not an omission: Section~\ref{sec-mode-state-machine}'s \texttt{Mode} type has no
+  \texttt{REPLACE} state, and adding one would touch the state machine, the cursor
+  invariants (Section~\ref{sec-cursor-invariants}), and the rendering mapping (Section~\ref{sec-rendering-mapping-renderer-consumes-parser-state-never-the-reverse}) for a
+  single mode family that isn't central to the curriculum this document
+  specifies. This is distinct from single-character replace, \texttt{r\textless{}char\textgreater{}},
+  which is already in \texttt{\textless{}action\textgreater{}} (Section~\ref{sec-formal-command-grammar}) and remains fully in scope ---
+  the two commands share a letter-adjacent name but not an implementation,
+  and this bullet excludes only the sticky multi-character mode.
+\item
+  \textbf{Folds} --- \texttt{zf}, \texttt{zo}, \texttt{zc}, and fold-aware motions.
+\item
+  \textbf{Additional text objects} --- sentence objects (\texttt{is}/\texttt{as}), and any
+  syntax- or treesitter-aware object beyond the fixed set in Section~\ref{sec-text-objects}'s
+  table.
+\item
+  \textbf{The Ex-command language} --- beyond the two named exceptions below, full
+  Ex-scripting, \texttt{:let}, arbitrary ranges beyond whole-buffer/global-matched
+  lines, and anything requiring Vimscript evaluation is out of scope.
+  \textbf{Two explicit exceptions}, specified in full in Section~\ref{sec-global-commands-and-substitute}, exist
+  because real usage showed the original single-command carve-out (macro
+  replay only) was too narrow to cover how \texttt{:g} and \texttt{:s} actually get used
+  together in practice: the global-command family
+  (\texttt{:g}/\texttt{:global}, \texttt{:v}/\texttt{:g!}/\texttt{:vglobal}) combined with a small fixed set of
+  per-line actions (\texttt{d}, \texttt{m}, \texttt{t}/\texttt{co}, \texttt{normal{[}!{]}}), and the substitute
+  command (\texttt{:s}, \texttt{:\%s}) with a bounded pattern/replacement grammar that
+  explicitly excludes the \texttt{\textbackslash{}=} expression register. These are two named
+  additions with their own specification, not a reopening of the
+  Ex-command family generally.
+\item
+  \textbf{Plugins and Vimscript execution} --- this project teaches Vim's built-in
+  grammar; it is not a Vimscript runtime. This is also why the \texttt{\textbackslash{}=}
+  expression register is excluded from the \texttt{:substitute} grammar in
+  Section~\ref{sec-global-commands-and-substitute} even though \texttt{:substitute} itself is in scope: \texttt{\textbackslash{}=} evaluates
+  an arbitrary expression (\texttt{printf(...)}, \texttt{strftime(...)}, \texttt{line(\textquotesingle{}.\textquotesingle{})}) as
+  part of the replacement, and is exactly the Vimscript-execution surface
+  this exclusion is naming, just reachable through a single command's
+  syntax rather than through a \texttt{:let}-style statement.
+\item
+  \textbf{Treesitter-based or language-aware text objects} --- anything requiring
+  actual syntax parsing of the buffer's contents as a programming language,
+  as opposed to the character-class rules in Section~\ref{sec-word-classification}.
+\item
+  \textbf{Bash/readline ``vi mode'' (\texttt{set\ -o\ vi}) is not Vim and is not a coverage
+  target at all}, named here only to close off a plausible confusion: it
+  is a different program's emulation of Vim's modal editing, with real
+  behavioral differences (no multi-line editing, a different and smaller
+  text-object set) that would violate the Section~\ref{sec-fidelity-principle} Fidelity Principle if
+  treated as interchangeable with the actual Vim behavior this document
+  specifies.
+\end{itemize}
+
+Each of the still-excluded items above is a plausible ``Phase 9'' for a
+version of this project that outgrows its original teaching scope, not a
+rejection of the idea --- they are listed here specifically so that scope
+creep during Phases 0--8 has a named list to be checked against and deferred
+to, rather than being negotiated fresh each time it comes up.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-global-commands-and-substitute}{%
+\section{Global Commands and Substitute}\label{sec-global-commands-and-substitute}}
+
+Section~\ref{sec-future-vim-coverage-explicitly-out-of-scope-for-v1} named two exceptions to the Ex-command exclusion. This section
+specifies both in full, at the same level of rigor as Section~\ref{sec-formal-command-grammar}, 4, and 5,
+since real usage showed both are load-bearing rather than peripheral.
+
+\hypertarget{sec-the-global-command-family}{%
+\subsection{The Global Command Family}\label{sec-the-global-command-family}}
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+<global>        ::= <global-normal> | <global-inverse>
+<global-normal> ::= (":g" | ":global") "/" <pattern> "/" <line-action>
+<global-inverse>::= (":v" | ":g!" | ":vglobal") "/" <pattern> "/" <line-action>
+<line-action>   ::= "d"                            ; delete every matching line
+                   | "m" <dest-line>                ; move every matching line to dest-line
+                   | ("t" | "co") <dest-line>       ; copy every matching line to after dest-line
+                   | "normal!"? <keys>              ; run a keystroke sequence at each match
+                   | <substitute>                   ; see 12.2 — ":g/pat/s/.../.../ " form
+\end{Verbatim}
+
+\texttt{\textless{}pattern\textgreater{}} is the same pattern grammar as Section~\ref{sec-substitute}'s search side. The
+semantics that matter for correctness, and are easy to get wrong:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{:g} first scans the \textbf{entire buffer once}, marking every line that
+  matches, and only then executes \texttt{\textless{}line-action\textgreater{}} on each marked line in
+  order --- it does not re-scan after each action. This is why
+  \texttt{:g/pattern/normal\ \$3X} behaves correctly even when the action changes
+  line lengths or content: the set of target lines was fixed before any
+  action ran.
+\item
+  \texttt{:g/\^{}/m0} (move every line to line 0, in buffer order) is a real,
+  idiomatic reverse-the-buffer idiom precisely because of the
+  scan-then-act ordering above: each line, moved to position 0 in turn,
+  ends up in reverse order relative to the original.
+\item
+  \texttt{normal!} (with the bang) suppresses the user's own custom mappings
+  during the per-line replay, using only the grammar this document
+  specifies; \texttt{normal} without the bang is excluded from this grammar, since
+  it would depend on a remapping layer this project does not implement.
+\item
+  A \texttt{\textless{}keys\textgreater{}} sequence following \texttt{normal!} may itself invoke a macro
+  register (\texttt{@a}) --- this is the original narrow exception from the prior
+  revision of Section~\ref{sec-future-vim-coverage-explicitly-out-of-scope-for-v1} --- but it is no longer the \emph{only} supported
+  \texttt{\textless{}line-action\textgreater{}}, since \texttt{d}, \texttt{m}, \texttt{t}/\texttt{co}, and direct keystrokes without
+  a macro are equally common and equally in scope.
+\item
+  \textbf{Nested \texttt{:g}/\texttt{:v} is illegal, matching real Vim.} Neither \texttt{\textless{}keys\textgreater{}}
+  (following \texttt{normal!}) nor \texttt{\textless{}substitute\textgreater{}} may itself contain a \texttt{:g},
+  \texttt{:global}, \texttt{:v}, \texttt{:g!}, or \texttt{:vglobal} invocation. Real Vim rejects this
+  with \texttt{E147:\ Cannot\ do\ :global\ recursive}, and this grammar rejects it the
+  same way: a parse-time error, not a silently-ignored or partially-applied
+  command. This matters specifically because \texttt{\textless{}line-action\textgreater{}} already
+  permits \texttt{normal!} with an arbitrary \texttt{\textless{}keys\textgreater{}} sequence, which is exactly
+  general enough that an implementer could accidentally allow a second
+  \texttt{:g} to slip through inside it if this exclusion weren't stated
+  separately from the rest of the grammar.
+\end{itemize}
+
+\hypertarget{sec-substitute}{%
+\subsection{Substitute}\label{sec-substitute}}
+
+\begin{Verbatim}[breaklines=true, breakanywhere=true, fontsize=\small]
+<substitute>  ::= <range>? "s" <sep> <pattern> <sep> <replacement> <sep> <flags>?
+<range>       ::= "%"                    ; whole buffer — the primary case
+                 | <line-num> "," <line-num>
+<sep>         ::= "/" | "#" | "!" | ...  ; any single non-alphanumeric char, consistent within one command
+<flags>       ::= ("g" | "i")+           ; g: all matches per line, not just first; i: case-insensitive
+\end{Verbatim}
+
+\textbf{No \texttt{\textless{}range\textgreater{}} means the current line only, not the whole buffer.} The \texttt{?}
+on \texttt{\textless{}range\textgreater{}} in the grammar above is easy to misread as ``range is optional,
+so omitting it is the same as the widest range'' --- this is backwards. A bare
+\texttt{:s/foo/bar/} with no range prefix applies to the cursor's current line
+only; \texttt{\%} must be given explicitly to mean the whole buffer, exactly as
+\texttt{\textless{}range\textgreater{}} requires it as one of two named alternatives rather than as the
+grammar's default. This is worth stating outside the grammar because it is
+the single most common mistake a Vim beginner makes with \texttt{:s}, and a
+teaching tool that got it wrong would be teaching the mistake rather than
+correcting it.
+
+\textbf{Pattern grammar (search side), in scope:}
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2500}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Feature
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Magic mode
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Very-magic mode (\texttt{\textbackslash{}v})
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Example from real usage
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+literal text & as written & as written & \\
+any character & \texttt{.} & \texttt{.} & \\
+quantifiers & \texttt{\textbackslash{}+} \texttt{\textbackslash{}*} \texttt{\textbackslash{}\{n,m\}} & \texttt{+} \texttt{*} \texttt{\{n,m\}} & \texttt{\textbackslash{}d\textbackslash{}\{1,3\}} \\
+character classes & \texttt{\textbackslash{}d} \texttt{\textbackslash{}w} \texttt{\textbackslash{}s} \texttt{\textbackslash{}u} & \texttt{\textbackslash{}d} \texttt{\textbackslash{}w} \texttt{\textbackslash{}s} \texttt{\textbackslash{}u} & \texttt{\textbackslash{}d\textbackslash{}\{1,3\}\textbackslash{}.\textbackslash{}d\textbackslash{}\{1,3\}...} \\
+anchors & \texttt{\^{}} \texttt{\$} & \texttt{\^{}} \texttt{\$} & \\
+grouping & \texttt{\textbackslash{}(...\textbackslash{})} & \texttt{(...)} & \texttt{\textbackslash{}v\^{}(a\textbackslash{}\textbar{}g)} \\
+alternation & \texttt{\textbackslash{}\textbar{}} (needs \texttt{\textbackslash{}}) & \texttt{\textbackslash{}\textbar{}} & \texttt{\textbackslash{}v\^{}(a\textbackslash{}\textbar{}g)} \\
+match-start reset & \texttt{\textbackslash{}zs} & \texttt{\textbackslash{}zs} & \texttt{\textbackslash{}v(\^{}\textbackslash{}\textbar{}{[}.!?{]}\ )\textbackslash{}zs\textbackslash{}w} \\
+\end{longtable}
+\endgroup
+
+Both magic levels are in scope, not just one, because real usage mixes them
+(default-magic \texttt{\textbackslash{}d\textbackslash{}\{1,3\}} alongside very-magic \texttt{\textbackslash{}v\^{}(a\textbar{}g)}), and a learner
+who only sees one style in-game would be underprepared for the other.
+
+\textbf{Replacement grammar, in scope:} literal text, whole-match backreference
+\texttt{\&}, numbered group backreferences \texttt{\textbackslash{}0}--\texttt{\textbackslash{}9}, and the case-modifier escapes
+\texttt{\textbackslash{}u} \texttt{\textbackslash{}U} \texttt{\textbackslash{}l} \texttt{\textbackslash{}L} \texttt{\textbackslash{}e} \texttt{\textbackslash{}E} (next-char, run-until-\texttt{\textbackslash{}E}, and end-of-run
+case conversion --- this is exactly the mechanism behind the small-caps and
+sentence-capitalization idioms real usage showed: \Verb[breaklines=true,breakanywhere=true]#%s/\u\+/\L&/g# and
+\Verb[breaklines=true,breakanywhere=true]#%s/\v(^|[.!?] )\zs\w/\u&/g#).
+
+\textbf{Explicitly excluded from the replacement grammar:} the \texttt{\textbackslash{}=} expression
+register (\texttt{\textbackslash{}=printf(...)}, \texttt{\textbackslash{}=strftime(...)}, \texttt{\textbackslash{}=line(\textquotesingle{}.\textquotesingle{})}, or any other
+expression). This is a single, deliberate cut: \texttt{\textbackslash{}=} is the one point in
+\texttt{:substitute}'s own syntax where arbitrary Vimscript evaluation becomes
+reachable, and excluding it removes that whole surface at once without
+narrowing anything else in this section's grammar. A level or macro that
+depends on \texttt{\textbackslash{}=} is out of scope by construction, the same as any other
+Vimscript dependency named in Section~\ref{sec-future-vim-coverage-explicitly-out-of-scope-for-v1}.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{sec-user-generated-and-editable-levels}{%
+\section{User-Generated and Editable Levels}\label{sec-user-generated-and-editable-levels}}
+
+The curriculum levels in Section~\ref{sec-level-data-format} are hand-authored and pedagogically
+ordered. This section specifies a second, complementary level type: an
+arbitrary real editing task --- reformat this data, fix this repeated typo,
+rename this pattern everywhere --- imported and played as a level in its own
+right, scored the same way. This is the design's actual payoff: once a task
+can be expressed as a \texttt{before}/\texttt{after} buffer pair, the game doesn't need to
+know or care what the task was \emph{for}.
+
+\hypertarget{sec-level-import-model}{%
+\subsection{Level Import Model}\label{sec-level-import-model}}
+
+Import needs only what Section~\ref{sec-level-data-format}'s \texttt{goal} field already accepts: a starting
+buffer and a target. Concretely:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Direct pair.} The author supplies \texttt{initialBuffer} and a target buffer
+  directly; the target becomes a \texttt{bufferEquals} goal exactly as in Section~\ref{sec-level-data-format}.
+\item
+  \textbf{Diff-based.} For large real files, pasting two full copies is unwieldy.
+  The author instead supplies \texttt{initialBuffer} and a unified diff; the target
+  buffer is computed once at import time by applying the diff, and only the
+  resulting target is stored in the level definition. The diff itself is an
+  authoring convenience --- it is not part of the level's runtime
+  representation, and nothing downstream (parser, oracle, leaderboard) ever
+  sees it.
+\end{itemize}
+
+No new parser feature is required for either path; this section is an
+authoring workflow layered on Section~\ref{sec-level-data-format}'s existing schema, not a new goal
+type.
+
+\hypertarget{sec-author-plays-first-par-seeding}{%
+\subsection{Author-Plays-First Par Seeding}\label{sec-author-plays-first-par-seeding}}
+
+Section~\ref{sec-level-data-format}'s \texttt{par} field assumed a level designer who simply knows the
+intended solution length. That doesn't generalize to arbitrary imported
+tasks, since computing a provably minimal keystroke sequence over the full
+grammar (counts, registers, macros, the \texttt{:g} exception above) is not
+tractable in general. Par is therefore seeded operationally rather than
+computed: \textbf{the author must solve the level themselves once at import
+time}, and their own keystroke count becomes the level's starting par. This
+guarantees, as a side effect of how the level is created, that at least one
+real solution exists --- a level that turns out to be unsolvable as authored
+is caught at the moment of authoring, not after a player gets stuck.
+
+\hypertarget{sec-crowd-sourced-par-and-verified-replays}{%
+\subsection{Crowd-Sourced Par and Verified Replays}\label{sec-crowd-sourced-par-and-verified-replays}}
+
+Par for an imported level is a discovered record, not a computed constant ---
+the same posture Pipeline Golf takes toward transformation quality elsewhere
+in this line of work: no claimed optimum, only a current best that stands
+until beaten.
+
+This only works if submissions are trustworthy, which means a submitted
+score can never be a bare number:
+
+\begin{itemize}
+\tightlist
+\item
+  Every submission stores the \textbf{actual keystroke sequence} that achieved
+  it, not just its length.
+\item
+  A submission is accepted only if replaying that exact sequence through the
+  deterministic, headless parser (Sections~\ref{sec-mode-state-machine}--\ref{sec-text-objects}) reaches the level's declared
+  goal state in precisely the claimed number of keystrokes. This reuses the
+  same replay mechanism Section~\ref{sec-differential-testing-against-real-vim} already requires for oracle testing ---
+  both are ``replay these keys against this parser and check the result,''
+  differing only in which state they check against (real Neovim's output vs.
+  a level's declared goal).
+\end{itemize}
+
+\textbf{What counts as one keystroke is not obvious, and a par system built on an
+ambiguous definition isn't a par system.} Two implementations that
+disagree on whether \texttt{f\ a} is one keystroke or two, or whether invoking a
+macro costs 1 keystroke or the N keystrokes it replays, will produce
+different par values for the \emph{same} recorded solution --- which defeats the
+purpose of a shared, cross-verifiable leaderboard. The rule is: \textbf{every
+distinct key-press event that reaches the parser as a discrete input counts
+as exactly one keystroke}, with no event ever counted as zero, as a
+fraction, or as a multiple of what was physically pressed. The table below
+resolves every case this document's grammar makes possible; the general
+rule above is what a new case should be checked against if one is missed.
+
+\begingroup\small
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Input
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Keystroke count
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reasoning
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+A single command key (\texttt{d}, \texttt{w}, \texttt{x}, \texttt{\textasciitilde{}}, \texttt{\$}, \texttt{\%}, \texttt{\{}, \texttt{.}) & 1 & One key-press event \\
+\texttt{\textless{}Esc\textgreater{}} & 1 & One key-press event, same as any other key \\
+A control-chord (\texttt{Ctrl-r}, \texttt{Ctrl-v}, \texttt{Ctrl-w}, \texttt{Ctrl-{[}}) & 1 & The chord is a single input event at the keyboard level; it is not counted per physical key held \\
+Each digit of a count prefix (\texttt{12dw}) & 1 per digit & \texttt{12dw} = \texttt{1},\texttt{2},\texttt{d},\texttt{w} = \textbf{4}, not 3 --- a two-digit count costs exactly as much as physically typing two digits, which is what makes a needlessly large count an honest cost rather than a free multiplier \\
+\texttt{f\{char\}}, \texttt{F\{char\}}, \texttt{t\{char\}}, \texttt{T\{char\}}, \texttt{r\{char\}} & 2 & The command key and the target character are separate key-press events \\
+Each character of a search pattern, including the leading \texttt{/} or \texttt{?} and the terminating \texttt{\textless{}CR\textgreater{}} & 1 per character & \texttt{/foo\textless{}CR\textgreater{}} = \texttt{/},\texttt{f},\texttt{o},\texttt{o},\texttt{\textless{}CR\textgreater{}} = \textbf{5} \\
+Each character of an Ex command line, including the leading \texttt{:} and the terminating \texttt{\textless{}CR\textgreater{}} & 1 per character & \texttt{:\%s/a/b/g\textless{}CR\textgreater{}} = \textbf{12} --- this is what makes the par system fairly weigh ``type a substitute command'' against ``edit by hand,'' rather than giving \texttt{:s} an unearned discount \\
+Each typed character of inserted text, plus the mode-entering key and the terminating \texttt{\textless{}Esc\textgreater{}} & 1 per character/key & \texttt{ihi\textless{}Esc\textgreater{}} = \texttt{i},\texttt{h},\texttt{i},\texttt{\textless{}Esc\textgreater{}} = \textbf{4} \\
+A text object or motion spelled with multiple characters (\texttt{iw}, \texttt{aw}, \texttt{ge}) & 1 per character & \texttt{diw} = \texttt{d},\texttt{i},\texttt{w} = \textbf{3} \\
+Macro recording (\texttt{qa\ ...\ q}) & 1 for \texttt{q}, 1 for the register letter, 1 for each keystroke performed while recording, 1 for the terminating \texttt{q} & Recording has no discount: it costs exactly what was typed, including the \texttt{q}/register/\texttt{q} bracketing \\
+Macro invocation (\texttt{@a}) & 2 & \texttt{@} and the register letter, regardless of how many keystrokes the macro replays internally --- this is the entire reason macros are efficient in this accounting, not an oversight to patch \\
+Repeated macro invocation (\texttt{10@a}) & 1 per digit, plus 2 & \texttt{10@a} = \texttt{1},\texttt{0},\texttt{@},\texttt{a} = \textbf{4}, however many keystrokes the macro itself replays each of the ten times \\
+\texttt{.} (dot-repeat) & 1 & Regardless of the size or complexity of the command being repeated --- this is symmetric with macro invocation: both are cases where one keystroke stands for an arbitrarily larger replayed effect \\
+\end{longtable}
+\endgroup
+
+A worked example ties this to Section~\ref{sec-the-global-command-family}'s own idiom: \texttt{:g/\^{}\textbackslash{}d\textbackslash{}+\$/d} ---
+every character including \texttt{:}, \texttt{g}, \texttt{/}, \texttt{\^{}}, \texttt{\textbackslash{}}, \texttt{d}, \texttt{+}, \texttt{\$}, \texttt{/}, \texttt{d},
+and the terminating \texttt{\textless{}CR\textgreater{}} counts individually, for a total of \textbf{11}
+keystrokes, regardless of how many lines in the buffer actually match and
+get deleted. This is the same principle as the Ex-command row above,
+applied to \texttt{:g} rather than \texttt{:s}: the cost is what was typed, not what the
+command's effect turned out to be.
+
+\begin{itemize}
+\tightlist
+\item
+  Leaderboards are naturally shared, per-level data: \texttt{window.storage} with
+  \texttt{shared:\ true}, keyed by level id, storing an ordered list of
+  \texttt{\{keystrokes:\ string,\ playerLabel:\ string\}} entries rather than scores
+  alone, so any entry remains independently re-verifiable by replaying it ---
+  including, as a spot check, by running it through the Section~\ref{sec-differential-testing-against-real-vim} oracle
+  as well as the level's own goal check.
+\end{itemize}
+
+\hypertarget{sec-repetition-detection-and-macro-friendliness}{%
+\subsection{Repetition Detection and Macro-Friendliness}\label{sec-repetition-detection-and-macro-friendliness}}
+
+Real editing tasks that are worth turning into levels are disproportionately
+the ones with repeated structure --- the same shape of edit recurring at many
+sites --- which is exactly the condition under which a short macro dominates
+any manual approach. This is the actual reason this pivot makes macros the
+star mechanic rather than one system among several.
+
+At import time, a lightweight structural diff between \texttt{initialBuffer} and
+the target can detect approximately-repeated edit patterns and annotate the
+level with an estimated repetition count. This is metadata for hinting and
+level browsing (``macro-friendly,'' tagged with an approximate multiplicity),
+not a gameplay gate --- \texttt{allowedCommands} and the lock system from Section~\ref{sec-pedagogical-layer}
+still govern what's actually available in a given level. Detection only
+decides what the level is labeled, not what it permits.
+
+\hypertarget{sec-placement-in-the-build-plan}{%
+\subsection{Placement in the Build Plan}\label{sec-placement-in-the-build-plan}}
+
+This section depends on the full grammar being solid --- specifically macros
+(Phase 6) and, for large imported files, the undo-tree work (Phase 7) --- and
+benefits from Section~\ref{sec-differential-testing-against-real-vim}'s oracle harness already existing, since the same
+replay-and-verify mechanism does double duty as the leaderboard's anti-cheat
+check. It belongs after the curriculum phases as its own \textbf{Phase 8}, so
+that level-authoring tooling never becomes a dependency the core teaching
+path in Phases 0--7 has to wait on.
+
+\end{document}

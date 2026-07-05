@@ -1,0 +1,219 @@
+\chapter{Repair, Cost, and the Economics of Maintaining a Distinction}
+\label{ch:repair-economics}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter imports the repair-theoretic
+machinery of \emph{Conservation of Ambiguity}: repair cost, ambiguity, and
+interference as quantitative descriptions of how finite budgets constrain
+distinguishability. The Redistribution Theorem is restated and carefully
+scoped as a description of how a single observer reallocates finite
+resources across distinctions within one repair economy at one moment. The
+chapter's key emphasis, on which the rest of the monograph depends, is that
+ambiguity conservation is not that theorem's central result; the deeper
+conserved quantity is the repair budget itself, and ambiguity conservation
+is recovered only as a restrictive limiting case.
+\end{quotation}
+
+\section{Repair Cost as the Cost of Preserving a Minimal Pair}
+
+Chapter~\ref{ch:distinctions} defined a named distinction $d$ via a
+minimal pair $\{x_d, x_{\neg d}\}$ (\cref{def:minimal-pair}) and defined
+$d$ as discarded by a rendering precisely when that pair collapses
+(\cref{def:discard-set}). This chapter's imported apparatus speaks
+instead of the \emph{repair cost} of $d$, and it is worth stating plainly,
+before using the two vocabularies interchangeably as every later chapter
+does, exactly how they connect.
+
+\begin{definition}[Repair Cost, Specialized]
+\label{def:repair-cost-specialized}
+For a named distinction $d$ with minimal pair $\{x_d, x_{\neg d}\}$
+subject to a perturbation process (a transformation, a transmission
+channel, a compression step), the repair cost $\repcost{d}$ is the cost of
+maintaining $x_d \not\sim x_{\neg d}$ -- that is, of keeping the pair told
+apart -- under that perturbation.
+\end{definition}
+
+\cref{def:repair-cost-specialized} is a specialization of
+Chapter~\ref{ch:repair-economics}'s imported notion of repair cost to the
+minimal-pair vocabulary of Chapter~\ref{ch:distinctions}, and it is what
+licenses Chapter~\ref{ch:budget-relay}'s otherwise unexplained move of
+treating $\repcost{d}$ and $\discard{r}$ as talking about the same
+underlying phenomenon: a distinction is discarded by a rendering exactly
+when insufficient repair investment was made, relative to that
+rendering's perturbation, to keep its minimal pair apart.
+
+\begin{remark}[Repair Cost as Deficit-Closing Investment]
+\label{rem:repair-cost-as-deficit}
+Chapter~\ref{ch:four-operations} imports Distinguishability Geometry's
+coding deficit $\delta_T(x)$ (\cref{def:coding-deficit}), and the connection
+to repair cost is close enough to be worth stating even before that chapter
+is reached: funding $\repcost{d}$ is, in the vocabulary of that later
+chapter, precisely the investment required to keep $d$'s minimal pair
+distinguishable under an ontology $T$ that would otherwise identify them --
+that is, to hold $\delta_T(d)$ at zero rather than letting it rise. This
+monograph's repair-economic vocabulary and Distinguishability Geometry's
+deficit vocabulary are describing the same underlying phenomenon from two
+directions: one asks what it costs to prevent a collapse, the other asks
+how much description length is lost once the collapse has already
+happened.
+\end{remark}
+
+\section{Repair Cost, Sharpness, and Ambiguity}
+
+\imported{Conservation of Ambiguity}
+
+\begin{definition}[Distinction Sharpness]
+\label{def:sharpness}
+For $d \in \restdomain$ a repair-stable distinction, the sharpness of $d$
+is $\sigma(d) = \repcost{d}$, the repair cost required to maintain $d$
+under admissible perturbation.
+\end{definition}
+
+\begin{definition}[Operational Ambiguity]
+\label{def:ambiguity}
+The ambiguity of a distinction is a monotone decreasing function of its
+repair cost; the simplest choice is $\amb{d} = 1/\repcost{d}$.
+\end{definition}
+
+\begin{remark}[Ambiguity's Functional Form Is a Convention, Not a Law]
+\label{rem:ambiguity-convention}
+\emph{Conservation of Ambiguity} states this explicitly, and it is worth
+repeating rather than letting the simplest choice harden into an
+assumption: any strictly decreasing monotone transformation of
+$\repcost{d}$ produces an equivalent \emph{ordering} of distinctions by
+ambiguity, so $\amb{d} = 1/\repcost{d}$ is adopted here for concreteness
+and ease of computation in worked examples, not because it is uniquely
+forced by anything proved. Nothing in this monograph depends on the
+specific functional form; every result stated in terms of $\amb{d}$ could
+be restated, without loss, in terms of the ordering it induces.
+\end{remark}
+
+Ambiguity, under \cref{def:ambiguity}, is not ignorance, incomplete
+information, or subjective uncertainty. It measures the degree to which a
+distinction has been left under-maintained: a distinction is ambiguous
+because insufficient repair capacity has been committed to stabilizing it
+against perturbation, not because information about it is unknowable in
+principle.
+
+\section{Repair Interference}
+
+\begin{definition}[Repair Interference]
+\label{def:interference}
+For $d_i, d_j \in \restdomain$, the repair interference
+$\interf{d_i}{d_j}$ is the change in repair cost of $d_j$ induced by an
+infinitesimal increase in repair investment devoted to $d_i$. Positive
+interference indicates repair competition; negative interference
+indicates repair synergy; zero interference indicates operational
+independence.
+\end{definition}
+
+This definition is stated exactly as \emph{Conservation of Ambiguity}
+gives it, correctly attributed. It is worth flagging, rather than
+discovering by accident later, that the same source text attributes this
+formula to Observability Is Restorability, and Observability Is
+Restorability's own verified text defines repair interference differently
+-- algebraically rather than as a derivative.
+\cref{rem:interference-inconsistency} (Chapter~\ref{ch:four-operations})
+gives the precise comparison; nothing in this chapter or those that follow
+depends on resolving it, since this monograph uses only the derivative
+form, consistently, throughout.
+
+\section{The Redistribution Theorem}
+
+\begin{theorem}[Redistribution Theorem]
+\label{thm:redistribution}
+\imported{Conservation of Ambiguity}
+Let $\Phi = \amb{\cdot} + \lambda \repcost{\cdot} + \mu I(\cdot,\cdot)$ be
+the repair budget functional of a finite observer, with total budget
+$\Phi_{\mathrm{tot}}$ held fixed. Then every admissible variation
+satisfying $\delta \repcost{d_1} > 0$ for some distinction $d_1$ induces
+compensating variations throughout the remaining distinction space such
+that $\delta\Phi = 0$. Consequently, no local increase in distinction
+sharpness can occur without global redistribution of ambiguity, repair
+cost, or repair interference.
+\end{theorem}
+
+\begin{proofsketch}
+\imported{Conservation of Ambiguity} The result follows from constrained
+variation of the repair budget functional $\Phi$ under fixed total
+budget. Since the observer possesses no additional maintenance capacity,
+every increase in repair investment devoted to one region of distinction
+space must appear elsewhere as a corresponding change in ambiguity,
+repair cost, or repair interference. The full proof, including the three
+interference regimes (competition, synergy, independence), is given in
+\emph{Conservation of Ambiguity} and is not repeated here.
+\end{proofsketch}
+
+\textbf{Scope note.} \cref{thm:redistribution} governs a single observer's
+competing distinctions at a single moment: a \emph{synchronic} result. It
+says nothing, on its own, about what happens to a single distinction's
+status as it is carried across a sequence of independently-budgeted
+stages over time. That extension is the subject of
+Chapter~\ref{ch:synchronic-to-diachronic} and Part~\ref{part:budget-relay}.
+
+\begin{corollary}[Ambiguity Conservation as a Limiting Case]
+\label{cor:ambiguity-limiting-case}
+\imported{Conservation of Ambiguity}
+If repair costs and interference remain fixed ($\delta\repcost{\cdot} =
+\delta I(\cdot,\cdot) = 0$), then $\delta \amb{\cdot} = 0$: ambiguity
+conservation is recovered as a special case of repair-budget conservation.
+In realistic systems, sharpening one distinction almost always changes
+both repair costs and interference relationships, so ambiguity alone is
+generally \emph{not} conserved; the conserved quantity is the complete
+repair budget $\Phi$.
+\end{corollary}
+
+This corollary is the reason this monograph does not treat itself as a
+corollary of \cref{thm:redistribution}: the earlier framing of the
+research program that produced this book -- ``ambiguity is conserved,
+merely relocated'' -- is precisely the special case
+\cref{cor:ambiguity-limiting-case} shows to be exceptionally restrictive
+and generally false. The new work required here
+(Part~\ref{part:budget-relay}) does not inherit its central claim from
+this theorem; it must be argued independently.
+
+\section{A Worked Instance, Before It Becomes a Relay}
+\label{sec:redistribution-worked}
+
+Chapter~\ref{ch:budget-relay} introduces a running numerical example: five
+distinctions $d_1, \ldots, d_5$ with repair costs $\repcost{d_1}=1$,
+$\repcost{d_2}=2$, $\repcost{d_3}=3$, $\repcost{d_4}=2$,
+$\repcost{d_5}=4$. There, the costs are held fixed and a \emph{budget}
+$\beta_i$ varies from stage to stage of a relay. Here, before any relay
+exists, it is worth seeing what \cref{thm:redistribution} says about the
+same five distinctions considered as the simultaneous concern of a
+\emph{single} observer with one fixed total budget
+$\Phi_{\mathrm{tot}}$ -- the case the theorem actually governs.
+
+Suppose the observer initially funds all five distinctions exactly at
+their stated costs, for a total commitment of $1+2+3+2+4 = 12$, and
+suppose $\Phi_{\mathrm{tot}} = 12$ exactly, leaving no slack. Now suppose
+the observer wishes to sharpen $d_3$ -- to invest further in it beyond its
+baseline cost, driving $\repcost{d_3}$ up and $\amb{d_3}$ down, perhaps
+because $d_3$ has become newly important. \cref{thm:redistribution}
+states that this cannot happen for free: with $\Phi_{\mathrm{tot}}$ fixed
+at $12$ and already fully committed, $\delta \repcost{d_3} > 0$ forces a
+compensating $\delta \Phi = 0$ elsewhere in the functional. If
+interference is negligible ($I \approx 0$, as in the worked relay of
+\cref{sec:worked-relay}), the compensation must come directly out of the
+repair cost or ambiguity terms of the remaining four distinctions --
+concretely, some combination of $d_1, d_2, d_4, d_5$ must have its own
+funding reduced by exactly the amount $d_3$'s sharpening consumed, raising
+their ambiguity in turn.
+
+This is the single-observer, single-moment phenomenon
+\cref{thm:redistribution} describes, and it is worth contrasting directly
+with what happens to the \emph{same five numbers} once
+Chapter~\ref{ch:budget-relay} turns them into a two-stage relay with
+$\beta_0 = 4$ and $\beta_1 = 3$. There, $d_3$'s low priority at stage $0$
+does not trigger any compensating adjustment to $d_1$ or $d_2$'s funding
+elsewhere in a shared $\Phi_{\mathrm{tot}}$, because no such shared
+quantity exists across stages (\cref{def:budget-relay}): $d_3$, $d_4$, and
+$d_5$ are simply dropped, permanently, with nothing anywhere in the
+system compensating for their loss. The redistribution
+\cref{thm:redistribution} guarantees within one economy has no
+counterpart at all across the boundary between $\beta_0$ and $\beta_1$.
+Chapter~\ref{ch:synchronic-to-diachronic} argues for this contrast in
+prose; \cref{prop:no-global-conserved-quantity} there states it as a
+precise claim about why no functional analogous to $\Phi$ can be defined
+across a relay's stages in the first place.

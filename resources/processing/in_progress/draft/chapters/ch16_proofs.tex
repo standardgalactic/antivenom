@@ -1,0 +1,125 @@
+\chapter{Proofs: Sufficiency Relative to a Closed Task and System}
+\label{ch:proofs}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This chapter addresses the strongest apparent
+counterexample to the monograph's thesis: a formal proof, once written,
+appears complete. The chapter shows this is correct precisely for
+verification relative to a fixed axiom system, and precisely why it stops
+being correct the moment explanation, intuition, generalization, pedagogy,
+or future theoretical change become the task instead. Proofs therefore
+demonstrate that task-relative sufficiency is genuinely achievable in the
+closed case, while simultaneously reinforcing why task boundaries matter as
+much as they do throughout the rest of the book.
+\end{quotation}
+
+\section{The Strongest Apparent Counterexample}
+
+Any framework claiming that no finite substrate is generally sufficient
+invites the objection: but a machine-checkable proof, once written, is
+complete for verification. This chapter states precisely why that
+objection is correct as far as it goes, and precisely where it stops
+applying -- a role this chapter is written to make explicit, since the
+objection would otherwise hang unanswered over the rest of the
+monograph.
+
+\begin{proposition}[Verification Sufficiency]
+\label{prop:verification-sufficiency}
+For a fixed axiom system $\mathcal{S}$, a machine-checkable proof $p$ is
+sufficient (\cref{def:sufficiency}) for the task of verification relative
+to $\mathcal{S}$.
+\end{proposition}
+
+\begin{proofsketch}
+The verification algorithm for $\mathcal{S}$ is finite and decidable by
+construction; every distinction it requires to certify $p$ appears
+explicitly in $p$ together with $\mathcal{S}$'s axioms. No distinction
+required by the verification task is discarded, so
+\cref{def:sufficiency} is satisfied.
+\end{proofsketch}
+
+\begin{corollary}[Explanation Is Not Guaranteed]
+\label{cor:explanation-not-guaranteed}
+\cref{prop:verification-sufficiency} does not extend to the tasks of
+explanation, generalization, or adaptation to a changed axiom system.
+\end{corollary}
+
+\begin{proofsketch}
+These tasks lie outside the closed task space $\{\tau_{\text{verify}}\}$
+for which $\mathcal{S}$ and $p$ were held fixed in
+\cref{prop:verification-sufficiency}'s hypothesis; by
+\cref{prop:task-unavailability}, sufficiency for tasks outside a closed,
+anticipated set is not guaranteed by a finite substrate.
+\end{proofsketch}
+
+\section{Why This Resolves Rather Than Merely Sidesteps the Objection}
+
+\cref{prop:verification-sufficiency} shows the impossibility claim of
+\cref{principle:global-insufficiency} was never intended to apply where
+both the task and the formal system are closed and fixed in advance;
+\cref{cor:explanation-not-guaranteed} shows that the moment either is
+allowed to vary, the same proof reverts to an ordinary instance of
+\cref{prop:task-unavailability}. Sufficiency, throughout this monograph,
+is always sufficiency relative to a declared task space, and a proof's
+celebrated reliability is precisely a case where that task space has been
+closed by convention.
+
+\section{Why Proofs Do Not Exhibit Composition Failure}
+
+Chapter~\ref{ch:budget-relay} onward has treated failure as arising when
+a chain's stages pursue \emph{different} local tasks $\tau_0, \ldots,
+\tau_{n-1}$, each locally reasonable, that jointly fail to anticipate a
+later $\tau^*$. A proof's transmission -- through typesetting, copying,
+publication, translation of notation -- is also a chain of renderings in
+the sense of \cref{def:substrate-chain}. It is worth stating precisely
+why this particular chain typically avoids
+\cref{thm:composition-failure}'s failure mode for the verification task,
+even though it is exactly the kind of chain the theorem is about in
+general.
+
+\begin{proposition}[Homogeneous-Task Chains Preserve What They Share]
+\label{prop:homogeneous-chain}
+If every stage of a substrate chain shares the same task, $\tau_0 =
+\tau_1 = \cdots = \tau_{n-1} = \tau$, and every stage's budget satisfies
+$\beta_i \ge R_\tau$ (the total cost of $\tau$'s required distinctions),
+then $A_n$ is sufficient for $\tau$.
+\end{proposition}
+
+\begin{proofsketch}
+By \cref{def:locally-admissible}, each stage ranks $\tau$'s required
+distinctions above all others, and by hypothesis $\beta_i \ge R_\tau$ at
+every stage, so every required distinction is funded at every stage: no
+required distinction is ever dropped, by \cref{def:budget-discard}. Since
+this holds for every $i$, $\tau$'s required distinctions survive intact
+into $A_n$, and $A_n$ is sufficient for $\tau$ by
+\cref{def:sufficiency}.
+\end{proofsketch}
+
+\cref{prop:homogeneous-chain}'s hypothesis is exactly what typesetting
+and transmission processes for mathematical proofs typically satisfy for
+$\tau = \tau_{\text{verify}}$: every party handling the text -- a
+typesetter, a journal, a translator of notation -- treats preserving the
+logical content as the overriding priority, well-resourced enough that
+$\beta_i \ge R_{\tau_{\text{verify}}}$ at every stage. This is why proofs
+do not feel like an exception requiring special pleading:
+\cref{prop:homogeneous-chain} shows that a chain avoids composition
+failure for a given task exactly when every stage treats that task as
+priority throughout, which is the normal condition for a proof's
+transmission and verification, but conspicuously is \emph{not} the
+normal condition for a proof's transmission with respect to explanation.
+Nothing about the transmission chain prioritizes preserving the
+motivating intuition, the historical context of the discovery, or the
+informal picture that made the result plausible in the first place; those
+distinctions are exactly the ones a typesetting or publication process
+has no particular reason to fund, and \cref{cor:explanation-not-guaranteed}
+is the consequence.
+
+\section{Verification as Preservation, Explanation as Reconstitution}
+
+A proof text is high-fidelity (\cref{def:fidelity}) for verification,
+since $r_{c,t}$ for a verifier with the text in hand is close to the
+proof itself (\cref{def:access-mode}); understanding \emph{why} the
+proof works is typically reconstitution-mode, built from a reader's
+trace-based reconstruction of the argument's structure, and is therefore
+subject to \cref{prop:recursive-insufficiency} in exactly the way memory
+is (Chapter~\ref{ch:memory}).

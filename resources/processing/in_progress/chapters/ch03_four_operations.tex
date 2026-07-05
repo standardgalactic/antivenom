@@ -1,0 +1,682 @@
+\chapter{The Four Operations of Distinction}
+\label{ch:four-operations}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} Chapter~\ref{ch:distinctions} built a self-contained
+apparatus for renderings and discard sets without situating it within the
+broader research program from which its vocabulary descends. This chapter
+does that situating, against six sources at three different levels of
+verification: Distinguishability Geometry and Persistence Before Truth,
+checked by reading primary text directly; Observability Is Restorability,
+likewise checked directly, which also surfaces an inconsistency between
+two of the other source texts; Admissibility Before Truth and The
+Geometry of Correction, integrated on the strength of formulas and
+theorem statements transcribed directly from source PDFs by the author
+rather than independently checked against primary source text; and The
+Geometry of Witnesses, reported only from the author's prose summary and
+cited at a correspondingly weaker tier still. Every claim is marked \imported{},
+\transcribed{}, or \secondary{} according to which of these three tiers
+actually supports it, and the distinction is maintained rather than
+allowed to blur after the first citation. The honest finding is that
+this monograph built working analogues of three of Distinguishability
+Geometry's four primitive operations without recognizing them as such,
+resolved a fourth case only a later source could characterize, and
+discovered -- by the accident of checking an unrelated source -- that
+its oldest working distinction, benign versus corrupting loss, already
+had a name in a program it had not previously engaged.
+\end{quotation}
+
+\section{Two Collisions in the Source Vocabulary}
+\label{sec:collisions}
+
+Before any importing can be done responsibly, two terminological collisions
+need to be named, because silently picking one convention over the other
+would misrepresent both source texts.
+
+The first collision is internal to the wider research program this monograph
+draws on. Distinguishability Geometry's foundational object is the ontological
+triple $(X, \sim, T)$, in which $T$ denotes an \emph{ontology}: a description
+language or template hierarchy determining which descriptions of elements of
+$X$ are reachable. Persistence Before Truth's foundational object is the
+structured domain $(X, \mathcal{T}, \mathcal{D}, \mathcal{R})$, in which
+$\mathcal{T}$ denotes a family of \emph{admissible transformations}
+$\{T_\alpha : X \to X\}$. The same letter is doing incompatible work in two
+sibling foundational texts: one uses $T$ for the language in which $X$ is
+described, the other uses $\mathcal{T}$ for the maps that act on $X$. This
+monograph adopts the merged notation
+\[
+(X, \sim, T, \mathcal{T}),
+\]
+with $X$ the state space, $\sim$ the distinguishability relation, $T$ the
+ontology in Distinguishability Geometry's sense, and $\mathcal{T}$ the
+transformation family in Persistence Before Truth's sense, and uses this
+notation for the remainder of the present chapter whenever both roles need to
+appear together.
+
+The second collision is not resolved here, and it is important to say so
+plainly rather than let the first resolution create an impression of general
+tidiness. This monograph's own admissible continuation set
+$\admis{\tau}{r}$ (\cref{def:admissible-set}) is an epistemic, consumer-relative
+notion: the continuations reachable given what a particular rendering
+discloses. The Admissibility Program's own central object, so far as it can
+be reconstructed from a downstream application paper and a secondary summary
+rather than from the foundational text itself, is $\mathcal{A} \subseteq X$:
+a structural, non-epistemic subset of states whose continuation would not
+destroy the conditions for coherent further continuation, regardless of what
+any particular consumer can currently tell. These are not the same kind of
+object, and this monograph has not verified against the primary Admissibility
+Field source what the precise relationship between them is. This is recorded
+as an open item in Appendix~\ref{app:open-questions} rather than papered over.
+
+\section{Two Deficits}
+\label{sec:two-deficits}
+
+\imported{Distinguishability Geometry}
+
+\begin{definition}[Ontological Triple]
+\label{def:ontological-triple}
+An ontological triple is $(X, \sim, T)$, where $X$ is a set, $\sim$ is an
+equivalence relation on $X$ (observational indistinguishability), and $T$ is
+an ontology determining which descriptions of elements of $X$ are reachable.
+The equivalence classes $[x]_\sim$ are called fibers.
+\end{definition}
+
+\begin{definition}[Coding Deficit]
+\label{def:coding-deficit}
+Let $L_T(x)$ be the shortest description of $x$ reachable within $T$, and
+$L^*(x) = K(x)$ the Kolmogorov complexity of $x$. The coding deficit is
+$\delta_T(x) = L_T(x) - L^*(x)$.
+\end{definition}
+
+\begin{definition}[Distinguishability Deficit]
+\label{def:distinguishability-deficit}
+Let $D_T(x)$ be the number of objects separable from $x$ by descriptions
+reachable in $T$, and $D^*(x)$ the maximum such capacity attainable by any
+ontology. The distinguishability deficit is $\Delta_T(x) = D^*(x) - D_T(x)$.
+\end{definition}
+
+\begin{theorem}[Deficit Proxy]
+\label{thm:deficit-proxy}
+\imported{Distinguishability Geometry}
+Under faithful encoding (each expressible distinction requires at least one
+description bit), $\Delta_T(x) \le C\,\delta_T(x)$ for a system-dependent
+constant $C > 0$. In particular, $\delta_T(x) = 0 \Rightarrow \Delta_T(x) = 0$.
+\end{theorem}
+
+The converse direction is stated in the source text as an open conjecture,
+not a theorem, and this monograph inherits that status rather than
+strengthening it: whether $\Delta_T(x) = 0 \Rightarrow \delta_T(x) = 0$ in
+general remains unproved.
+
+This apparatus is considerably more developed than the loss vocabulary this
+monograph built independently in Chapter~\ref{ch:distinctions}. Where
+$\discard{r}$ (\cref{def:discard-set}) records only which named distinctions
+are present or absent, $\delta_T$ and $\Delta_T$ are quantitative, and the
+Deficit Proxy Theorem relates two genuinely different notions of loss --
+coding cost and distinguishing capacity -- that this monograph never
+separated. \cref{sec:where-this-sits} states precisely how far the
+correspondence between the two vocabularies extends and where it does not.
+
+\section{The Four Operations}
+\label{sec:four-operations}
+
+\imported{Distinguishability Geometry}
+
+Distinguishability Geometry organizes representational change into two
+levels. Projection and embedding operate at the distinction level, modifying
+$\sim$ within a fixed space. Revision and transport operate at the ontology
+level: revision changes $T$, and transport connects two distinct triples.
+
+\begin{definition}[Projection]
+\label{def:dg-projection}
+A projection on $(X, \sim, T)$ is a surjective map $\sigma: X \to S$ inducing
+a coarsening $\sim'$ of $\sim$: $\sigma(x) = \sigma(y) \Rightarrow x \sim' y$.
+\end{definition}
+
+\begin{theorem}[Projection Deficit Bound]
+\label{thm:projection-deficit-bound}
+\imported{Distinguishability Geometry}
+Let $\sigma: X \to S$ be a projection inducing fiber partition $\{F_s\}_{s \in
+S}$, with $X$ carrying a probability measure $\mu$. Then $\Delta\delta(\sigma)
+\ge H(X \mid S)$, the conditional entropy of $X$ given $S$.
+\end{theorem}
+
+\begin{definition}[Embedding]
+\label{def:dg-embedding}
+An embedding of $(X, \sim, T)$ into $(Y, \sim', T')$ is an injective map
+$\phi: X \to Y$ such that $\phi(x) \sim' \phi(y) \Rightarrow x \sim y$. An
+embedding is faithful if the converse also holds.
+\end{definition}
+
+\begin{theorem}[Embedding Refinement]
+\label{thm:embedding-refinement}
+\imported{Distinguishability Geometry}
+If $\phi: (X,\sim,T) \to (Y,\sim',T')$ is a faithful embedding, then
+$\delta_{T'}(\phi(x)) \le \delta_T(x)$: a faithful embedding never increases
+the coding deficit.
+\end{theorem}
+
+\begin{definition}[Revision]
+\label{def:dg-revision}
+An ontological revision is a transition $(X, \sim_T, T) \to (X, \sim_{T'},
+T')$ where $T' \supset T$. A revision is productive if $\delta_{T'}(x) <
+\delta_T(x)$.
+\end{definition}
+
+\begin{theorem}[Revision Monotonicity]
+\label{thm:revision-monotonicity}
+\imported{Distinguishability Geometry}
+For an expanding sequence of ontologies $T_0 \subset T_1 \subset \cdots$,
+$\delta_{T_{n+1}}(x) \le \delta_{T_n}(x)$ for all $n \ge 0$.
+\end{theorem}
+
+\begin{corollary}[Asymptotic Deficit]
+\label{cor:asymptotic-deficit}
+\imported{Distinguishability Geometry}
+The sequence $(\delta_{T_n}(x))_{n \ge 0}$ is monotone non-increasing and
+bounded below by zero; hence $\lim_{n\to\infty} \delta_{T_n}(x) = \delta_\infty(x)
+\ge 0$ exists, with $\delta_\infty(x) = 0$ iff some reachable revision
+sequence converges to an optimal ontology for $x$.
+\end{corollary}
+
+\begin{definition}[Transport]
+\label{def:dg-transport}
+A transport map is $\tau: (X,\sim_X,T_X) \to (Y,\sim_Y,T_Y)$ with $x \sim_X
+x' \Rightarrow \tau(x) \sim_Y \tau(x')$, and distortion $\epsilon(\tau) \ge 0$
+controlling the measure of fiber violations.
+\end{definition}
+
+\begin{theorem}[Transport Stability]
+\label{thm:transport-stability}
+\imported{Distinguishability Geometry}
+Let $\tau$ be a transport map with distortion at most $\epsilon$, and let
+$I_X$, $I_Y$ be invariants constant on fibers of $\sim_X$, $\sim_Y$
+respectively, agreeing on perfectly transported fibers. Then $|I_X(x) -
+I_Y(\tau(x))| \le C\epsilon$ for a constant $C$ depending on the oscillation
+of the invariants across fiber boundaries.
+\end{theorem}
+
+\begin{corollary}[Justification of Analogy]
+\label{cor:justification-of-analogy}
+\imported{Distinguishability Geometry}
+An analogical inference transported by $\tau$ is valid up to error
+$C\epsilon(\tau)$; Transport Stability is the precise condition under which
+analogical reasoning is valid.
+\end{corollary}
+
+\section{Persistence Sets}
+\label{sec:persistence-sets}
+
+\imported{Persistence Before Truth}
+
+\begin{definition}[Structured Domain]
+\label{def:structured-domain}
+A structured domain is a quadruple $(X, \mathcal{T}, \mathcal{D}, \mathcal{R})$,
+where $X$ is a state space, $\mathcal{T} = \{T_\alpha : X \to X\}$ is a
+family of admissible transformations, $\mathcal{D} = \{d_i : X \to Y_i\}$ is
+a family of distinctions, and $\mathcal{R} = \{R_j : X \to X\}$ is a family
+of admissible reconstruction operators.
+\end{definition}
+
+\begin{definition}[Recoverability Relation]
+\label{def:recoverability-relation}
+A distinction $d \in \mathcal{D}$ is recoverable under $T \in \mathcal{T}$ if
+there exists $R \in \mathcal{R}$ such that $d \circ R \circ T = d$.
+\end{definition}
+
+\begin{definition}[Persistence Set]
+\label{def:persistence-set}
+The persistence set of a distinction $d$ is $P(d) = \{T \in \mathcal{T} :
+\exists R \in \mathcal{R} \text{ with } d \circ R \circ T = d\}$.
+\end{definition}
+
+\begin{theorem}[Persistence Depends Only on Structure]
+\label{thm:persistence-structural}
+\imported{Persistence Before Truth}
+Recoverability is invariant under any isomorphism of structured domains that
+preserves transformations, distinctions, and reconstruction operators; hence
+recoverable persistence is a structural property rather than a property of
+particular representations.
+\end{theorem}
+
+This is the general, primitive object this monograph's root-object apparatus
+(\cref{def:root-object}) turns out to be a narrow special case of.
+\cref{sec:where-this-sits} makes the correspondence precise.
+
+\section{A Third Verified Source: Observability Is Restorability}
+\label{sec:oir}
+
+\imported{Observability Is Restorability}
+
+A third source cited in this monograph's front matter has since been checked
+against primary text, and the check surfaced something worth reporting
+precisely: not an error this monograph introduced, but an inconsistency
+already present between two source texts it draws on.
+
+\begin{definition}[Restorable Distinction Set]
+\label{def:rest-oir}
+For a repair repertoire $\mathcal{R}$, $\mathrm{Rest}(\mathcal{R}) = \{d \in
+\mathcal{D} : C_R(d) < +\infty\}$: the set of distinctions restorable at
+finite cost under every admissible perturbation.
+\end{definition}
+
+$\restdomain$, used throughout Chapters~\ref{ch:repair-economics} onward, is
+this object, and the attribution to Observability Is Restorability was
+correct: $\mathrm{Rest}(\mathcal{R})$ is exactly this source's central
+construction, arrived at from repair paths, perturbations, and a
+substrate $(X_S, \mathcal{P}, \mathcal{D})$ considerably richer than
+anything this monograph builds on top of it. This monograph's $\repcost{d}$
+is a bare scalar; Observability Is Restorability's $C_R(d)$ is an infimum
+over actual repair paths through a topological state space, and the source
+text develops a full geometry on top of it -- an interference matrix with
+spectral structure (bottleneck clusters, synergistic bundles), a repair
+pseudometric, an observer-relative admissibility manifold $\mathcal{A}_O$
+characterized by a Repair Boundary Theorem, and a Control-Geometry
+Collapse theorem identifying restorability with reachability under
+controllability hypotheses. None of this deeper apparatus is used in the
+present monograph; $\restdomain$ is imported as a set, not as the geometry
+that generates it.
+
+\begin{remark}[An Inconsistency Between Two Source Texts, Not Introduced Here]
+\label{rem:interference-inconsistency}
+\emph{Conservation of Ambiguity} states that its repair interference
+functional $I(d_i,d_j)$ is ``established in Observability Is
+Restorability,'' and gives it in derivative form: the change in repair
+cost of $d_j$ induced by an infinitesimal increase in repair investment
+devoted to $d_i$. This is exactly the form \cref{def:interference} uses,
+correctly attributed to \emph{Conservation of Ambiguity}. But Observability
+Is Restorability's own Definition 8.7 gives a different, algebraic form:
+$I(d_i,d_j) = C_R(d_i \wedge d_j) - C_R(d_i) - C_R(d_j)$, a superadditivity
+gap rather than a derivative. The sign conventions agree (positive:
+competition or conflict; negative: synergy; zero: independence), but the
+formulas are not the same object, and one text's claim to inherit the
+other's definition does not survive a direct check. This is recorded here
+because it bears on how much weight the phrase ``established in
+Observability Is Restorability'' can carry elsewhere in the corpus, not
+because it requires this monograph to choose between the two: everything
+in Chapters~\ref{ch:repair-economics} onward uses only the derivative
+form, consistently, and nothing here depends on reconciling it with the
+algebraic one.
+\end{remark}
+
+\begin{theorem}[Paradigm Shift as Repair-Repertoire Discontinuity]
+\label{thm:paradigm-shift}
+\imported{Observability Is Restorability}
+Let $\mathcal{R}_{\mathrm{old}}$ and $\mathcal{R}_{\mathrm{new}}$ be repair
+repertoires with $\mathcal{R}_{\mathrm{old}} \not\subseteq
+\mathcal{R}_{\mathrm{new}}$ and $\mathcal{R}_{\mathrm{new}} \not\subseteq
+\mathcal{R}_{\mathrm{old}}$. Then $\mathrm{Rest}(\mathcal{R}_{\mathrm{old}})
+\not\subseteq \mathrm{Rest}(\mathcal{R}_{\mathrm{new}})$ and conversely: the
+restorable-distinction sets are incomparable, with lost distinctions
+$\mathrm{Rest}(\mathcal{R}_{\mathrm{old}}) \setminus
+\mathrm{Rest}(\mathcal{R}_{\mathrm{new}})$ and gained distinctions the
+reverse difference, both generically nonempty.
+\end{theorem}
+
+This theorem is the resolution \cref{prop:relay-replacement-partial-revision}
+needed and did not have. That proposition showed relay revision matches
+Distinguishability Geometry's revision operation only when the state space
+is held fixed and the ontology merely expands, and left the genuine
+paradigm-shift case -- where the state space itself changes --
+uncharacterized. \cref{thm:paradigm-shift} characterizes exactly that case,
+and does so within the repair-theoretic vocabulary this monograph already
+uses throughout Chapters~\ref{ch:repair-economics} onward, rather than
+requiring an appeal to Distinguishability Geometry's ontology-revision
+apparatus at all. \cref{sec:where-this-sits} restates this as a fifth
+correspondence.
+
+\section{A Fourth Source, Transcribed: Admissibility Before Truth}
+\label{sec:abt}
+
+\transcribed{Admissibility Before Truth}
+
+The following is imported on the strength of exact formulas and a proof
+sketch transcribed directly from the source PDF by the author, not from
+an independent reading of the primary file; per the front matter, this is
+marked throughout rather than allowed to blend into the fuller confidence
+of \cref{sec:oir}'s verified import.
+
+\begin{definition}[Domain Restriction]
+\label{def:domain-restriction}
+A truth predicate $\mathcal{T}$ factors as $\mathcal{T} = \widetilde{\mathcal{T}}
+\circ \iota$, where $\iota: \mathrm{Rest}(\mathcal{R}) \hookrightarrow
+\mathcal{D}$ is the inclusion of restorable distinctions into the full
+distinction space.
+\end{definition}
+
+\begin{theorem}[Domain Restriction Theorem]
+\label{thm:domain-restriction}
+\transcribed{Admissibility Before Truth}
+$\mathrm{dom}(\mathcal{T}) \subseteq \mathrm{Rest}(\mathcal{R})$: a truth
+predicate is defined only on distinctions restorable by the observer's
+repair repertoire. Outside $\mathrm{Rest}(\mathcal{R})$, a distinction is
+neither true nor false but unevaluable.
+\end{theorem}
+
+\begin{proofsketch}
+\transcribed{Admissibility Before Truth} Every distinction in the domain
+of $\mathcal{T}$ must lie in $\mathcal{D}$ by well-typedness; $\mathcal{T}$
+is then defined on $\mathrm{Rest}(\mathcal{R})$ by restriction through
+$\iota$, and outside $\mathrm{Rest}(\mathcal{R})$ the predicate takes a
+third value marking non-evaluability, not a truth value of either
+polarity.
+\end{proofsketch}
+
+\begin{proposition}[Sufficiency Presupposes Evaluability]
+\label{prop:sufficiency-presupposes-evaluability}
+Task-relative sufficiency (\cref{def:sufficiency}) implicitly assumes
+$\mathcal{T}$'s domain restriction: $r$ can be sufficient for $\tau$ only
+if every distinction $\tau$ requires already lies in
+$\mathrm{Rest}(\mathcal{R})$ for the repair repertoire generating $r$.
+\end{proposition}
+
+\begin{proofsketch}
+\cref{def:sufficiency} asks whether $\admis{\tau}{r} \subseteq
+\mathcal{C}_\tau(e)$, which presupposes that membership in
+$\mathcal{C}_\tau(e)$ is a meaningful, evaluable question for the
+distinctions at stake. By \cref{thm:domain-restriction}, that question is
+only meaningful for distinctions in $\mathrm{Rest}(\mathcal{R})$; for a
+distinction outside it, asking whether a continuation is correct is
+type-confused rather than merely undetermined. This was never stated in
+Chapter~\ref{ch:admissibility}, which built \cref{def:sufficiency} without
+reference to any prior evaluability condition, silently assuming it. The
+assumption is almost always harmless in this monograph's worked domains,
+since the distinctions at stake (castling rights, causal history, lexical
+content) are restorable by construction whenever they are discussed at
+all -- but it is an assumption, made visible only now.
+\end{proofsketch}
+
+\cref{prop:sufficiency-presupposes-evaluability} is the closest this
+monograph comes to making contact with the Admissibility Program's actual
+formal content, as distinct from the still entirely unseen
+\emph{Admissibility Field}. It does not resolve the three-way
+admissibility collision recorded in the front matter and in
+Appendix~\ref{app:open-questions}, but it is the first of the four
+competing admissibility-adjacent notions now on record that connects to
+this monograph's own apparatus by a stated proof rather than by analogy
+alone.
+
+\section{A Fifth Source, Transcribed: The Geometry of Correction}
+\label{sec:goc}
+
+\transcribed{The Geometry of Correction}
+
+\begin{definition}[Self-Referential and Reality-Anchored Evaluation]
+\label{def:evaluation-types}
+For an evaluation function $E: X \to \mathbb{R}$ and internal signal set
+$S$, a system is self-referential if $E(x) = f(S(x))$, depending only on
+internal signals. A system is reality-anchored if $E(x) = f(S(x), O(x))$
+for an external channel $O$ the system does not fully author or control.
+\end{definition}
+
+\begin{definition}[Coupling Coefficient]
+\label{def:coupling-coefficient}
+$\rho = \partial E / \partial O$. When $\rho \approx 0$, the external
+channel no longer moves the evaluation in practice, regardless of whether
+$O$ remains present.
+\end{definition}
+
+\begin{principle}[Correction Suppression]
+\label{principle:correction-suppression}
+\transcribed{The Geometry of Correction}
+Pathological self-reference does not usually mean no external corrective
+channel exists; it means the system has become insensitive to a channel
+that remains present.
+\end{principle}
+
+This is stated as a Principle rather than a Theorem because the source
+text itself names it that way, and this monograph preserves that label
+rather than upgrading its apparent formality.
+
+\begin{proposition}[Corruption as Correction Suppression]
+\label{prop:corruption-as-suppression}
+Corrupting loss (\cref{def:corrupting-loss}) is an instance of correction
+suppression: a rendering's presentation obscuring a discard is exactly a
+case where the rendering's apparent evaluation of its own sufficiency has
+decoupled from the external channel -- the actual, undisclosed state of
+$\discard{r}$ -- that would otherwise correct it.
+\end{proposition}
+
+\begin{proofsketch}
+Let $E$ be the confidence or sufficiency a rendering presents to a
+consumer, and let $O$ be the true discard set $\discard{r}$, a fact about
+the rendering the consumer does not directly observe. Declared loss
+(\cref{def:benign-loss}) keeps $E$ coupled to $O$: the consumer's
+assessment of sufficiency tracks what was actually discarded, since it is
+disclosed. Undeclared loss (\cref{def:corrupting-loss}) is exactly the
+case where $E$ no longer moves with $O$: the presented confidence is
+computed from $S$ alone -- the rendering's internal, self-referential
+account of itself -- with $\rho \approx 0$ relative to the actual discard
+set. \cref{prop:confidence-renderings}'s regress (Chapter~\ref{ch:fanout})
+is the recursive version of the same failure: each confidence profile
+$Q$ is itself a rendering whose own $E$ may or may not track its own
+$O$, and the trust boundary (\cref{def:trust-boundary}) is precisely the
+point at which this monograph stops asking whether $\rho \approx 0$ has
+crept in one level further down.
+\end{proofsketch}
+
+\cref{prop:corruption-as-suppression} is offered as the tightest
+correspondence in this chapter, tighter even than the four/five-operations
+correspondences of \cref{sec:where-this-sits}: it did not require
+reinterpreting either definition, only recognizing that
+\cref{def:corrupting-loss}'s ``obscures'' and \cref{def:coupling-coefficient}'s
+``$\rho \approx 0$'' are the same phenomenon named twice, once in this
+monograph's discard-set vocabulary and once in the correction-theoretic
+vocabulary of a program this monograph had not previously engaged.
+
+\section{A Sixth Source, at a Weaker Tier: The Geometry of Witnesses}
+\label{sec:witnesses}
+
+\secondary{The Geometry of Witnesses}
+
+What follows rests on the author's prose account of having read this
+text, not on transcribed formulas or primary source text, and is
+reported at that correspondingly weaker tier: informative enough to
+record and connect to this monograph's open questions, not solid enough
+to state as a Definition or Theorem the way \S\S\ref{sec:abt}--\ref{sec:goc}
+do.
+
+The reported central question is who maintains the repair repertoire
+$\mathcal{R}$ that Admissibility Before Truth (\S\ref{sec:abt}) treats as
+given. The proposed answer introduces a witness operator, reconstructing
+a repair operator from historical structure rather than repairing a
+distinction directly, and a reconstruction cover $C(r)$ -- the set of
+histories from which a given repair operator can be reconstructed -- with
+an associated redundancy, reported as $\rho(r) = |C(r)|$.
+
+\begin{remark}[A Notation Collision, Not Introduced Here]
+\label{rem:rho-collision}
+The Geometry of Witnesses's reported redundancy and The Geometry of
+Correction's coupling coefficient (\cref{def:coupling-coefficient}) both
+use $\rho$ for entirely unrelated quantities, apparently a collision
+between the two source texts' own notational choices rather than an
+error introduced in this monograph. To avoid compounding the collision
+inside a single chapter, this monograph writes the witness redundancy as
+$\rho_W(r) = |C(r)|$ from this point on, reserving unadorned $\rho$ for
+\cref{def:coupling-coefficient}'s coupling coefficient throughout.
+\end{remark}
+
+Zero, $\rho_W(r) = 0$, means the repair operator is permanently lost; one
+means a single point of failure; larger values mean resilience.
+
+\begin{remark}[A Candidate Answer to an Open Question, Unverified]
+\label{rem:witnesses-persistence-measure}
+Appendix~\ref{app:open-questions} records, as unresolved, what
+$\mu(P(d))$ -- the measure of a persistence set (\cref{def:persistence-set})
+-- might be in general. The reconstruction cover $C(r)$ and redundancy
+$\rho_W(r)$, as reported, are a plausible candidate operationalization of
+exactly this quantity for the specific case of root recovery
+(\cref{prop:root-recovery}): a root object with many independent
+reconstruction pathways is resilient in precisely the sense
+$\rho_W(r) \gg 1$ would formalize, and a root object with exactly one
+surviving copy in one archive is the $\rho_W(r) = 1$ case this monograph's
+oral-tradition discussion (Appendix~\ref{app:extended-examples}) already
+worried about informally, without a name for it. This monograph does not
+adopt $\rho_W(r)$ as its own machinery, since it has not been verified;
+it is recorded here as a specific, checkable candidate for future work
+rather than left as a vague gesture toward ``some measure or other.''
+\end{remark}
+
+\section{Where This Monograph's Apparatus Sits}
+\label{sec:where-this-sits}
+
+
+Five correspondences concerning Distinguishability Geometry's four
+operations are worth stating explicitly, because they were not
+recognized when the relevant chapters of this monograph were drafted, and
+because they differ sharply in how tight they are. Four are proved
+correspondences; one is an open, hedged analogy. Two further
+correspondences, concerning evaluability and correction rather than the
+four operations, were given already in \S\ref{sec:abt} and \S\ref{sec:goc}
+and are not repeated here.
+
+\begin{proposition}[Rendering Is Projection]
+\label{prop:rendering-is-projection}
+A rendering $r$ in the sense of \cref{def:rendering} is a projection in the
+sense of \cref{def:dg-projection}, and the discard set $\discard{r}$ of
+\cref{def:discard-set} corresponds to the fibers merged by that projection.
+\end{proposition}
+
+\begin{proofsketch}
+Both are surjective maps from a source distinguishability structure to a
+coarser one, defined by which pairs of source states become identified.
+\cref{def:rendering}'s ``some distinctions separated in $X$ become identified
+in $Y$'' is \cref{def:dg-projection}'s coarsening condition stated in
+different words. What this monograph's apparatus does not compute, and
+\cref{thm:projection-deficit-bound} does, is a quantitative lower bound on
+how much is lost: $\Delta\delta(r) \ge H(X \mid Y)$ would give every discard
+set in this book a numeric floor it currently lacks. This is a genuine,
+available strengthening that has not been carried out.
+\end{proofsketch}
+
+\begin{proposition}[Augmentation Is Embedding]
+\label{prop:augmentation-is-embedding}
+Augmentation with an enumerable hidden-state set $H$
+(\cref{prop:closed-sufficiency}) is a faithful embedding in the sense of
+\cref{def:dg-embedding}, and \cref{prop:closed-sufficiency} is an instance of
+\cref{thm:embedding-refinement}.
+\end{proposition}
+
+\begin{proofsketch}
+The augmented rendering $r' = (r, H)$ is obtained from $r$ by an injective
+map into a richer space that separates states $r$ identified, exactly
+\cref{def:dg-embedding}'s shape; it is faithful precisely when $H$ exhausts
+the task-relevant hidden state, which is \cref{prop:closed-sufficiency}'s
+hypothesis. \cref{thm:embedding-refinement} then gives, for free and in full
+generality, the conclusion \cref{prop:closed-sufficiency} proved by a bespoke
+argument: a faithful embedding cannot increase the coding deficit, so
+augmentation cannot make sufficiency worse. This monograph's proof of
+\cref{prop:closed-sufficiency} is correct but is now known to be a special
+case of a general theorem it did not cite.
+\end{proofsketch}
+
+\begin{proposition}[Relay Replacement Is Revision, Where the State Space Is Held Fixed]
+\label{prop:relay-replacement-partial-revision}
+Relay revision (\cref{def:relay-revision}) in which the underlying state
+space $X$ is unchanged and only the descriptive ontology is expanded is an
+instance of \cref{def:dg-revision}, and \cref{thm:revision-monotonicity}
+guarantees the new theory's coding deficit is no worse than the old one's.
+\end{proposition}
+
+\begin{proofsketch}
+When a superseded theory is replaced by one built on an expanded, but not
+qualitatively different, evidential ontology -- more precise instruments
+within the same conceptual framework, say -- this is exactly $T \subset T'$
+on a fixed $X$, and \cref{thm:revision-monotonicity} applies directly. The
+correspondence is deliberately not claimed in full generality. Where a
+replacement changes what counts as a state at all -- a genuine paradigm
+shift in the sense Chapter~\ref{ch:science}'s note on adjacent debates
+explicitly declined to adjudicate -- the transition is not pure revision in
+\cref{def:dg-revision}'s sense, since that definition holds $X$ fixed; such a
+case would need to be analyzed as some composition of revision and
+transport, and this monograph has not carried out that analysis.
+\end{proofsketch}
+
+\begin{proposition}[Paradigm-Shift Relay Replacement Is Repair-Repertoire Discontinuity]
+\label{prop:relay-replacement-paradigm-shift}
+Relay revision in which the underlying production process changes so
+substantially that neither the old nor the new process's repertoire
+contains the other corresponds to \cref{thm:paradigm-shift}, with the
+substrate chain's producing repertoire at each era playing the role of
+$\mathcal{R}_{\mathrm{old}}$ and $\mathcal{R}_{\mathrm{new}}$.
+\end{proposition}
+
+\begin{proofsketch}
+This is exactly the case \cref{prop:relay-replacement-partial-revision}
+left uncharacterized. \cref{thm:paradigm-shift} shows the resulting
+restorable-distinction sets are incomparable rather than one being a
+refinement of the other, which is a more decisive statement than
+``analysis not carried out'': it says the two eras' restorable
+distinctions are genuinely incommensurable in the technical sense of
+neither set containing the other, with concrete lost and gained
+distinctions on both sides. Chapter~\ref{ch:science}'s example of a
+theory's evidential basis being enlarged rather than replaced falls under
+\cref{prop:relay-replacement-partial-revision} instead; the paradigm-shift
+case this proposition covers is the sharper one, where old and new
+genuinely talk past each other on some distinctions in both directions.
+\end{proofsketch}
+
+\begin{remark}[Root Recovery as Persistence-Set Membership]
+\label{rem:root-recovery-persistence-set}
+\cref{prop:root-recovery} is naturally read as the claim that a specific
+transformation -- the composite production process from $A_0$ to $A_n$ --
+lies in the persistence set $P(d)$ (\cref{def:persistence-set}) for a
+discarded distinction $d$, exactly when the reconstruction operator ``recompute
+from the preserved $A_0$ under a revised policy'' is available in
+$\mathcal{R}$. This reframes Appendix~\ref{app:open-questions}'s
+root-preservation bootstrapping question sharply: rather than asking
+qualitatively whether recovery is possible, one can ask what $\mu(P(d))$ is
+-- what fraction of the relevant transformation family still admits
+recovery -- and this monograph has not attempted that computation.
+\end{remark}
+
+\begin{remark}[Fidelity and Transport: An Open Correspondence]
+\label{rem:fidelity-transport-open}
+Chapter~\ref{ch:fidelity-continuum}'s fidelity $\fidelity{r}{\tau}$
+(\cref{def:fidelity}) and \cref{thm:transport-stability}'s invariant-oscillation
+bound both measure how well structure survives a transformation, but they
+are different mathematical objects -- a cardinality ratio of admissible
+continuation sets against a Lipschitz-style bound on a fiber-constant
+invariant -- and this monograph has not shown one reduces to the other. This
+is the weakest of the five correspondences in this section, offered as an
+open question rather than a result, and recorded as such in
+Appendix~\ref{app:open-questions}.
+\end{remark}
+
+\section{An Honest Scorecard}
+
+Before this chapter, a reader could reasonably have concluded that this
+monograph recognized only one of Distinguishability Geometry's four
+primitive operations -- projection -- as load-bearing, with embedding,
+revision, and transport absent. That conclusion would have been too
+pessimistic and not quite accurate. \cref{prop:rendering-is-projection}
+confirms projection was there from Chapter~\ref{ch:distinctions} onward.
+\cref{prop:augmentation-is-embedding} shows embedding was present, unnamed,
+in the augmentation mechanism of Chapters~\ref{ch:admissibility} and
+\ref{ch:chess}. \cref{prop:relay-replacement-partial-revision} and
+\cref{prop:relay-replacement-paradigm-shift} together show revision was
+present, unnamed, in Chapter~\ref{ch:science} for both the case
+Distinguishability Geometry's revision operation covers and the sharper
+paradigm-shift case it does not, with Observability Is Restorability
+supplying the missing half. Only transport remains without a demonstrated
+instance in this monograph rather than merely an unnamed one:
+\cref{rem:fidelity-transport-open}'s candidate is an analogy, not yet a
+correspondence. Three operations out of four fully accounted for, and the
+fourth genuinely open rather than merely unexamined, is a materially
+different and more encouraging finding than one operation out of four --
+and it is the finding this monograph is prepared to defend, rather than a
+stronger claim it has not earned.
+
+Two further findings sit outside the four-operations scorecard entirely.
+\cref{prop:sufficiency-presupposes-evaluability} shows this monograph's
+sufficiency apparatus was silently assuming an evaluability condition
+Admissibility Before Truth makes explicit, discovered only once that
+source was transcribed rather than paraphrased. \cref{prop:corruption-as-suppression}
+shows this monograph's oldest and most-used distinction -- benign versus
+corrupting loss, present since Chapter~\ref{ch:distinctions} -- is the
+same phenomenon The Geometry of Correction names correction suppression,
+recognized only by accident of the author happening to transcribe a
+second, unrelated-seeming source. Neither finding would have been visible
+from the four-operations framing alone, which is itself a reason to keep
+checking new sources against this monograph's apparatus rather than
+treating the reconciliation work in this chapter as finished.

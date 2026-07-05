@@ -1,0 +1,101 @@
+% =====================================================================
+% main.tex -- master file
+%
+% Continuation Under Constraint: Distinctions, Substrates, and Repair
+% Across Transformations
+%
+% Build stack: lualatex (2 passes minimum for cross-references; a
+% third pass if the index or ToC entries shift). xelatex is the
+% fallback stack if font loading fails; no preamble changes should be
+% needed to switch.
+%
+% Structure: each chapter/appendix/front-matter section lives in its
+% own file under chapters/, appendices/, frontmatter/, backmatter/.
+% \include (rather than \input) is used deliberately at this scale:
+% it permits \includeonly during drafting so a single chapter can be
+% recompiled without reprocessing all ~20 others, which matters once
+% the monograph is at full length (est. 900-1200pp).
+% =====================================================================
+
+\documentclass[11pt,twoside,openright]{book}
+\input{preamble.tex}
+
+% ---------------------------------------------------------------------
+% DRAFTING CONTROL
+% Uncomment \includeonly and list only the file(s) under active
+% revision to speed up compilation while drafting a single chapter.
+% Leave commented for full builds.
+% ---------------------------------------------------------------------
+% \includeonly{chapters/ch06_budget_relay}
+
+\title{\booktitle\\\large \booksubtitle}
+\author{Flyxion}
+\date{2026}
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+\include{frontmatter/abstract}
+\include{frontmatter/epistemic_status}
+\include{frontmatter/relation_to_prior_work}
+\tableofcontents
+
+\mainmatter
+
+% ============================== PART I ==============================
+\part{Foundations: Distinctions, Substrates, and the Problem of Continuation}
+\label{part:foundations}
+\include{chapters/ch01_continuation_problem}
+\include{chapters/ch02_distinctions}
+\include{chapters/ch03_admissibility}
+\include{chapters/ch04_repair_economics}
+\include{chapters/ch05_synchronic_to_diachronic}
+
+% ============================== PART II =============================
+\part{The Budget Relay: A New Formal Object}
+\label{part:budget-relay}
+\include{chapters/ch06_budget_relay}
+\include{chapters/ch07_coordination}
+\include{chapters/ch08_fanout}
+\include{chapters/ch09_composition_failure}
+
+% ============================== PART III ============================
+\part{Modes of Access: Preservation and Reconstitution}
+\label{part:modes-of-access}
+\include{chapters/ch10_fidelity_continuum}
+\include{chapters/ch11_mem8}
+\include{chapters/ch12_mode_relativity}
+
+% ============================== PART IV ==============================
+\part{Worked Domains}
+\label{part:worked-domains}
+\include{chapters/ch13_chess}
+\include{chapters/ch14_painting}
+\include{chapters/ch15_maps}
+\include{chapters/ch16_proofs}
+\include{chapters/ch17_contracts}
+\include{chapters/ch18_science}
+\include{chapters/ch19_memory}
+\include{chapters/ch20_pipelines}
+
+% ============================== PART V ===============================
+\part{Synthesis}
+\label{part:synthesis}
+\include{chapters/ch21_synthesis}
+
+% ============================ APPENDICES =============================
+\appendix
+\include{appendices/appA_proof}
+\include{appendices/appB_notation}
+\include{appendices/appC_comparison}
+\include{appendices/appD_extended_examples}
+\include{appendices/appE_simulation}
+\include{appendices/appF_open_questions}
+
+\backmatter
+\include{backmatter/bibliography_note}
+\printindex
+
+\end{document}

@@ -26,8 +26,12 @@
 \maketitle
 
 \begin{abstract}
-\noindent This essay outlines a proposed publishing architecture within the \textsc{PlenumHub}/\textsc{Polyxan}/Spherepop lineage, one that treats structured source material rather than any rendered artifact as canonical. Video, audio, prose at varying depths, comics, and interactive renderings are all generated views of an underlying, addressable, branchable state history. The essay argues that most of the epistemic and practical failures of contemporary video-based publishing --- oversimplification, unaccountable pronouncement, uncorrectable error, loss of provenance --- are consequences of a specific and correctable design decision: conflating source and rendering into a single frozen artifact. It situates this claim within the broader stack, in which Spherepop supplies event histories and provenance, Polyxan supplies addressable semantic and hypermedia structure, and PlenumHub supplies coordination and governance --- and argues that source-first publishing is not a new addition to that stack but a straightforward instance of its existing commitments. It closes by proposing a public, competitive practice --- a form of \emph{pipeline golf} --- in which participants compete to produce the most interesting, entertaining, or explanatorily faithful transformations of a fixed text into image, animation, or sound.
+\noindent This essay outlines a proposed publishing architecture within the \textsc{PlenumHub}\slash\textsc{Polyxan}\slash Spherepop lineage, one that treats structured source material rather than any rendered artifact as canonical. Video, audio, prose at varying depths, comics, and interactive renderings are all generated views of an underlying, addressable, branchable state history. The essay argues that most of the epistemic and practical failures of contemporary video-based publishing --- oversimplification, unaccountable pronouncement, uncorrectable error, loss of provenance --- are consequences of a specific and correctable design decision: conflating source and rendering into a single frozen artifact. It situates this claim within the broader stack, in which Spherepop supplies event histories and provenance, Polyxan supplies addressable semantic and hypermedia structure, and PlenumHub supplies coordination and governance --- and argues that source-first publishing is not a new addition to that stack but a straightforward instance of its existing commitments.
+
+To make this claim precise rather than merely evocative, the essay develops a typed calculus of semantic objects, transformation rules, closure, entropy-bounded merge, and sheaf-style coherence, and proves that well-typedness is preserved under revision, that erasure is eliminated by construction, and that no rendering pipeline can ever be fully faithful to an unboundedly long history --- a limit the architecture cannot remove but can make reversible rather than permanent through retained provenance and progressive disclosure. It then turns the same scrutiny on itself, showing where the calculus's guarantees are unconditional and where they depend on assumptions --- computable entropy, deterministic renderers, retained history, an independently checkable rule set --- that a real deployment must supply rather than inherit for free, and naming three questions the substrate does not and cannot answer on its own: which branch a reader sees by default, whether an inference attached to a citation was ever recorded, and whether a rendering pipeline invents content it cannot actually produce. Along the way it formalizes what a reader is entitled to demand of such a system, why addressable identity is a precondition for citation and discourse rather than a bookkeeping convenience, and why retaining history rather than a mere current snapshot is what makes forgetting reversible instead of final. It closes by proposing a public, competitive practice --- a form of \emph{pipeline golf} --- in which participants compete to produce the most interesting, entertaining, or explanatorily faithful transformations of a fixed text into image, animation, or sound.
 \end{abstract}
+
+\newpage
 
 \section{The Conflation Problem}
 \label{sec:conflation}
@@ -85,21 +89,83 @@ This is not, in fact, an unsolved problem for the wider program of which this es
 \section{Provenance Without Rigidity}
 \label{sec:provenance-rigidity}
 
-A system that makes correction too easy risks destroying the very citability it was meant to preserve. If a document's identity is untethered from any fixed point --- if paraphrase silently re-anchors what a given reference resolves to --- then nothing can be quoted, cited, or held stable against later revision. The intended design resolves this the way version-control systems resolve it: a human-facing name (``the essay,'' ``Document A'') always resolves to a current state, but every prior state through which the document has passed remains individually visible and addressable in an unbroken list. Nothing is overwritten. ``Show me the full text as it existed before the last revision'' must always be answerable.
+A system that makes correction too easy risks destroying the very citability it was meant to preserve. The general problem of tracking where a piece of data came from and the process by which it arrived at its current form is well studied under the name data provenance~\cite{buneman2001}; this essay borrows the term and narrows it to the specific case of publishing, where the units being tracked are claims and renderings rather than database views. If a document's identity is untethered from any fixed point --- if paraphrase silently re-anchors what a given reference resolves to --- then nothing can be quoted, cited, or held stable against later revision. The intended design resolves this the way version-control systems resolve it: a human-facing name (``the essay,'' ``Document A'') always resolves to a current state, but every prior state through which the document has passed remains individually visible and addressable in an unbroken list. Nothing is overwritten. ``Show me the full text as it existed before the last revision'' must always be answerable.
+
+\section{Why Histories, Not Snapshots?}
+\label{sec:histories-not-snapshots}
+
+Section~\ref{sec:provenance-rigidity} argued that correction must not untether a document's identity from a fixed point, but it did not yet say why the architecture insists on retaining a full history rather than simply keeping an accurate current snapshot. This section states that reason directly, since the rest of the essay assumes it without pausing to justify it again.
+
+A snapshot answers the question of what currently exists. A history answers the question of how the current state came to exist. These are not the same question, and a system that retains only the answer to the first has, by construction, discarded the answer to the second --- which is exactly the erasure this essay has been arguing against since Section~\ref{sec:conflation}.
+
+\begin{definition}[Snapshot Map]
+\label{def:snapshot-map}
+Define $\pi(\sigma) = M$, the function taking a semantic object to its populated content map alone, discarding $I$, $E$, and $S$.
+\end{definition}
+
+\begin{proposition}[Snapshots Underdetermine History]
+\label{prop:snapshot-underdetermine}
+$\pi$ is non-injective: there exist $\sigma_1 = (I_1, T, M, E_1, S_1)$ and $\sigma_2 = (I_2, T, M, E_2, S_2)$ with $S_1 \neq S_2$ and $\pi(\sigma_1) = \pi(\sigma_2)$.
+\end{proposition}
+
+\begin{proof}
+Let $M$ be any fixed content map populated by a single modality $k$ with content $c$. Let $S_1$ be the provenance graph of a single \texttt{introduce\_term} event directly producing $c$, and let $S_2$ be the provenance graph of a chain \texttt{introduce\_term}, \texttt{qualify}, \texttt{qualify} whose final rendering, by coincidence of template collapse, also produces $c$ --- for instance because the qualifications were later judged redundant with the base claim and contributed no additional surface text under the renderer in use. Then $\sigma_1 = (I_1, T, M, E_1, S_1)$ and $\sigma_2 = (I_2, T, M, E_2, S_2)$ satisfy $\pi(\sigma_1) = M = \pi(\sigma_2)$ while $S_1 \neq S_2$, witnessing non-injectivity.
+\end{proof}
+
+Equivalently, and more directly connected to the illusion result of Theorem~\ref{thm:no-faithful-rendering}: $\pi(\sigma_1) = \pi(\sigma_2) \not\Rightarrow S_1 = S_2$. A snapshot cannot, even in principle, distinguish between two histories that happen to converge on the same current content, and a system that keeps only $\pi(\sigma)$ has thrown away exactly the information that would let it. This is the precise sense in which ``how did it become this'' is not recoverable from ``what exists,'' and it is why the architecture developed in Section~\ref{sec:formal-realization} retains $S$ as a first-class component of $\sigma$ rather than treating it as an optional log a deployment could reasonably discard.
 
 \section{From Publishing System to Media Operating System}
 \label{sec:media-os}
 
 Once audience participation is admitted --- suggestions, alternate continuations, competing branches --- the model stops being a document with history and becomes a \emph{history space}: a graph rather than a line, traversed rather than read. A video renderer follows one path through the graph; a comic renderer may follow another; an exploratory renderer may expose the branching structure itself rather than collapsing it. This is the point at which the system converges, structurally, with source control, game engines, screenplay systems, and knowledge graphs --- not by analogy, but because all of these are prior solutions to the same underlying problem: separating representation from rendering.
 
+\section{Querying Histories Instead of Reading Artifacts}
+\label{sec:querying}
+
+The source-first inversion proposed throughout this essay changes not only how content is stored but how it is encountered. Conventional publishing systems assume that the primary interaction between a reader and a body of work is the act of reading a completed artifact. A reader opens a document, watches a video, or listens to a recording. Whatever history produced that artifact remains secondary, if it is visible at all.
+
+A canonical-source architecture reverses this assumption. Because the source exists as a structured, addressable history rather than a frozen object, the natural unit of interaction becomes a query rather than a document. A reader may still choose to consume a rendered artifact from beginning to end, but that artifact is only one view among many. The underlying object remains available for inspection, traversal, and transformation.
+
+This shift is easiest to see by considering questions that conventional documents answer poorly. A reader may wish to know when a particular definition entered a work, which revision introduced a controversial claim, which branches disagree about a conclusion, or which assumptions changed between two versions of the same argument. In a document-centered architecture these questions require manual reconstruction. In a source-first architecture they are direct queries against provenance: a request for every revision introducing a given definition, or every branch that disagrees about a given claim, or every rendering derived from a given event, is a traversal of $S$ in the sense of Definition~\ref{def:semantic-object}, not a search through prose.
+
+The distinction resembles the difference between browsing a rendered webpage and querying a database. A webpage presents a fixed arrangement chosen in advance by its author. A database exposes a space of possible questions, many of which the author never anticipated. Source-first publishing extends this principle from data management to knowledge production. The primary object is not a narrative sequence but a structured history capable of supporting many narrative sequences.
+
+This does not eliminate the value of authored presentations. A carefully written essay remains a useful path through a space of possibilities. What changes is its status. The essay becomes one traversal of the source rather than the source itself. Readers who wish to follow the author's path may do so. Readers who wish to inspect alternatives, recover omitted context, or examine the history that produced a conclusion are no longer constrained by the limits of the rendering.
+
+Seen this way, the proposal is not merely a version-control system for documents. It is a transition from artifact-centric publishing to query-centric publishing. Documents remain possible, but they become answers to questions rather than containers of truth.
+
+\section{Reader Views and Reader Rights}
+\label{sec:reader-rights}
+
+Section~\ref{sec:querying} argued that the natural unit of interaction in a source-first system is a query rather than a document. This section makes explicit what a reader is entitled to query for, since a query-centric architecture is only as useful as the space of admissible queries it actually supports.
+
+A reader encountering a rendering $M(k)$ of some $\sigma$ is not limited to accepting that rendering at face value. At minimum, six distinct requests should be treated as first-class operations rather than incidental features of a particular interface. A reader may request the provenance behind a claim, resolving to the chain of rule applications that produced it, in the sense of Definition~\ref{def:semantic-object}. A reader may request the alternatives to a given branch, surfacing sibling continuations that share a common ancestor but were never merged, per Definition~\ref{def:merge}. A reader may request the disagreements among branches, which is a request for the specific point at which two provenance graphs diverge rather than a request for either graph in full. A reader may request the source itself, at whatever depth the underlying object supports, rather than being confined to the depth a particular renderer chose to produce. A reader may request the rendering path connecting a source to a given output, which Section~\ref{sec:executable-citations} develops in depth as the executable citation. And a reader may request the context a shorter rendering omitted, which Proposition~\ref{prop:disambiguation-depth} shows is always answerable in principle, provided the underlying histories remain retained.
+
+None of these six requests introduces new formal machinery beyond what Section~\ref{sec:formal-realization} already defines; each is simply a named traversal of $\sigma$ that a conventional document-centric interface has no vocabulary for expressing. The point of naming them here, before the calculus itself is developed, is to record what a source-first architecture owes its readers independently of how any particular implementation chooses to expose it. A system that retains full provenance but never surfaces these six requests to a reader has built the substrate without honoring what the substrate was for.
+
+It is worth being precise about what this list does not claim. It does not claim that every reader will exercise these rights, nor that exercising them is costless --- Section~\ref{sec:failure-modes} discusses the countervailing risk of provenance overload directly. It claims only that the architecture should make the six requests possible, leaving whether and how often a given reader chooses to use them as a separate question about interface design and reader disposition, not about what the substrate permits.
+
 \section{Pipeline Golf}
 \label{sec:pipeline-golf}
 
-A subsidiary and more immediately playable component of this vision is a public competitive practice, in the spirit of vim golf or code golf, applied to text-to-image and text-to-video pipelines. A fixed source text --- a short passage, a single paragraph, an event sequence --- is given to participants, who each construct a distinct rendering pipeline for it.
+A subsidiary and more immediately playable component of this vision is a public competitive practice, in the spirit of vim golf or code golf, applied to text-to-image and text-to-video pipelines. A fixed source text --- a short passage, a single paragraph, an event sequence --- is given to participants, who each construct a distinct rendering pipeline for it. Submissions are judged not on a single axis but several, potentially including:
 
 Submissions are judged not on a single axis but several, potentially including fidelity --- how much of the source's structure survives the transformation; economy --- how few steps, tokens, or how little compute the pipeline requires; explainability --- how legible the pipeline's own logic is to an outside reader, whether someone else can read the pipeline and understand why it produced what it produced; and entertainment or surprise --- whether the resulting rendering is interesting independent of its fidelity, in the way an unusual translation or an eccentric adaptation can be valuable precisely for departing from its source.
 
 This practice serves two purposes beyond its own entertainment value. First, it is a standing, low-stakes proving ground for the rendering layer of the larger system, generating a continuously growing library of pipelines against which the canonical-source architecture can be tested. Second, it directly operationalizes the essay's central claim: that a single source can and should support many legitimate, non-competing renderings, and that the interesting design space lies in the diversity and quality of the transformation, not in the enforcement of one official version.
+
+Pipeline Golf is not part of the substrate developed in Section~\ref{sec:formal-realization}, and no theorem in this essay depends on it. It is a cultural practice intended to drive renderer development the way vim golf and code golf drive tooling development for their own domains: a source of demonstration pipelines, not a source of proof obligations. Judging a submission by fidelity, economy, explainability, or surprise is a social convention this essay recommends, not a scoring function derivable from Definition~\ref{def:entropy} or any other part of the calculus; a future version of the practice could adopt an entropy-based score without changing anything the calculus already proves, but nothing here requires it to.
+
+\section{Canonical Sources and Educational Media}
+\label{sec:educational-media}
+
+The architecture developed in the remainder of this essay is easiest to evaluate against a concrete domain rather than in the abstract, and education is an unusually clean fit for reasons worth making explicit before the formal apparatus of Section~\ref{sec:formal-realization} begins.
+
+A textbook chapter, a recorded lecture, a set of flashcards, and an interactive simulation covering the same topic are, under ordinary publishing practice, four independent artifacts maintained separately, correctable only by separately editing each one, and prone to drifting out of agreement with each other as errors are fixed in one but not the others. Under the architecture this essay proposes, they are four renderings of a single $\sigma$ whose declared modalities are \textsc{prose-full}, \textsc{video}, \textsc{flashcard-set}, and \textsc{simulation}, in the sense of Definition~\ref{def:semantic-object}. A correction to the underlying claim --- a fixed date, a corrected derivation, an updated example --- is made once, to the source, and the closure operator of Definition~\ref{def:closure} regenerates whichever renderings a course or a learner is actually using. This is not a new capability invented for education; it is the general claim of Section~\ref{sec:core-inversion} applied to a domain where the cost of drift between renderings is unusually visible, since a student working from an outdated flashcard set while a lecture has already been corrected is a failure mode instructors already recognize by other names.
+
+Education also stresses the depth axis of Section~\ref{sec:three-axes} in a way general-purpose publishing does not. The same source plausibly needs a one-sentence definition, a worked example, a full derivation, and a set of practice problems, and a learner's need for each depends on where they are in a course rather than on any property of the material itself. Progressive disclosure, in the sense of Section~\ref{sec:progressive-disclosure}, is close to a description of how a well-designed course already tries to sequence material; the contribution here is only to make the underlying object explicit enough that the sequencing can be generated on demand rather than authored separately for every cohort.
+
+None of this argues that educational content is where the architecture is easiest to build --- the entropy-measurement difficulties of Section~\ref{sec:entropy-status} and the event-grammar limitations of Section~\ref{sec:worked-example} apply here exactly as they apply elsewhere. What education offers is not an easier case but a more legible one: a domain where the cost of the conflation problem diagnosed in Section~\ref{sec:conflation} is already familiar to anyone who has taught from materials that fell out of sync with each other, which makes the proposal feel like a description of an existing frustration rather than a speculative architecture in search of a use case.
 
 \section{A Formal Substrate for Canonical Sources}
 \label{sec:formal-realization}
@@ -271,6 +337,32 @@ If coherence fails --- if two renderings of the same declared source disagree on
 
 This is the formal cash value of ``renderings should not be mistaken for source.'' Coherence failure is not merely an aesthetic inconvenience to be smoothed over; under this calculus it is a proof-theoretic signal that something has gone wrong upstream, and the corollary above tells you exactly what kind of thing to look for.
 
+\subsection{Progressive Disclosure}
+\label{sec:progressive-disclosure}
+
+Several results already developed in this section, and one developed in the section that follows, share an unnamed pattern: a reader dissatisfied with a coarse rendering can ask for a finer one, and the finer rendering does not contradict the coarser one but refines it. This pattern deserves a name and a precise statement before the next subsection uses it to resolve a specific failure mode.
+
+\begin{definition}[Depth Order]
+\label{def:depth-order}
+Let $k_0, k_1, \dots, k_n$ be modalities corresponding to increasing depth in the sense of Section~\ref{sec:three-axes}, and write $k_i \preceq k_j$ for $i \leq j$. The order is a \emph{refinement order} if, for every pair $i \leq j$, there exists a declared rule $r : k_j \rightsquigarrow k_i$ --- a deeper rendering can always be compressed down to a shallower one --- and no declared rule in the reverse direction is guaranteed to exist.
+\end{definition}
+
+\begin{definition}[Progressive Disclosure]
+\label{def:progressive-disclosure}
+A rendering pipeline satisfies \emph{progressive disclosure} with respect to a refinement order $k_0 \preceq \cdots \preceq k_n$ if a reader may request $M(k_i)$ for any $i$ without the pipeline requiring $M(k_j)$ for any $j > i$ to have been produced or inspected first.
+\end{definition}
+
+\begin{theorem}[Progressive Disclosure Resolves Distinguishability Monotonically]
+\label{thm:progressive-disclosure}
+Let $k_0 \preceq \cdots \preceq k_n$ be a refinement order, and let $S_1 \neq S_2 \in \mathcal{P}$ be provenance histories, in the sense of Definition~\ref{def:provenance-space}, whose renderings at depth $k_i$ are distinguishable: $\rho_{k_i}(S_1) \neq \rho_{k_i}(S_2)$, in the sense of Definition~\ref{def:rendering-map}. If every rule $r : k_j \rightsquigarrow k_i$ guaranteed by Definition~\ref{def:depth-order} is a well-defined function on the image of $\rho_{k_j}$, then $\rho_{k_j}(S_1) \neq \rho_{k_j}(S_2)$ for every $j > i$.
+\end{theorem}
+
+\begin{proof}
+Suppose toward contradiction that $\rho_{k_j}(S_1) = \rho_{k_j}(S_2)$ for some $j > i$. By Definition~\ref{def:depth-order}, a declared rule $r : k_j \rightsquigarrow k_i$ exists, and $\rho_{k_i}(S_1) = r(\rho_{k_j}(S_1))$ and $\rho_{k_i}(S_2) = r(\rho_{k_j}(S_2))$ by construction of a rendering map as the composition of the rule chain producing it. Since $\rho_{k_j}(S_1) = \rho_{k_j}(S_2)$ by assumption, applying the same function $r$ to equal inputs yields $r(\rho_{k_j}(S_1)) = r(\rho_{k_j}(S_2))$, hence $\rho_{k_i}(S_1) = \rho_{k_i}(S_2)$, contradicting the hypothesis that $\rho_{k_i}(S_1) \neq \rho_{k_i}(S_2)$.
+\end{proof}
+
+The theorem is deliberately modest: it states that distinguishability at a shallow depth is never lost by moving deeper, not that moving deeper always gains distinguishing information the shallower depth lacked. That stronger claim is exactly Proposition~\ref{prop:disambiguation-depth} below, which is now visible as a special case of Theorem~\ref{thm:progressive-disclosure} applied to the specific pair of depths \textsc{short} and \textsc{full}: illusion at a shallow depth is compatible with disambiguation at a deeper one because the refinement order guarantees the deeper rendering never contradicts the shallower one, only adds to it. Progressive disclosure, in this sense, is the general design principle of which ``ask for more depth'' is the specific instance this essay has relied on since Section~\ref{sec:three-axes} first distinguished depth from lineage and rendering.
+
 \subsection{The Limits of Any Rendering}
 
 The preceding subsections establish what a source-first architecture guarantees. This one establishes a limit no architecture of this kind, however carefully specified, can remove --- and distinguishes that limit sharply from the pathology this essay opened by diagnosing.
@@ -391,6 +483,8 @@ Events $e_1$ through $e_5$ are untouched. A diff against this source is the sing
 
 This demonstrates that a bounded fragment of argumentative prose --- definitions, asserted relations, contrasts, qualifications --- has a workable event grammar. It does not demonstrate that arbitrary theoretical prose does. Analogy, hedged claims, rhetorical questions, narrative exposition, and long inferential chains with implicit rather than declared dependencies are not covered by the four operations above, and it is not obvious that any small closed vocabulary of operations could cover them without either growing without bound or losing the very property --- machine-precision --- that motivated the event grammar in the first place. What is shown here is a genuine existence proof for a restricted case, not a general solution.
 
+It is worth being precise about which claim this limitation actually threatens. Nothing in Definition~\ref{def:semantic-object} requires $M$ to be populated entirely by fully eventized content, and nothing in Definition~\ref{def:rule} requires every rule to originate from a maximally structured source. A semantic object is well-typed as long as $\mathrm{dom}(M) \subseteq T$, regardless of how much internal structure the content at each modality carries; a source can therefore contain fully eventized passages, partially structured prose annotated with some but not all of the dependencies above, and raw unstructured prose side by side, coexisting in the same provenance graph. Read this way, the operative question is not whether the grammar of Section~\ref{app:grammar} can eventually cover arbitrary discourse --- a demand this essay has no basis for meeting --- but how much of a given source is worth eventizing at all, which is a cost-benefit question about where machine-precision earns its keep rather than a completeness question about the grammar's expressive reach. The essay's own claims should be read against the weaker requirement, since that is the one Sections~\ref{sec:formal-realization} through~\ref{sec:failure-modes} actually depend on: the calculus needs the canonical layer to be \emph{more} structured than the rendering layer at whatever points structure has been supplied, not structured everywhere.
+
 \subsection{The Status of the Entropy Measure}
 \label{sec:entropy-status}
 
@@ -400,6 +494,8 @@ For the worked example above, it can. The events $e_1$ through $e_6$ are symboli
 
 For genuinely cross-modal content --- a video rendering measured against the prose it was generated from --- no such procedure is known. There is no principled, agreed definition of the Shannon entropy of a video clip or the mutual information between a video and a paragraph; any number produced for such a pair is, at present, necessarily a proxy computed by some learned multimodal model's embedding similarity, not an instantiation of the formal quantity in Definition~\ref{def:entropy}. This matters beyond mere imprecision. A proxy metric is optimizable, and any renderer whose acceptance depends on scoring low $E$ against a learned proxy has an incentive to produce output that games the proxy rather than remains faithful to the source --- the standard reward-hacking failure mode for any learned evaluation function substituted for a formal one~\cite{amodei2016}. Section~\ref{sec:formal-realization}'s entropy-boundedness theorem does not prevent this, because the theorem's guarantee is only as strong as the guard $E' \leq E + \epsilon_r$ actually being checked against a faithful $E$, and a gameable proxy is by construction not faithful in the cases that matter most. The honest position is that Section~\ref{sec:formal-realization} gives an entropy accounting scheme that is rigorous for symbolic and single-modality content today, and that extending it to cross-modal content is a measurement problem, not a mathematics problem, requiring either a genuine theory of cross-modal information content or an explicit, independently audited proxy whose failure modes are tracked rather than assumed away.
 
+The preceding two paragraphs are, in effect, describing two different quantities that Definition~\ref{def:entropy} lets a single symbol denote. Call them $E_{\mathrm{symbolic}}$, the entropy of a finite discrete distribution over declared operation types, and $E_{\mathrm{semantic}}$, whatever quantity would actually correspond to a reader's sense of how much meaning drifted between a source and a distant rendering of it. Theorem~\ref{thm:entropy-bound} is a theorem about $E_{\mathrm{symbolic}}$; it is exact, computable, and exactly as rigorous as the worked example above suggests. The essay's informal prose about ``bounding semantic drift,'' by contrast, is implicitly a claim about $E_{\mathrm{semantic}}$, and no result in this essay establishes that $E_{\mathrm{symbolic}}$ tracks $E_{\mathrm{semantic}}$ once a rendering leaves symbolic content behind. Keeping the two notations distinct rather than letting one symbol carry both meanings is a discipline the essay owes itself: the theorem is not weakened by making this explicit, but its scope is narrowed to exactly where the proof actually reaches.
+
 \subsection{Canonicality, Defaults, and the Limits of the Substrate}
 \label{sec:governance-canonicality}
 
@@ -407,7 +503,17 @@ The formal substrate of Section~\ref{sec:formal-realization} has nothing to say 
 
 The first is a substrate guarantee: a branch, once created, is never deleted. It remains addressable by its identity $I$, its provenance $S$ is preserved, and any rule chain that once applied to it can still be applied and cited. This is provided directly by the definitions in Section~\ref{sec:formal-realization}; nothing in the merge or closure operators removes a losing branch, because ``losing'' is not a concept the substrate defines. This guarantee is real and is not nothing: it is precisely what YouTube-style demonetization, shadow-banning, or platform-level deletion can violate, and a source-first system of the kind proposed here cannot silently make a branch harder to find in the way a recommendation algorithm can.
 
-The second is a governance choice: which branch, among several that remain equally addressable, is shown to a reader who has not specified a coordinate --- the branch returned when someone asks for ``the current version'' without further qualification. This is naturally written as a pointer-selection function $P : \mathcal{B} \to \mathcal{B}$ over the branch set $\mathcal{B}$, with $P(\mathcal{B}) = b_{\mathrm{default}}$ picking out whichever branch is currently shown by default; ``canonical,'' in this narrower sense, is shorthand for $P(\mathcal{B})$ at a given time, not a property intrinsic to the branch itself. Writing it this way is worth doing even though $P$ is not derived from the formal substrate, because it converts ``this branch is canonical'' into ``this pointer currently resolves to this branch,'' and the second phrasing makes it obvious that the fact could be otherwise tomorrow without anything about the branch having changed. $P$ itself is not, and cannot be, derived from the formal substrate, because the substrate treats all valid branches symmetrically by design; the choice of $P$ is external to it. Whatever mechanism instantiates $P$ --- vote, stake-weighted preference, editorial designation, reputation score --- is exactly as capturable by concentrated resources as any comparable mechanism in any other social system, and no result in Section~\ref{sec:formal-realization} bears on this. A faction with more resources can in principle secure $P(\mathcal{B})$ for its own branch under most plausible instantiations of $P$, including ones that look procedurally fair.
+The second is a governance choice: which branch, among several that remain equally addressable, is shown to a reader who has not specified a coordinate --- the branch returned when someone asks for ``the current version'' without further qualification. This is naturally written as a pointer-selection function $P : \mathcal{B} \to \mathcal{B}$ over the branch set $\mathcal{B}$, with $P(\mathcal{B}) = b_{\mathrm{default}}$ picking out whichever branch is currently shown by default; ``canonical,'' in this narrower sense, is shorthand for $P(\mathcal{B})$ at a given time, not a property intrinsic to the branch itself. Writing it this way is worth doing even though $P$ is not derived from the formal substrate, because it converts ``this branch is canonical'' into ``this pointer currently resolves to this branch,'' and the second phrasing makes it obvious that the fact could be otherwise tomorrow without anything about the branch having changed. $P$ itself is not, and cannot be, derived from the formal substrate, because the substrate treats all valid branches symmetrically by design; the choice of $P$ is external to it. Whatever mechanism instantiates $P$ --- vote, stake-weighted preference, editorial designation, reputation score --- is exactly as capturable by concentrated resources as any comparable mechanism in any other social system, and no result in Section~\ref{sec:formal-realization} bears on this. A faction with more resources can in principle secure $P(\mathcal{B})$ for its own branch under most plausible instantiations of $P$, including ones that look procedurally fair. Reader attention, and the default-branch position in particular, behaves in this respect like the common-pool resources studied at length in the institutional-economics literature: hard to exclude anyone from, but rival in practice once a single default is imposed on all readers~\cite{ostrom1990}. This essay does not attempt to adapt that literature's design principles for self-governing institutions to the present case, but the resemblance is worth flagging, since it suggests the default-branch problem may be less novel, and less unprecedented, than a purely technical framing would imply.
+
+\begin{definition}[Branch Visibility and Capture]
+\label{def:branch-capture}
+Let $V(b) = \Pr[P(\mathcal{B}) = b]$ denote the exposure share of branch $b$ under some pointer-selection process, treated probabilistically if $P$ varies over time or context. Let $A(b)$ denote an independent admissibility or audit score for $b$, supplied from outside the calculus in the sense of Section~\ref{sec:provenance-not-truth}, normalized to the same scale as $V$. Define \emph{capture} as
+\[
+\mathrm{Cap}(b) = V(b) - A(b).
+\]
+\end{definition}
+
+Capture, in this sense, occurs precisely when a branch's visibility exceeds what its independent audit score would warrant: $\mathrm{Cap}(b) > 0$. This definition does not resolve the governance question this section has already declined to resolve --- it presupposes $A$, an external admissibility judgment, exactly as Section~\ref{sec:provenance-not-truth} presupposes $\mathrm{True}$ as external to the calculus --- but it gives the phrase ``auditable capture'' below a concrete form: an audit is, under this definition, nothing more than computing $\mathrm{Cap}(b)$ for a disputed branch and publishing the result as a citable event in the sense of Section~\ref{sec:executable-citations}. What the substrate contributes is not a way to keep $\mathrm{Cap}(b)$ at zero, which is a governance achievement no formal definition can guarantee, but a way to make $\mathrm{Cap}(b)$ computable and disputable rather than a matter of unverifiable impression.
 
 What the substrate can offer here is narrower than a solution, but not nothing: the pointer-selection process itself can be made a first-class, versioned object subject to the same provenance discipline as everything else. A change to which branch is currently the default is then a citable event with an identity and a timestamp, not a silent update, and the history of default-pointer changes is itself queryable --- one can ask not only ``what is currently canonical'' but ``who made it canonical, when, and under what stated selection rule.'' This converts unaccountable capture into auditable capture. It does not prevent capture, and any claim that it does would be overreach. The central political question the earlier critique identified --- how does the system prevent a well-resourced faction from burying competing branches under an ostensibly neutral default mechanism --- is not answered by this essay, and it is not answered by the formal substrate developed in Section~\ref{sec:formal-realization}, because it is not the kind of question a type system can answer. It is a governance design problem, it belongs to the PlenumHub layer discussed in the next section, and it deserves treatment on its own terms rather than a deferral disguised as an answer.
 
@@ -449,6 +555,37 @@ The remedy is not a new theorem but a discipline the existing machinery already 
 
 The same explanatory strategy appears outside citation analysis entirely: separate a bundled explanation into its component causes, construct an intervention that removes one component while holding the other fixed, and reassess which component was actually responsible for the observed effect. Diffusion-model training research has used exactly this move to distinguish a data-augmentation effect from a self-supervision effect that had previously been reported as one bundled improvement~\cite{selfflow2026}. The parallel is structural, not substantive --- this essay has nothing to say about noise scheduling --- but the underlying move, holding one cause fixed and removing the other to see what was actually carrying the effect, is the same discipline the unmarked-rule diagnosis above asks a reader to apply to any citation that bundles a sourced claim with an uncredited inference.
 
+Proposition~\ref{prop:unmarked} shows that an unmarked rule is invisible to the type system. This can be stated as a standing limit on verification itself, independent of any particular chain in which an unmarked rule happens to occur.
+
+\begin{theorem}[No General Verifier for Faithfulness]
+\label{thm:no-verifier}
+Let $V$ be any procedure that takes as input only $S_{\mathrm{recorded}}$ and $M$ and outputs a judgment about whether $\mathrm{Faithful}(S)$ holds, in the sense of Definition~\ref{def:faithful-provenance}. There is no such $V$ that decides $\mathrm{Faithful}(S)$ correctly in general, because $S_{\mathrm{actual}}$ is not among $V$'s inputs.
+\end{theorem}
+
+\begin{proof}
+By Definition~\ref{def:faithful-provenance}, $\mathrm{Faithful}(S)$ is defined as the equality $S_{\mathrm{recorded}} = S_{\mathrm{actual}}$. A procedure $V(S_{\mathrm{recorded}}, M)$ has no access to $S_{\mathrm{actual}}$ by hypothesis. For any such $V$, consider two scenarios that produce identical inputs $(S_{\mathrm{recorded}}, M)$ to $V$: in the first, $\sigma$ was produced by exactly the rule chain recorded in $S_{\mathrm{recorded}}$, so $\mathrm{Faithful}(S)$ holds; in the second, $\sigma$ was produced by that same declared chain with one additional unmarked rule inserted, in the sense of Definition~\ref{def:unmarked-rule}, chosen so that its effect on $M$ is indistinguishable from ordinary variation within the declared rule's output range, so $\mathrm{Faithful}(S)$ fails. Since $V$ receives the same $(S_{\mathrm{recorded}}, M)$ in both scenarios, it must return the same judgment in both, and so is incorrect in at least one of them.
+\end{proof}
+
+It does not follow from Theorem~\ref{thm:no-verifier} that every declared rule is equally opaque to a reader who suspects one is missing; some rules leave more to check than others, and it is worth naming the distinction precisely rather than leaving it as an intuition.
+
+\begin{definition}[Verifiable Rule]
+\label{def:verifiable-rule}
+A rule $r : a \rightsquigarrow b$ is \emph{verifiable} if there exists a procedure, independent of whichever renderer applied $r$, that decides from $M(a)$ and $M(b)$ alone whether $M(b)$ is a value $r$ could have produced from $M(a)$.
+\end{definition}
+
+A rule computing a checksum, a rule extracting a fixed field, or the rule linking $e_1$ through $e_5$ to their rendered paragraph in the worked example of Section~\ref{sec:worked-example} are all verifiable in this sense: an auditor holding only the declared input and output, without trusting whoever ran the rule, can confirm or refute the claimed relation. A rule that calls an opaque generative model with no reconstructable decision procedure is not.
+
+\begin{proposition}[Verifiability Narrows, but Does Not Resolve, the Unmarked-Rule Problem]
+\label{prop:verifiable}
+If every rule in a chain $R$ is verifiable in the sense of Definition~\ref{def:verifiable-rule}, an independent auditor can confirm that every \emph{declared} step in $R$ is consistent with its rule specification, and can falsify a claimed chain by exhibiting a step inconsistent with its declared rule. This does not establish $\mathrm{Faithful}(S)$ in the sense of Definition~\ref{def:faithful-provenance}: an unmarked rule inserted between two declared verifiable steps, altering $M$ without adding a node to $S_{\mathrm{recorded}}$, remains undetectable by the same verification procedure, since that procedure checks whether declared steps were executed correctly, not whether every step that actually occurred was declared.
+\end{proposition}
+
+\begin{proof}
+The first claim follows directly from Definition~\ref{def:verifiable-rule}: verifiability of $r_i$ guarantees a procedure deciding, from $M(a_i)$ and $M(b_i)$ alone, whether $r_i$ could have produced $b_i$ from $a_i$; applying this procedure to every declared $r_i \in R$ either confirms all of them or exhibits the first inconsistent one. The second claim follows from Proposition~\ref{prop:unmarked}: an unmarked rule is by definition absent from $S_{\mathrm{recorded}}$, so no verification procedure applied to the declared steps of $R$ has an opportunity to check it, regardless of whether the declared steps surrounding it are individually verifiable.
+\end{proof}
+
+The value of Proposition~\ref{prop:verifiable} is narrower than a detection mechanism for unmarked rules, and it should not be read as one. What it supplies is a way to falsify a specific claimed derivation --- an auditor can show that a declared step could not have produced its output --- without supplying any corresponding way to certify that a chain is complete. A provenance graph built entirely from verifiable rules is one where every recorded claim can be independently checked; it is not, on that basis alone, a graph guaranteed free of unrecorded ones. The two failure modes this essay has already distinguished, erasure and illusion, both concerned what happens to information the calculus already represents; verifiability adds a third axis orthogonal to both, describing whether a recorded step can be checked by someone other than whoever recorded it, which is a property about trust in declared content rather than about completeness of the record.
+
 \subsection{Confabulated Closure}
 \label{sec:confabulated-closure-sec}
 
@@ -476,6 +613,26 @@ None of this weakens Theorem~\ref{thm:coherence} as mathematics; it is correct g
 
 A comparable staging choice, made for unrelated engineering reasons, is visible in recent work compiling natural-language task specifications into lightweight neural artifacts. Program-as-Weights produces a parameter-efficient adapter from a specification in two declared stages rather than one: a first pass emits an intermediate pseudo-program, and a second pass reads the specification together with that pseudo-program to produce the adapter itself~\cite{paw2026}. Nothing about the compilation target forces this split; a single end-to-end pass from specification to adapter is not excluded by the problem, any more than Theorem~\ref{thm:coherence}'s hypotheses are excluded by anything prior to their own statement. The staged design was chosen because a named intermediate type is easier to inspect, debug, and constrain than an opaque one-shot mapping --- which is close to Definition~\ref{def:rule}'s own reason for typing a rule by its source and target before asking what it computes. The parallel is worth naming for the same reason as Section~\ref{sec:citation-joint}'s: it is evidence that declaring an intermediate structure, rather than deriving it from necessity, is an ordinary and often correct engineering discipline elsewhere too, not a peculiarity of this essay's own unresolved axioms.
 
+\subsection{Provenance Is Not Truth}
+\label{sec:provenance-not-truth}
+
+Proposition~\ref{prop:unmarked} showed that well-typedness does not imply faithful provenance. A reader who has followed that result carefully may already suspect a further gap one level up, and it is worth closing explicitly rather than leaving it implicit: faithful provenance does not imply that anything recorded is correct.
+
+This calculus has no formal notion of truth, and it should not manufacture one to answer this question. Let $\mathrm{True}$ denote any predicate a reader applies to $M$ for reasons entirely external to $\sigma$ --- correspondence to some state of affairs the calculus does not represent, agreement with an independent authority, subsequent empirical confirmation, or any other standard a reader brings from outside this essay. Definition~\ref{def:faithful-provenance} places no constraint on what $\mathrm{True}$ means and neither does this subsection; $\mathrm{True}$ is supplied by the reader, not by the calculus, in exactly the sense that Section~\ref{sec:incentive-layer} supplies its cost model from outside the substrate rather than deriving it from admissibility or closure.
+
+\begin{proposition}[Provenance Is Not Truth]
+\label{prop:provenance-not-truth}
+For any predicate $\mathrm{True}$ external to this calculus in the sense above, $\mathrm{Faithful}(S)$ neither implies nor is implied by $\mathrm{True}(M)$.
+\end{proposition}
+
+\begin{proof}
+$\mathrm{Faithful}(S) \not\Rightarrow \mathrm{True}(M)$: Definition~\ref{def:faithful-provenance} requires only $S_{\mathrm{recorded}} = S_{\mathrm{actual}}$, a claim about whether the stored history matches the derivation that produced it. Nothing in that equality constrains the content of any event in the history; a chain of rule applications can be exactly and faithfully recorded while every assertion it makes is false, since Definition~\ref{def:rule} governs the type of a transformation, not the correctness of what it asserts. A $\sigma$ built entirely from faithfully recorded, well-typed, false \texttt{assert\_relation} events, in the sense of Appendix~\ref{app:grammar}, witnesses $\mathrm{Faithful}(S) \wedge \neg\,\mathrm{True}(M)$.
+
+$\mathrm{True}(M) \not\Rightarrow \mathrm{Faithful}(S)$: a renderer may produce content satisfying $\mathrm{True}$ by a route entirely different from the one recorded in $S_{\mathrm{recorded}}$ --- by guessing correctly, by an unmarked rule in the sense of Definition~\ref{def:unmarked-rule} that happens to preserve correctness, or by any process uncorrelated with the declared derivation. Since $\mathrm{True}$ is external to $\sigma$ by hypothesis, nothing about $M$ satisfying it constrains whether $S_{\mathrm{recorded}}$ matches $S_{\mathrm{actual}}$; a $\sigma$ with correct content and a silently substituted derivation witnesses $\mathrm{True}(M) \wedge \neg\,\mathrm{Faithful}(S)$.
+\end{proof}
+
+The asymmetry this proposition guards against runs in both directions, and each direction forecloses a different overclaim. That $\mathrm{Faithful}(S) \not\Rightarrow \mathrm{True}(M)$ prevents provenance from being mistaken for correctness: a reader who confirms that a claim's derivation is faithfully recorded has confirmed only that the record is honest about its own history, not that the history began from true premises or reasoned validly. That $\mathrm{True}(M) \not\Rightarrow \mathrm{Faithful}(S)$ prevents the reverse mistake, in which a correct-seeming output is taken as evidence that the provenance behind it can be trusted. This completes a pattern the essay has maintained since Section~\ref{sec:formal-realization}: well-typedness does not imply faithful provenance, per Proposition~\ref{prop:unmarked}; retention does not imply elimination of illusion, per Proposition~\ref{prop:eliminates}; and now, faithful provenance does not imply truth. Each result narrows what the layer below it was ever entitled to promise the layer above. The substrate guarantees that a claim can be traced. It has never guaranteed, and this subsection makes explicit that it cannot guarantee, that what is traced is correct.
+
 \subsection{What This Calculus Guarantees, Enables, and Leaves Open}
 \label{sec:guarantees-summary}
 
@@ -483,16 +640,139 @@ The preceding six subsections have shown, one at a time, that a formal result pr
 
 Three things are guaranteed outright, for every $\sigma$ and every rule set, with no further condition to satisfy. Theorem~\ref{thm:preservation} shows well-typedness survives any valid rule chain. Proposition~\ref{prop:idempotent} shows closure is idempotent wherever it is defined. Proposition~\ref{prop:eliminates} shows erasure is eliminated by construction, since Definition~\ref{def:semantic-object} never permits a rule application to discard $S$.
 
-Four things are guaranteed conditionally: true given a stated hypothesis, not true regardless of it. Theorem~\ref{thm:entropy-bound}'s drift bound holds given that $E$ is computable, which Section~\ref{sec:entropy-status} shows only for symbolic content. Theorem~\ref{thm:coherence}'s gluing result holds given rule determinism and shared closed-object derivation, which this subsection has just shown are stipulated rather than derived. Proposition~\ref{prop:disambiguation-depth}'s illusion-resolution holds given that the histories in question remain retained and a full-depth rendering rule exists for them, neither of which the calculus forces into existence. And Proposition~\ref{prop:dominance}'s retention dominance holds given the calculus's own cost model, which prices rule application but, as stated directly after the proposition, prices neither storage nor search.
+Five things are guaranteed conditionally: true given a stated hypothesis, not true regardless of it. Theorem~\ref{thm:entropy-bound}'s drift bound holds given that $E$ is computable, which Section~\ref{sec:entropy-status} shows only for symbolic content. Theorem~\ref{thm:coherence}'s gluing result holds given rule determinism and shared closed-object derivation, which this subsection has just shown are stipulated rather than derived. Proposition~\ref{prop:disambiguation-depth}'s illusion-resolution holds given that the histories in question remain retained and a full-depth rendering rule exists for them, neither of which the calculus forces into existence. Proposition~\ref{prop:dominance}'s retention dominance holds given the calculus's own cost model, which prices rule application but, as stated directly after the proposition, prices neither storage nor search. And Proposition~\ref{prop:verifiable}'s auditability result holds given that every rule in a chain is verifiable in the sense of Definition~\ref{def:verifiable-rule}, which is a property of the rule set an auditor is given, not something the calculus guarantees any particular rule set has.
 
-Three things the calculus does not address, and has not claimed to. Which branch a reader is shown by default is external to it, per Section~\ref{sec:governance-canonicality}. Whether an inference attached to a citation was actually recorded is undetectable by it, per Proposition~\ref{prop:unmarked}. Whether a rendering pipeline invents content for an unreachable modality rather than reporting failure is unconstrained by it, per Definition~\ref{def:confabulated-closure}. Each of these three is a property of a rule set, a renderer, or a governance process built on top of the calculus, not a property the calculus's own definitions fix.
+Three things the calculus does not address, and has not claimed to. Which branch a reader is shown by default is external to it, per Section~\ref{sec:governance-canonicality}. Whether an inference attached to a citation was actually recorded is undetectable by it, per Proposition~\ref{prop:unmarked} --- and Proposition~\ref{prop:verifiable} sharpens rather than closes this gap, since verifying that declared steps are individually sound is not the same as certifying that no step is missing. Whether a rendering pipeline invents content for an unreachable modality rather than reporting failure is unconstrained by it, per Definition~\ref{def:confabulated-closure}. Each of these three is a property of a rule set, a renderer, or a governance process built on top of the calculus, not a property the calculus's own definitions fix.
 
-A deployment receives the first three guarantees automatically. It earns the middle four only by supplying the conditions they name --- a computable entropy measure, deterministic renderers, retained provenance, an affordable storage budget. It must solve the last three itself, by engineering discipline or by a governance layer external to Section~\ref{sec:formal-realization} entirely, since no theorem in this essay reaches them.
+A deployment receives the first three guarantees automatically. It earns the middle five only by supplying the conditions they name --- a computable entropy measure, deterministic renderers, retained provenance, an affordable storage budget, an independently checkable rule set. It must solve the last three itself, by engineering discipline or by a governance layer external to Section~\ref{sec:formal-realization} entirely, since no theorem in this essay reaches them.
+
+One further result sits outside this three-way ledger because it is neither a guarantee delivered to a deployment nor a gap left for one to fill: Proposition~\ref{prop:provenance-not-truth} holds unconditionally, for every $\sigma$, and states a ceiling rather than a floor. No amount of faithful provenance, verifiable rules, or auditable governance substitutes for an independent check on whether what is being traced is true. The calculus guarantees traceability; it was never in a position to guarantee correctness, and Proposition~\ref{prop:provenance-not-truth} is what makes that limit a proven fact rather than an implicit assumption.
+
+\section{Executable Citations}
+\label{sec:executable-citations}
+
+Section~\ref{sec:citation-joint} argued that citations often conceal the boundary between sourced material and authorial inference. The problem is not merely that readers fail to inspect citations. It is that conventional citations provide almost no mechanism for inspection beyond locating a referenced document and manually reconstructing the reasoning that connects it to the claim being supported.
+
+A source-first architecture permits a different conception of citation. Rather than functioning as a pointer to a document, a citation becomes a pointer to a provenance path. The cited object is not merely a location but a sequence of transformations connecting source material to a rendered claim --- concretely, a chain of rule applications in the sense of Definition~\ref{def:rule}, each with its own type signature and entropy budget, rather than a single unstructured reference.
+
+Suppose a sentence cites a research paper. Under ordinary publishing conventions, the reader receives a reference and little else. The intermediate steps connecting the paper to the author's conclusion remain implicit. In a provenance-aware system those intermediate steps can be represented explicitly as rule applications within the graph, exactly as Section~\ref{sec:citation-joint} proposed splitting a single bundled citation into $r_1$ and $r_2$. The citation therefore resolves not only to a source but to a derivation.
+
+This changes the meaning of verification. To verify a citation is no longer merely to check whether a document exists. It is to inspect the transformations connecting source and conclusion. A reader may accept the source while rejecting a particular inferential step, or may agree with an inference while disputing a later extrapolation. The citation itself exposes the structure required to make those distinctions.
+
+An executable citation is therefore one that can be expanded. A reader encountering a claim may request progressively deeper views of the provenance chain that produced it. At the shallowest level the citation behaves much like a conventional reference. At deeper levels it reveals intermediate claims, transformations, qualifications, and assumptions. At the deepest level it resolves to the primary source material itself.
+
+This property does not eliminate disagreement. Readers may still reject premises, dispute inferences, or prefer alternative interpretations. What it eliminates is ambiguity about where disagreement occurs. The provenance path becomes inspectable rather than hidden, and a dispute can therefore attach to a specific transformation rather than to an entire document.
+
+The resulting system treats citation as computation rather than annotation. A citation is no longer a footnote attached to a claim after the fact. It is the derivation history through which the claim exists in the first place. This is close in spirit to the nanopublication proposal in the scholarly-communication literature, which represents individual scientific assertions together with explicit, machine-actionable provenance metadata rather than leaving provenance implicit in surrounding prose~\cite{groth2010}; the difference here is one of scope rather than kind, since this essay's executable citation exposes an entire derivation chain, in the sense of Definition~\ref{def:rule}, rather than attaching provenance to a single isolated assertion.
+
+\section{The Reader as Auditor}
+\label{sec:reader-auditor}
+
+Section~\ref{sec:executable-citations} showed that a citation in this architecture resolves to a derivation rather than merely a document. This section draws out a consequence of that shift for the reader's own role, since a system that changes what a citation is also changes what reading a citation means to do.
+
+Conventional publishing asks a reader to trust an author's chain of reasoning up to the point where a citation is offered, and then to trust the cited source in turn, without any practical mechanism for inspecting the joints between the two. The posture this asks of a reader is fundamentally one of deference: verification is possible in principle, by locating the cited document and reconstructing the reasoning independently, but the architecture does nothing to make that reconstruction easy, and in practice most citations go unchecked for exactly this reason.
+
+A source-first architecture, once executable citations and the provenance apparatus of Section~\ref{sec:formal-realization} are in place, asks something different of a reader. Because every claim resolves to a chain of rule applications rather than an opaque reference, and because Definition~\ref{def:verifiable-rule} identifies which of those rule applications can be independently checked without trusting whoever applied them, a reader is positioned to inspect a derivation rather than merely accept or reject its conclusion. This is the posture of an auditor rather than a consumer: not trust extended by default and withdrawn only on suspicion, but verification treated as a normal and low-cost first step.
+
+It is important not to overstate what this shift accomplishes. Proposition~\ref{prop:unmarked} already showed that an unmarked rule is invisible to any verification an auditor can perform, and Theorem~\ref{thm:no-verifier} sharpens this into a standing limitation: no procedure restricted to $S_{\mathrm{recorded}}$ and $M$ can certify faithfulness in general. An auditor-reader is therefore not guaranteed a complete account, only a more inspectable partial one. What changes is not the ceiling on what verification can achieve --- Proposition~\ref{prop:provenance-not-truth} sets that ceiling regardless of architecture --- but the floor: a reader who wants to inspect a derivation now has a mechanism for doing so that a conventional citation does not provide, even though that mechanism inherits every limitation the calculus has already been honest about.
+
+The auditor posture also reframes what a reader owes a claim before rejecting it. Under a deference model, rejecting a claim without reading its source is a minor discourtesy. Under an auditor model, the derivation is available at whatever depth a reader is willing to inspect, in the sense of Section~\ref{sec:progressive-disclosure}, which makes unexamined rejection and unexamined acceptance symmetric failures rather than asymmetric ones. Neither failure is prevented by the architecture; both become more visible as failures, because the alternative --- actually looking --- has been made cheaper than it was before.
+
+\section{The Cost of Forgetting}
+\label{sec:cost-forgetting}
+
+Section~\ref{sec:formal-realization} treated erasure, in the sense of Definition~\ref{def:erasure}, as a failure mode to be eliminated, and Proposition~\ref{prop:eliminates} showed the architecture developed there eliminates it by construction. That result is correct as far as it goes, but it invites a misreading worth heading off before the next section turns to the architecture's own costs: it does not follow that forgetting is always a defect, or that a system committed to retention has thereby avoided every cost associated with compression.
+
+Every depth transformation in the sense of Section~\ref{sec:three-axes} is, definitionally, a form of forgetting: a short rendering discards information a full rendering retains, and Theorem~\ref{thm:no-faithful-rendering} already established that this discarding is unavoidable for any practically bounded output. Compression of this kind is not the pathology Section~\ref{sec:conflation} opened by diagnosing. The pathology was never that information gets compressed; it was that the compressed form gets mistaken for, or substituted for, the source it was compressed from, so that the discarded information becomes permanently unrecoverable rather than provisionally set aside.
+
+This distinction gives forgetting two forms that this essay's vocabulary has kept separate without naming the separation explicitly. \emph{Reversible forgetting} is any depth reduction performed on a retained source: the full history remains in $S$, per Definition~\ref{def:semantic-object}, and Proposition~\ref{prop:disambiguation-depth} shows the discarded detail can always be recovered on request. \emph{Irreversible forgetting} is erasure in the sense of Definition~\ref{def:erasure}: the source itself is discarded, and no amount of inspecting the remaining rendering recovers what was lost. The architecture developed in this essay does not, and cannot, eliminate the practice of compression --- Section~\ref{sec:educational-media} depends on compression being available at will --- but it converts every instance of forgetting from irreversible to reversible by construction, provided the retention discipline of Definition~\ref{def:policies} is actually followed.
+
+The remaining cost is therefore not the cost of compressing content, which this architecture treats as ordinary and necessary, but the cost of retaining what compression discards. That cost is real, is not priced by the entropy guard of Definition~\ref{def:rule}, and is exactly what the next section's discussion of provenance overload takes up directly: reversibility is not free merely because it is not erasure, and a system that can never forget anything irreversibly may still find that the volume of what it reversibly retains becomes its own kind of burden.
+
+\section{Failure Modes of Source-First Systems}
+\label{sec:failure-modes}
+
+The preceding sections have emphasized the limitations of artifact-centered publishing and the advantages of treating structured sources as canonical. It would be a mistake, however, to conclude that source-first systems are free from failure modes of their own. Every architecture resolves some constraints only by introducing others.
+
+The most obvious risk is provenance overload. A system that retains every transformation, branch, qualification, and merge may eventually present readers with more history than they can practically inspect. Preservation of information does not guarantee comprehension. A graph that faithfully records every decision can still become too large for human navigation.
+
+\begin{proposition}[Provenance Overload Bound]
+\label{prop:overload-bound}
+Let $|S|$ denote the number of nodes in a provenance graph, and let $B$ denote a reader's practical inspection budget, measured in the same units. If $|S| > B$, full inspection of $S$ by that reader is impossible. Define the \emph{inspectable fraction} $\eta = B / |S|$. For fixed $B$, $\eta \to 0$ as $|S| \to \infty$.
+\end{proposition}
+
+\begin{proof}
+The first claim is immediate: a reader who can inspect at most $B$ nodes cannot inspect all of $|S| > B$ nodes, since inspection is assumed here to consume budget at a rate of at least one unit per node. The second claim follows directly from the definition of $\eta$: for fixed $B$, $\lim_{|S|\to\infty} B/|S| = 0$.
+\end{proof}
+
+This is a deliberately minimal formalization --- it does not model that some nodes are more important to inspect than others, nor that inspection budget might scale with the significance of a dispute rather than remaining fixed --- and it should not be read as more than what it is: a precise statement of the sentence already made in prose above, that preservation of information does not guarantee comprehension. Proposition~\ref{prop:overload-bound} shows this is not merely likely but structural: for any fixed reader capacity, growth in $|S|$ drives the inspectable fraction to zero, regardless of how faithfully $S$ is maintained.
+
+A second risk is branch proliferation. The architecture deliberately lowers the cost of creating alternative continuations. This encourages experimentation and protects minority viewpoints from deletion, but it also produces a growing population of partially developed branches competing for attention. The problem shifts from preserving alternatives to discovering which alternatives deserve examination.
+
+A third risk concerns governance. Section~\ref{sec:governance-canonicality} showed that no formal property of the substrate determines which branch should be shown by default. Any mechanism that resolves this question introduces the possibility of strategic influence. Source-first systems make such influence auditable, but auditability should not be mistaken for immunity.
+
+A fourth risk is renderer monoculture. The architecture assumes a diversity of rendering pipelines capable of producing alternative views of the same source. In practice, users may converge on a small number of popular renderers. When this occurs, the system can recreate many of the interpretive bottlenecks associated with conventional media despite retaining a richer substrate underneath. A plurality of sources does not guarantee a plurality of perspectives if every reader encounters them through the same transformation process.
+
+\begin{proposition}[Renderer Concentration]
+\label{prop:renderer-concentration}
+Let $\{r_1, \dots, r_m\}$ be the set of renderers available for some modality, and let $p(r_i)$ denote the empirical share of renderings produced by $r_i$ across some population of readers, with $\sum_i p(r_i) = 1$. Define renderer concentration as
+\[
+C_R = \sum_i p(r_i)^2.
+\]
+Then $C_R \to 1$ as usage concentrates on a single renderer, and $C_R = 1/m$ when usage is uniform across all $m$ renderers.
+\end{proposition}
+
+\begin{proof}
+If $p(r_1) = 1$ and $p(r_i) = 0$ for $i \neq 1$, then $C_R = 1^2 = 1$, the maximum value the sum can take given $\sum_i p(r_i) = 1$. If $p(r_i) = 1/m$ for every $i$, then $C_R = \sum_{i=1}^m (1/m)^2 = m \cdot (1/m^2) = 1/m$, which is the minimum value $C_R$ can take given $m$ available renderers, since a sum of squares subject to a fixed-sum constraint is minimized at the uniform point.
+\end{proof}
+
+The substrate developed in Section~\ref{sec:formal-realization} guarantees only that multiple renderers \emph{may} exist for a given modality, per Definition~\ref{def:rule}; it says nothing about $C_R$, because usage concentration is a fact about reader behavior, not about the rule set. A high $C_R$ is compatible with a well-typed, renderer-complete, fully coherent $\sigma$ in the sense of Section~\ref{sec:formal-realization}, since none of those properties constrain which renderer a population of readers actually chooses. This is the precise sense in which the failure mode named above is a property of usage rather than of the calculus: a plurality of declared rules is necessary but not sufficient for a plurality of renderings actually reaching readers, and $C_R$ is what would have to be measured, in a real deployment, to know whether the necessary condition has translated into the sufficient one.
+
+Finally, there is the risk of semantic drift through tooling. A renderer, summarizer, or recommendation system may gradually become the de facto authority through widespread use even when it was never intended to occupy that role. The canonical source remains available in principle while becoming increasingly invisible in practice. The architecture can preserve provenance without guaranteeing that users will consult it.
+
+These risks do not invalidate the proposal. They merely establish that source-first publishing should be understood as a redistribution of constraints rather than their elimination. The system exchanges the pathologies of artifact-centered publishing for a new family of problems associated with abundance, navigation, and governance. Recognizing those problems is part of designing responsibly rather than an argument against the design itself.
+
+\section{Semantic Objects Beyond Documents}
+\label{sec:semantic-objects}
+
+Every worked example in this essay has been an essay, a paragraph, or a passage of argumentative prose, and a reader could reasonably conclude from that pattern alone that $\sigma = (I,T,M,E,S)$ is a document with extra bookkeeping attached --- a well-typed, provenance-aware file format, and nothing more. Nothing in Definition~\ref{def:semantic-object} supports that conclusion, and it is worth showing concretely why not, rather than leaving the point implicit in the formalism and hoping a skeptical reader notices.
+
+Definition~\ref{def:semantic-object} places no requirement on what $T$ contains. A semantic object whose declared modalities are \textsc{prose-full} and \textsc{video} is a document in the sense this essay has mostly illustrated, but a semantic object whose declared modalities are \textsc{formal-statement} and \textsc{informal-gloss} is a mathematical claim, and one whose modalities are \textsc{premise-set} and \textsc{derivation} is a proof step, addressable and versionable by exactly the same machinery. A definition, in the sense of Appendix~\ref{app:grammar}'s \texttt{introduce\_term} event, is already a semantic object in miniature: it has an identity, a narrow declared type, and a provenance graph of whatever reasoning motivated introducing it. A citation, per Section~\ref{sec:executable-citations}, is a semantic object whose content is a chain of rule applications rather than a passage of prose. A renderer is itself describable as a semantic object with its own identity and revision history, distinct from any particular $\sigma$ it renders. A governance action --- a change to the pointer-selection function $P$ discussed in Section~\ref{sec:governance-canonicality} --- was already proposed there as ``a first-class, versioned object subject to the same provenance discipline as everything else,'' which is precisely a semantic object whose content is a decision rather than a claim. None of these required a new definition. They required only populating $T$ differently.
+
+This is the sense in which the architecture is not usefully described as version control for documents. A version-control system such as Git operates on files: opaque byte sequences whose diffs are syntactic, and whose semantic content --- what a change actually asserts, proves, or governs --- is invisible to the system doing the versioning. A semantic object's identity $I$ and provenance $S$ persist independently of which modality happens to be populated, and its declared type $T$ names what kind of thing it is before any content exists to diff. Where Git sees a changed line, this calculus can see a changed claim, a changed proof step, or a changed governance decision, each typed as such rather than reduced to a common denominator of text.
+
+Read this way, Polyxan's actual contribution to the stack described in Section~\ref{sec:situating} is not that it adds hyperlinks to documents. It is that the addressable node in the system was never a document in the first place; a document is one populated instance of $T$ among many equally valid ones, and the essay's repeated use of prose and video as worked examples reflects the motivating case of publishing, not a limit on what $\sigma$ can represent. The architecture generalizes to any domain where claims, proofs, citations, and decisions need to be addressable, versioned, and traceable to their derivation --- publishing is the case this essay develops in depth, not the boundary of what the formalism supports.
+
+\section{Addressability as a Primitive}
+\label{sec:addressability}
+
+Section~\ref{sec:semantic-objects} used the words \emph{addressable}, \emph{referenceable}, and \emph{citable} throughout without pausing to justify why addressability matters in the first place. This section supplies that justification directly, since the claim is doing more work in this essay than its casual repetition might suggest.
+
+An object that cannot be addressed cannot be cited, since a citation is, at minimum, a stable pointer that a second party can resolve independently of the first party's continued cooperation. An object that cannot be cited cannot accumulate discourse around it, since discourse --- agreement, rebuttal, extension, qualification --- requires a fixed point that successive contributions can attach to without each contribution having to re-specify what it is responding to. Addressability is therefore not a convenience layered on top of a publishing system; it is a precondition for the kind of collective reasoning this essay has assumed throughout, from executable citations in Section~\ref{sec:executable-citations} to the branch-disagreement queries of Section~\ref{sec:reader-rights}.
+
+This dependency can be stated precisely once identity is separated from content, which Definition~\ref{def:semantic-object} already does by construction.
+
+\begin{lemma}[Addressability Lemma]
+\label{lem:addressability}
+Let $\sigma_t$ and $\sigma_{t+1}$ be successive states of a semantic object related by a revision in the sense of Section~\ref{sec:three-axes}, and let a citation to $\sigma_t$ be a reference resolved through $I(\sigma_t)$ rather than through $M(\sigma_t)$ directly. If $I(\sigma_t) \neq I(\sigma_{t+1})$ --- that is, if revision is permitted to change identity --- then no citation issued against $\sigma_t$ can be guaranteed to resolve to any determinate object once $\sigma_{t+1}$ exists, since the identity a citation was anchored to no longer picks out a unique member of the object's own lineage. Conversely, if $I(\sigma_t) = I(\sigma_{t+1})$ is preserved across every revision, as Definition~\ref{def:semantic-object} stipulates for $I$, then a citation issued against $\sigma_t$ continues to resolve to a determinate node in $S$ regardless of how many further revisions occur.
+\end{lemma}
+
+\begin{proof}
+A citation resolved through $I$ rather than $M$ is, by construction, a request to retrieve whichever node in the provenance graph $S$ carries that identity at the time the citation was issued. If identity is not preserved across revision, the set of nodes carrying the identity referenced by the citation is not guaranteed to be a singleton at any later time, and resolution becomes ambiguous exactly to the degree that identity has drifted. If identity is preserved, per Definition~\ref{def:semantic-object}, the node originally cited remains uniquely identified by $I$ within $S$ independently of how many further nodes have since been added, since $S$ is append-only and $I$ is immutable by hypothesis.
+\end{proof}
+
+This is the sense in which $I$'s immutability, stipulated almost in passing in Definition~\ref{def:semantic-object}, is not bookkeeping but a load-bearing precondition. Everything this essay has said about citation surviving revision, in Section~\ref{sec:provenance-rigidity}, and about executable citations resolving to a determinate derivation, in Section~\ref{sec:executable-citations}, depends on Lemma~\ref{lem:addressability} holding, and Lemma~\ref{lem:addressability} in turn depends on nothing more exotic than $I$ never changing once assigned. One well-studied way of engineering that guarantee structurally, rather than by policy alone, is to derive identity from content itself through a cryptographic hash tree, so that identity is fixed by the data rather than by whichever party currently custodies it~\cite{merkle1987}; this essay does not commit to any particular addressing scheme, but the discipline such schemes formalize --- identity that no single party can quietly reassign --- is exactly what Lemma~\ref{lem:addressability} requires of $I$, however it is implemented.
 
 \section{Situating the Proposal Within the Stack}
 \label{sec:situating}
 
+\subsection{Three Layers of the Stack, Briefly}
+
+A reader meeting \textsc{Spherepop}, \textsc{Polyxan}, and \textsc{PlenumHub} for the first time is owed a map before the detailed discussion below, since the three names arrive late in this essay and depend on context this essay alone does not fully supply. At the coarsest level of description: Spherepop is the persistence layer, responsible for the fact that nothing is overwritten and every state is reachable from its history; Polyxan is the structure layer, responsible for content being addressable by identity and type rather than by file path, per Section~\ref{sec:semantic-objects}'s point that a semantic object need never be a document; and PlenumHub is the coordination layer, responsible for governance, attribution, and the social process of resolving disputes about which branch is shown by default, per Section~\ref{sec:governance-canonicality}. None of the three is a rebrand of an existing system under a new name --- Polyxan is not Xanadu's hypertext with different terminology, Spherepop is not Git with a different diff format, and PlenumHub is not a forum with a different reputation score --- but the precise sense in which each differs is the subject of the rest of this section, not something a one-paragraph map can establish on its own. What the map can establish is where this essay's proposal sits: source-first publishing, as developed in Sections~\ref{sec:conflation} through~\ref{sec:semantic-objects}, is the persistence and structure layers applied specifically to the case of publishing, with the coordination layer's open problems --- named honestly rather than solved --- inherited rather than newly introduced.
+
 Source-first publishing is not a new project sitting alongside \textsc{PlenumHub} and \textsc{Polyxan}; it is what those two projects already imply once applied to video, audio, and prose specifically. The three-layer stack this essay's proposal belongs to can be summarized as follows.
+
+\subsection{The Stack in Detail}
 
 \textbf{Spherepop} supplies event histories, collapse operations, provenance, and execution: the substrate-level fact that identity is an irreversible history of events rather than a persisting essence, and that nothing is overwritten, only extended. \textbf{Polyxan} supplies semantic structure and hypermedia: typed semantic objects rather than isolated documents, bidirectional linking, proof topology, and the claim --- inherited explicitly from Project Xanadu~\cite{nelson1999} --- that meaning itself, not merely text, should be addressable, versioned, and traversable in multiple directions. Media quines and sheaf-theoretic worldviews belong here: the requirement that locally reasonable interpretive acts glue together into a globally coherent semantic structure rather than silently contradicting one another at scale~\cite{maclane1992}. \textbf{PlenumHub} supplies coordination, governance, and economic and social infrastructure: identity as provenance and contribution rather than popularity, governance built on top of declared coherence conditions rather than imposed by centralized moderation --- though, as Section~\ref{sec:self-application} makes explicit, those conditions are themselves stipulated rather than derived, a limitation this essay has not resolved and has no grounds to exempt itself from having flagged in other systems --- and, in the later, more explicitly thermodynamic framing, platform pathologies reframed not as bad incentives to be patched but as concentration of semantic capacity and curvature wells that attract attention, calling for redesign of the substrate itself rather than moderation layered on top of it.
 
@@ -500,9 +780,28 @@ All three have at various points been described as programs written in Spherepop
 
 Seen this way, the complaint that opened this essay --- that YouTube discards its source and treats an uneditable recording as canonical --- was never really a complaint about video specifically. Conventional social media generally optimizes for feed-centric competition among posts for attention; the proposal here inherits, from the wider stack, an explicit rejection of that architecture in favor of merge-aware, provenance-aware, event-sourced structures where correctness and coordination are properties of the substrate rather than outcomes fought for within it. The publishing problem turned out to be one more surface on which the same underlying commitment applies: that containers --- histories, semantic structures, coordination mechanisms --- are prior to and independent of their contents, and that a system built on that premise keeps a wide space of admissible futures open by construction, rather than collapsing it into whatever single frozen artifact happened to get rendered first.
 
-\clearpage
-\section*{Appendices}
+\section{The End of the Document}
+\label{sec:end-of-document}
 
+The concept of a document is older than the digital systems that now distribute most human knowledge. A document assumes a bounded object with a beginning and an end, a stable sequence of contents, and a fixed identity independent of its production history. These assumptions were reasonable under the constraints of paper. They are no longer technologically necessary.
+
+Much of the friction discussed throughout this essay can be understood as a consequence of preserving the document model long after the conditions that justified it disappeared. Version histories are hidden because documents are expected to be singular objects. Alternative continuations are difficult to represent because documents are expected to be linear. Corrections appear as amendments because documents are expected to be complete. The architecture inherited from paper continues to shape systems that no longer depend on paper.
+
+A source-first architecture proposes a different primitive. The primary object is not a document but a history space. What persists through time is not a rendered artifact but a structured graph of events, transformations, and relationships --- the object Definition~\ref{def:semantic-object} calls $\sigma$. Documents become temporary projections through that graph, generated for specific audiences, purposes, and contexts.
+
+Seen from this perspective, essays, videos, podcasts, comics, lectures, and summaries occupy the same ontological status. None is canonical. None is the work itself. Each is a rendering of a deeper object whose identity is carried by provenance rather than presentation.
+
+This shift parallels earlier transitions in computing. Source code displaced binaries as the primary object of software development. Databases displaced static reports as the primary object of information management. Version control displaced isolated snapshots as the primary representation of software history. In each case the enduring object moved from a rendered artifact to a structured process capable of producing many artifacts.
+
+The proposal developed throughout this essay applies the same inversion to publishing. The goal is not to abolish documents. Documents remain useful because humans often prefer bounded narratives to open-ended structures. The goal is to relocate them from the foundation of the system to its surface. They become generated views rather than containers of truth.
+
+That preference is not merely a habit left over from paper, and it would be a mistake for this essay to imply otherwise. Boundedness makes a work finishable, both to write and to read. A stable identity makes it citable without qualification. A fixed beginning and end make comprehension tractable in a way an open-ended graph, however well organized, does not automatically provide. These are cognitive facts about readers, not just technological facts about print, and a source-first architecture does not get to treat them as obsolete simply because the storage layer no longer requires them. What the architecture changes is where those properties live: a document remains bounded, stable, and readable in one sitting, but it becomes one closed projection through $\sigma$ rather than $\sigma$ itself, so that the cognitive convenience of a document and the corrigibility of a history are no longer purchased at each other's expense. The claim of this essay is that documents are useful projections of a history space, not that documents are obsolete; the difference matters, since only the first claim survives contact with why people wanted documents in the first place.
+
+Put most compactly: the goal is not to abolish the document but to demote it, from ontology to interface. It stops being the thing that exists and becomes the thing a reader is shown --- a real demotion, since only the source is retained, addressable, and correctable, but not an abolition, since every cognitive reason a reader ever had for wanting a document is still being served by the projection they receive.
+
+If the architecture succeeds, the document does not disappear. It becomes what it perhaps always was: one path through a larger space of possibilities, valuable as a rendering but no longer mistaken for the source from which it came.
+
+\clearpage
 \appendix
 \section{A Minimal Event Grammar for Argumentative Prose}
 \label{app:grammar}
@@ -568,19 +867,7 @@ The worked example of Section~\ref{sec:worked-example} used a restricted event v
 
 \subsection{Dependency Constraints}
 
-\begin{enumerate}
-\item Every event identifier is unique.
-
-\item Every element of \texttt{depends\_on} must reference an already-existing event.
-
-\item \texttt{assert\_relation} introduces a directed semantic edge from \texttt{subject} to \texttt{object}.
-
-\item \texttt{contrast} requires at least two referenced events.
-
-\item \texttt{qualify} does not replace its target event; it creates a new event whose interpretation is layered onto the target.
-
-\item Event histories are append-only. Existing events are never modified in place.
-\end{enumerate}
+Six constraints govern any well-formed event history in this grammar. Every event identifier is unique, and every element of \texttt{depends\_on} must reference an already-existing event, so that a dependency can never point forward into content that has not yet been introduced. An \texttt{assert\_relation} event introduces a directed semantic edge from its \texttt{subject} to its \texttt{object}, giving the relation a fixed orientation rather than leaving it symmetric. A \texttt{contrast} event requires at least two referenced events, since a contrast drawn against a single term is not yet a contrast. A \texttt{qualify} event does not replace its target event but creates a new event whose interpretation is layered onto the target, preserving the target exactly as it was. And event histories are append-only throughout: existing events are never modified in place, which is what makes the diff in the worked example of Section~\ref{sec:worked-example} a single added node rather than a rewritten paragraph.
 
 \subsection{Dependency Graph Semantics}
 
@@ -588,14 +875,7 @@ Let
 \[
 G = (V,E)
 \]
-be the event graph induced by a source object.
-
-\begin{itemize}
-\item Each event corresponds to a vertex $v \in V$.
-\item Each dependency $a \in \texttt{depends\_on}(b)$ induces a directed edge $a \rightarrow b$.
-\item $G$ is required to be acyclic.
-\item Rendering order is any topological ordering of $G$.
-\end{itemize}
+be the event graph induced by a source object. Each event corresponds to a vertex $v \in V$, and each dependency $a \in \texttt{depends\_on}(b)$ induces a directed edge $a \rightarrow b$. $G$ is required to be acyclic, and a rendering order is any topological ordering of $G$.
 
 \subsection{Example}
 
@@ -680,12 +960,20 @@ $S_{\mathrm{recorded}}$, $S_{\mathrm{actual}}$ & The stored provenance graph ver
 $\mathrm{Faithful}(S)$ & $S_{\mathrm{recorded}} = S_{\mathrm{actual}}$. & Def.~\ref{def:faithful-provenance} \\
 unmarked rule & A transformation altering $M$ that is absent from $S_{\mathrm{recorded}}$. & Def.~\ref{def:unmarked-rule} \\
 confabulated closure & Content occupying a modality outside $\mathrm{Reach}(\sigma)$, invented rather than derived or left absent. & Def.~\ref{def:confabulated-closure} \\
+verifiable rule & A rule whose input--output relation can be independently checked from $M(a)$ and $M(b)$ alone, without trusting the renderer. & Def.~\ref{def:verifiable-rule} \\
+$\mathrm{True}(M)$ & An external, reader-supplied correctness predicate the calculus does not define; used only to state that faithfulness and truth are independent. & \S\ref{sec:provenance-not-truth} \\
 $P : \mathcal{B} \to \mathcal{B}$ & Pointer-selection function choosing the default branch shown to a reader. & \S\ref{sec:governance-canonicality} \\
+$I(\sigma_t) = I(\sigma_{t+1})$ & Addressability Lemma: identity preserved across revision is what lets citations resolve stably. & Lem.~\ref{lem:addressability} \\
+$k_i \preceq k_j$ & Refinement (depth) order: a deeper modality can always be compressed to a shallower one. & Def.~\ref{def:depth-order} \\
+progressive disclosure & A pipeline lets a reader request any depth without first producing deeper ones. & Def.~\ref{def:progressive-disclosure} \\
+$\pi(\sigma)$ & Snapshot map: $\sigma$ to its content map alone, discarding $I$, $E$, $S$. & Def.~\ref{def:snapshot-map} \\
+$V$ (no general verifier) & Any procedure deciding $\mathrm{Faithful}(S)$ from $S_{\mathrm{recorded}}, M$ alone; shown not to exist in general. & Thm.~\ref{thm:no-verifier} \\
+$\eta = B/|S|$ & Inspectable fraction: reader budget over provenance-graph size. & Prop.~\ref{prop:overload-bound} \\
+$C_R = \sum_i p(r_i)^2$ & Renderer concentration over empirical usage shares $p(r_i)$. & Prop.~\ref{prop:renderer-concentration} \\
+$\mathrm{Cap}(b) = V(b) - A(b)$ & Branch capture: exposure share minus independent admissibility score. & Def.~\ref{def:branch-capture} \\
 \bottomrule
 \end{longtable}
 
-
-\newpage
 \begin{thebibliography}{9}
 
 \bibitem{shannon1948}
@@ -708,6 +996,18 @@ T.~H. Nelson. Xanalogical structure, needed now more than ever: parallel documen
 
 \bibitem{maclane1992}
 S.~Mac~Lane and I.~Moerdijk. \emph{Sheaves in Geometry and Logic: A First Introduction to Topos Theory}. Springer-Verlag, 1992.
+
+\bibitem{buneman2001}
+P.~Buneman, S.~Khanna, and W.-C.~Tan. Why and where: a characterization of data provenance. In \emph{Database Theory --- ICDT 2001}, Lecture Notes in Computer Science vol. 1973, pages 316--330. Springer, 2001.
+
+\bibitem{merkle1987}
+R.~C.~Merkle. A digital signature based on a conventional encryption function. In \emph{Advances in Cryptology --- CRYPTO '87}, Lecture Notes in Computer Science vol. 293, pages 369--378. Springer, 1987.
+
+\bibitem{groth2010}
+P.~Groth, A.~Gibson, and J.~Velterop. The anatomy of a nanopublication. \emph{Information Services and Use}, 30(1--2):51--56, 2010.
+
+\bibitem{ostrom1990}
+E.~Ostrom. \emph{Governing the Commons: The Evolution of Institutions for Collective Action}. Cambridge University Press, 1990.
 
 \end{thebibliography}
 

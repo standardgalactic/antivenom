@@ -1,0 +1,115 @@
+% =====================================================================
+% preamble.tex
+% Continuation Under Constraint: Distinctions, Substrates, and Repair
+% Across Transformations
+%
+% Compilation: XeLaTeX is the tested, working engine for this
+% skeleton. LuaLaTeX is the intended long-run primary stack (per
+% established practice across the rest of the corpus), but requires
+% the luaotfload package, which was found to be absent from this
+% drafting environment's texlive install; fontspec fails at font-load
+% time under lualatex here as a direct result. This is exactly the
+% documented fallback scenario -- "XeLaTeX as fallback for
+% font-loading issues" -- rather than an exception to it. On a
+% machine with a complete texlive install (specifically the
+% texlive-luatex collection, which provides luaotfload), switch back
+% to lualatex by changing only the engine invocation; no preamble
+% changes are required, since fontspec is used identically under both.
+% =====================================================================
+
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Pagella}
+\usepackage[full]{textcomp}
+
+% NOTE ON MATH FONT: unicode-math + a dedicated Pagella math font
+% would be the ideal pairing, but the unicode-math stack requires
+% lualatex-math.sty, which is not present in this environment's
+% texlive install (and CTAN is outside the allowed network domains
+% for fetching it here). mathpazo was tried as a fallback but its
+% Type1/T1-encoded text fonts clash with fontspec's TU encoding under
+% lualatex, so this skeleton falls back further to plain amsmath with
+% default (Computer Modern) math symbols for now -- compiles cleanly
+% under all three engines with zero encoding conflicts. Once drafting
+% moves to an environment with a complete texlive install, swap in
+% unicode-math + a Pagella-family math font (or newpxmath, which is
+% fontspec-safe) for visual consistency with the Pagella body text;
+% no chapter file needs to change for that swap.
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{mathtools}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{enumitem}
+\usepackage{geometry}
+\geometry{a5paper,margin=2.2cm} % scholarly-monograph trim size; adjust for print run
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{makeidx}
+\makeindex
+\usepackage{booktabs}
+
+% ---------------------------------------------------------------------
+% Numbering: theorem-like environments numbered within chapter, so
+% cross-references remain stable as chapters are drafted independently
+% and reordered during editing. This matches the practice used across
+% the rest of the corpus (CPR, Semantic Infrastructure, etc.).
+% ---------------------------------------------------------------------
+\numberwithin{equation}{chapter}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{lemma}[theorem]{Lemma}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{construction}[theorem]{Construction}
+\newtheorem{example}[theorem]{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem*{proofsketch}{Proof Sketch}
+
+% ---------------------------------------------------------------------
+% Non-standard environments enforcing the monograph's epistemic-
+% labeling discipline: a claim's status (proved theorem, corollary,
+% proposition with a complete proof, or conjecture/open question
+% awaiting fuller treatment) must be visually and semantically
+% distinct. This is a structural commitment of the whole project,
+% not a cosmetic choice -- see the Note on Epistemic Status in the
+% front matter.
+% ---------------------------------------------------------------------
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{openquestion}[theorem]{Open Question}
+\newtheorem{principle}[theorem]{Principle} % informal, pre-formal statements (e.g. Ch. 1's thesis)
+
+% Visual flag for imported results, so the reader can see at a glance
+% which theorems originate in prior work (Conservation of Ambiguity,
+% Observability Is Restorability, etc.) versus this monograph.
+\newcommand{\imported}[1]{\textit{(Imported from #1.)}}
+\newcommand{\newresult}{\textit{(New to this monograph.)}}
+
+% ---------------------------------------------------------------------
+% Notation macros (populated as Part I is drafted; consolidated
+% reference lives in Appendix B). Declared here so every chapter file
+% can use them consistently without re-defining locally.
+% ---------------------------------------------------------------------
+\newcommand{\repcost}[1]{C_R(#1)}                 % repair cost
+\newcommand{\amb}[1]{A(#1)}                        % operational ambiguity
+\newcommand{\interf}[2]{I(#1,#2)}                  % repair interference
+\newcommand{\discard}[1]{D(#1)}                    % discarded distinction set
+\newcommand{\admis}[2]{\mathcal{A}_{#1}(#2)}       % admissible continuation set, task then substrate
+\newcommand{\fidelity}[2]{F(#1,#2)}                % fidelity of rendering r for task tau
+\newcommand{\restdomain}{\mathrm{Rest}(\mathcal{R})} % repair-stable domain, imported notation
+
+\newcommand{\booktitle}{Continuation Under Constraint}
+\newcommand{\booksubtitle}{Distinctions, Substrates, and Repair Across Transformations}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[LE]{\textsc{\leftmark}}
+\fancyhead[RO]{\textsc{\rightmark}}
+\fancyfoot[C]{\thepage}

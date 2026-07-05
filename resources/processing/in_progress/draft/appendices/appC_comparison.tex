@@ -1,0 +1,89 @@
+\chapter{Relation to \emph{Conservation of Ambiguity}: A Side-by-Side Comparison}
+\label{app:comparison}
+
+\begin{quotation}
+\noindent\textit{Synopsis.} This appendix compares the Composition Failure
+Theorem with the Redistribution Theorem of \emph{Conservation of
+Ambiguity}, setting out their different assumptions, domains, and
+implications side by side, and arguing explicitly that neither is derivable
+from the other without the budget-relay machinery of
+Part~\ref{part:budget-relay}.
+\end{quotation}
+
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+& Redistribution Theorem & Composition Failure Theorem \\
+& (\cref{thm:redistribution}) & (\cref{thm:composition-failure}) \\
+\midrule
+Structure & Synchronic & Diachronic \\
+Object & Single observer's budget $\Phi$ & Sequence of independent budgets $B_i$ \\
+Distinctions involved & Many, competing simultaneously & One (or a bounded cluster), tracked over stages \\
+Conserved quantity & Total repair budget $\Phi_{\mathrm{tot}}$ & None conserved; cumulative discard is monotone (\cref{prop:monotonicity}) \\
+Coordination assumed & Full, by construction (one observer) & None, by construction (\cref{def:budget-relay}) \\
+Failure mode & Local sharpening forces redistribution & Locally rational stages compose into global gaps \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Why One Does Not Reduce to the Other}
+
+\cref{def:budget-relay}'s defining condition is that each stage's budget
+$\beta_i$ is set without reference to any other stage's budget or ledger.
+It is worth checking directly what happens to
+Appendix~\ref{app:proof}'s witness if that condition is dropped and the
+stages' budgets are pooled into a single, simultaneously-allocated
+$\Phi_{\mathrm{tot}}$ instead -- not merely to confirm that
+\cref{thm:redistribution} then applies, but to see concretely what
+difference pooling makes to the actual outcome.
+
+Recall the witness of \cref{con:witness}: five distinctions with costs
+$1,2,3,2,4$, and two stage-local budgets $\beta_0 = 4$ and $\beta_1 = 3$,
+applied sequentially. Under \cref{def:budget-relay}, $\beta_0$'s unspent
+remainder (after funding $\{d_1, d_2\}$ at cost $3$, one unit of $\beta_0$
+goes unused, since no non-required distinction costs $1$ or less) cannot
+be carried forward to supplement $\beta_1$; each stage's allocation is
+decided in isolation, and \cref{lem:exhaustion} shows $d_5$ is dropped at
+stage $0$ regardless of construction.
+
+\begin{proposition}[Pooling Can Restore Sufficiency]
+\label{prop:pooling-restores}
+Let $\Phi_{\mathrm{tot}} = \beta_0 + \beta_1 = 7$ be made available to a
+single observer as one simultaneous allocation over all five distinctions
+of \cref{con:witness}, rather than as two separate stage-local budgets.
+Then a feasible allocation exists that funds $\{d_1, d_2, d_5\}$ in full,
+avoiding the insufficiency for $\tau_{d_5}$ that
+Appendix~\ref{app:proof} shows is unavoidable under the separated relay.
+\end{proposition}
+
+\begin{proof}
+$C(d_1) + C(d_2) + C(d_5) = 1 + 2 + 4 = 7 = \Phi_{\mathrm{tot}}$, so
+funding exactly $\{d_1, d_2, d_5\}$ is feasible under a single,
+simultaneous budget constraint of $7$, using the full amount with nothing
+left over. Under this allocation, $d_5 \notin \discard{A_1}$, so by
+\cref{lem:recovery-sufficiency}, sufficiency for $\tau_{d_5}$ is
+preserved. This allocation is unavailable to the separated relay of
+\cref{con:witness} because $\beta_0 = 4$ alone is insufficient to fund
+$\{d_1, d_2, d_5\}$ (cost $7 > 4$), and \cref{prop:monotonicity} forbids
+recovering $d_5$ once stage $0$ has discarded it, regardless of how much
+budget $\beta_1$ later provides.
+\end{proof}
+
+\cref{prop:pooling-restores} is the concrete content behind the claim,
+made in prose in Chapter~\ref{ch:composition-failure}, that assuming a
+shared budget across all stages of a relay is precisely the condition
+under which \cref{thm:composition-failure}'s construction becomes
+unavailable. It is stronger than merely showing the construction
+\emph{fails to apply} under pooling: it exhibits an allocation that
+actively \emph{succeeds} where the separated relay fails, using the
+identical total nominal resource. The insufficiency exhibited in
+Appendix~\ref{app:proof} is therefore not a consequence of scarcity in
+any absolute sense -- $\Phi_{\mathrm{tot}} = 7$ was always, in total,
+enough to have funded $\{d_1, d_2, d_5\}$ -- but a consequence
+specifically of \cref{def:budget-relay}'s prohibition on transferring
+unspent capacity from one stage to a later one. This is the precise
+sense in which the two theorems occupy disjoint settings rather than one
+subsuming the other: \cref{thm:redistribution} presupposes exactly the
+transferability that \cref{thm:composition-failure}'s witness depends on
+the absence of.
