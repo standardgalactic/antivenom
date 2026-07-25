@@ -4,5 +4,10 @@
 
 * [The Math That Erases Human Need](https://standardgalactic.github.io/antivenom/essay/) — *Audio Overview*
 
-[From Fields to Futures](https://standardgalactic.github.io/antivenom/essay/counterfactual.pdf)
+[From Fields to Futures](https://standardgalactic.github.io/antivenom/essay/research-report.pdf)
+
+[The Contraction of the Possible](https://standardgalactic.github.io/antivenom/essay/contraction-of-the-possible.pdf)
+
+![](contraction-infographic.png)
+
 
