@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Audioscope</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{
+  width:100%;height:100%;
+  background:#000;
+  font-family:monospace;
+  color:#00ff41;
+  overflow:hidden;
+  touch-action:manipulation;
+}
+body{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:900;
+  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.70) 100%);
+}
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:901;
+  background:repeating-linear-gradient(
+    to bottom,rgba(0,0,0,.22) 0px,rgba(0,0,0,.22) 1px,
+    transparent 1px,transparent 3px);
+}
+#screen{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  will-change:transform;
+}
+#title{
+  position:fixed;top:16px;left:0;right:0;
+  text-align:center;
+  font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(0,255,65,.52);
+  z-index:100;
+}
+#clock{
+  position:fixed;top:16px;right:14px;
+  font-size:7px;letter-spacing:.10em;
+  color:rgba(0,255,65,.22);z-index:100;
+}
+canvas{
+  display:block;
+  width:min(420px,86vw);
+  height:min(420px,86vw);
+  cursor:pointer;
+  z-index:10;position:relative;
+}
+/* background figures canvas — behind main */
+#bg{
+  position:fixed;inset:0;
+  width:100%;height:100%;
+  z-index:2;pointer-events:none;
+}
+#status{
+  position:fixed;bottom:46px;left:0;right:0;
+  text-align:center;font-size:7px;letter-spacing:.18em;
+  color:rgba(0,255,65,.18);z-index:100;
+}
+#subs{
+  position:fixed;bottom:12px;
+  left:50%;transform:translateX(-50%);
+  width:min(600px,90vw);
+  min-height:2em;
+  text-align:center;
+  font-size:11px;line-height:1.5;
+  color:rgba(0,255,65,.62);
+  letter-spacing:.02em;
+  font-style:italic;
+  z-index:100;
+}
+#glitch-band{
+  position:fixed;left:0;right:0;height:2px;
+  background:rgba(0,255,65,.50);
+  pointer-events:none;z-index:902;display:none;
+  box-shadow:0 0 5px #00ff41;
+}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="screen">
+  <div id="title">THE MATH THAT ERASES HUMAN NEED</div>
+  <span id="clock">00:00</span>
+  <canvas id="viz"></canvas>
+  <div id="status">[ click · play / pause ]</div>
+  <div id="subs"></div>
+</div>
+<div id="glitch-band"></div>
+<audio id="audio">
+  <track kind="captions"
+         src="The_Math_That_Erases_Human_Need.vtt"
+         default>
+</audio>
+
+<script>
+const audio     = document.getElementById("audio");
+const subsEl    = document.getElementById("subs");
+const clockEl   = document.getElementById("clock");
+const screen    = document.getElementById("screen");
+const glitchBand= document.getElementById("glitch-band");
+
+let audioCtx, analyser, freqData, timeData;
+
+function initAudio(){
+  if(audioCtx) return;
+  audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = .86;
+  freqData = new Uint8Array(analyser.frequencyBinCount);
+  timeData = new Uint8Array(analyser.fftSize);
+  const src = audioCtx.createMediaElementSource(audio);
+  src.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+function attachTrack(){
+  const t = audio.textTracks[0];
+  if(!t) return;
+  t.mode = "hidden";
+  t.oncuechange = ()=>{
+    const c = t.activeCues[0];
+    subsEl.textContent = c ? c.text : "";
+  };
+}
+audio.addEventListener("loadedmetadata", attachTrack, {once:true});
+
+audio.ontimeupdate = ()=>{
+  const t = audio.currentTime|0;
+  clockEl.textContent =
+    `${String(t/60|0).padStart(2,"0")}:${String(t%60).padStart(2,"0")}`;
+};
+
+document.getElementById("viz").addEventListener("click",()=>{
+  initAudio();
+  audioCtx.resume().then(()=>{
+    if(!audio.src||audio.src==="about:blank"||audio.src===location.href){
+      audio.src="The_Math_That_Erases_Human_Need.mp3";
+      audio.load();
+      audio.addEventListener("loadedmetadata",attachTrack,{once:true});
+      audio.play();
+    } else if(audio.paused) audio.play();
+    else audio.pause();
+  });
+});
+
+/* ── main canvas ── */
+const canvas = document.getElementById("viz");
+const ctx    = canvas.getContext("2d");
+const SZ = 512;
+canvas.width = canvas.height = SZ;
+const cx=SZ/2, cy=SZ/2;
+
+/* ── background canvas ── */
+const bg   = document.getElementById("bg");
+const bctx = bg.getContext("2d");
+function resizeBg(){
+  bg.width  = window.innerWidth;
+  bg.height = window.innerHeight;
+}
+resizeBg();
+window.addEventListener("resize",resizeBg);
+
+let frame=0, bass=0, mid=0, high=0, vol=0, entropy=0;
+
+function updateEnergy(){
+  if(!analyser) return;
+  analyser.getByteFrequencyData(freqData);
+  analyser.getByteTimeDomainData(timeData);
+  let b=0,m=0,h=0,v=0;
+  for(let i=0;i<40;i++) b+=freqData[i];
+  for(let i=40;i<180;i++) m+=freqData[i];
+  for(let i=180;i<freqData.length;i++) h+=freqData[i];
+  for(let i=0;i<freqData.length;i++) v+=freqData[i];
+  bass+=(b/(40*255)-bass)*.08;
+  mid +=(m/(140*255)-mid)*.06;
+  high+=(h/((freqData.length-180)*255)-high)*.05;
+  vol +=(v/(freqData.length*255)-vol)*.07;
+  let sum=0,ent=0;
+  for(let i=0;i<freqData.length;i++) sum+=freqData[i];
+  if(sum>0){
+    for(let i=0;i<freqData.length;i++){
+      const p=freqData[i]/sum; if(p>0) ent-=p*Math.log2(p);
+    }
+    ent/=Math.log2(freqData.length);
+  }
+  entropy+=(ent-entropy)*.04;
+}
+
+/* glitch */
+let glitchActive=false,glitchTimer=0,glitchType=0,lastGlitch=0;
+function maybeGlitch(){
+  if(glitchActive||!analyser) return;
+  if(entropy<.68&&vol<.48) return;
+  if(frame-lastGlitch<110) return;
+  if(Math.random()>.013) return;
+  glitchActive=true; glitchTimer=0;
+  glitchType=Math.random()<.55?0:1;
+  lastGlitch=frame;
+}
+function applyGlitch(){
+  if(!glitchActive){
+    screen.style.transform="";
+    glitchBand.style.display="none";
+    return;
+  }
+  glitchTimer++;
+  const dur=glitchType===0?20:9;
+  if(glitchType===0){
+    const d=1-glitchTimer/dur;
+    screen.style.transform=
+      `translate(${(Math.random()-.5)*7*d}px,${(Math.random()-.5)*2*d}px)`;
+    glitchBand.style.display="none";
+  } else {
+    glitchBand.style.display="block";
+    glitchBand.style.top=`${(glitchTimer/dur)*108-4}%`;
+    glitchBand.style.opacity=`${1-glitchTimer/dur}`;
+    screen.style.transform="";
+  }
+  if(glitchTimer>=dur){
+    glitchActive=false;
+    screen.style.transform="";
+    glitchBand.style.display="none";
+  }
+}
+
+/* ════════════════════════════════════════════════
+   BACKGROUND FIGURES
+   Bureaucratic apparatus: charts, regression lines,
+   tables, confidence intervals, axis labels.
+   Each figure has a lifespan — fades in, holds,
+   fades out. New ones spawn stochastically.
+   They feel like slides in a presentation nobody
+   asked for, justifying a decision already made.
+════════════════════════════════════════════════ */
+
+const figures = [];
+const COLS = ["GAMBIA","CUBA"];
+const METRICS = [
+  "GNI per capita","HDI index","U5 mortality","Gini coeff",
+  "Literacy rate","Life expect.","DALY burden","Aid/GDP ratio",
+  "Maternal mort.","Access water","Sanitation %","GDP growth"
+];
+
+function spawnFigure(){
+  const type = Math.floor(Math.random()*5);
+  const W=bg.width, H=bg.height;
+  // place in margins — left or right of centre canvas
+  const side = Math.random()<.5?-1:1;
+  const x = W/2 + side*(Math.min(210+Math.random()*80, W*.38));
+  const y = H*.12 + Math.random()*H*.72;
+  figures.push({
+    type,x,y,
+    born:frame,
+    life:220+Math.random()*280,
+    // random data for two countries
+    dataA: Array.from({length:6},()=>Math.random()),
+    dataB: Array.from({length:6},()=>Math.random()),
+    metric: METRICS[Math.floor(Math.random()*METRICS.length)],
+    seed: Math.random()*100|0
+  });
+}
+
+function drawFigures(){
+  bctx.clearRect(0,0,bg.width,bg.height);
+
+  // spawn rate tied to audio energy
+  const spawnChance = .008 + (analyser ? vol*.018 : 0);
+  if(Math.random()<spawnChance && figures.length<12) spawnFigure();
+
+  figures.forEach((f,fi)=>{
+    const age = (frame-f.born)/f.life;
+    if(age>=1){ figures.splice(fi,1); return; }
+    // fade envelope: in over 12%, hold, out over 18%
+    let alpha;
+    if(age<.12)       alpha = age/.12;
+    else if(age<.82)  alpha = 1;
+    else              alpha = 1-(age-.82)/.18;
+    alpha *= .28; // max opacity — dim, background, institutional
+
+    bctx.save();
+    bctx.translate(f.x,f.y);
+    bctx.globalAlpha = alpha;
+    bctx.font="7px monospace";
+    bctx.fillStyle="#00ff41";
+    bctx.strokeStyle="#00ff41";
+    bctx.lineWidth=.8;
+
+    if(f.type===0){
+      // bar chart — side by side comparison
+      drawBarChart(bctx,f);
+    } else if(f.type===1){
+      // scatter + regression line
+      drawScatter(bctx,f);
+    } else if(f.type===2){
+      // data table — two columns
+      drawTable(bctx,f);
+    } else if(f.type===3){
+      // confidence interval plot
+      drawConfInterval(bctx,f);
+    } else {
+      // axis cross with label
+      drawAxisCross(bctx,f);
+    }
+
+    bctx.restore();
+  });
+}
+
+function drawBarChart(c,f){
+  const W=90,H=60;
+  // axes
+  c.beginPath();
+  c.moveTo(0,H);c.lineTo(0,0);c.moveTo(0,H);c.lineTo(W,H);
+  c.stroke();
+  const bars=3, bw=10, gap=8;
+  const ox=12;
+  for(let i=0;i<bars;i++){
+    const hA=f.dataA[i]*H*.85;
+    const hB=f.dataB[i]*H*.85;
+    c.fillStyle="rgba(0,255,65,.35)";
+    c.fillRect(ox+i*(bw*2+gap),H-hA,bw,hA);
+    c.fillStyle="rgba(0,255,65,.18)";
+    c.fillRect(ox+i*(bw*2+gap)+bw+1,H-hB,bw,hB);
+  }
+  c.font="6px monospace";
+  c.fillStyle="#00ff41";
+  c.fillText(COLS[0],2,H+8);
+  c.fillText(COLS[1],46,H+8);
+  c.fillText(f.metric,-4,-4);
+}
+
+function drawScatter(c,f){
+  const W=80,H=60;
+  c.beginPath();
+  c.moveTo(0,H);c.lineTo(0,0);c.moveTo(0,H);c.lineTo(W,H);
+  c.stroke();
+  // points
+  for(let i=0;i<8;i++){
+    const x=(f.dataA[i%6]*.7+i/8*.3)*W;
+    const y=H-(f.dataB[i%6]*.7+(1-i/8)*.3)*H;
+    c.beginPath();c.arc(x,y,1.5,0,Math.PI*2);
+    c.fillStyle="rgba(0,255,65,.55)";c.fill();
+  }
+  // regression line — always looks authoritative
+  c.beginPath();c.moveTo(4,H-8);c.lineTo(W-4,12);
+  c.strokeStyle="rgba(0,255,65,.5)";c.lineWidth=1;c.stroke();
+  c.font="6px monospace";
+  c.fillStyle="#00ff41";
+  c.fillText(`r²=0.${(f.seed%40+55)}`,2,H+8);
+}
+
+function drawTable(c,f){
+  const rows=4,rh=11,cw=44;
+  c.font="6px monospace";
+  c.fillStyle="#00ff41";
+  c.fillText(COLS[0],cw*.1,-2);
+  c.fillText(COLS[1],cw*1.1,-2);
+  for(let r=0;r<rows;r++){
+    const y=r*rh+8;
+    c.fillStyle="rgba(0,255,65,.25)";
+    c.fillRect(0,y-7,cw*2+4,rh-1);
+    c.fillStyle="#00ff41";
+    const vA=(f.dataA[r%6]*99.9).toFixed(1);
+    const vB=(f.dataB[r%6]*99.9).toFixed(1);
+    const met=METRICS[(f.seed+r)%METRICS.length].slice(0,10);
+    c.fillText(met,-2,y+1);
+    c.fillText(vA,cw*.1+2,y+1);
+    c.fillText(vB,cw*1.1+2,y+1);
+  }
+}
+
+function drawConfInterval(c,f){
+  const W=80,H=50;
+  c.beginPath();
+  c.moveTo(0,H/2);c.lineTo(W,H/2);
+  c.strokeStyle="rgba(0,255,65,.2)";c.stroke();
+  // two CI bars
+  [.28,.68].forEach((xn,i)=>{
+    const x=xn*W;
+    const hw=(f.dataA[i]*.12+.06)*H;
+    const my=H/2+(i===0?-8:8);
+    c.beginPath();
+    c.moveTo(x,my-hw);c.lineTo(x,my+hw);
+    c.moveTo(x-6,my-hw);c.lineTo(x+6,my-hw);
+    c.moveTo(x-6,my+hw);c.lineTo(x+6,my+hw);
+    c.strokeStyle="rgba(0,255,65,.6)";c.lineWidth=1;c.stroke();
+    // mean dot
+    c.beginPath();c.arc(x,my,2.5,0,Math.PI*2);
+    c.fillStyle="rgba(0,255,65,.7)";c.fill();
+    c.font="6px monospace";
+    c.fillStyle="#00ff41";
+    c.fillText(COLS[i],x-12,i===0?my-hw-3:my+hw+8);
+  });
+  c.font="6px monospace";
+  c.fillStyle="#00ff41";
+  c.fillText("95% CI",-2,H+8);
+}
+
+function drawAxisCross(c,f){
+  const S=60;
+  c.beginPath();
+  c.moveTo(0,S/2);c.lineTo(S,S/2);
+  c.moveTo(S/2,0);c.lineTo(S/2,S);
+  c.strokeStyle="rgba(0,255,65,.25)";c.stroke();
+  // diagonal — the counterfactual equivalence line
+  c.beginPath();c.moveTo(0,S);c.lineTo(S,0);
+  c.strokeStyle="rgba(0,255,65,.18)";
+  c.setLineDash([3,5]);c.stroke();c.setLineDash([]);
+  c.font="6px monospace";c.fillStyle="#00ff41";
+  c.fillText(f.metric,-2,S+8);
+  c.fillText("counterfactual",0,S+16);
+}
+
+/* ════════════════════════════════════════════════
+   MAIN LISSAJOUS
+   Two signals — A (Gambia) and B (Cuba) — fed into
+   a lissajous as X and Y. They are genuinely different
+   oscillations but the apparatus produces a single
+   authoritative trace that makes them comparable.
+   The trace is clean, precise, institutional.
+   A slow erasure drift: over time the two signals
+   converge toward the same lag, collapsing the
+   distinction. The counterfactual ghost shows what
+   the trace looked like before convergence.
+════════════════════════════════════════════════ */
+
+let erasureT   = 0;   // 0=distinct 1=converged
+let ghostBuf   = null;
+let ghostTimer = 0;
+
+function drawMain(){
+  if(!analyser) return;
+
+  const N = timeData.length;
+
+  // erasure: slowly converge the two lags toward each other
+  // resets when bass spikes — the decision gets re-examined
+  erasureT += .00025 + mid*.00015;
+  if(bass>.22 && Math.random()<.04){
+    erasureT = Math.max(0, erasureT - .12);
+  }
+  erasureT = Math.min(erasureT, 1);
+
+  // lag A — Gambia signal: shorter lag, faster oscillation
+  const lagA_base = Math.floor(N*.18)&~1;
+  // lag B — Cuba signal: longer lag, different character
+  const lagB_base = Math.floor(N*.34)&~1;
+  // erasure convergence: both lags pulled toward .25 (the false equivalence)
+  const lagA = Math.floor(N*((.18*(1-erasureT) + .25*erasureT)))&~1;
+  const lagB = Math.floor(N*((.34*(1-erasureT) + .25*erasureT)))&~1;
+
+  // ghost — what the trace looked like before erasure began
+  // captured periodically; fades
+  ghostTimer++;
+  if(ghostTimer%180===0 && erasureT<.4){
+    ghostBuf = new Uint8Array(timeData);
+  }
+
+  if(ghostBuf && erasureT>.05){
+    const ghostLagA = Math.floor(N*.18)&~1;
+    const ghostLagB = Math.floor(N*.34)&~1;
+    ctx.beginPath();
+    for(let i=0;i<ghostBuf.length;i+=3){
+      const a=(ghostBuf[i]-128)/128;
+      const b=(ghostBuf[(i+ghostLagA)%ghostBuf.length]-128)/128;
+      // X = A-signal, Y = B-signal (lissajous proper)
+      const bv=(ghostBuf[(i+ghostLagB)%ghostBuf.length]-128)/128;
+      if(i===0) ctx.moveTo(cx+a*SZ*.28,cy+bv*SZ*.28);
+      else      ctx.lineTo(cx+a*SZ*.28,cy+bv*SZ*.28);
+    }
+    ctx.strokeStyle=`rgba(0,255,65,${erasureT*.07})`;
+    ctx.lineWidth=.6; ctx.stroke();
+  }
+
+  // main trace — X driven by signal A lag, Y by signal B lag
+  ctx.beginPath();
+  for(let i=0;i<N;i+=2){
+    const a=(timeData[i]-128)/128;
+    const b=(timeData[(i+lagA)%N]-128)/128;
+    const bv=(timeData[(i+lagB)%N]-128)/128;
+    // as erasure progresses, Y collapses toward X (false equivalence)
+    const yMix = b*(1-erasureT*.6) + a*erasureT*.6;
+    if(i===0) ctx.moveTo(cx+a*SZ*.28,cy+yMix*SZ*.28);
+    else      ctx.lineTo(cx+a*SZ*.28,cy+yMix*SZ*.28);
+  }
+  ctx.strokeStyle=`rgba(0,255,65,${.52+mid*.18})`;
+  ctx.lineWidth=1.2+bass*.5;
+  ctx.shadowBlur=6+bass*10;
+  ctx.shadowColor="rgba(0,255,65,.35)";
+  ctx.stroke();
+  ctx.shadowBlur=0;
+
+  // convergence indicator — when fully erased, a near-diagonal
+  // forms (one signal = the other), with a faint label
+  if(erasureT>.7){
+    ctx.save();
+    ctx.globalAlpha=(erasureT-.7)/.3*.18;
+    ctx.beginPath();
+    ctx.moveTo(cx-SZ*.28,cy+SZ*.28);
+    ctx.lineTo(cx+SZ*.28,cy-SZ*.28);
+    ctx.strokeStyle="#00ff41";
+    ctx.lineWidth=.7;
+    ctx.setLineDash([2,8]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.font="7px monospace";
+    ctx.fillStyle="#00ff41";
+    ctx.fillText("EQUIVALENT",cx-28,cy+SZ*.30);
+    ctx.restore();
+  }
+}
+
+/* main loop */
+function draw(){
+  frame++;
+  updateEnergy();
+  maybeGlitch();
+  applyGlitch();
+
+  // phosphor
+  ctx.fillStyle="rgba(0,0,0,.14)";
+  ctx.fillRect(0,0,SZ,SZ);
+
+  drawFigures();
+  drawMain();
+
+  // idle pulse before audio
+  if(!analyser){
+    ctx.beginPath();
+    ctx.arc(cx,cy,3+Math.sin(frame*.04)*1.5,0,Math.PI*2);
+    ctx.fillStyle="rgba(0,255,65,.18)";
+    ctx.fill();
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>
