@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# See conformance/run for the contract this must satisfy.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+FIXTURE_DIR="$(cd "$1" && pwd)"
+mkdir -p "$2"
+OUTPUT_DIR="$(cd "$2" && pwd)"
+cd "$DIR"
+exec python3 -m glossfero.cli "$FIXTURE_DIR" "$OUTPUT_DIR"

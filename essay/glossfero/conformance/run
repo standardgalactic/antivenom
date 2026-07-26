@@ -1,0 +1,151 @@
+#!/usr/bin/env bash
+# conformance/run <language> [fixture...]
+#
+# Runs one language's implementation against one or more fixtures under
+# fixtures/, then diffs its output against golden/<fixture>/ using
+# conformance/diff.py (the reference differ; see diff.py's own docstring
+# for the exact-match / bounded-match rules it applies).
+#
+# This script currently defines the CONTRACT each language implementation
+# must satisfy to be pluggable here. As of this milestone, no language
+# implementation exists yet under rust/, haskell/, python/, clojure/ --
+# this is deliberately the first thing spec/ nails down so that when those
+# implementations start, they all target the same harness from day one.
+#
+# Contract: `<lang>/conformance-entrypoint <fixture-dir> <output-dir>` must:
+#   - accept a fixture directory (e.g. fixtures/repo-small-001) as $1
+#   - accept an output directory as $2, which it should create if absent
+#   - run DISCOVER -> MEASURE -> SUMMARIZE -> PROPOSE PARTITION ->
+#     GLOBAL COLLISION CHECK -> CLASSIFY OBJECT TYPE -> NAME against that
+#     fixture, treating the registry as containing only that one repository
+#   - write, into the output directory:
+#       repo_record.json
+#       proposal.<candidate_root>.json      (one per proposed candidate)
+#       collision_result.<candidate_root>.json
+#       glossfero_name.<candidate_root>.json
+#     each canonically serialized per spec/protocol/protocol.md §8
+#   - exit 0 on success, non-zero on any internal error
+#
+# Elm is exempt from this contract (see spec/protocol/protocol.md and the
+# design discussion: Elm implements the review UI and pure model
+# transformations, not the scanning pipeline, so it has nothing to run
+# headlessly against a fixture in this sense).
+
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+usage() {
+  echo "usage: $0 <rust|haskell|python|clojure> [fixture-name ...] [--stage=discover-measure|full]" >&2
+  echo "  with no fixture-name given, runs against every fixture under fixtures/" >&2
+  echo "  --stage=discover-measure (default) only checks repo_record.json --" >&2
+  echo "    use this while an implementation has not yet reached PROPOSE PARTITION." >&2
+  echo "  --stage=full also requires proposal/collision_result/glossfero_name output." >&2
+  exit 2
+}
+
+[ $# -ge 1 ] || usage
+LANG="$1"; shift
+
+STAGE="discover-measure"
+POSITIONAL=()
+for ARG in "$@"; do
+  case "$ARG" in
+    --stage=*) STAGE="${ARG#--stage=}" ;;
+    *) POSITIONAL+=("$ARG") ;;
+  esac
+done
+set -- "${POSITIONAL[@]:-}"
+[ "${1:-}" = "" ] && set --
+
+case "$STAGE" in
+  discover-measure|full) ;;
+  *) echo "unknown --stage: $STAGE" >&2; usage ;;
+esac
+
+case "$LANG" in
+  rust|haskell|python|clojure) ;;
+  *) echo "unsupported language: $LANG (elm has no headless conformance entrypoint)" >&2; exit 2 ;;
+esac
+
+ENTRYPOINT="$ROOT_DIR/$LANG/conformance-entrypoint"
+if [ ! -x "$ENTRYPOINT" ]; then
+  echo "no conformance entrypoint at $ENTRYPOINT yet -- nothing to run." >&2
+  echo "see conformance/run's own header comment for the contract it must satisfy." >&2
+  exit 1
+fi
+
+if [ $# -eq 0 ]; then
+  mapfile -t FIXTURES < <(find "$ROOT_DIR/fixtures" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;)
+else
+  FIXTURES=("$@")
+fi
+
+OVERALL_STATUS=0
+
+for FIXTURE in "${FIXTURES[@]}"; do
+  FIXTURE_DIR="$ROOT_DIR/fixtures/$FIXTURE"
+  GOLDEN_DIR="$ROOT_DIR/golden/$FIXTURE"
+  OUT_DIR="$ROOT_DIR/conformance/.out/$LANG/$FIXTURE"
+
+  if [ ! -d "$FIXTURE_DIR" ]; then
+    echo "no such fixture: $FIXTURE" >&2
+    OVERALL_STATUS=1
+    continue
+  fi
+  if [ ! -d "$GOLDEN_DIR" ]; then
+    echo "no golden output for fixture $FIXTURE -- skipping" >&2
+    continue
+  fi
+
+  mkdir -p "$OUT_DIR"
+  echo "== $LANG :: $FIXTURE =="
+  "$ENTRYPOINT" "$FIXTURE_DIR" "$OUT_DIR"
+
+  if [ -f "$OUT_DIR/repo_record.json" ] && [ -f "$GOLDEN_DIR/expected.repo_record.json" ]; then
+    python3 "$SCRIPT_DIR/diff.py" repo_record "$GOLDEN_DIR/expected.repo_record.json" "$OUT_DIR/repo_record.json" \
+      || OVERALL_STATUS=1
+  fi
+
+  for GOLD_PROPOSAL in "$GOLDEN_DIR"/expected.proposal*.json; do
+    [ -e "$GOLD_PROPOSAL" ] || continue
+    [ "$STAGE" = "full" ] || continue
+    BASE="$(basename "$GOLD_PROPOSAL")"
+    OUT_MATCH="$OUT_DIR/${BASE#expected.}"
+    if [ -f "$OUT_MATCH" ]; then
+      python3 "$SCRIPT_DIR/diff.py" proposal "$GOLD_PROPOSAL" "$OUT_MATCH" || OVERALL_STATUS=1
+    else
+      echo "missing expected output: $OUT_MATCH" >&2
+      OVERALL_STATUS=1
+    fi
+  done
+
+  for GOLD_COLL in "$GOLDEN_DIR"/expected.collision_result*.json; do
+    [ -e "$GOLD_COLL" ] || continue
+    [ "$STAGE" = "full" ] || continue
+    BASE="$(basename "$GOLD_COLL")"
+    OUT_MATCH="$OUT_DIR/${BASE#expected.}"
+    if [ -f "$OUT_MATCH" ]; then
+      python3 "$SCRIPT_DIR/diff.py" collision_result "$GOLD_COLL" "$OUT_MATCH" || OVERALL_STATUS=1
+    else
+      echo "missing expected output: $OUT_MATCH" >&2
+      OVERALL_STATUS=1
+    fi
+  done
+
+  for GOLD_NAME in "$GOLDEN_DIR"/expected.glossfero_name*.json; do
+    [ -e "$GOLD_NAME" ] || continue
+    [ "$STAGE" = "full" ] || continue
+    BASE="$(basename "$GOLD_NAME")"
+    OUT_MATCH="$OUT_DIR/${BASE#expected.}"
+    if [ -f "$OUT_MATCH" ]; then
+      python3 "$SCRIPT_DIR/diff.py" glossfero_name "$GOLD_NAME" "$OUT_MATCH" || OVERALL_STATUS=1
+    else
+      echo "missing expected output: $OUT_MATCH" >&2
+      OVERALL_STATUS=1
+    fi
+  done
+done
+
+exit $OVERALL_STATUS

@@ -10,4 +10,14 @@
 
 ![](contraction-infographic.png)
 
+[Admissibility Groupoids](https://standardgalactic.github.io/antivenom/essay/admissibility_groupoids.pdf)
 
+[Glossfero and Popo](https://standardgalactic.github.io/antivenom/essay/glossfero-essay.pdf)
+
+[Structural Honesty](https://standardgalactic.github.io/antivenom/essay/structural-honesty.pdf)
+
+[Paracosms of the Strange](https://standardgalactic.github.io/antivenom/essay/paracosms-of-the-strange.pdf)
+
+<!-- Bonus Material
+![](paracosms-infographic.png)
+-->

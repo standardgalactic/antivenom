@@ -215,6 +215,7 @@ g/\v\c<amplitwist>/call add(g:flyxion_matches, line('.') . "\x01" . getline('.')
 %s/\v\c<Zeem's scaled>/zoom-scaled/g
 %s/\v\c<Happo Praxis>/Haplopraxis/g
 %s/\v\c<haphopraxis>/Haplopraxis/g
+%s/\v\c<Mathpetitions>/mathematicians/g
 wq!
 EOF
 

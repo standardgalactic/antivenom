@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# See conformance/run for the contract this must satisfy.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BIN="$DIR/target/release/conformance-cli"
+if [ ! -x "$BIN" ]; then
+  (cd "$DIR" && cargo build --release --quiet)
+fi
+exec "$BIN" "$1" "$2"

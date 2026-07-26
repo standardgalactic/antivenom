@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Glossfero — Review</title>
+  <script src="elm.js"></script>
+  <style>
+    body { font-family: sans-serif; max-width: 640px; margin: 2rem auto; }
+    .glossfero-actions button { margin-right: 0.5rem; }
+    .glossfero-error { color: #b00; }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    // Illustrative flags: spec/examples/proposal.example.json and
+    // spec/examples/collision_result.example.json, chosen over the
+    // golden repo-small-001 fixture's own proposal/collision_result
+    // specifically because the golden fixture's registry is empty
+    // (classification NEW, nearest_existing []), which makes for a
+    // correct but visually uninteresting demo of the review screen.
+    // These two example files match the "PROPOSED: parser.bubble /
+    // nearest existing: 0.94 parser-core.object / ..." mockup from the
+    // design discussion directly.
+    var flags = {
+      proposal: {
+        proposal_id: "prop_01J8X9K2R3M4N5P6Q7S8T9V0W1",
+        source_repo: "sha256:4316c68fcd1efdc236b6aef2ec5d0ee6e9bae544c69fbfc5a060a939b3c9d280",
+        source_commit: "abc123def456abc123def456abc123def456abc",
+        candidate_root: "parser",
+        source_paths: ["src/parser", "tests/parser"],
+        summary: "Parsing and syntax normalization subsystem.",
+        dependencies_in: ["core"],
+        dependencies_out: ["schema"],
+        estimated_files: 181,
+        estimated_bytes: 4291830,
+        cochange_score: 0.81,
+        semantic_cohesion: 0.88,
+        cross_boundary_cost: 0.13,
+        score: null,
+        status: "human_reviewed",
+        collision_check_id: "coll_01J8X9K2R3M4N5P6Q7S8T9V0W2",
+        glossfero_name: {
+          semantic_root: "parser",
+          object_type: "bubble",
+          discriminator: null,
+          full_name: "parser.bubble",
+          status: "candidate",
+          assigned_to_repo_id: null
+        }
+      },
+      collisionResult: {
+        collision_check_id: "coll_01J8X9K2R3M4N5P6Q7S8T9V0W2",
+        proposal_id: "prop_01J8X9K2R3M4N5P6Q7S8T9V0W1",
+        checked_at: "2026-07-25T00:05:00Z",
+        classification: "RELATED_DIFFERENT_OBJECT",
+        stage_reached: "semantic_summary",
+        nearest_existing: [
+          { repo_id_or_name: "parser-core.object", similarity: 0.91, structural_overlap: 0.74, shared_history: false },
+          { repo_id_or_name: "parsing-notes.text", similarity: 0.81, structural_overlap: 0.12, shared_history: false },
+          { repo_id_or_name: "old-parser.cloak", similarity: 0.49, structural_overlap: 0.30, shared_history: true }
+        ],
+        reason: "High name and semantic similarity to parser-core.object, but structural overlap is partial.",
+        requires_human_review: true
+      }
+    };
+
+    var app = Elm.Main.init({ node: document.getElementById("app"), flags: flags });
+  </script>
+</body>
+</html>

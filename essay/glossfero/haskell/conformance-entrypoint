@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# See conformance/run for the contract this must satisfy.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BIN="$DIR/build/conformance-cli"
+if [ ! -x "$BIN" ]; then
+  (cd "$DIR" && ghc --make -isrc -iapp app/Main.hs -o build/conformance-cli -outputdir build/obj -v0)
+fi
+exec "$BIN" "$1" "$2"

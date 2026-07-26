@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# See conformance/run for the contract this must satisfy.
+set -euo pipefail
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CP="$DIR/src:/usr/share/java/clojure-1.11.jar:/usr/share/java/data.json.jar"
+exec java -cp "$CP" clojure.main -m glossfero.cli "$1" "$2"
