@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Why More Cameras Mean Less Truth — Lissajous Audio Trace</title>
+  <style>
+    :root{--ink:#071819;--glass:#082a29;--green:#95f5b0;--amber:#ffbd58;--paper:#ead8ae;--red:#d55736;--controls-h:76px}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:#100f0d;color:var(--paper);font-family:Georgia,serif}
+    body{display:grid;place-items:center;padding:18px;padding-bottom:calc(var(--controls-h) + 24px);background-image:radial-gradient(#ffffff0a 1px,transparent 1px);background-size:4px 4px}
+    main{width:min(1100px,100%);border:3px solid #bd9d60;background:#24231e;box-shadow:0 18px 70px #000,inset 0 0 0 5px #100f0d;padding:clamp(14px,3vw,30px)}
+    header{display:flex;justify-content:space-between;gap:20px;align-items:end;border-bottom:2px solid #7e704f;padding-bottom:13px;margin-bottom:18px}
+    h1{font:900 clamp(24px,5vw,52px)/.9 Impact,Haettenschweiler,sans-serif;letter-spacing:.035em;margin:0;color:var(--amber);text-transform:uppercase}
+    header p{margin:7px 0 0;font:700 12px/1.2 ui-monospace,monospace;letter-spacing:.14em;color:#bcb18f;text-transform:uppercase}
+    .lamp{font:700 11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}.lamp::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#625b49;margin-right:8px;box-shadow:0 0 0 2px #111}.lamp.live::before{background:var(--green);box-shadow:0 0 12px var(--green),0 0 0 2px #111}
+    .scope{position:relative;aspect-ratio:16/10;border:12px solid #0a0b09;border-radius:34px;background:var(--glass);overflow:hidden;box-shadow:inset 0 0 70px #000,inset 0 0 0 2px #766947}
+    .scope::after{content:"";pointer-events:none;position:absolute;inset:0;background:repeating-linear-gradient(0deg,#fff0 0 3px,#fff .6px 4px);opacity:.035}
+    canvas{display:block;width:100%;height:100%}
+    .readout{position:absolute;left:18px;top:15px;font:700 clamp(10px,1.4vw,14px) ui-monospace,monospace;color:#8bd3a1;text-shadow:0 0 8px #53ff85;letter-spacing:.1em;pointer-events:none}
+
+    .captions{margin-top:14px;height:3.4em;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:.4em 1em;background:#021514;border:1px solid #77dc9866;border-radius:8px;color:#e9f7d5;text-align:center;font:700 clamp(13px,2vw,20px)/1.25 Georgia,serif;opacity:0;transition:opacity .15s}
+    .captions.show{opacity:1}
+
+    .controls{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;align-items:center;gap:16px;padding:14px clamp(14px,3vw,30px);padding-bottom:calc(14px + env(safe-area-inset-bottom));background:#1a1913;border-top:2px solid #7e704f;box-shadow:0 -10px 30px #000a}
+    .controls-inner{width:min(1100px,100%);margin:0 auto;display:flex;align-items:center;gap:16px}
+    button#playpause{flex:0 0 auto;border:2px solid #0a0b09;background:var(--amber);color:#171710;padding:12px 22px;font:800 12px ui-monospace,monospace;text-transform:uppercase;letter-spacing:.08em;box-shadow:inset 0 0 0 1px #fff6;cursor:pointer}
+    button#playpause:hover{filter:brightness(1.08)}
+    .timeline{flex:1 1 auto;display:flex;align-items:center;gap:12px}
+    .timeline input[type=range]{flex:1;height:22px;accent-color:var(--amber)}
+    .timeline span{font:700 11px ui-monospace,monospace;color:#bcb18f;letter-spacing:.06em;white-space:nowrap}
+
+    audio{display:none}
+  </style>
+</head>
+<body>
+<main>
+  <header><div><h1>More Cameras, Less Truth</h1><p>The Power of Paranoia — book overview, phase portrait</p></div><div id="lamp" class="lamp">signal idle</div></header>
+  <section class="scope" aria-label="Lissajous oscilloscope display">
+    <canvas id="scope"></canvas><div id="readout" class="readout">0.00 dB</div>
+  </section>
+  <div id="caption" class="captions" aria-live="polite"></div>
+  <audio id="audio" preload="metadata" src="Why_more_cameras_mean_less_truth.mp3"><track id="subtitles" kind="subtitles" srclang="en" label="English" src="Why_more_cameras_mean_less_truth.vtt" default></audio>
+</main>
+<section class="controls">
+  <div class="controls-inner">
+    <button id="playpause">Play</button>
+    <div class="timeline">
+      <span id="elapsed">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" step="1" value="0">
+      <span id="duration">0:00</span>
+    </div>
+  </div>
+</section>
+<script>
+(() => {
+  const audio=document.querySelector('#audio'), canvas=document.querySelector('#scope');
+  const ctx2d=canvas.getContext('2d'), lamp=document.querySelector('#lamp'), readout=document.querySelector('#readout'), caption=document.querySelector('#caption');
+  const playBtn=document.querySelector('#playpause'), seek=document.querySelector('#seek'), elapsedEl=document.querySelector('#elapsed'), durationEl=document.querySelector('#duration');
+
+  // Fixed trace parameters (no user-facing toggles): plot the signal against a
+  // delayed copy of itself, which reliably produces a broad, non-flat loop even
+  // when left and right channels are identical (mono-sourced) audio.
+  const DELAY = 46;
+  const SCALE = 0.82;
+  const FADE = 0.045;
+
+  let ac,source,split,left,right,leftData,rightData,raf,seeking=false;
+
+  function fmtTime(s){if(!isFinite(s))return'0:00';const m=Math.floor(s/60),r=Math.floor(s%60);return`${m}:${r.toString().padStart(2,'0')}`}
+
+  function size(){const d=devicePixelRatio||1,r=canvas.getBoundingClientRect();canvas.width=Math.round(r.width*d);canvas.height=Math.round(r.height*d);ctx2d.setTransform(d,0,0,d,0,0);drawGrid(r.width,r.height)}
+  function drawGrid(w,h){ctx2d.fillStyle='#082a29';ctx2d.fillRect(0,0,w,h);ctx2d.strokeStyle='#5ba47b35';ctx2d.lineWidth=1;for(let i=1;i<10;i++){ctx2d.beginPath();ctx2d.moveTo(w*i/10,0);ctx2d.lineTo(w*i/10,h);ctx2d.stroke();ctx2d.beginPath();ctx2d.moveTo(0,h*i/10);ctx2d.lineTo(w,h*i/10);ctx2d.stroke()}ctx2d.strokeStyle='#88d5a957';ctx2d.beginPath();ctx2d.moveTo(w/2,0);ctx2d.lineTo(w/2,h);ctx2d.moveTo(0,h/2);ctx2d.lineTo(w,h/2);ctx2d.stroke()}
+
+  async function init(){if(ac){if(ac.state==='suspended')await ac.resume();return}ac=new AudioContext();source=ac.createMediaElementSource(audio);split=ac.createChannelSplitter(2);left=ac.createAnalyser();right=ac.createAnalyser();left.fftSize=right.fftSize=2048;source.connect(split);split.connect(left,0);split.connect(right,1);source.connect(ac.destination);leftData=new Float32Array(left.fftSize);rightData=new Float32Array(right.fftSize)}
+
+  let frameCount=0;
+  function render(){
+    frameCount++;
+    // Throttle to roughly half the display refresh rate for a calmer, slower-moving trace.
+    if(frameCount%2===0){raf=requestAnimationFrame(render);return}
+    const w=canvas.clientWidth,h=canvas.clientHeight;
+    left.getFloatTimeDomainData(leftData);right.getFloatTimeDomainData(rightData);
+    ctx2d.fillStyle=`rgba(8,42,41,${FADE})`;ctx2d.fillRect(0,0,w,h);
+    ctx2d.lineWidth=1.5;ctx2d.strokeStyle='#9dffb8';ctx2d.shadowColor='#5cff87';ctx2d.shadowBlur=10;
+    ctx2d.beginPath();
+    let rms=0,started=false;
+    for(let i=0;i<leftData.length-DELAY;i+=2){
+      const x=leftData[i], y=leftData[i+DELAY];
+      rms+=x*x+y*y;
+      const px=w/2+x*w*SCALE, py=h/2-y*h*SCALE;
+      if(!started){ctx2d.moveTo(px,py);started=true}else ctx2d.lineTo(px,py);
+    }
+    ctx2d.stroke();ctx2d.shadowBlur=0;
+    rms=Math.sqrt(rms/(leftData.length-DELAY)/2);
+    const db=(rms?20*Math.log10(rms):-99).toFixed(1);
+    readout.textContent=`${db} dB`;
+    raf=requestAnimationFrame(render);
+  }
+
+  async function play(){await init();lamp.classList.add('live');lamp.textContent='signal active';playBtn.textContent='Pause';cancelAnimationFrame(raf);render()}
+
+  audio.addEventListener('play',play);
+  audio.addEventListener('pause',()=>{lamp.classList.remove('live');lamp.textContent='signal paused';playBtn.textContent='Play'});
+  audio.addEventListener('ended',()=>{lamp.classList.remove('live');lamp.textContent='signal ended';playBtn.textContent='Play'});
+
+  playBtn.addEventListener('click',async()=>{
+    if(audio.paused){await init();audio.play().catch(()=>{})}
+    else audio.pause();
+  });
+
+  audio.addEventListener('loadedmetadata',()=>{durationEl.textContent=fmtTime(audio.duration)});
+  audio.addEventListener('timeupdate',()=>{
+    if(seeking)return;
+    elapsedEl.textContent=fmtTime(audio.currentTime);
+    if(audio.duration)seek.value=String(Math.round((audio.currentTime/audio.duration)*1000));
+  });
+  seek.addEventListener('input',()=>{
+    seeking=true;
+    if(audio.duration)elapsedEl.textContent=fmtTime((seek.value/1000)*audio.duration);
+  });
+  seek.addEventListener('change',()=>{
+    if(audio.duration)audio.currentTime=(seek.value/1000)*audio.duration;
+    seeking=false;
+  });
+
+  function connectCaptions(){const textTrack=audio.textTracks[0];if(!textTrack)return;textTrack.mode='hidden';textTrack.oncuechange=()=>{const cues=[...textTrack.activeCues||[]];caption.textContent=cues.map(c=>c.text.replace(/<[^>]+>/g,'')).join('\n');caption.classList.toggle('show',cues.length>0)}}
+  document.querySelector('#subtitles').addEventListener('load',connectCaptions);connectCaptions();
+
+  addEventListener('resize',size);size();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2381 @@
+WEBVTT
+
+00:00.000 --> 00:06.240
+Have you ever opened up a massive spreadsheet or I guess maybe a massive database if that happens
+
+00:06.240 --> 00:10.680
+to be more your speed? Right. And you're just looking at all those neat perfectly aligned
+
+00:10.680 --> 00:16.620
+rows and columns and you stop and wonder like where does the meaning actually come from? Yeah
+
+00:16.620 --> 00:21.120
+it's a great question. Because does the computer sitting right in front of you actually know what
+
+00:21.120 --> 00:26.040
+these numbers mean or is it all just this elaborate illusion? It is a question that feels almost
+
+00:26.040 --> 00:31.760
+you know too simple to ask. Which usually means it is exactly the right question to start with.
+
+00:31.880 --> 00:36.480
+Exactly. I mean you look at the number 12 in a cell and you know it means 12 units sold.
+
+00:36.480 --> 00:43.400
+Does the software know that? We spend our entire days surrounded by data just trusting it implicitly.
+
+00:43.800 --> 00:50.600
+We never really interrogate how a piece of silicon knows the difference between say a zip code and a
+
+00:50.600 --> 00:57.340
+bank balance. Or if it's just blindly moving pixels around on a screen. So today we are answering that
+
+00:57.340 --> 01:01.720
+question and we have an incredibly fascinating source to guide us through it. We really do.
+
+01:02.000 --> 01:08.300
+It is a 2026 paper by the independent researcher Flyxion. It's titled Repartitioning Convention,
+
+01:08.800 --> 01:15.040
+Pebbles, Punched Cards, and the Migration of Schema. It is a phenomenal piece of research. I mean it's
+
+01:15.040 --> 01:21.300
+rigorous, deeply historically grounded and it just fundamentally changes how you look at modern data
+
+01:21.300 --> 01:27.480
+infrastructure. Totally. The mission for this deep dive is to trace the evolution of data all the way
+
+01:27.480 --> 01:34.040
+from ancient sheep herders using literal rocks straight through to modern JSON schemas. Right.
+
+01:34.200 --> 01:38.780
+And specifically we want to uncover the surprising truth that machines still don't actually understand
+
+01:38.780 --> 01:44.700
+our data. So okay let's unpack this. To set the stage here. Yeah. We need to understand that this paper
+
+01:44.700 --> 01:51.140
+is not just a chronological history of technology. Okay. It is a philosophical investigation into what
+
+01:51.140 --> 01:57.700
+Flyxion calls the location of convention. Location of convention. Yeah. Convention in this sense means
+
+01:57.700 --> 02:03.440
+the shared rules and agreements that give data its meaning. The core argument is about where those rules
+
+02:03.440 --> 02:07.160
+actually live. Because the rules have to live somewhere right? If the computer doesn't know the
+
+02:07.160 --> 02:13.700
+rules something else has to. That is the crux of the entire journey. For our conceptual backdrop today
+
+02:13.700 --> 02:18.500
+I want you to just imagine a split screen. Okay. I'm picturing it. On the left side of the screen
+
+02:18.500 --> 02:27.380
+you have a primitive rough-hewn clay bowl filled with just small unremarkable pebbles. Just rocks in a
+
+02:27.380 --> 02:32.320
+bowl. Right. And then on the right side of the screen you have a glowing modern computer monitor
+
+02:32.320 --> 02:40.200
+displaying a highly structured explicitly typed database schema. Oh I love that visual. A bowl of rocks on
+
+02:40.200 --> 02:45.900
+one side. A glowing matrix of code on the other. The journey we are going on today is the journey
+
+02:45.900 --> 02:50.720
+across that split screen. We are going to figure out how we got from the left side to the right side.
+
+02:50.760 --> 02:54.780
+And what we left behind along the way. So let's jump right into that left side of the screen.
+
+02:55.080 --> 03:00.860
+Take us back in time to this pre-literate herder. Yeah. Imagine a pastoral setting thousands of years
+
+03:00.860 --> 03:06.860
+ago. Long before the invention of written language. Right. And crucially long before anyone had invented
+
+03:06.860 --> 03:12.600
+a spoken vocabulary for abstract numbers. Wait really? So they couldn't even count out loud? No.
+
+03:12.860 --> 03:21.120
+No one in this society can say I have 47 sheep. The concept of 47 as a portable mathematical entity
+
+03:21.120 --> 03:28.680
+just does not exist yet. That is wild. But this herder still has a very real very pressing business
+
+03:28.680 --> 03:33.920
+problem. They need to know if every single sheep that left the pen in the morning to graze
+
+03:33.920 --> 03:40.080
+has returned safely by evening. Which is a remarkably tough problem if you literally cannot count them.
+
+03:40.240 --> 03:44.460
+I mean think about trying to take inventory in a warehouse today without using numbers. It seems
+
+03:44.460 --> 03:49.660
+impossible. It really does. And yet they solved it with a perfectly functional minimal accounting
+
+03:49.660 --> 03:55.640
+procedure. Using the rocks. Exactly. They use loose tokens, just ordinary pebbles, and a simple clay bowl.
+
+03:55.640 --> 04:00.300
+The mechanism is beautifully straightforward. How does it work? Well as each sheep passes through
+
+04:00.300 --> 04:04.960
+the gate at departure of the morning, the herder places exactly one pebble into the bowl. So one
+
+04:04.960 --> 04:09.860
+sheep goes out, one pebble goes in. Yep. Sheep go out, they graze all day. As evening falls, the flock
+
+04:09.860 --> 04:15.360
+returns. And as each sheep passes back through the gate into the pen, the herder removes one pebble from
+
+04:15.360 --> 04:21.860
+the bowl and sets it aside. It is just a pure physical matching game. One sheep in, one pebble out.
+
+04:21.860 --> 04:27.680
+Yes. It establishes a strict one-to-one correspondence between two collections,
+
+04:28.140 --> 04:32.660
+the sheep and the pebbles, without ever requiring a name for the total quantity.
+
+04:33.520 --> 04:36.680
+No, I have to jump in here and push back a little because in the paper,
+
+04:37.220 --> 04:42.180
+Flyxion argues that this bowl of pebbles is a digital information system. Right.
+
+04:42.520 --> 04:48.000
+And when I read that, I did a double take. Like, is this paper genuinely arguing that a bowl of rocks
+
+04:48.000 --> 04:52.500
+is digital? It is. Because when I think digital, you know, I think of electronics,
+
+04:52.800 --> 04:58.320
+silicon chips, Wi-Fi. How can a rock in a bowl be digital? It's a totally fair reaction because our
+
+04:58.320 --> 05:04.060
+modern colloquial use of the word digital has been completely hijacked by electronics. Right. We just
+
+05:04.060 --> 05:10.060
+use it to mean computerized. Exactly. But Flyxion is leaning into the older, much more foundational
+
+05:10.060 --> 05:15.340
+definition of the word. Digital fundamentally means discrete selection among alternatives. Okay.
+
+05:15.340 --> 05:20.940
+It actually comes from digitus, the Latin word for finger. Distinct, separate, countable units.
+
+05:21.120 --> 05:25.320
+Oh, like counting on your fingers. You don't have a half finger state. A finger is either up or down.
+
+05:25.620 --> 05:30.200
+That is the perfect way to look at it. The continuous flow of reality, like time passing,
+
+05:30.440 --> 05:36.100
+the sun moving, a chaotic mass of wool and hooves moving through a field that is all continuous and
+
+05:36.100 --> 05:41.080
+analog. And just blends together. Right. The pebble system takes that messy continuous flow
+
+05:41.080 --> 05:46.360
+and partitions it into countable, individuated, discrete units. I see.
+
+05:46.600 --> 05:51.700
+Each unit is registered by a distinct material change of state. A pebble is either inside the
+
+05:51.700 --> 05:56.180
+bowl or it is outside the bowl. There is no such thing as a pebble being 30% in the bowl.
+
+05:56.440 --> 06:00.600
+It's binary, essentially. Yes. The state of the individual pepper is binary.
+
+06:01.060 --> 06:03.380
+Yeah. So it is a fully digital information system,
+
+06:03.800 --> 06:06.000
+even though it predates electricity by millennia.
+
+06:06.000 --> 06:09.200
+That completely flips my understanding of the word digital.
+
+06:09.400 --> 06:11.300
+It operates by structural correspondence,
+
+06:11.640 --> 06:14.760
+not by continuous measurement like an analog thermometer would.
+
+06:14.820 --> 06:19.420
+Wow. Okay. I guess I've just been conflating the medium electricity with the logical structure.
+
+06:19.880 --> 06:22.680
+So we have this analog era, purely digital pebble system.
+
+06:23.220 --> 06:25.820
+What does it actually tell the herder at the end of the day?
+
+06:26.000 --> 06:29.140
+The procedure yields three progressively stronger results.
+
+06:29.620 --> 06:34.140
+And the herder gets the first two without needing to do a shred of arithmetic.
+
+06:34.140 --> 06:35.560
+Okay. What's the first one?
+
+06:36.040 --> 06:36.780
+The first result.
+
+06:37.820 --> 06:41.320
+If the bowl is completely empty after the returning flock has passed the gate,
+
+06:41.880 --> 06:45.280
+the herder knows that departures and returns have been exactly matched.
+
+06:45.540 --> 06:49.080
+Perfect parody. That's the happy path. You go to sleep peacefully.
+
+06:49.280 --> 06:53.380
+Exactly. The second result happens if pebbles remain in the bowl.
+
+06:54.040 --> 06:55.900
+Immediately, a deficit exists.
+
+06:56.080 --> 06:56.880
+Oh no.
+
+06:57.160 --> 07:00.320
+Yeah. The herder knows that at least one sheep is unaccounted for.
+
+07:00.320 --> 07:05.900
+And the crucial point here is that this knowledge is instantaneous and doesn't require calculation.
+
+07:06.280 --> 07:08.340
+Just seeing a rock in the bowl means danger.
+
+07:08.700 --> 07:11.920
+Right. The mere physical presence of a pebble is an alarm bell.
+
+07:12.020 --> 07:13.800
+You don't even need to know how many rocks.
+
+07:14.140 --> 07:17.580
+Just any rocks means a wolf had a good day or a sheep wandered off.
+
+07:17.800 --> 07:19.180
+Then we arrive at the third result.
+
+07:19.780 --> 07:23.620
+The remaining pebbles in that bowl preserve the exact magnitude of the deficit.
+
+07:24.160 --> 07:26.080
+They hold the precise size of the loss.
+
+07:26.380 --> 07:28.160
+But wait. The herder doesn't know the number.
+
+07:28.160 --> 07:31.020
+We establish they don't have a word for four or whatever.
+
+07:31.460 --> 07:32.940
+They don't have a name for the number. Correct.
+
+07:33.040 --> 07:35.360
+They can't run to their family and say four sheep are missing.
+
+07:35.640 --> 07:35.800
+Right.
+
+07:36.580 --> 07:39.460
+But the magnitude is still physically preserved to the system.
+
+07:39.860 --> 07:44.880
+If they wanted to, they could take those remaining pebbles and match them against something else to solve the problem.
+
+07:45.000 --> 07:45.400
+Like what?
+
+07:45.800 --> 07:48.620
+Maybe against the tracking dogs they need to send out to search.
+
+07:49.020 --> 07:49.260
+Yeah.
+
+07:49.380 --> 07:50.920
+One dog per pebble.
+
+07:51.480 --> 07:55.080
+The magnitude is stored, even if it isn't named or verbalized.
+
+07:55.080 --> 08:03.760
+That is wild. It's almost like having a variable in a computer program that holds a value in memory, but you just don't have a print function to display it on the screen.
+
+08:04.100 --> 08:05.700
+I really like that variable analogy.
+
+08:05.940 --> 08:11.260
+The data is there. It's structurally perfectly accurate. It's ready to be used in the next operation.
+
+08:11.260 --> 08:13.800
+It just can't be spoken aloud as an integer.
+
+08:14.200 --> 08:15.940
+It maps perfectly to what is happening.
+
+08:16.800 --> 08:26.060
+And, you know, speaking of computer programs, Flyxion actually provides a retrospective mathematical translation of this procedure to make the logic completely formal.
+
+08:26.420 --> 08:28.100
+Oh, I remember that equation in the paper.
+
+08:28.640 --> 08:33.860
+Let's walk through it carefully because it looks incredibly intimidating on the page, but it's actually describing something very grounded.
+
+08:34.340 --> 08:35.080
+It really is.
+
+08:35.080 --> 08:40.460
+So, it looks like this. We define capital P as the current multi-set of tokens in the bowl.
+
+08:40.660 --> 08:40.980
+Okay.
+
+08:40.980 --> 09:04.060
+And the state transition is written as, and bear with me, open parenthesis, capital P, comma, lowercase s, prime subscript i, close parenthesis, maps to, open parenthesis, capital P, set minus curly bracket, lowercase p, close curly bracket, comma, lowercase s, prime subscript i, close parenthesis.
+
+09:04.060 --> 09:11.680
+Okay. If anyone is listening to this in their car or on a run, do not try to visualize the syntax. I am going to translate that math back into the dirt in the sheep.
+
+09:11.800 --> 09:12.300
+Please do.
+
+09:12.640 --> 09:16.700
+Let's start with multi-set. Why is it a multi-set and not just a regular set?
+
+09:16.940 --> 09:22.140
+In mathematics, a standard set is a collection of distinct objects. You can't have duplicates.
+
+09:22.280 --> 09:22.500
+Okay.
+
+09:22.700 --> 09:33.280
+But a multi-set allows for multiple instances of identical items. The pebbles in the bowl are indistinguishable from one another. Pebble A is functionally the exact same as pebble B.
+
+09:33.280 --> 09:37.800
+So you just care about the aggregate collection, not the individual identity of the rocks.
+
+09:37.980 --> 09:38.500
+Exactly.
+
+09:38.740 --> 09:42.880
+Got it. And the rest of the equation, what is the s prime and the lowercase p?
+
+09:43.160 --> 09:50.480
+The s prime subscript represents the arrival of a specific returning sheep. That arrival is the trigger event.
+
+09:50.480 --> 10:03.780
+The equation is essentially saying that every time a returning sheep shows up, it gives you permission to subtract exactly one generic pebble, the lowercase p, from the total multi-set of pebbles in the bowl, which is the big P.
+
+10:03.940 --> 10:07.980
+So it's literally just a highly formal way of saying sheep arrives, pebble leaves.
+
+10:08.080 --> 10:13.780
+Yes. But the paper emphasizes something vital here. The herder does not need this math.
+
+10:13.780 --> 10:15.040
+Obviously not.
+
+10:15.120 --> 10:24.400
+Right. This notation is for us, as modern analysts, looking back to formalize the logic. The herder doesn't do arithmetic. The procedure is entirely relational.
+
+10:24.640 --> 10:28.140
+Because the meaning of a single pebble isn't the abstract number one.
+
+10:28.300 --> 10:34.640
+Exactly. The meaning is deeply tied to the event. It means one departure that has not yet been matched by a return.
+
+10:34.640 --> 10:38.380
+It's a placeholder for an unresolved event in the real world.
+
+10:38.500 --> 10:45.980
+Which brings us to one of the most profound insights in the paper. It's this distinction between a witness and an explanation.
+
+10:46.240 --> 10:47.600
+A witness and an explanation.
+
+10:48.000 --> 10:53.640
+The bowl of pebbles is a witness of discrepancy. It is not a representation of mechanism.
+
+10:54.440 --> 11:00.820
+Let's really dig into that, because I feel like this is a trap we still fall into with modern data dashboards all the time.
+
+11:00.820 --> 11:12.880
+Oh, absolutely. Think about it from the herder's perspective. If you look in the bowl at sunset and see three pebbles, the bowl is witnessing. It is attesting to the fact that a discrepancy occurred.
+
+11:12.980 --> 11:14.680
+Right. You are down three sheep.
+
+11:14.900 --> 11:24.400
+But it tells you absolutely nothing about the mechanism of the loss. It can't tell you which three sheep are missing. Was it the sheep with the black spot on its ear? It doesn't know.
+
+11:24.520 --> 11:25.440
+It has no idea.
+
+11:25.440 --> 11:30.700
+It can't tell you when they went missing. Did they escape at noon or at 4 p.m.? And it certainly can't tell you why.
+
+11:30.860 --> 11:31.080
+Right.
+
+11:31.400 --> 11:39.540
+The bowl preserves a highly compressed, lossy invariant, the unmatched cardinality of two event streams, and absolutely nothing else.
+
+11:39.700 --> 11:44.680
+It really reminds me of a tripwire in a security system versus a high-definition security camera.
+
+11:44.960 --> 11:46.120
+Oh, that's a great analogy.
+
+11:46.500 --> 11:54.060
+Because the camera is an explanation. You can watch the footage and see exactly who broke in, how they picked the lock, what time they did it, and what they stole.
+
+11:54.360 --> 11:54.800
+Exactly.
+
+11:54.800 --> 12:02.720
+But the tripwire is just a witness. You come in the next morning, the wire is snapped, and all you know is something happened.
+
+12:03.100 --> 12:03.400
+Yes.
+
+12:03.580 --> 12:11.360
+You know the perimeter was breached, but you have no mechanism, no narrative. The pubble bowl is basically just an ancient tripwire.
+
+12:11.520 --> 12:18.780
+That is a brilliant way to frame it. The tripwire alerts you to the discrepancy, but the investigative work still falls entirely on you.
+
+12:19.000 --> 12:20.500
+You still have to go find the sheep.
+
+12:20.500 --> 12:27.260
+Right. Now, what's truly fascinating here is looking at the physical pebbles themselves in isolation.
+
+12:28.160 --> 12:31.620
+The pebbles have absolutely no intrinsic semantic content.
+
+12:31.960 --> 12:33.700
+Meaning they don't mean anything on their own.
+
+12:33.700 --> 12:41.680
+Exactly. If a traveling merchant from another continent who didn't know the system walked up and looked at the bowl, they would just see a pile of rocks.
+
+12:41.880 --> 12:42.200
+Right.
+
+12:42.420 --> 12:50.280
+They couldn't determine if those rocks were tracking sheep, tracking days of labor, debts owed, or votes in a local tribal dispute.
+
+12:50.700 --> 12:53.480
+Because a rock is just a rock. It has no label on it.
+
+12:53.480 --> 12:58.900
+The physical substrate, the pebble, is entirely indifferent to the domain it happens to be tracking.
+
+12:59.320 --> 13:01.880
+So if the meaning isn't in the rock, where is it?
+
+13:02.020 --> 13:02.560
+Where is it?
+
+13:02.700 --> 13:04.140
+This is the core thesis of the paper.
+
+13:04.540 --> 13:11.640
+The convention that gives those pebbles their meaning, the rule that says one token equals one departure, is stored nowhere in the bowl.
+
+13:11.760 --> 13:12.480
+Oh, wow.
+
+13:12.580 --> 13:16.220
+It resides entirely in the herder's tacit embodied practice.
+
+13:16.220 --> 13:21.840
+It is in the human's mind, their cultural habits, their memory of the morning's procedure.
+
+13:22.040 --> 13:24.360
+So the computer, the bowl, is completely dumb.
+
+13:24.800 --> 13:30.540
+All the intelligence, all the context, all the meaning is hovering like a ghost completely outside of it.
+
+13:30.660 --> 13:34.700
+And this introduces a very practical, physical limitation to the system.
+
+13:34.900 --> 13:35.340
+What's that?
+
+13:35.540 --> 13:40.000
+Well, if you want to know how many sheep are currently out in the field at 2 p.m., you can just look at the bowl.
+
+13:40.660 --> 13:42.100
+The unremoved pebbles tell you.
+
+13:42.300 --> 13:42.660
+Okay.
+
+13:42.660 --> 13:48.140
+But what happens at 8 p.m. after all the sheep have returned and you've removed all the pebbles to match them?
+
+13:48.160 --> 13:49.020
+But the bowl is empty.
+
+13:49.440 --> 13:49.820
+Exactly.
+
+13:50.280 --> 13:56.540
+You cannot inspect the record after the fact because the act of matching the sheep consumes the record.
+
+13:56.840 --> 13:57.100
+Oh.
+
+13:57.480 --> 13:59.800
+Removing the pebble destroys the data state.
+
+13:59.960 --> 14:04.020
+If you want to review yesterday's grazing data to see how many sheep you had, you can't.
+
+14:04.200 --> 14:04.720
+It's gone.
+
+14:05.280 --> 14:07.120
+The system only exists in the present tense.
+
+14:07.120 --> 14:12.620
+Which is a huge problem if you're trying to run a larger, more complex agricultural operation.
+
+14:12.940 --> 14:13.060
+Right.
+
+14:13.260 --> 14:22.700
+Like, if you need to pay taxes to a local lord based on your flock size or prove to a merchant tomorrow what you had today, the bowl fails you completely.
+
+14:22.820 --> 14:23.220
+It does.
+
+14:23.480 --> 14:26.400
+You need to be able to look at the data without destroying it.
+
+14:26.460 --> 14:28.840
+So how do we make the record portable and durable?
+
+14:29.160 --> 14:30.720
+That requires a shift in medium.
+
+14:31.040 --> 14:34.300
+We have to move away from loose, movable tokens.
+
+14:34.400 --> 14:35.280
+Like writing it down.
+
+14:35.280 --> 14:38.220
+Yes, but not writing as we currently understand it.
+
+14:38.880 --> 14:43.460
+The next technological leap is the tally mark, scratched into a piece of wood or a bone.
+
+14:43.560 --> 14:44.220
+Right, right.
+
+14:44.360 --> 14:49.100
+This is a massive leap forward because it addresses that exact limitation of the consumed record.
+
+14:49.140 --> 14:50.040
+Because it's permanent.
+
+14:50.300 --> 14:50.660
+Exactly.
+
+14:51.120 --> 14:54.740
+A tally mark still corresponds one-to-one with an event, just like a pebble.
+
+14:55.200 --> 14:58.540
+One sheep leaves, you carve one scratch with a flint knife.
+
+14:58.660 --> 14:58.940
+Okay.
+
+14:58.940 --> 15:03.320
+But the difference is you can inspect the tally stick later without consuming the record.
+
+15:04.220 --> 15:07.000
+The discrete unit has become permanently etched.
+
+15:07.200 --> 15:07.860
+It is quotable.
+
+15:08.640 --> 15:10.360
+I can hand the bone to the tax collector?
+
+15:10.600 --> 15:11.040
+You can.
+
+15:11.220 --> 15:15.320
+But logically, underneath, it still works the exact same way as the bowl, right?
+
+15:15.660 --> 15:17.460
+One scratch equals one sheep.
+
+15:17.720 --> 15:20.080
+If you have five sheep, you carve five scratches.
+
+15:20.400 --> 15:22.280
+It relies entirely on repetition.
+
+15:22.280 --> 15:25.060
+It is what we call minimally symbolic.
+
+15:26.320 --> 15:31.820
+A tally of five strokes conveys the idea of five purely through repetition and spatial grouping.
+
+15:32.120 --> 15:33.480
+Just one, one, one, one.
+
+15:33.640 --> 15:33.860
+Right.
+
+15:34.100 --> 15:37.800
+There is no arbitrary sign standing for the abstract concept of five.
+
+15:38.100 --> 15:39.680
+It's still a physical correspondence.
+
+15:39.880 --> 15:42.360
+Which works fine for five sheep or even 20 sheep.
+
+15:42.820 --> 15:45.500
+But human civilization didn't stop at small flocks.
+
+15:45.620 --> 15:46.320
+No, it didn't.
+
+15:46.320 --> 15:55.080
+What if you were the administrator of a growing Mesopotamian city-state, and you need to track 47,000 bushels of wheat coming into the granary?
+
+15:55.320 --> 15:56.620
+Good luck with tally marks.
+
+15:57.100 --> 15:57.580
+Exactly.
+
+15:57.840 --> 16:00.920
+Tally marks are going to run out of runway incredibly fast.
+
+16:01.240 --> 16:05.060
+You would need a literal forest of tally sticks just to keep the city's books.
+
+16:05.060 --> 16:11.100
+And that logistical nightmare forces the next monumental shift in human data processing.
+
+16:11.460 --> 16:11.900
+Which is?
+
+16:12.200 --> 16:15.200
+The evolution from unary tallying to positional numerals.
+
+16:15.200 --> 16:23.240
+The cognitive jump from drawing 47 individual scratches on a bone to writing down the symbol 4 and the symbol 7 next to each other.
+
+16:23.660 --> 16:26.600
+I was thinking about this earlier, and I came up with an analogy for you.
+
+16:26.740 --> 16:27.780
+Tell me if this tracks.
+
+16:27.900 --> 16:28.360
+Let's hear it.
+
+16:28.680 --> 16:36.780
+Moving from drawing 47 tally marks to writing the number 47 is basically the ancient equivalent of compressing a computer file.
+
+16:37.260 --> 16:39.060
+Like zipping a folder on your desktop.
+
+16:39.240 --> 16:39.860
+Oh, that's interesting.
+
+16:39.860 --> 16:52.120
+You are taking this massive, sprawling physical representation, 47 physical scratches, and you are compressing it down into just two tiny arbitrary symbols on a clay tablet.
+
+16:52.240 --> 16:55.060
+It saves a massive amount of physical space on your ledger.
+
+16:55.200 --> 16:57.720
+It is a radical compression of physical space, yes.
+
+16:57.820 --> 16:57.920
+Yes.
+
+16:58.040 --> 16:59.180
+But there is a catch.
+
+16:59.560 --> 17:05.480
+When you zip a computer file, the file size gets tiny, but you can't just open it and read the text anymore.
+
+17:05.480 --> 17:06.520
+It looks like gibberish.
+
+17:06.680 --> 17:06.780
+Right.
+
+17:06.860 --> 17:08.180
+You need software to open it.
+
+17:08.300 --> 17:14.340
+You need a piece of decompression software installed on your computer to unpack it back into something useful.
+
+17:14.600 --> 17:15.760
+Oh, I see where you're going.
+
+17:16.100 --> 17:18.640
+Writing the number 47 is the exact same thing.
+
+17:19.200 --> 17:28.440
+You compress the data on the page, but you now require a huge, complex piece of decompression software to be installed in the human brain reading it.
+
+17:28.440 --> 17:30.440
+That is a phenomenal way to describe it.
+
+17:30.800 --> 17:38.140
+If we connect this to the bigger picture of the paper, Flyxion actually refers to your decompression software as the interpretive burden.
+
+17:38.220 --> 17:39.120
+The interpretive burden.
+
+17:39.260 --> 17:39.480
+Yes.
+
+17:40.040 --> 17:51.380
+Moving to positional numerals is a genuine world-changing game in physical efficiency, but it represents a massive, almost invisible increase in the interpretive burden placed on human convention.
+
+17:51.560 --> 17:55.380
+Because the rules of how to read the ledger just got exponentially more complicated.
+
+17:56.180 --> 17:56.660
+Exponentially.
+
+17:56.660 --> 17:58.840
+Think about the symbol 4.
+
+17:59.700 --> 18:03.720
+In the pebble system, one pebble means one thing, no matter where it sits in the bowl.
+
+18:04.380 --> 18:05.420
+Left side, right side, bottom.
+
+18:05.740 --> 18:07.180
+It's still one missing sheep.
+
+18:07.260 --> 18:07.480
+Right.
+
+18:07.860 --> 18:11.660
+On a tally stick, one scratch means one thing, no matter where it is on the bone.
+
+18:12.100 --> 18:17.400
+But in a positional numeral system, the symbol 4 in the tens place means 40.
+
+18:17.800 --> 18:18.120
+Right.
+
+18:18.420 --> 18:19.320
+But move it over.
+
+18:19.660 --> 18:25.040
+That exact same physical symbol, written just one inch to the right in the ones place, means 4.
+
+18:25.420 --> 18:25.860
+Wow.
+
+18:26.000 --> 18:26.240
+Yeah.
+
+18:26.660 --> 18:35.060
+A distinction like that, where spatial position radically alters mathematical magnitude, has absolutely no analog in a bowl of pebbles.
+
+18:35.300 --> 18:36.900
+It's a completely abstract rule.
+
+18:37.160 --> 18:42.380
+The physical position of the ink on the page completely changes the mathematical reality of what it represents.
+
+18:42.380 --> 18:47.100
+And this highlights a persistent limitation that haunts us all the way to the present day.
+
+18:47.100 --> 18:47.860
+What's that?
+
+18:47.860 --> 18:57.200
+Even when you upgrade to written numerals, and you start arranging them into neat ledgers with rows and columns, the spatial grouping alone isn't enough to convey meaning.
+
+18:57.200 --> 19:04.200
+Let's say you uncover an ancient ledger or even just an Excel spreadsheet from 1995 with no headers.
+
+19:04.200 --> 19:09.500
+You see a row of beautifully written numbers, 47, 12, 19.
+
+19:09.800 --> 19:10.380
+What do they mean?
+
+19:10.740 --> 19:12.480
+You have absolutely no idea.
+
+19:12.600 --> 19:14.040
+The ink doesn't know what it is.
+
+19:14.040 --> 19:15.360
+The ink is completely blind.
+
+19:15.360 --> 19:15.740
+Yeah.
+
+19:15.740 --> 19:21.560
+It could be 47 bushels of wheat, 12 silver coins, 19 days until the festival.
+
+19:21.700 --> 19:21.980
+Right.
+
+19:22.180 --> 19:27.900
+To know what those numbers mean, the human reader has to look at the printed heading at the top of the ledger page.
+
+19:27.900 --> 19:32.180
+The column must explicitly say, sheep count.
+
+19:32.680 --> 19:39.460
+So the interpretive burden still rests heavily on the external context provided by the document and the human reading it.
+
+19:39.540 --> 19:39.900
+Exactly.
+
+19:40.120 --> 19:42.320
+Which poses a massive logical problem.
+
+19:42.700 --> 19:52.620
+If meaning still requires a human being with a highly trained brain to look at the top of a page, read a heading, understand the local language, and apply that context to a number further down the page.
+
+19:52.740 --> 19:53.000
+Yes.
+
+19:53.060 --> 19:55.120
+What happens when we want machines to do the reading?
+
+19:55.480 --> 19:55.720
+Right.
+
+19:55.720 --> 20:00.860
+A machine doesn't have eyeballs, it doesn't speak English, it can't read the word sheep at the top of a column.
+
+20:00.860 --> 20:08.060
+And that transition from human clerks to mechanical processing is where the story accelerates.
+
+20:08.440 --> 20:14.440
+This is where Flyxion anchors a major part of the argument in a very specific historical artifact.
+
+20:14.820 --> 20:17.240
+The 1928 IBM punched card.
+
+20:17.640 --> 20:17.940
+Yes.
+
+20:18.140 --> 20:19.800
+This is such a cool part of the paper.
+
+20:19.800 --> 20:25.180
+We're moving from clay tablets into the era of electromechanical business machines.
+
+20:25.720 --> 20:28.840
+Describe this 1928 punched card for us.
+
+20:29.060 --> 20:30.420
+It is incredibly tactile.
+
+20:31.080 --> 20:36.080
+It was a rectangular piece of stiff cardboard and its layout was strictly standardized.
+
+20:36.440 --> 20:36.680
+Okay.
+
+20:36.860 --> 20:40.560
+It had 80 vertical columns and 12 horizontal rows.
+
+20:40.860 --> 20:47.100
+If you do the math, that gives you exactly 960 possible positions where a small rectangular hole could be punched.
+
+20:47.240 --> 20:48.260
+And this was the standard.
+
+20:48.260 --> 20:59.020
+Oh, this specific format superseded older round hole cards and became the absolute undisputed industry standard for global business and government for the next 50 years.
+
+20:59.020 --> 21:06.240
+Now, I think we need to clear something up because when most people today picture those old punch cards from the mid 20th century, they think of the matrix.
+
+21:06.380 --> 21:06.800
+What do you mean?
+
+21:07.000 --> 21:11.020
+They think of early computing as just giant sheets of binary code.
+
+21:11.180 --> 21:19.380
+Like, oh, it's just a massive string of ones and zeros that the computer reads as one giant continuous number, like a modern machine code file.
+
+21:19.560 --> 21:20.040
+Oh, I see.
+
+21:20.040 --> 21:26.920
+But the paper points out that this is a total misconception of how these cards were actually used in business, right?
+
+21:27.400 --> 21:29.780
+It is a fundamental misunderstanding of the era.
+
+21:30.480 --> 21:34.320
+A business punched card was not one giant binary number.
+
+21:34.640 --> 21:39.520
+It encoded a specific business transaction and it do so as a heterogeneous tuple.
+
+21:39.760 --> 21:41.720
+Unpack heterogeneous tuple for us.
+
+21:41.900 --> 21:45.080
+Tuple is just a mathematical term for an ordered list of elements.
+
+21:45.980 --> 21:49.640
+And heterogeneous means those elements are of fundamentally different types.
+
+21:49.640 --> 21:50.600
+Okay, give me an example.
+
+21:51.060 --> 21:54.900
+A single punch card might record a sale made by a traveling salesman.
+
+21:54.960 --> 21:59.220
+To do that, those 80 vertical columns are divided up into specific zones or fields.
+
+21:59.420 --> 21:59.520
+Right.
+
+21:59.740 --> 22:01.860
+Maybe columns 1 through 6 record the date.
+
+22:02.340 --> 22:04.320
+Columns 7 through 10 record a customer code.
+
+22:04.800 --> 22:11.820
+Then there's a town code, a salesperson code, the quantity of items sold, the commodity code, the price per item, and the freight charge.
+
+22:12.100 --> 22:17.980
+So it's literally just a whole row in a modern spreadsheet squeezed onto a single piece of cardboard.
+
+22:18.240 --> 22:19.480
+That's exactly what it is.
+
+22:19.480 --> 22:22.260
+And here is why the heterogeneous part is so important.
+
+22:22.880 --> 22:33.720
+Every single one of those fields has its own domain of legitimate values and its own rules for what mathematical operations actually make sense to perform on them.
+
+22:33.900 --> 22:35.940
+Give me an example of how those rules differ.
+
+22:35.940 --> 22:39.660
+Consider the quantity field and the freight charge field.
+
+22:40.280 --> 22:49.660
+You can take a massive stack of these punched cards and run them through a tabulating machine to sum up all the quantities, like how many total items did we sell this week?
+
+22:49.720 --> 22:51.000
+That makes logical sense.
+
+22:51.140 --> 22:52.640
+You can sum up the freight charges.
+
+22:52.900 --> 22:55.340
+How much did we spend on shipping across the whole territory?
+
+22:55.780 --> 22:56.600
+That also makes sense.
+
+22:56.760 --> 22:56.960
+Right.
+
+22:56.960 --> 22:59.280
+But what about the customer code and the town code?
+
+22:59.420 --> 23:04.460
+Well, they are just identifiers, like a social security number or a zip code.
+
+23:04.580 --> 23:04.920
+Exactly.
+
+23:05.120 --> 23:07.240
+They occupy numeric positions on the card.
+
+23:07.640 --> 23:09.320
+They are physically punched as numbers.
+
+23:09.560 --> 23:09.780
+Yeah.
+
+23:10.320 --> 23:12.940
+But they are identifiers, not magnitudes.
+
+23:13.060 --> 23:13.240
+Okay.
+
+23:13.300 --> 23:13.780
+I follow you.
+
+23:13.780 --> 23:23.840
+You can use the machine to sort the cards by customer code to group all the purchases by one client, but you cannot meaningfully average town codes.
+
+23:23.960 --> 23:24.280
+Right.
+
+23:24.420 --> 23:26.720
+The average of two zip codes doesn't mean anything.
+
+23:26.840 --> 23:29.880
+Adding two customer codes together is utter mathematical nonsense.
+
+23:30.120 --> 23:33.340
+It produces a number that correlates to nothing in reality.
+
+23:33.400 --> 23:33.860
+Wow.
+
+23:34.280 --> 23:34.660
+Yeah.
+
+23:34.980 --> 23:36.660
+But here's the terrifying part.
+
+23:37.340 --> 23:40.780
+From the perspective of the machine, they are all just holes.
+
+23:41.200 --> 23:42.100
+They are just numbers.
+
+23:42.100 --> 23:48.760
+And the tabulator's adder circuit would happily add two customer codes together if you wired it to do so.
+
+23:48.940 --> 23:50.320
+Here's where it gets really interesting.
+
+23:50.860 --> 23:59.260
+Flyxion includes this formula in the paper that I absolutely loved because it maps out exactly how a whole becomes a number and how a number becomes a meaning.
+
+23:59.480 --> 24:00.520
+Oh, the meaning formula.
+
+24:00.720 --> 24:00.940
+Yes.
+
+24:01.060 --> 24:05.640
+The formula is meaning equals a function of presence, row, column, field, and schema.
+
+24:06.120 --> 24:09.820
+Let's break that down because it proves that a whole on its own means absolutely nothing.
+
+24:09.820 --> 24:11.780
+It is a layered chain of translation.
+
+24:12.100 --> 24:13.040
+It's vital to understand.
+
+24:13.380 --> 24:15.540
+Let's look at a single isolated hole on the cardboard.
+
+24:16.020 --> 24:21.340
+At the lowest, most physical substrate level, it is just binary, presence or absence.
+
+24:21.440 --> 24:21.600
+Right.
+
+24:21.720 --> 24:23.360
+There is a hole or there isn't.
+
+24:23.480 --> 24:23.880
+Exactly.
+
+24:24.300 --> 24:31.760
+When the card runs through the machine, a metal brush drops through the hole, touches a metal roller, and an electrical circuit is completed.
+
+24:31.760 --> 24:35.120
+But what does that pulse of electricity actually mean?
+
+24:35.440 --> 24:39.700
+Well, according to the formula, the first thing we need to know is the row and column.
+
+24:39.940 --> 24:40.600
+The code level.
+
+24:40.680 --> 24:43.980
+Let's say our hole is at row 7 in column 15.
+
+24:44.640 --> 24:48.620
+The overarching coding scheme is decimal, not binary.
+
+24:48.620 --> 24:53.200
+The physical position of row 7 translates to the decimal digit 7.
+
+24:53.400 --> 24:57.180
+Okay, so now we have the number 7, but we still don't have business meaning.
+
+24:57.440 --> 24:58.600
+Because what is the 7?
+
+24:58.820 --> 24:59.320
+Is it $7?
+
+25:00.180 --> 25:00.940
+7 sheep.
+
+25:01.280 --> 25:02.000
+7 salespeople.
+
+25:02.140 --> 25:02.340
+Right.
+
+25:02.480 --> 25:04.300
+That is where the field variable comes in.
+
+25:04.460 --> 25:05.060
+The field boundary.
+
+25:05.720 --> 25:12.800
+Human Convention dictates that columns 14, 15, and 16 group together to form a specific field on this particular type of card.
+
+25:12.800 --> 25:18.660
+Because our hole is in column 15, we know it's the middle digit of a three-digit number.
+
+25:19.260 --> 25:23.200
+Let's say the full number punched across those three columns is 0, 7, 2.
+
+25:23.420 --> 25:23.960
+So 72.
+
+25:24.220 --> 25:30.600
+Now we have a specific multi-digit value, but we still don't know what the value represents in the real world.
+
+25:30.760 --> 25:35.680
+And that brings us to the final boss level variable in the formula, the schema.
+
+25:35.820 --> 25:36.280
+The schema.
+
+25:36.280 --> 25:42.900
+The overarching layout that assigns a conceptual business category to that specific physical field.
+
+25:43.220 --> 25:44.300
+So it's the rule that says.
+
+25:44.360 --> 25:50.100
+The schema is the rule that says columns 14 through 16 represent the quantity of items sold.
+
+25:50.240 --> 25:50.600
+Okay.
+
+25:50.920 --> 25:51.220
+Wow.
+
+25:51.320 --> 25:57.680
+Only now, after moving through physical presence, row column coordinate, field boundary, and overarching schema,
+
+25:58.180 --> 26:04.140
+does that single physical whole finally take on the economic meaning of 72 units sold.
+
+26:04.140 --> 26:09.800
+And the craziest part about this whole chain of translation from a business event happening in the real world
+
+26:09.800 --> 26:14.900
+all the way to a mechanical operation in a machine is that the machine doesn't know almost any of it.
+
+26:15.080 --> 26:16.720
+That is the ultimate crux of the paper.
+
+26:16.940 --> 26:17.120
+Yeah.
+
+26:17.200 --> 26:20.060
+Let's walk through the actual human workflow of 1928.
+
+26:20.640 --> 26:22.400
+A customer buys 72 widgets.
+
+26:22.800 --> 26:24.840
+That is a business distinction made by humans.
+
+26:24.940 --> 26:25.160
+Right.
+
+26:25.360 --> 26:31.900
+A human clerk writes the number 72 in a box labeled quantity on a paper form.
+
+26:31.900 --> 26:42.660
+A key punch operator sits down, reads that paper form, and their trained hands instinctively move to punch holes in columns 14, 15, and 16.
+
+26:42.900 --> 26:43.160
+Okay.
+
+26:43.160 --> 26:49.400
+Then, a machine engineer wires a physical plug board on the front of the tabulating machine.
+
+26:49.980 --> 26:55.860
+They literally take a cable and plug it into the output sockets for columns 14, 15, and 16,
+
+26:56.200 --> 27:00.800
+and roll an other end of the cable over to the input sockets for a mechanical addition circuit.
+
+27:00.880 --> 27:01.620
+It's all physical.
+
+27:01.840 --> 27:04.760
+Finally, the cards are fed to the hopper, the machine senses the holes,
+
+27:05.140 --> 27:09.480
+the electricity flows to the wires the engineer placed, and the machine adds to the numbers.
+
+27:09.480 --> 27:13.380
+It is the most extreme example of distributed cognition I have ever heard of.
+
+27:13.740 --> 27:17.160
+The knowledge required to make this system work is scattered everywhere.
+
+27:17.260 --> 27:17.840
+It really is.
+
+27:17.980 --> 27:18.640
+Think about it.
+
+27:18.960 --> 27:23.020
+The clerk knows what a widget is, but doesn't know how to wire the tabulating machine.
+
+27:23.460 --> 27:27.300
+The key punch operator knows exactly which buttons to press for column 14,
+
+27:27.500 --> 27:31.480
+but might have no idea what the freight costs are or what the customer does.
+
+27:31.620 --> 27:36.820
+The plug board engineer knows exactly how to route the electricity to make the adder circuit fire.
+
+27:36.820 --> 27:40.960
+But they don't care if they are adding widgets, sheep, or dollars.
+
+27:41.600 --> 27:42.780
+And the machine itself.
+
+27:42.900 --> 27:43.440
+The machine.
+
+27:43.660 --> 27:48.040
+The giant, expensive, noisy marvel of modern engineering.
+
+27:48.720 --> 27:52.780
+The machine is the dumbest participant in the entire room.
+
+27:53.140 --> 27:54.080
+You hit the nail on the head.
+
+27:54.560 --> 27:59.040
+Flyxion specifically calls out the myth of machine intelligence from this era.
+
+27:59.160 --> 28:00.180
+Oh, I love this part.
+
+28:00.500 --> 28:03.460
+If you look at the period marketing for these IBM machines,
+
+28:03.460 --> 28:06.140
+they claim they had universal applicability.
+
+28:06.960 --> 28:09.780
+They advertised that this single machine could do payroll,
+
+28:10.140 --> 28:11.000
+it could do inventory,
+
+28:11.540 --> 28:13.440
+it could calculate insurance premiums,
+
+28:13.460 --> 28:15.740
+it could run scientific census data.
+
+28:15.880 --> 28:17.420
+Which sounds like artificial intelligence.
+
+28:17.660 --> 28:18.160
+And they were right.
+
+28:18.380 --> 28:19.260
+It could do all those things.
+
+28:19.580 --> 28:23.480
+But it wasn't because the machine was smart enough to understand all those radically different domains.
+
+28:23.700 --> 28:23.800
+Yeah.
+
+28:24.300 --> 28:27.260
+The machine had no concept of what an insurance premium was.
+
+28:27.260 --> 28:32.920
+It only knew how to sense physical holes and route electrical contacts based on where a human plugged a wire.
+
+28:32.920 --> 28:33.480
+Exactly.
+
+28:33.780 --> 28:39.200
+The schema, the actual meaning of the data, lived everywhere except inside the machine's brain.
+
+28:39.620 --> 28:43.300
+It lived in the printed text headers glued onto the front of the card,
+
+28:43.580 --> 28:46.180
+which the machine obviously couldn't read because it doesn't have eyes.
+
+28:46.320 --> 28:46.580
+Right.
+
+28:47.020 --> 28:51.300
+It lived in the giant three-ring binder manual sitting on the accounting manager's desk.
+
+28:51.720 --> 28:54.400
+It lived in the muscle memory of the key punch operator.
+
+28:54.820 --> 28:58.620
+It lived physically as a tangled rat's nest of cords on the plug board.
+
+28:58.620 --> 29:03.180
+So the machine's so-called generality was purely a generality of formal operation.
+
+29:03.480 --> 29:04.920
+Counting, sorting, summing.
+
+29:05.100 --> 29:14.700
+It achieved this incredible flexibility precisely by externalizing all the domain-specific meaning onto the humans and the paper forms surrounding it.
+
+29:14.960 --> 29:17.400
+The machine just provided the brute force math.
+
+29:17.540 --> 29:19.860
+But this raises a massive red flag for me.
+
+29:20.040 --> 29:20.320
+Uh-oh.
+
+29:20.500 --> 29:20.940
+What's that?
+
+29:20.940 --> 29:28.740
+If the machine has absolutely no idea what the data actually represents, if it doesn't know that column 10 is a price and column 20 is a zip code,
+
+29:29.140 --> 29:33.900
+what is stopping it from doing something incredibly catastrophically stupid?
+
+29:34.260 --> 29:34.540
+Wow.
+
+29:34.540 --> 29:43.160
+If the machine is completely blind to context, how do we determine if an operation is actually valid before it ruins the company's books?
+
+29:43.500 --> 29:47.140
+That question brings us to the theoretical heart of Flyxion's paper.
+
+29:48.080 --> 29:56.540
+To explain how we separate valid math from invalid nonsense, the paper introduces a framework called the three gates of admissibility.
+
+29:57.240 --> 29:58.180
+The three gates.
+
+29:58.180 --> 29:58.620
+Yes.
+
+29:59.220 --> 30:07.060
+To perform a valid, meaningful operation on data, that operation must successfully pass through three distinct conceptual gates.
+
+30:08.040 --> 30:15.100
+Understanding these three gates is the absolute key to understanding why working with data is still so frustrating for us today.
+
+30:15.320 --> 30:16.620
+I love a good framework.
+
+30:16.760 --> 30:17.640
+Let's not just list them.
+
+30:17.720 --> 30:18.680
+Let's really figure them out.
+
+30:18.780 --> 30:20.960
+I'll throw out a scenario and you tell me how the gates apply.
+
+30:21.080 --> 30:21.740
+Okay, let's do it.
+
+30:21.780 --> 30:25.600
+Let's say I take a stack of punched cards and I want to run an operation.
+
+30:25.700 --> 30:26.860
+I want the machine to do something.
+
+30:26.860 --> 30:29.680
+What is the very first hurdle I have to clear?
+
+30:30.200 --> 30:32.720
+The first hurdle is gate one, executability.
+
+30:33.640 --> 30:36.860
+Can the machine physically execute the operation you are asking for?
+
+30:37.260 --> 30:41.700
+From the perspective of the machine's hardware and physics, is this a valid request?
+
+30:42.340 --> 30:50.640
+For example, if the machine's read heads sends two fields that are purely numerical and has an adder circuit built into its chassis, it can add them.
+
+30:50.960 --> 30:51.840
+The electricity can flow.
+
+30:52.120 --> 30:53.380
+It is physically possible.
+
+30:53.380 --> 31:01.900
+But if I tell it to do something impossible, like if I feed it a field full of alphabetical letters, like a customer's name, and I ask it to do long division.
+
+31:02.080 --> 31:06.680
+It might physically jam the gears, throw a spark, or halt with an error state.
+
+31:07.320 --> 31:10.420
+The hardware cannot execute math on alphabetical punches.
+
+31:10.640 --> 31:11.040
+Got it.
+
+31:11.560 --> 31:17.120
+So gate one just asks, is the data in a format the hardware can process for this specific command?
+
+31:17.560 --> 31:18.700
+Can the gears turn?
+
+31:19.160 --> 31:20.180
+Can the electricity flow?
+
+31:20.180 --> 31:23.280
+Okay, so gate one is just basic physics and hardware capability.
+
+31:23.480 --> 31:27.460
+If yes, we pass gate one, but passing gate one doesn't mean it's a smart thing to do.
+
+31:27.960 --> 31:28.020
+Right.
+
+31:28.140 --> 31:31.660
+Earlier we talked about adding a customer ID number to a price tag.
+
+31:31.820 --> 31:32.380
+Both are numbers.
+
+31:32.720 --> 31:34.300
+The machine can physically add them.
+
+31:34.720 --> 31:37.460
+Gate one is cleared, but it's obviously wrong.
+
+31:37.760 --> 31:38.640
+So what stops that?
+
+31:38.780 --> 31:41.600
+That is where we encounter gate two, type licensing.
+
+31:42.080 --> 31:45.320
+Does the schema, the logical structure of the data allow this operation?
+
+31:45.680 --> 31:46.520
+Type licensing?
+
+31:46.520 --> 31:47.040
+Yes.
+
+31:47.760 --> 31:50.440
+This introduces the concept of data types.
+
+31:50.920 --> 31:57.260
+Even if two fields are both numbers, meaning they pass gate one, are they the kind of numbers
+
+31:57.260 --> 31:58.060
+that should interact?
+
+31:58.420 --> 32:02.500
+Like a quantity is an integer count, but a price is a monetary value.
+
+32:02.620 --> 32:02.940
+Exactly.
+
+32:03.260 --> 32:05.820
+The schema dictates what types these fields are.
+
+32:06.680 --> 32:12.300
+Type licensing asks, do the rules of mathematics and data types permit this operation?
+
+32:12.520 --> 32:12.800
+Okay.
+
+32:12.800 --> 32:17.880
+You can multiply a quantity by a price to get a total cost, that is type license.
+
+32:18.220 --> 32:20.180
+The categories are compatible for multiplication.
+
+32:20.380 --> 32:20.820
+Makes sense.
+
+32:20.940 --> 32:26.180
+But adding an identity like a customer ID to a magnitude like a price is a strict type violation.
+
+32:26.620 --> 32:30.500
+The schema should not allow it, even if the hardware can physically execute it.
+
+32:30.620 --> 32:32.400
+So gate one is, can the machine do it?
+
+32:32.500 --> 32:36.020
+Gate two is, do the logical categories of the data allow it?
+
+32:36.100 --> 32:37.220
+That seems pretty comprehensive.
+
+32:37.380 --> 32:41.060
+If the hardware can do it and the data types match up, shouldn't we be good to go?
+
+32:41.060 --> 32:42.560
+What is left for gate three?
+
+32:43.080 --> 32:47.520
+Gate three is the most elusive, the most difficult to pin down, and by far the most important.
+
+32:47.640 --> 32:48.640
+Oh, the suspense.
+
+32:48.860 --> 32:50.560
+Gate three is contextual warrant.
+
+32:50.700 --> 32:51.340
+Contextual warrant.
+
+32:51.700 --> 32:51.980
+Yes.
+
+32:52.620 --> 32:57.640
+Even if the hardware can do it and the data types match, does the operation actually make
+
+32:57.640 --> 33:02.660
+sense in reality, given the specific real world context of what we are trying to achieve?
+
+33:02.660 --> 33:04.060
+Contextual warrant.
+
+33:04.680 --> 33:07.240
+I need a concrete example of a failure at gate three.
+
+33:07.760 --> 33:12.720
+Something that breezes past gate one and gate two, but violently crashes at gate three.
+
+33:12.800 --> 33:15.180
+Let's use a very elegant example straight from the source paper.
+
+33:16.440 --> 33:17.500
+Averaging two prices.
+
+33:18.300 --> 33:23.180
+Suppose you have a database of products, and as an executive, you decide you want to find
+
+33:23.180 --> 33:26.300
+the average price of two specific items in your inventory.
+
+33:26.300 --> 33:27.580
+Okay, averaging two numbers.
+
+33:28.240 --> 33:30.360
+Gate one, executability dot pass.
+
+33:30.480 --> 33:33.100
+The computer can easily do the math to average two numbers.
+
+33:33.380 --> 33:35.300
+Gate two, type licensing dot pass.
+
+33:35.880 --> 33:39.560
+The schema explicitly declares that both of these fields are monetary values.
+
+33:39.700 --> 33:40.560
+They are both prices.
+
+33:40.720 --> 33:40.920
+Right.
+
+33:41.080 --> 33:44.680
+The rules of data types say you are perfectly allowed to average two monetary values.
+
+33:45.040 --> 33:48.080
+So the computer happily runs the calculation and spits out a result.
+
+33:48.240 --> 33:49.320
+Okay, so where does it go wrong?
+
+33:49.520 --> 33:51.980
+Let's step back and look at the real world context.
+
+33:51.980 --> 33:57.840
+What if one price is denominated in U.S. dollars, and the other price is denominated in Japanese
+
+33:57.840 --> 34:02.520
+yen, and you didn't include an exchange rate conversion in your calculation?
+
+34:02.660 --> 34:05.300
+Oh, the math works perfectly.
+
+34:05.500 --> 34:11.620
+The types are both money, but the answer is completely functionally wrong in the real world.
+
+34:11.740 --> 34:13.820
+Or consider another contextual failure.
+
+34:14.320 --> 34:15.680
+Let's say the currencies match.
+
+34:16.020 --> 34:20.440
+They are both in U.S. dollars, but the goods themselves are completely incomparable.
+
+34:20.620 --> 34:21.060
+What do you mean?
+
+34:21.060 --> 34:27.800
+You are averaging the price of a single plastic paperclip and the price of an industrial diesel-powered
+
+34:27.800 --> 34:28.520
+bulldozer.
+
+34:29.520 --> 34:34.220
+Is that average number actually useful to a business executive making a forecasting decision?
+
+34:34.320 --> 34:35.080
+Absolutely not.
+
+34:35.200 --> 34:38.080
+It's a mathematically flawless piece of useless trivia.
+
+34:38.680 --> 34:41.940
+Actually, this makes me think of one of the most famous engineering disasters in history,
+
+34:42.060 --> 34:43.760
+the Mars Climate Orbiter in 1999.
+
+34:44.200 --> 34:44.640
+Oh, yes.
+
+34:44.640 --> 34:50.620
+NASA lost a $125 million spacecraft because one engineering team was using metric units,
+
+34:50.880 --> 34:55.400
+newton-seconds, and another team was using imperial units, pound-seconds.
+
+34:55.480 --> 34:56.500
+That's the classic example.
+
+34:56.640 --> 34:59.540
+The computer systems passed the data back and forth perfectly.
+
+34:59.960 --> 35:00.740
+Gate 1 passed.
+
+35:00.980 --> 35:02.040
+The computers could talk.
+
+35:02.580 --> 35:03.460
+Gate 2 passed.
+
+35:03.460 --> 35:06.620
+The data types were both floating-point numbers representing thrust.
+
+35:07.020 --> 35:09.140
+But Gate 3 failed catastrophically.
+
+35:09.240 --> 35:09.860
+Completely failed.
+
+35:10.080 --> 35:14.120
+The contextual warrant was broken because the units were mismatched, and the probe just
+
+35:14.120 --> 35:15.520
+burned up in the Martian atmosphere.
+
+35:15.700 --> 35:19.420
+That is an absolutely perfect, tragic example of a Gate 3 failure.
+
+35:19.820 --> 35:26.020
+In all those scenarios, the yen versus dollars, the paperclip versus the bulldozer, the metric
+
+35:26.020 --> 35:31.120
+versus imperial, the computer does not crash, does not throw an error code.
+
+35:31.440 --> 35:35.280
+It cheerfully hands you a number, and that number is a well-formed lie.
+
+35:35.900 --> 35:37.920
+It lacks contextual warrant.
+
+35:38.400 --> 35:43.520
+And if we look back at a 1928 tabulating machine, that machine only enforced Gate 1, right?
+
+35:43.720 --> 35:45.980
+It only knew if it could physically route the electricity.
+
+35:46.520 --> 35:50.660
+And even then, it only enforced Gate 1 via the physical cables plugged into the board.
+
+35:50.840 --> 35:51.280
+That's right.
+
+35:51.280 --> 35:57.320
+In 1928, enforcing Gate 2, making sure you don't add IDs to prices, and enforcing Gate
+
+35:57.320 --> 36:02.920
+3, making sure the average actually makes business sense, fell entirely, 100% on human
+
+36:02.920 --> 36:04.120
+organizational discipline.
+
+36:04.340 --> 36:06.420
+Just humans checking each other's work.
+
+36:06.760 --> 36:12.480
+It relied on clerks reading the printed headings carefully, managers double-checking the wiring
+
+36:12.480 --> 36:17.040
+before flipping the switch, and executives exercising good judgment when they read the
+
+36:17.040 --> 36:17.600
+final report.
+
+36:17.600 --> 36:21.820
+However, the machine took zero responsibility for the meaning of the data.
+
+36:22.260 --> 36:27.220
+And as anyone who has ever worked in a large organization knows, relying purely on human
+
+36:27.220 --> 36:32.680
+organizational discipline to stop bad math is a terrifying, doomed strategy.
+
+36:32.880 --> 36:34.080
+Oh, it never works long-term.
+
+36:34.200 --> 36:35.120
+Humans get tired.
+
+36:35.280 --> 36:36.900
+They get sloppy on a Friday afternoon.
+
+36:37.880 --> 36:42.680
+The senior person who wrote the training manual retires, and the new hire just guesses how
+
+36:42.680 --> 36:43.760
+the plug board should be wired.
+
+36:43.920 --> 36:44.160
+Right.
+
+36:44.160 --> 36:48.340
+The software industry eventually realized this was a massive systemic vulnerability.
+
+36:48.940 --> 36:51.400
+We couldn't leave all the intelligence on the outside of the machine.
+
+36:51.940 --> 36:56.700
+We had to start forcing the data to carry its own name tag so the computer could start taking
+
+36:56.700 --> 36:58.360
+on some of that interpretive burden.
+
+36:58.860 --> 37:03.900
+And that realization is what brings us out of the mechanical era and into Section 5 of the
+
+37:03.900 --> 37:06.160
+paper, the file format revolution.
+
+37:06.380 --> 37:07.920
+The dawn of CSV.
+
+37:08.380 --> 37:09.540
+Comma-separated values.
+
+37:09.540 --> 37:16.420
+Specifically, the paper cites RFC 4180, which is the technical specification published to
+
+37:16.420 --> 37:18.000
+formalize how CSVs should work.
+
+37:18.100 --> 37:18.280
+Okay.
+
+37:18.640 --> 37:21.960
+This represents a monumental shift in the history of data representation.
+
+37:23.040 --> 37:27.860
+We are finally moving away from the rigid, blind, punched card, and we are witnessing
+
+37:27.860 --> 37:30.100
+what Flyxion calls the migration of schema.
+
+37:30.320 --> 37:31.640
+The migration of schema.
+
+37:32.200 --> 37:35.660
+Meaning the rules are finally packing their bags and moving inside the computer.
+
+37:36.140 --> 37:37.260
+A portion of them, yes.
+
+37:37.260 --> 37:41.220
+Think about a typical CSV file you might open in a text editor today.
+
+37:42.020 --> 37:44.140
+The very first row is usually the header row.
+
+37:44.380 --> 37:49.060
+It looks like town code, comma, salesperson code, comma, quantity.
+
+37:49.220 --> 37:49.420
+Right.
+
+37:49.500 --> 37:49.940
+The labels.
+
+37:50.160 --> 37:52.540
+Then the actual numerical data follows on the next lines.
+
+37:53.180 --> 37:57.740
+The breakthrough here is that for the first time, the names of the fields, the human readable
+
+37:57.740 --> 38:02.140
+labels, are traveling the exact same computational channel as the data itself.
+
+38:02.300 --> 38:04.500
+The machine can actually read the word quantity.
+
+38:04.500 --> 38:08.720
+It's not just a printed label glued to a piece of cardboard that only a human eyeball can see.
+
+38:08.960 --> 38:14.520
+The computer reads the letters Q-U-A-N-T-I-T-Y right alongside the number 12.
+
+38:14.880 --> 38:19.860
+A software program reading this file can dynamically recover the fact that the third field is called
+
+38:19.860 --> 38:26.560
+quantity without needing to consult an external three-ring binder or a physical wiring diagram.
+
+38:26.940 --> 38:27.340
+Wow.
+
+38:27.340 --> 38:30.580
+It is internalized, a crucial piece of the convention.
+
+38:31.160 --> 38:32.740
+The data is starting to describe itself.
+
+38:32.940 --> 38:34.720
+So wait, we did it.
+
+38:35.220 --> 38:38.460
+The computer can read the headers and knows what the columns are.
+
+38:38.840 --> 38:40.300
+Does this fix the problem?
+
+38:40.680 --> 38:43.520
+Is the punch card era officially dead and buried?
+
+38:43.720 --> 38:47.680
+What's fascinating here is how easily we deceive ourselves about our own technological progress.
+
+38:48.360 --> 38:48.800
+Uh-oh.
+
+38:48.960 --> 38:49.980
+I hear a butt coming.
+
+38:49.980 --> 38:54.260
+The paper delivers a brilliant pushback against the supposed triumph of CSV.
+
+38:54.880 --> 38:57.760
+Yes, it's an improvement, but it is incredibly fragile.
+
+38:58.020 --> 39:01.920
+Have you ever actually read the RFC 4180 specification for CSVs?
+
+39:02.000 --> 39:05.600
+I can't say that I read requests for comments, documents for fun on the weekends, no.
+
+39:05.780 --> 39:09.780
+Well, if you do read it, you'll find a glaring, almost comical loophole.
+
+39:10.380 --> 39:13.560
+The specification explicitly treats the header row as optional.
+
+39:13.920 --> 39:14.700
+It is not mandatory.
+
+39:14.820 --> 39:15.180
+Oh, no.
+
+39:15.400 --> 39:18.640
+So you can just have a CSV with raw data and no labels at all?
+
+39:18.640 --> 39:19.280
+Absolutely.
+
+39:19.800 --> 39:24.340
+And even when a header is present, it is vulnerable to all sorts of software violence.
+
+39:24.800 --> 39:27.340
+Headers get accidentally deleted by rogue scripts.
+
+39:27.480 --> 39:28.260
+They get duplicated.
+
+39:28.340 --> 39:29.140
+I've seen that.
+
+39:29.280 --> 39:32.960
+If you open a CSV in a spreadsheet program and accidentally bump your keyboard,
+
+39:33.220 --> 39:35.280
+you might silently reorder a column.
+
+39:36.000 --> 39:38.840
+And here is the truly damning part that Flyxion highlights.
+
+39:39.900 --> 39:45.180
+A massive amount of modern software still reads CSV files positionally.
+
+39:45.220 --> 39:45.720
+Positionally.
+
+39:45.720 --> 39:48.520
+You mean by column index, like grab whatever data is in column
+
+39:48.520 --> 39:49.080
+number three?
+
+39:49.360 --> 39:49.640
+Yes.
+
+39:50.300 --> 39:54.320
+Instead of writing code that says, look for the column explicitly named quantity and grab
+
+39:54.320 --> 39:59.360
+that data, the script just blindly grabs the third column, assuming it will always be the
+
+39:59.360 --> 39:59.700
+quantity.
+
+39:59.800 --> 40:00.460
+Oh, man.
+
+40:00.580 --> 40:02.460
+This happens constantly in data pipelines.
+
+40:03.140 --> 40:07.460
+Underneath the hood, despite all our modern processing power in supposedly smart languages,
+
+40:07.460 --> 40:13.900
+we are often still treating CSVs exactly like rigid, fragile 1928 punch cards.
+
+40:13.900 --> 40:19.380
+The vulnerability is just relocated from physical cardboard to brittle software scripts.
+
+40:19.520 --> 40:20.960
+That is painfully true.
+
+40:21.680 --> 40:25.600
+Anyone who has messed around with Panda's data frames in Python knows this pain.
+
+40:25.600 --> 40:34.000
+I've had scripts break entirely because someone in another department decided to add a middle name column to a CSV report,
+
+40:34.460 --> 40:39.480
+and suddenly my script is trying to calculate the average salary of a bunch of middle initials.
+
+40:39.660 --> 40:40.280
+It's a nightmare.
+
+40:40.280 --> 40:48.540
+But even on a good day, when the header is there and the software reads it correctly by name, CSV is still severely lacking, isn't it?
+
+40:48.620 --> 40:50.080
+Because it only gives you names.
+
+40:50.220 --> 40:51.220
+It doesn't give you rules.
+
+40:51.340 --> 40:53.000
+It gives you vocabulary, but no grammar.
+
+40:53.120 --> 40:53.300
+Yeah.
+
+40:53.300 --> 41:02.820
+A CSV header tells the machine this column is called quantity, but it does not tell the machine that quantity must be a positive integer.
+
+41:03.040 --> 41:05.220
+Because you can't sell negative three widgets.
+
+41:05.500 --> 41:05.980
+Exactly.
+
+41:06.440 --> 41:11.620
+It doesn't tell the machine that price is a monetary value that shouldn't be added to a zip code.
+
+41:11.940 --> 41:18.880
+It doesn't tell the machine that the salesperson code actually has to correspond to a real employee who currently works at the company.
+
+41:19.040 --> 41:20.360
+So it's still missing pieces.
+
+41:20.360 --> 41:28.480
+It gives you machine-readable names, but it leaves the types, the logical constraints, the gate 2 rules completely external.
+
+41:29.080 --> 41:31.360
+The machine still doesn't know how to enforce gate 2.
+
+41:31.540 --> 41:39.100
+It's like giving a bouncer at a nightclub a list of names, but not telling him what anyone looks like, what gender they are, or how old they have to be to enter.
+
+41:39.840 --> 41:45.520
+He knows the name on the list, but he can't actually verify if the person walking in matches the criteria to be there.
+
+41:45.580 --> 41:46.680
+That is a perfect analogy.
+
+41:46.680 --> 41:55.080
+To solve that type problem, to give the bouncer the actual rules of entry and the authority to check IDs, we had to invent something much stricter.
+
+41:55.180 --> 41:57.860
+We couldn't just rely on comma-separated text files.
+
+41:57.960 --> 42:00.040
+We had to build a fortress around the data.
+
+42:00.320 --> 42:04.680
+And that is where the paper shifts to explicit schemas and the unclosed gap.
+
+42:04.840 --> 42:06.240
+Okay, take us into the fortress.
+
+42:06.560 --> 42:09.720
+This brings us to the architecture of the modern data ecosystem.
+
+42:09.720 --> 42:18.660
+Flyxion cites EF-Codd's seminal 1970 paper that introduced relational databases and also points to modern web formats like JSON schema.
+
+42:19.240 --> 42:19.540
+Right.
+
+42:19.540 --> 42:27.920
+These technologies represent a massive, aggressive, structural attempt to pull convention, the rules of the game, deep into the machine itself.
+
+42:28.260 --> 42:29.220
+How do they do it?
+
+42:29.500 --> 42:34.480
+How is a relational database fundamentally different from a CSV acting as a bad bouncer?
+
+42:34.480 --> 42:39.520
+When you build a relational database table, you don't just declare the column names.
+
+42:39.900 --> 42:42.740
+You declare the column types at the very moment of creation.
+
+42:43.160 --> 42:43.940
+Ah, okay.
+
+42:44.060 --> 42:47.520
+You tell the database engine, this quantity column is not just named quantity.
+
+42:47.820 --> 42:49.000
+It is strictly an integer.
+
+42:49.640 --> 42:51.840
+This price column is a fixed point decimal.
+
+42:52.440 --> 42:59.720
+This salesperson ID column has a foreign key constraint, which means any ID entered here must already exist in the master employee table.
+
+42:59.720 --> 43:04.040
+Ah, so the database engine itself becomes an active enforcer.
+
+43:04.260 --> 43:06.680
+It is the bouncer checking IDs at the door.
+
+43:06.820 --> 43:07.180
+Exactly.
+
+43:07.640 --> 43:10.480
+It finally internalizes gate 2, type licensing.
+
+43:11.540 --> 43:19.420
+If a piece of sloppy application code tries to insert the word 17 spelled out in alphabetical letters into the integer typed quantity column,
+
+43:19.760 --> 43:22.580
+the database engine will mechanically reject the operation.
+
+43:22.720 --> 43:23.520
+It just blocks it.
+
+43:23.740 --> 43:27.580
+It will throw a fatal error and block the data from entering the fortress.
+
+43:27.580 --> 43:32.160
+It will refuse to allow a fake ID into the foreign key column.
+
+43:32.960 --> 43:37.900
+For the first time in this long history, the machine is actively enforcing semantic rules,
+
+43:38.600 --> 43:43.260
+preventing a whole class of category mismatches from ever polluting the system.
+
+43:43.440 --> 43:44.800
+The machine is finally smart.
+
+43:45.060 --> 43:45.620
+We did it.
+
+43:45.760 --> 43:48.620
+We taught the silicon how to understand the rules of the data.
+
+43:48.920 --> 43:49.220
+Right.
+
+43:49.420 --> 43:49.940
+Not quite.
+
+43:50.020 --> 43:50.840
+Oh, man.
+
+43:51.020 --> 43:53.140
+And this is the core revelation of the entire paper.
+
+43:53.140 --> 43:58.060
+This is the ultimate conclusion that Flyxion drives home after tracing this entire history.
+
+43:58.060 --> 44:01.020
+Yes, we enforced gate 1 with the hardware and physics.
+
+44:01.500 --> 44:06.160
+Yes, we finally enforced gate 2 with relational databases, SQL constraints, and JSON schemas.
+
+44:06.340 --> 44:07.940
+But we never closed gate 3.
+
+44:08.160 --> 44:08.960
+Contextual warrant.
+
+44:09.520 --> 44:10.860
+The Mars climate orbiter problem.
+
+44:11.080 --> 44:13.660
+Contextual warrant remains entirely unmechanized.
+
+44:14.340 --> 44:18.400
+A meticulously written JSON schema can force a price field to be a non-negative number.
+
+44:18.960 --> 44:22.560
+It can do an amazing job of keeping alphabetical text out of your math circuits.
+
+44:22.560 --> 44:29.060
+But it does absolutely nothing to prevent an application from blindly averaging U.S. dollars in Japanese yen.
+
+44:29.560 --> 44:34.060
+It cannot know if the calculation actually means what you think it means in the real world.
+
+44:34.260 --> 44:37.180
+Because the database doesn't know why you were doing the math.
+
+44:37.560 --> 44:40.740
+It just knows the math is technically legal according to the types.
+
+44:40.920 --> 44:41.440
+Precisely.
+
+44:41.940 --> 44:48.540
+That gap contextual warrant has not moved inside the machine because it was never a property of the file format to begin with.
+
+44:48.640 --> 44:49.020
+Wow.
+
+44:49.020 --> 44:55.960
+It is a property of the relationship between a specific calculation, the real world human purpose it is meant to serve.
+
+44:56.500 --> 45:06.720
+And no JSON schema, no SQL constraint, no matter how perfectly written or rigorously enforced, can fully anticipate every purpose a future user might have for a piece of data.
+
+45:06.720 --> 45:22.660
+So what does this all mean if we synthesize this whole journey from the preliterate herder dropping a pebble into a clay bowl to the 1928 clerk punching a hole in a cardboard IBM card to the modern data engineer writing a perfectly constrained JSON schema?
+
+45:23.540 --> 45:25.880
+We didn't actually invent machines that understand meaning.
+
+45:25.880 --> 45:26.640
+No, we didn't.
+
+45:26.700 --> 45:28.160
+We just repartitioned the convention.
+
+45:28.500 --> 45:31.820
+We shoved more and more of the structural rules into the machine-readable channel.
+
+45:32.040 --> 45:41.480
+But the core essence of meaning, the why, the context, the human intent is still sitting outside the machine hovering like a ghost.
+
+45:41.820 --> 45:42.880
+It is a profound realization.
+
+45:43.600 --> 45:45.460
+I want to address the listener directly here.
+
+45:45.760 --> 45:46.720
+Think about your own job.
+
+45:46.720 --> 45:57.600
+Think about the last time you were frustrated, pulling your hair out over a spreadsheet or a corporate DAG board that was giving you numbers that just felt wrong, even though the math technically checked out.
+
+45:57.840 --> 45:58.520
+We've all been there.
+
+45:58.860 --> 46:04.240
+This historical repartitioning is exactly why working with data is often so deeply frustrating.
+
+46:04.820 --> 46:13.080
+You are dealing with systems that flawlessly execute operations, meaning they pass gate one and flawlessly check data types, passing gate two,
+
+46:13.080 --> 46:16.740
+giving you an incredibly convincing illusion of total reliability.
+
+46:17.160 --> 46:18.040
+But it's just an illusion.
+
+46:18.340 --> 46:23.300
+But no SQL database can anticipate the specific business purpose you have for that data today.
+
+46:23.720 --> 46:28.560
+The ultimate responsibility for contextual warrant gate three still rests entirely on you.
+
+46:28.740 --> 46:29.520
+It's all on us.
+
+46:29.840 --> 46:39.980
+It rests on human judgment, on having good documentation, and on the messy analog institutional practice of talking to your colleagues to figure out what the data actually represents.
+
+46:39.980 --> 46:42.700
+The machine is not going to save you from a bad context.
+
+46:42.700 --> 46:43.340
+Wow.
+
+46:44.620 --> 46:46.040
+That brings us to our wrap up.
+
+46:46.620 --> 46:52.200
+Looking back across everything we've covered, the sheer continuity of information history is staggering.
+
+46:52.580 --> 47:05.100
+When you really strip away the glowing screens, the cloud servers, and the complex SQL queries, a hole punched in an IBM card is fundamentally just a digital descendant of a pebble dropped in a bowl.
+
+47:05.220 --> 47:05.880
+It really is.
+
+47:06.340 --> 47:12.420
+Representational history isn't this triumphant march toward an artificially intelligent artifact that can perfectly explain itself to us.
+
+47:12.840 --> 47:16.840
+Instead, it is a long, ongoing history of shifting the interpretive burden.
+
+47:16.840 --> 47:22.680
+We keep trying to pack more of the rules into the suitcase, but the suitcase can never hold the human intent.
+
+47:22.680 --> 47:24.600
+It is a continuous repartitioning.
+
+47:25.100 --> 47:28.700
+Substrate, artifact, machinery, documentation, trained judgment.
+
+47:29.100 --> 47:33.300
+We just keep sliding the boundaries of where the meaning lives, trying to get the machine to help us carry the load.
+
+47:33.520 --> 47:42.400
+Before we go, I know you had a final provocative thought about the implications of this, something that wasn't explicitly stated in the paper, but sort of larks in the shadows of this history.
+
+47:42.400 --> 47:47.080
+What happens if we run this timeline forward into the deep future?
+
+47:47.820 --> 47:50.700
+It is something that has been bothering me since I read Flyxion's piece.
+
+47:50.820 --> 47:50.980
+Yeah.
+
+47:50.980 --> 47:57.840
+We have established that no schema format can capture the contextual warrant, the true why, of how data should be used.
+
+47:58.380 --> 48:04.180
+That knowledge lives exclusively in the minds of the people and the culture of the institutions that created the data.
+
+48:04.220 --> 48:04.400
+Right.
+
+48:04.400 --> 48:09.400
+But humans retire, institutions go bankrupt, civilizations eventually fall.
+
+48:10.240 --> 48:15.100
+What happens to our massive petabyte-scale historical databases centuries from now?
+
+48:15.180 --> 48:15.720
+Oh, man.
+
+48:15.800 --> 48:25.720
+Once the original humans are gone and the institutional knowledge evaporates, does all our meticulously typed, flawlessly validated JSON data just revert back into a bowl of identical pebbles?
+
+48:26.260 --> 48:30.240
+Perfectly discrete, flawlessly preserved, but whose true meaning is lost forever.
+
+48:30.700 --> 48:32.180
+That is a haunting thought.
+
+48:32.180 --> 48:38.460
+A perfectly preserved, high-definition tripwire with no one left who remembers what it was supposed to be guarding.
+
+48:39.100 --> 48:43.000
+Just a mountain of numbers waiting for a context that died centuries ago.
+
+48:43.340 --> 48:46.760
+That is definitely something to mull over the next time you are staring at a spreadsheet.
+
+48:47.360 --> 48:52.820
+Thank you so much for joining us on this deep dive into the hidden history and philosophy of our data.
+
+48:53.260 --> 48:55.980
+Hopefully you will look at your own rows and columns a little differently tomorrow.
+

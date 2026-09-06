@@ -1,0 +1,2376 @@
+\% Appendix A: Probability, Bayesian Updating, and Model Uncertainty
+\% Status: prose-drafted (full text supplied)
+
+\chapter{Probability, Bayesian Updating, and Model Uncertainty}
+\label{app:a}
+
+\section{Purpose and scope}
+\label{sec:a1}
+
+The argument of this book depends upon a distinction that ordinary discussions of evidence often obscure. Uncertainty may arise because the available observations do not determine which hypothesis is true, but it may also arise because the observer has not represented all the relevant hypotheses, does not know how observations were generated, cannot establish the independence of sources, or cannot determine whether the present case belongs to the population from which prior expectations were derived. These are mathematically different forms of uncertainty.
+
+Probability theory is indispensable for reasoning under uncertainty, but it does not transform incomplete records into complete causal knowledge. A probability is always defined relative to some specification of possible outcomes, distinctions among hypotheses, information available to the reasoner, and assumptions about how evidence relates to those hypotheses. Bayesian updating can describe how belief should change inside such a specification. It cannot guarantee that the specification contains the correct causal history.
+
+This appendix develops the probabilistic foundations needed for the main text. Its purpose is not to reduce legal judgment to numerical calculation. It is to clarify where calculation is possible, where judgment enters the calculation, and why procedural constraints remain necessary even when probabilistic reasoning is formally impeccable.
+
+The governing distinction is between uncertainty within a model and uncertainty about the model:
+
+\[
+\underbrace{P(H\mid E,M)}_{\text{uncertainty represented within model }M}
+\qquad\text{and}\qquad
+\underbrace{P(M\mid E)}_{\text{uncertainty concerning the model itself}}.
+\]
+
+A further possibility lies outside both expressions:
+
+\[
+M^\ast\notin\mathfrak M,
+\]
+
+where \(M^\ast\) is the causally appropriate model and \(\mathfrak M\) is the family of models under consideration. In that case, neither a precise posterior within one model nor an average over the represented models captures the full extent of ignorance.
+
+\section{Probability spaces and represented possibilities}
+\label{sec:a2}
+
+A probability space is a triple
+
+\[
+(\Omega,\mathcal F,P),
+\]
+
+where \(\Omega\) is a sample space of possible outcomes, \(\mathcal F\) is a collection of events to which probabilities may be assigned, and \(P\) is a probability measure satisfying
+
+\[
+P(\Omega)=1,
+\]
+
+\[
+P(A)\geq 0
+\quad\text{for every }A\in\mathcal F,
+\]
+
+and, for pairwise disjoint events \(A_1,A_2,\ldots\),
+
+\[
+P\left(\bigcup_{i=1}^{\infty}A_i\right)
+=
+\sum_{i=1}^{\infty}P(A_i).
+\]
+
+The first limitation appears before any probability is assigned. The space \(\Omega\) must already distinguish the possibilities that matter. If \(\Omega\) contains only the alternatives "intentional" and "accidental," then the analysis has no direct place for coercion, misunderstood instruction, distributed responsibility, machine failure, incapacity, staged evidence, or combinations of these conditions. They may be compressed into the two represented categories, but the resulting posterior cannot reveal that the categories themselves were inadequate.
+
+Suppose an investigator considers three hypotheses:
+
+\[
+\mathcal H=\{H_1,H_2,H_3\}.
+\]
+
+These might represent intentional action, accidental action, and technical failure. The condition
+
+\[
+P(H_1)+P(H_2)+P(H_3)=1
+\]
+
+does not mean that reality must belong to one of these categories. It means only that the probability model has treated them as exhaustive. If a fourth history \(H_4\) is later discovered, the original normalization appears overconfident retrospectively because probability mass was distributed among an incomplete set.
+
+This motivates a distinction between formal exhaustiveness and causal exhaustiveness. A partition is formally exhaustive when its cells cover the stipulated sample space. It is causally exhaustive only if the sample space adequately represents the ways in which the event could actually have occurred. Probability theory guarantees the former once the model is specified. It does not independently guarantee the latter.
+
+The epistemic paranoia defended in this book begins at precisely this point. It asks not merely which represented hypothesis has the largest probability, but whether the represented alternatives deserve to be treated as exhaustive.
+
+\section{Random variables, observations, and records}
+\label{sec:a3}
+
+A random variable is a measurable function
+
+\[
+X:\Omega\to\mathcal X.
+\]
+
+In the present context, \(X\) may denote a causally relevant but partially hidden condition, while another variable \(Y\) denotes what is observed. The observation is generated through some channel:
+
+\[
+Y=\mathcal O(X,\eta),
+\]
+
+where \(\eta\) includes noise, occlusion, measurement error, compression, selection, and uncontrolled variation.
+
+The record available to an investigator may be a further transformation:
+
+\[
+R=\mathcal K(Y,\zeta),
+\]
+
+where \(\mathcal K\) represents recording, storage, retrieval, editing, or transcription and \(\zeta\) represents another source of distortion. The complete chain is therefore
+
+\[
+X\longrightarrow Y\longrightarrow R\longrightarrow E,
+\]
+
+where \(E\) is the portion of the record admitted or otherwise treated as evidence.
+
+These variables should not be conflated. The probability of a record given a hypothesis,
+
+\[
+P(R\mid H),
+\]
+
+is not necessarily the probability of the underlying event given that hypothesis. Likewise, the probability that a record becomes visible to an investigator may depend upon both its content and the institutional pathway through which records are selected:
+
+\[
+P(E\mid R,H)\neq P(E\mid R).
+\]
+
+This inequality expresses informative selection. Evidence is not always a random sample of the available record. It may be selected because it is vivid, incriminating, easy to explain, compatible with an early theory, favored by a ranking algorithm, or supplied by a strategically interested actor.
+
+The evidentiary process should consequently be represented as a generative system:
+
+\[
+P(H,X,Y,R,E)
+=
+P(H)P(X\mid H)P(Y\mid X,H)P(R\mid Y,H)P(E\mid R,H).
+\]
+
+Every conditional distribution introduces assumptions. The final posterior \(P(H\mid E)\) inherits all of them.
+
+\section{Conditional probability}
+\label{sec:a4}
+
+For events \(A\) and \(B\) with \(P(B)>0\), conditional probability is defined as
+
+\[
+P(A\mid B)
+=
+\frac{P(A\cap B)}{P(B)}.
+\]
+
+This represents the probability assigned to \(A\) after restricting attention to situations in which \(B\) occurs. It follows that
+
+\[
+P(A\cap B)
+=
+P(A\mid B)P(B)
+=
+P(B\mid A)P(A).
+\]
+
+Conditional probability is not causal direction. The expression
+
+\[
+P(H\mid E)
+\]
+
+concerns belief in \(H\) after observing \(E\); it does not state that \(E\) causes \(H\), nor even that \(H\) directly causes \(E\). Both may arise from common causes, and the evidence-selection process may itself depend upon the hypothesis under investigation.
+
+An important source of error is the inverse fallacy:
+
+\[
+P(E\mid H)\neq P(H\mid E).
+\]
+
+A piece of evidence may be highly probable if a hypothesis is true without making that hypothesis highly probable given the evidence. The posterior also depends upon how commonly the evidence occurs under alternatives and upon the prior plausibility of the hypothesis.
+
+If an unusual visual pattern occurs with probability \(0.9\) when manipulation has occurred but with probability \(0.05\) when no manipulation has occurred, the observation favors manipulation. Yet if manipulation is extremely rare in the relevant population, the posterior probability may remain modest.
+
+Let
+
+\[
+P(H)=0.001,\qquad
+P(E\mid H)=0.9,\qquad
+P(E\mid\neg H)=0.05.
+\]
+
+Then
+
+\[
+P(E)
+=
+P(E\mid H)P(H)
++
+P(E\mid\neg H)P(\neg H),
+\]
+
+so
+
+\[
+P(E)
+=
+0.9(0.001)+0.05(0.999)
+=
+0.05085.
+\]
+
+Therefore,
+
+\[
+P(H\mid E)
+=
+\frac{0.9(0.001)}{0.05085}
+\approx 0.0177.
+\]
+
+The evidence raises the probability of manipulation from approximately 0.1 percent to approximately 1.77 percent, a substantial relative increase but a low absolute probability. The distinction matters because public argument often describes any evidence that moves probability upward as though it established a high posterior confidence.
+
+\section{Bayes' theorem}
+\label{sec:a5}
+
+Bayes' theorem follows directly from the symmetry of the joint probability:
+
+\[
+P(H\mid E)
+=
+\frac{P(E\mid H)P(H)}{P(E)}.
+\]
+
+For mutually exclusive and exhaustive hypotheses \(H_1,\ldots,H_n\),
+
+\[
+P(H_i\mid E)
+=
+\frac{P(E\mid H_i)P(H_i)}
+{\sum_{j=1}^{n}P(E\mid H_j)P(H_j)}.
+\]
+
+The four terms have distinct interpretations. The prior \(P(H_i)\) represents belief before the new evidence is incorporated. The likelihood \(P(E\mid H_i)\) describes how compatible the evidence is with the hypothesis. The marginal likelihood
+
+\[
+P(E)
+=
+\sum_jP(E\mid H_j)P(H_j)
+\]
+
+normalizes the posterior. The posterior \(P(H_i\mid E)\) represents the updated state.
+
+Bayesian updating is sometimes summarized as "begin with a prior and update on evidence." That formulation is correct but incomplete because it suppresses the work involved in determining what counts as evidence, how its generation should be modeled, which hypotheses should be compared, and whether the likelihoods are stable across contexts.
+
+In a legal or historical investigation, the abstract expression
+
+\[
+P(H\mid E)
+\]
+
+may conceal a more realistic conditional structure:
+
+\[
+P(H
+\mid
+E,
+S,
+R,
+C,
+T,
+M),
+\]
+
+where \(S\) is the evidence-selection process, \(R\) its provenance, \(C\) the surrounding context, \(T\) its temporal relation to the event, and \(M\) the interpretive model. Two investigators can agree about Bayes' theorem while disagreeing profoundly about each of these conditioning variables.
+
+\section{Odds and likelihood ratios}
+\label{sec:a6}
+
+For two hypotheses \(H_1\) and \(H_0\), Bayes' theorem can be written in odds form:
+
+\[
+\frac{P(H_1\mid E)}{P(H_0\mid E)}
+=
+\frac{P(H_1)}{P(H_0)}
+\cdot
+\frac{P(E\mid H_1)}{P(E\mid H_0)}.
+\]
+
+Thus,
+
+\[
+\text{posterior odds}
+=
+\text{prior odds}
+\times
+\text{likelihood ratio}.
+\]
+
+The likelihood ratio
+
+\[
+\Lambda(E)
+=
+\frac{P(E\mid H_1)}{P(E\mid H_0)}
+\]
+
+measures how strongly \(E\) discriminates between the two hypotheses. If \(\Lambda(E)>1\), the evidence favors \(H_1\) over \(H_0\). If \(\Lambda(E)<1\), it favors \(H_0\). If \(\Lambda(E)=1\), it does not discriminate between them.
+
+This is more precise than saying that evidence is "consistent with" a hypothesis. Evidence can be perfectly consistent with \(H_1\) while being equally or more consistent with \(H_0\). Mere compatibility is not probative strength.
+
+Suppose a person runs from a location shortly after an incident. Let \(H_1\) be the hypothesis that the person caused the incident and \(H_0\) the hypothesis that the person did not. Even if
+
+\[
+P(\text{running}\mid H_1)=0.8,
+\]
+
+the observation is weak if
+
+\[
+P(\text{running}\mid H_0)=0.7.
+\]
+
+The likelihood ratio is
+
+\[
+\Lambda=\frac{0.8}{0.7}\approx1.14.
+\]
+
+The behavior is more likely under guilt than innocence, but only slightly. Treating it as highly incriminating would confuse vividness with discrimination.
+
+A likelihood ratio is also hypothesis-relative. Evidence that strongly distinguishes \(H_1\) from \(H_0\) may fail to distinguish \(H_1\) from a third hypothesis \(H_2\). Binary presentation can therefore exaggerate evidentiary strength by excluding the alternative under which the evidence is most expected.
+
+\section{Sequential updating}
+\label{sec:a7}
+
+Evidence usually arrives over time. If \(E_1,\ldots,E_n\) are observations, then
+
+\[
+P(H\mid E_{1:n})
+\propto
+P(H)P(E_{1:n}\mid H).
+\]
+
+If the observations are conditionally independent given \(H\),
+
+\[
+P(E_{1:n}\mid H)
+=
+\prod_{i=1}^{n}P(E_i\mid H),
+\]
+
+and therefore
+
+\[
+P(H\mid E_{1:n})
+\propto
+P(H)\prod_{i=1}^{n}P(E_i\mid H).
+\]
+
+In odds form,
+
+\[
+O(H_1:H_0\mid E_{1:n})
+=
+O(H_1:H_0)
+\prod_{i=1}^{n}
+\Lambda(E_i).
+\]
+
+Taking logarithms converts multiplication into addition:
+
+\[
+\log O(H_1:H_0\mid E_{1:n})
+=
+\log O(H_1:H_0)
++
+\sum_{i=1}^{n}\log\Lambda(E_i).
+\]
+
+This representation is useful because repeated modest evidence can accumulate into strong support. It is also dangerous when purportedly separate evidence items share a common source. The product rule above requires conditional independence. When that assumption fails, multiplying individual likelihood ratios double-counts information.
+
+Imagine that one original witness statement is repeated in twenty news reports. If the reports are treated as independent confirmations, the apparent evidentiary weight may grow exponentially. Yet all twenty reports may be descendants of one observation. Their dependency graph is
+
+\[
+W\longrightarrow
+R_1,R_2,\ldots,R_{20},
+\]
+
+not twenty independent paths from the event.
+
+Proper updating conditions on the shared source:
+
+\[
+P(R_1,\ldots,R_{20}\mid H,W)
+\]
+
+rather than treating
+
+\[
+P(R_1,\ldots,R_{20}\mid H)
+=
+\prod_iP(R_i\mid H).
+\]
+
+Repetition increases publicity. It does not necessarily increase independent evidence.
+
+\section{Source dependence and evidentiary genealogies}
+\label{sec:a8}
+
+An evidence collection should be represented as a genealogy rather than a flat list. Let \(G_E=(V_E,A_E)\) be a directed graph in which nodes are reports, recordings, measurements, or interpretations and edges indicate derivation, copying, citation, transformation, or common custody.
+
+Two evidence items \(E_i\) and \(E_j\) are dependent when learning one changes the expected value of the other even after conditioning on the hypothesis:
+
+\[
+P(E_i,E_j\mid H)
+\neq
+P(E_i\mid H)P(E_j\mid H).
+\]
+
+Positive dependence is common when reports share a witness, sensor, database, editorial source, interpretive convention, or institutional incentive. Negative dependence can also occur, particularly when records compete for selection or when one interpretation suppresses another.
+
+A crude approximation to the effective number of independent observations is
+
+\[
+n_{\mathrm{eff}}
+=
+\frac{n}
+{1+(n-1)\rho},
+\]
+
+where \(\rho\) is an average pairwise correlation. If \(n=100\) and \(\rho=0.1\), then
+
+\[
+n_{\mathrm{eff}}
+=
+\frac{100}{1+99(0.1)}
+\approx 9.17.
+\]
+
+A hundred correlated observations may contain information comparable to roughly nine independent observations. This formula is not a universal evidentiary law, but it illustrates how quickly apparent abundance can collapse when dependency is recognized.
+
+Provenance is therefore not auxiliary metadata. It determines the algebra by which evidence can legitimately accumulate.
+
+\section{Selection effects}
+\label{sec:a9}
+
+Evidence that reaches an investigator is usually selected from a larger body of possible evidence. Let \(S=1\) mean that an item is selected or observed. The investigator commonly works with
+
+\[
+P(H\mid E,S=1),
+\]
+
+not with the idealized quantity \(P(H\mid E)\).
+
+If selection depends upon both the hypothesis and evidentiary features, then
+
+\[
+P(S=1\mid E,H)
+\]
+
+must be included in the model. Bayes' theorem becomes
+
+\[
+P(H\mid E,S=1)
+\propto
+P(S=1\mid E,H)P(E\mid H)P(H).
+\]
+
+Selection can produce a misleading association even when the underlying measurements are accurate. For example, suppose videos are uploaded primarily when events appear dramatic. The set of publicly circulating videos is then enriched for visually extreme behavior. An observer who treats it as a representative sample may infer that the extreme behavior is typical.
+
+Selection also occurs during investigation. Once an initial hypothesis \(H_1\) becomes dominant, investigators may preferentially retrieve evidence predicted by \(H_1\). Let \(Q_t\) be the query used at time \(t\). If
+
+\[
+Q_t=q(H_t),
+\]
+
+then current belief influences which evidence becomes available for the next update:
+
+\[
+H_t\longrightarrow Q_t\longrightarrow E_{t+1}
+\longrightarrow H_{t+1}.
+\]
+
+This feedback loop can create confirmation without fabrication. Every retrieved item may be genuine, yet the retrieval process systematically excludes evidence expressed in an unexpected vocabulary, stored under an alternative category, or located in a part of the archive not searched by the prevailing theory.
+
+\section{Missing data}
+\label{sec:a10}
+
+Let \(X\) be a variable of interest and \(R\) indicate whether it is observed. Classical statistical theory distinguishes several missingness mechanisms.
+
+Data are missing completely at random when
+
+\[
+P(R\mid X,Y)=P(R).
+\]
+
+Missingness then does not depend upon observed or unobserved variables in the model.
+
+Data are missing at random when
+
+\[
+P(R\mid X,Y)=P(R\mid Y),
+\]
+
+so missingness may depend upon observed variables \(Y\) but not upon the missing value \(X\) after conditioning on \(Y\).
+
+Data are missing not at random when missingness continues to depend upon the unobserved value:
+
+\[
+P(R\mid X,Y)
+\neq
+P(R\mid Y).
+\]
+
+Legal, political, and historical records are frequently missing not at random. Actors may destroy incriminating documents, preserve exculpatory records, turn cameras on only after a confrontation begins, or withhold evidence because of shame, fear, loyalty, or institutional pressure. The absence of a record is therefore difficult to interpret.
+
+It is nevertheless invalid to treat every absence as proof of concealment. Let \(D\) denote deliberate destruction and \(A\) the absence of a record. Although
+
+\[
+P(A\mid D)
+\]
+
+may be high, the posterior
+
+\[
+P(D\mid A)
+\]
+
+still depends upon the frequency of accidental loss, ordinary non-recording, retention policies, technical failure, and other explanations. Missingness should alter the uncertainty model without automatically resolving it.
+
+\section{Base rates and reference classes}
+\label{sec:a11}
+
+A prior probability is often estimated from a reference class. Yet a case belongs simultaneously to many possible classes. An event may be classified by location, age, occupation, technology, institution, time period, behavioral pattern, or some conjunction of these attributes.
+
+If the reference class is \(C\), then the prior is
+
+\[
+P(H\mid C).
+\]
+
+Different plausible classes \(C_1\) and \(C_2\) can yield different priors:
+
+\[
+P(H\mid C_1)\neq P(H\mid C_2).
+\]
+
+This is the reference-class problem. It does not imply that priors are arbitrary. Some classifications are better supported, more causally relevant, or more stable than others. But prior selection is itself an inferential problem.
+
+A broad class may provide stable statistics while ignoring local conditions. A narrow class may resemble the case closely while containing too few observations for reliable estimation. This creates a bias-variance trade-off:
+
+\[
+\operatorname{Expected\ error}
+=
+\operatorname{Bias}^2
++
+\operatorname{Variance}
++
+\operatorname{Irreducible\ error}.
+\]
+
+Institutional paranoia should therefore operate in both directions. It should resist the neglect of established base rates, but it should also resist treating a broad historical average as an infallible description of a particular case.
+
+\section{Priors as accumulated structure}
+\label{sec:a12}
+
+A prior is sometimes portrayed as a subjective guess introduced before "the real evidence." This is misleading. Priors may encode extensive background knowledge, earlier data, physical constraints, institutional experience, or well-tested theory. A strong prior can prevent a small and noisy sample from producing a radical and unstable update.
+
+Suppose a parameter \(\theta\) has prior distribution
+
+\[
+\theta\sim\mathcal N(\mu_0,\sigma_0^2)
+\]
+
+and new observations satisfy
+
+\[
+X_i\mid\theta
+\sim
+\mathcal N(\theta,\sigma^2).
+\]
+
+After observing \(n\) values with mean \(\bar X\), the posterior mean is
+
+\[
+\mu_n
+=
+\frac{\sigma^{-2}n\bar X+\sigma_0^{-2}\mu_0}
+{\sigma^{-2}n+\sigma_0^{-2}}.
+\]
+
+This can be written as a weighted average:
+
+\[
+\mu_n
+=
+w_n\bar X+(1-w_n)\mu_0,
+\]
+
+where
+
+\[
+w_n
+=
+\frac{n/\sigma^2}
+{n/\sigma^2+1/\sigma_0^2}.
+\]
+
+When the new sample is small or noisy, \(w_n\) is small and the prior retains substantial influence. When the evidence becomes abundant and precise, \(w_n\) approaches \(1\).
+
+This provides a mathematical analogue for constrained institutional updating. Precedent, evidentiary standards, adversarial testing, and procedural regularities can prevent a vivid but narrow sample from rewriting institutional belief immediately. Yet the analogy has limits. A prior can be badly chosen, historically biased, or protected from corrective evidence. Regularization is defensible only if sufficient evidence can eventually overcome it.
+
+The proper principle is therefore not "preserve the prior," but:
+
+\[
+\text{magnitude of revision}
+\propto
+\text{robust evidentiary reach}.
+\]
+
+\section{Posterior concentration and false confidence}
+\label{sec:a13}
+
+Under favorable conditions, Bayesian posteriors concentrate around the true parameter as the amount of data grows. Informally,
+
+\[
+P\left(
+\theta\in U(\theta^\ast)
+\mid
+E_{1:n}
+\right)\to1
+\quad\text{as }n\to\infty,
+\]
+
+where \(\theta^\ast\) is the true parameter and \(U(\theta^\ast)\) is a neighborhood around it.
+
+The phrase "under favorable conditions" carries much of the substantive burden. Posterior concentration may fail to produce truth when the observations are dependent, the model is misspecified, the data-generating process changes, the selection process is ignored, or the truth is not represented in the model family.
+
+Under misspecification, the posterior may concentrate around the member of the model family closest to the true distribution according to some divergence, not around the true mechanism itself. Let \(P^\ast\) be the true distribution and \(\{P_\theta\}\) the model family. The posterior may converge toward
+
+\[
+\theta^\dagger
+=
+\arg\min_\theta
+D_{\mathrm{KL}}(P^\ast\Vert P_\theta),
+\]
+
+even though
+
+\[
+P_{\theta^\dagger}\neq P^\ast.
+\]
+
+More evidence can then produce greater confidence in the best available wrong model. This is one mathematical form of institutional feature drift: a system becomes increasingly certain because it has optimized its fit within an inadequate representational structure.
+
+\section{Model misspecification}
+\label{sec:a14}
+
+Let a model \(M\) specify a family of distributions
+
+\[
+\mathcal P_M=\{P_\theta:\theta\in\Theta\}.
+\]
+
+The model is correctly specified if the data-generating distribution \(P^\ast\) belongs to \(\mathcal P_M\). It is misspecified if
+
+\[
+P^\ast\notin\mathcal P_M.
+\]
+
+Misspecification can arise from omitted variables, incorrect functional form, unmodeled dependence, unstable measurement, selection bias, distribution shift, or an incomplete hypothesis space.
+
+Suppose a model assumes
+
+\[
+Y=\beta_0+\beta_1X+\varepsilon,
+\qquad
+E[\varepsilon\mid X]=0.
+\]
+
+If an omitted variable \(Z\) affects both \(X\) and \(Y\), then generally
+
+\[
+E[\varepsilon\mid X]\neq0.
+\]
+
+The fitted association between \(X\) and \(Y\) may then absorb the influence of \(Z\). Statistical precision around \(\widehat\beta_1\) does not repair the causal omission.
+
+In evidentiary reasoning, an analogous error occurs when an observed action is interpreted without representing the institutional or interpersonal condition that generated both the action and its visibility. A narrow model can estimate its own parameters accurately while answering the wrong causal question.
+
+\section{Uncertainty within and between models}
+\label{sec:a15}
+
+Suppose the investigator considers models \(M_1,\ldots,M_K\). Within-model uncertainty is represented by
+
+\[
+P(H\mid E,M_k).
+\]
+
+Between-model uncertainty is represented by
+
+\[
+P(M_k\mid E).
+\]
+
+Bayesian model averaging yields
+
+\[
+P(H\mid E)
+=
+\sum_{k=1}^{K}
+P(H\mid E,M_k)P(M_k\mid E).
+\]
+
+The posterior probability of a model is
+
+\[
+P(M_k\mid E)
+=
+\frac{P(E\mid M_k)P(M_k)}
+{\sum_jP(E\mid M_j)P(M_j)},
+\]
+
+where
+
+\[
+P(E\mid M_k)
+=
+\int
+P(E\mid\theta_k,M_k)
+P(\theta_k\mid M_k)
+\,d\theta_k
+\]
+
+is the model's marginal likelihood.
+
+Model averaging is valuable because it prevents all uncertainty from being compressed into one favored specification. It still assumes, however, that the relevant alternatives are represented among \(M_1,\ldots,M_K\). The sum
+
+\[
+\sum_{k=1}^{K}P(M_k\mid E)=1
+\]
+
+expresses completeness inside the analyst's model set, not proof that the model set exhausts causal reality.
+
+A disciplined analysis should therefore distinguish three propositions:
+
+\[
+P(H\mid E,M_k)\text{ is high},
+\]
+
+\[
+P(H\mid E)\text{ is high across represented models},
+\]
+
+and
+
+\[
+H\text{ remains well supported under plausible unrepresented models}.
+\]
+
+Only the first two can be calculated directly from the stipulated family. The third requires robustness arguments, sensitivity analysis, domain knowledge, and institutional procedures that invite objections from outside the initial model.
+
+\section{Bayes factors and model comparison}
+\label{sec:a16}
+
+For models \(M_1\) and \(M_0\), the Bayes factor is
+
+\[
+BF_{10}
+=
+\frac{P(E\mid M_1)}
+{P(E\mid M_0)}.
+\]
+
+Posterior model odds are
+
+\[
+\frac{P(M_1\mid E)}
+{P(M_0\mid E)}
+=
+BF_{10}
+\frac{P(M_1)}
+{P(M_0)}.
+\]
+
+A Bayes factor compares two models; it does not establish that either is adequate. A large \(BF_{10}\) may mean that \(M_1\) explains the evidence much better than \(M_0\) while both remain poor descriptions of the underlying process.
+
+This is especially important in adversarial public argument. A weak alternative can make a preferred account appear overwhelmingly strong. The relevant question is not merely whether \(H_1\) defeats the account presented by its opponent, but whether the comparison set includes the strongest causally plausible alternatives.
+
+The institutional importance of opposition, cross-examination, independent experts, and appeal partly lies in hypothesis-space expansion. An adversarial participant may contribute not just counterevidence but a model that changes the meaning of existing evidence.
+
+\section{Predictive adequacy and causal adequacy}
+\label{sec:a17}
+
+A model can predict observations accurately while misrepresenting their causes. Predictive adequacy concerns the distribution
+
+\[
+P(Y_{\mathrm{new}}\mid E,M).
+\]
+
+Causal adequacy concerns the behavior of the system under intervention:
+
+\[
+P(Y\mid do(X=x),M).
+\]
+
+These quantities need not agree. A variable may predict an outcome because it is a proxy for a hidden cause. Acting upon the proxy may then fail to change the outcome or may produce unjustified discrimination.
+
+In institutional settings, predictive models frequently estimate
+
+\[
+P(Y\mid X),
+\]
+
+where \(Y\) is a future adverse event and \(X\) is a collection of personal features. Yet a decision to intervene based on \(X\) asks a different question:
+
+\[
+P(Y\mid do(A=a),X).
+\]
+
+The prediction that a person belongs to a high-risk category does not itself establish that a particular action against that person will be effective, proportionate, or justified.
+
+The same distinction applies to narrative evidence. A behavioral pattern may predict involvement without explaining the event, and it may explain the event without establishing the legal responsibility required for sanction.
+
+\section{Calibration}
+\label{sec:a18}
+
+A probabilistic forecaster is calibrated when events assigned probability \(p\) occur approximately a proportion \(p\) of the time. If \(q_i\) is the forecast for case \(i\) and \(Y_i\in\{0,1\}\) is the outcome, calibration informally requires
+
+\[
+P(Y=1\mid q=p)=p.
+\]
+
+For example, among a sufficiently large and relevant collection of cases assigned probability \(0.7\), approximately 70 percent should exhibit the predicted outcome.
+
+Calibration is a population property. It does not determine the truth of an individual case. A well-calibrated system that assigns a person a 70 percent risk remains wrong in 30 percent of comparable cases. If an intervention is severe and irreversible, calibration alone cannot justify treating the probability as certainty.
+
+Calibration can also vary across groups and environments. A predictor calibrated in population \(G_1\) may be miscalibrated in \(G_2\):
+
+\[
+P(Y=1\mid q=p,G_1)=p
+\]
+
+while
+
+\[
+P(Y=1\mid q=p,G_2)\neq p.
+\]
+
+A system may appear calibrated overall while masking substantial local errors. Institutional use therefore requires subgroup analysis, temporal monitoring, and evaluation under distribution shift.
+
+\section{Discrimination, accuracy, and calibration}
+\label{sec:a19}
+
+Three properties are often confused. Accuracy measures how often a categorical decision is correct. Discrimination measures how well a score separates cases with different outcomes. Calibration measures whether reported probabilities correspond to observed frequencies.
+
+A model can be calibrated but weakly discriminative. If an event occurs in 10 percent of cases, assigning \(0.1\) to every case may be perfectly calibrated while providing no individual differentiation.
+
+A model can discriminate well but be miscalibrated. It may rank high-risk cases above low-risk cases while systematically overstating the numerical probability.
+
+A model can also achieve high accuracy in an imbalanced population by predicting the majority outcome in every case. If an adverse event occurs in 1 percent of cases, a system that always predicts "no event" is 99 percent accurate but useless for detection.
+
+These distinctions matter whenever numerical performance is invoked to legitimate institutional action. "The system is accurate" does not specify what kind of accuracy, on which population, at which threshold, under what selection regime, and with what distribution of errors.
+
+\section{Proper scoring rules}
+\label{sec:a20}
+
+A scoring rule evaluates probabilistic forecasts. For a binary outcome \(Y\in\{0,1\}\) and forecast \(q\in[0,1]\), the Brier score is
+
+\[
+S_{\mathrm{Brier}}(q,Y)
+=
+(q-Y)^2.
+\]
+
+The logarithmic score is
+
+\[
+S_{\log}(q,Y)
+=
+-\left[
+Y\log q+(1-Y)\log(1-q)
+\right].
+\]
+
+A proper scoring rule encourages the forecaster to report its true probabilistic belief rather than strategically exaggerating or minimizing confidence.
+
+Yet institutional actors do not always optimize for predictive accuracy. They may optimize for reputational safety, conviction rate, case closure, political responsiveness, audience engagement, or avoidance of visible false negatives. A formally well-designed evidentiary system can therefore be distorted by the loss function under which its participants operate.
+
+Let the official loss be \(L_o\) and the actor's effective loss be \(L_a\). If
+
+\[
+L_a\neq L_o,
+\]
+
+then behavior that appears irrational relative to official objectives may be rational relative to actual incentives. Institutional probability models must therefore include the ecology of incentives surrounding their production and use.
+
+\section{Credible intervals and confidence intervals}
+\label{sec:a21}
+
+A Bayesian credible interval \(C(E)\) for parameter \(\theta\) satisfies
+
+\[
+P(\theta\in C(E)\mid E)=1-\alpha.
+\]
+
+This is a posterior probability statement conditional on the model and prior.
+
+A frequentist confidence procedure produces intervals \(C(X)\) such that, under repeated sampling,
+
+\[
+P_\theta(\theta\in C(X))=1-\alpha.
+\]
+
+The parameter is treated as fixed and the interval as random. After observing one interval, classical frequentist theory does not generally interpret \(1-\alpha\) as the probability that the fixed parameter lies within that specific interval.
+
+The distinction matters, but neither interval captures all relevant uncertainty. Both may omit measurement error, data selection, unmodeled dependence, specification uncertainty, and ambiguity about how the parameter maps onto the legal or historical proposition at issue.
+
+A narrow interval can therefore coexist with broad causal uncertainty:
+
+\[
+\operatorname{Var}(\theta\mid E,M)\ll1
+\]
+
+while
+
+\[
+\operatorname{Uncertainty}(M,\mathcal H,S)\gg0.
+\]
+
+Numerical precision within a model should not be presented as exhaustive epistemic precision.
+
+\section{Imprecise probabilities and credal sets}
+\label{sec:a22}
+
+When available information does not justify a unique probability distribution, uncertainty can be represented by a set of distributions:
+
+\[
+\mathcal P=\{P_1,\ldots,P_m\}
+\]
+
+or, more generally, a convex set of admissible measures. Lower and upper probabilities are then
+
+\[
+\underline P(A)
+=
+\inf_{P\in\mathcal P}P(A),
+\]
+
+\[
+\overline P(A)
+=
+\sup_{P\in\mathcal P}P(A).
+\]
+
+Instead of reporting
+
+\[
+P(H\mid E)=0.72,
+\]
+
+one might report
+
+\[
+P(H\mid E)\in[0.41,0.81]
+\]
+
+over a justified family of priors, likelihoods, source-dependence structures, and selection assumptions.
+
+This interval is not a conventional confidence interval. It represents sensitivity to model uncertainty. A wide interval may be the most accurate statement available, even if institutions find it administratively inconvenient.
+
+A decision can be called robustly authorized when every admissible model supports it:
+
+\[
+\inf_{P\in\mathcal P}
+E_P[U(a,H)]
+>
+\sup_{P\in\mathcal P}
+E_P[U(a',H)]
+\]
+
+for relevant alternatives \(a'\). If model choice changes which action is preferred, the appropriate conclusion may be that the evidence does not yet warrant irreversible commitment.
+
+Credal representations give formal content to disciplined paranoia. They preserve disagreement among plausible models without treating all imaginable models as equally credible.
+
+\section{Sensitivity analysis}
+\label{sec:a23}
+
+Sensitivity analysis asks whether a conclusion survives reasonable variation in assumptions. Let the posterior depend upon parameters \(\psi\) representing priors, source reliability, dependence, selection, or likelihood specification:
+
+\[
+P(H\mid E,\psi).
+\]
+
+For an admissible assumption set \(\Psi\), define the posterior range
+
+\[
+\mathcal I_H(E)
+=
+\left[
+\inf_{\psi\in\Psi}P(H\mid E,\psi),
+\sup_{\psi\in\Psi}P(H\mid E,\psi)
+\right].
+\]
+
+If the lower and upper bounds are close, the conclusion is relatively robust. If they span the operative decision threshold, the action depends upon unresolved modeling choices.
+
+Local sensitivity examines derivatives such as
+
+\[
+\frac{\partial P(H\mid E,\psi)}
+{\partial\psi_j}.
+\]
+
+Global sensitivity varies several assumptions simultaneously. In causally dense settings, global sensitivity is often more informative because modeling choices interact.
+
+A public claim should be regarded with particular caution when its apparent certainty depends on a narrow combination of assumptions that are omitted from its presentation. The question is not only "What is the estimate?" but "Which changes in the surrounding model would reverse it?"
+
+\section{Robust Bayesian updating}
+\label{sec:a24}
+
+Suppose the prior belongs to a set \(\mathcal P_0\), and the likelihood belongs to a set \(\mathcal L\). Updating every admissible prior-likelihood pair produces a posterior set
+
+\[
+\mathcal P_E
+=
+\left\{
+P(\cdot\mid E):
+P\in\mathcal P_0,\,
+L\in\mathcal L
+\right\}.
+\]
+
+A robust conclusion is one shared across \(\mathcal P_E\). This makes explicit that evidence can be strong under one likelihood model and weak under another.
+
+For example, the significance of a witness's identification depends upon assumptions about lighting, viewing duration, stress, prior familiarity, lineup construction, administrator behavior, memory contamination, and the population used to estimate error. Assigning a single likelihood ratio may obscure legitimate uncertainty about these conditions.
+
+Robust updating does not mean refusing to conclude anything until every hypothetical model agrees. The admissible model family itself must be disciplined. Models should be included because they possess evidentiary, scientific, or causal justification, not merely because they preserve a desired conclusion.
+
+Thus robust paranoia is bounded:
+
+\[
+\mathfrak M_{\mathrm{admissible}}
+\subsetneq
+\mathfrak M_{\mathrm{imaginable}}.
+\]
+
+\section{Distribution shift}
+\label{sec:a25}
+
+A model developed under distribution \(P_{\mathrm{train}}(X,Y)\) may be applied under a different distribution \(P_{\mathrm{target}}(X,Y)\). Distribution shift occurs when
+
+\[
+P_{\mathrm{train}}(X,Y)
+\neq
+P_{\mathrm{target}}(X,Y).
+\]
+
+Covariate shift occurs when
+
+\[
+P_{\mathrm{train}}(X)
+\neq
+P_{\mathrm{target}}(X)
+\]
+
+while the conditional relation \(P(Y\mid X)\) remains stable. Label shift concerns changes in \(P(Y)\). Concept drift occurs when
+
+\[
+P_{\mathrm{train}}(Y\mid X)
+\neq
+P_{\mathrm{target}}(Y\mid X).
+\]
+
+Historical and legal inference frequently involve all three. Technologies change, recording practices change, actors adapt to surveillance, categories acquire new meanings, and enforcement changes which cases enter the observed dataset.
+
+A model that was once calibrated can become unreliable without any defect in its original construction. Continued authority therefore requires continued verification:
+
+\[
+\operatorname{Verified}_{t_0}(M)
+\centernot\Rightarrow
+\operatorname{Verified}_{t_1}(M).
+\]
+
+This is an instance of the distinction between authorization and continuation. A model's initial admissibility does not establish indefinite admissibility.
+
+\section{The value of additional information}
+\label{sec:a26}
+
+Suppose an institution must choose an action \(a\in\mathcal A\) under uncertainty about state \(H\). Without additional evidence, it chooses
+
+\[
+a^\ast
+=
+\arg\max_a
+E[U(a,H)].
+\]
+
+If future evidence \(E'\) becomes available, the institution can condition its action on that evidence. The expected value of perfect information is
+
+\[
+EVPI
+=
+E\left[
+\max_a U(a,H)
+\right]
+-
+\max_aE[U(a,H)].
+\]
+
+The expected value of sample information is
+
+\[
+EVSI
+=
+E_{E'}\left[
+\max_aE[U(a,H)\mid E']
+\right]
+-
+\max_aE[U(a,H)].
+\]
+
+These quantities formalize the benefit of waiting for additional evidence. Waiting is rational when the expected informational benefit exceeds the costs of delay:
+
+\[
+EVSI
+>
+C_{\mathrm{delay}}+C_{\mathrm{investigation}}.
+\]
+
+This condition depends strongly upon reversibility. If an immediate action is easily reversible, the cost of acting under uncertainty may be low. If the action produces imprisonment, public identification, permanent reputational damage, irreversible medical intervention, or destruction of records, the value of further information rises.
+
+The protected interval defended in the main text is therefore not an unconditional preference for slowness. It is a period whose value depends upon expected learning and the cost of premature action.
+
+\section{Sequential probability tests and stopping}
+\label{sec:a27}
+
+In sequential inference, evidence arrives over time and the investigator must decide when to stop collecting it. For hypotheses \(H_1\) and \(H_0\), define the cumulative likelihood ratio
+
+\[
+\Lambda_n
+=
+\prod_{i=1}^{n}
+\frac{P(E_i\mid H_1)}
+{P(E_i\mid H_0)}.
+\]
+
+A sequential probability ratio test compares \(\Lambda_n\) with two thresholds. If
+
+\[
+\Lambda_n\geq A,
+\]
+
+one accepts \(H_1\); if
+
+\[
+\Lambda_n\leq B,
+\]
+
+one accepts \(H_0\); otherwise, sampling continues.
+
+The mathematical elegance of this procedure depends upon assumptions rarely satisfied perfectly in public controversies. Evidence items may not be identically distributed, source dependence may be uncertain, hypotheses may evolve during the investigation, and the choice of which evidence to inspect next may depend upon current belief.
+
+More importantly, institutional stopping is itself political. Investigations may stop because a threshold has been reached, because resources are exhausted, because public attention has moved elsewhere, because an authority prefers closure, or because further inquiry threatens an established institution.
+
+A verdict at time \(\tau\) therefore conditions not only on evidence \(E_{1:\tau}\) but upon the stopping rule \(S\):
+
+\[
+P(H\mid E_{1:\tau},S).
+\]
+
+If stopping depends upon the observed evidence, ignoring \(S\) can exaggerate support. This is closely related to optional stopping, selective reporting, and the publication of analyses only when they reach a desired result.
+
+\section{Evidence accumulation under attention constraints}
+\label{sec:a28}
+
+Suppose potentially relevant evidence items arrive at rate \(\lambda\), while an institution can inspect items at rate \(\mu\). If \(\lambda>\mu\), the unreviewed backlog grows on average:
+
+\[
+\frac{dB(t)}{dt}
+=
+\lambda-\mu>0.
+\]
+
+Even when \(\mu>\lambda\), prioritization may cause some categories to wait much longer than others. Let item \(i\) have salience score \(s_i\), and suppose inspection priority is increasing in \(s_i\). If legal relevance \(r_i\) is imperfectly correlated with salience, then high-salience low-relevance items may crowd out low-salience high-relevance items.
+
+The probability that a relevant record is eventually recognized can be decomposed as
+
+\[
+P(\operatorname{recognized}\mid R)
+=
+P(\operatorname{retrieved}\mid R)
+P(\operatorname{understood}\mid \operatorname{retrieved},R)
+P(\operatorname{escalated}\mid \operatorname{understood},R).
+\]
+
+If the stages have probabilities \(p_1,p_2,p_3\), then
+
+\[
+P(\operatorname{recognized}\mid R)=p_1p_2p_3.
+\]
+
+A record can be publicly accessible while having a very low probability of influencing institutional judgment. This establishes a probabilistic difference between publicity and effective evidentiary availability.
+
+\section{Salience-biased sampling}
+\label{sec:a29}
+
+Let the archive contain items \(E_1,\ldots,E_N\), each with legal relevance \(r_i\) and public salience \(s_i\). A salience-driven platform samples item \(i\) with probability
+
+\[
+P(i\text{ displayed})
+=
+\frac{\exp(\beta s_i)}
+{\sum_{j=1}^{N}\exp(\beta s_j)}.
+\]
+
+As \(\beta\) increases, attention concentrates on the most salient items. If \(r_i\) and \(s_i\) are weakly correlated or negatively correlated, greater ranking efficiency with respect to salience can reduce evidentiary quality.
+
+The expected relevance of displayed evidence is
+
+\[
+E[r]
+=
+\sum_{i=1}^{N}
+r_i
+\frac{\exp(\beta s_i)}
+{\sum_j\exp(\beta s_j)}.
+\]
+
+There is no guarantee that
+
+\[
+\frac{dE[r]}{d\beta}>0.
+\]
+
+A system can become increasingly effective at selecting what attracts attention while becoming less effective at selecting what supports accurate judgment.
+
+This supplies a formal explanation for the paradox that intensive publicity may coexist with prolonged factual confusion.
+
+\section{Probability cascades}
+\label{sec:a30}
+
+Suppose individuals announce beliefs sequentially. Person \(i\) receives a private signal \(S_i\) and observes the preceding public actions \(A_1,\ldots,A_{i-1}\). The rational posterior is
+
+\[
+P(H\mid S_i,A_{1:i-1}).
+\]
+
+Once enough earlier actors choose the same interpretation, their public actions may outweigh later private evidence. Subsequent actors then imitate the public sequence even when their own signals point elsewhere. An information cascade forms.
+
+The cascade is fragile in principle because it may rest on little original evidence, but durable in practice because later conformity appears to provide additional confirmation. Observers may count the number of agreeing people without reconstructing the sequential dependency that produced their agreement.
+
+Publicity can consequently create a distinction between the amount of visible consensus and the amount of independent information supporting it:
+
+\[
+C_{\mathrm{visible}}
+\gg
+I_{\mathrm{independent}}.
+\]
+
+Legal procedure attempts to interrupt such cascades by separating witnesses, excluding some prejudicial material, questioning source independence, and requiring that conclusions be justified through admissible evidence rather than through the mere social prevalence of a narrative.
+
+\section{Probability and standards of proof}
+\label{sec:a31}
+
+It is tempting to identify legal standards of proof with numerical thresholds:
+
+\[
+P(H\mid E)>\theta.
+\]
+
+This representation is useful but incomplete. "Beyond a reasonable doubt" cannot be translated uncontroversially into a universal probability such as \(0.90\), \(0.95\), or \(0.99\). The posterior depends upon disputed priors, likelihoods, model choices, and the representation of alternative histories. Moreover, legal proof includes procedural provenance: how the evidence was obtained, tested, disclosed, and contested.
+
+A purely numerical model can nevertheless clarify the allocation of error. Suppose action \(a_1\) is conviction and \(a_0\) is acquittal. Let \(C_{10}\) be the cost of convicting under innocence and \(C_{01}\) the cost of acquitting under guilt. Expected-loss minimization favors conviction when
+
+\[
+P(H_1\mid E)C_{01}
+>
+P(H_0\mid E)C_{10},
+\]
+
+or equivalently,
+
+\[
+P(H_1\mid E)
+>
+\frac{C_{10}}
+{C_{10}+C_{01}}.
+\]
+
+If false conviction is assigned a much greater cost than false acquittal, the threshold rises.
+
+But this derivation does not prove what the costs should be, how they should be compared, or whether they are commensurable. The threshold is a consequence of normative commitments, not a substitute for them.
+
+The presumption of innocence is therefore better understood as a rule for allocating unresolved uncertainty than as a factual prior claiming accused persons are usually innocent. It states that uncertainty should not be converted into a particular form of coercion unless the burden of proof has been met.
+
+\section{Decision thresholds and reversible action}
+\label{sec:a32}
+
+Not every action requires the same evidentiary threshold. Let \(a\) have severity \(s(a)\), irreversibility \(r(a)\), duration \(d(a)\), and error asymmetry \(c(a)\). A threshold function may be represented abstractly as
+
+\[
+\theta(a)
+=
+f\bigl(
+s(a),r(a),d(a),c(a)
+\bigr),
+\]
+
+with
+
+\[
+\frac{\partial\theta}{\partial s}>0,
+\qquad
+\frac{\partial\theta}{\partial r}>0,
+\qquad
+\frac{\partial\theta}{\partial d}>0
+\]
+
+under ordinary assumptions.
+
+A temporary and reviewable protective measure may therefore be justified at a lower level of confidence than a final punitive judgment. The difference must be encoded institutionally. Otherwise, provisional suspicion acquires permanent consequences while retaining the lower threshold appropriate only to temporary intervention.
+
+Let \(a_p\) be a provisional action and \(a_f\) a final action. A legitimate system should ordinarily satisfy
+
+\[
+\theta(a_p)<\theta(a_f)
+\]
+
+and
+
+\[
+\operatorname{Review}(a_p,t^\ast)=1
+\]
+
+for a specified review time \(t^\ast\). Without mandatory review, "provisional" becomes a rhetorical label attached to continuing punishment.
+
+\section{Action under ambiguity}
+\label{sec:a33}
+
+Expected-utility theory assumes a probability distribution over states. Under severe model uncertainty, the institution may instead consider a family \(\mathcal P\). Several decision rules are possible.
+
+A maximin rule chooses
+
+\[
+a^\ast
+=
+\arg\max_a
+\inf_{P\in\mathcal P}
+E_P[U(a,H)].
+\]
+
+A minimax-regret rule chooses the action minimizing worst-case regret:
+
+\[
+a^\ast
+=
+\arg\min_a
+\sup_{P\in\mathcal P}
+\left[
+\max_{a'}E_P[U(a',H)]
+-
+E_P[U(a,H)]
+\right].
+\]
+
+An \(E\)-admissibility rule retains every action optimal under at least one admissible probability distribution. A robust-dominance rule authorizes \(a\) only if it outperforms alternatives under every admissible distribution.
+
+These rules embody different attitudes toward ambiguity. None can be selected by probability theory alone. A legal system may use robust caution when individual liberty is threatened while accepting greater ambiguity for low-cost investigation. The asymmetry is normative and institutional.
+
+\section{Unknown hypotheses and residual probability}
+\label{sec:a34}
+
+A closed hypothesis set assigns
+
+\[
+\sum_{i=1}^{n}P(H_i)=1.
+\]
+
+To represent recognized incompleteness, one may introduce a residual category \(H_\bot\):
+
+\[
+\mathcal H
+=
+\{H_1,\ldots,H_n,H_\bot\},
+\]
+
+where \(H_\bot\) denotes "some materially different unrepresented explanation." Then
+
+\[
+P(H_\bot)>0.
+\]
+
+This does not solve the unknown-hypothesis problem, because a residual category lacks a detailed likelihood model. Nevertheless, it prevents the represented alternatives from receiving the entire probability mass automatically.
+
+One may also use an open-world updating rule in which evidence that is poorly predicted by every represented hypothesis increases support for model expansion:
+
+\[
+\max_iP(E\mid H_i)<\epsilon
+\quad\Longrightarrow\quad
+\operatorname{Expand}(\mathcal H).
+\]
+
+The appropriate response to surprising evidence is not always to redistribute probability among existing narratives. It may be to introduce a new distinction.
+
+This is the probabilistic analogue of Pop: the appearance of an inadequately represented possibility within the active hypothesis space.
+
+\section{Surprise, anomaly, and accusation}
+\label{sec:a35}
+
+The surprisal of evidence \(E\) under model \(M\) is
+
+\[
+I(E\mid M)
+=
+-\log P(E\mid M).
+\]
+
+An observation with low predicted probability has high surprisal. But anomaly under a model is not proof of wrongdoing. It may indicate measurement error, distribution shift, omitted variables, poor model specification, rare innocent behavior, or intentional manipulation.
+
+Thus,
+
+\[
+\operatorname{Anomalous}(E\mid M)
+\centernot\Rightarrow
+\operatorname{False}(E)
+\]
+
+and
+
+\[
+\operatorname{Anomalous}(E\mid M)
+\centernot\Rightarrow
+\operatorname{Culpable}(H).
+\]
+
+An anomaly detector identifies a mismatch between observation and expectation. It does not identify the cause of the mismatch. Institutions that convert anomaly scores directly into adverse action suppress the distinction between detection and adjudication.
+
+The proper sequence is
+
+\[
+\operatorname{Anomaly}
+\to
+\operatorname{Inquiry}
+\to
+\operatorname{Causal\ differentiation}
+\to
+\operatorname{Evidence}
+\to
+\operatorname{Possible\ action}.
+\]
+
+\section{Reliability of testimony}
+\label{sec:a36}
+
+Suppose a witness reports \(R\in\{0,1\}\) concerning proposition \(H\in\{0,1\}\). Define sensitivity and specificity as
+
+\[
+s=P(R=1\mid H=1),
+\]
+
+\[
+c=P(R=0\mid H=0).
+\]
+
+Then
+
+\[
+P(R=1\mid H=0)=1-c.
+\]
+
+The likelihood ratio associated with a positive report is
+
+\[
+\Lambda_+
+=
+\frac{s}{1-c}.
+\]
+
+This simplified model already requires empirical estimates of witness performance under relevant conditions. But testimony is not a fixed diagnostic instrument. Reliability can depend upon viewing conditions, delay, stress, expectations, questioning, confidence feedback, social identity, prior exposure, memory reconstruction, and incentives.
+
+A more realistic specification is
+
+\[
+P(R\mid H,Z),
+\]
+
+where \(Z\) contains these conditions. If \(Z\) is incompletely observed, the investigator must integrate over its possible values:
+
+\[
+P(R\mid H)
+=
+\int P(R\mid H,Z)\,dP(Z\mid H).
+\]
+
+Multiple witnesses may share observation conditions or influence one another. Their reports should not be multiplied as independent likelihoods without a causal account of those dependencies.
+
+Confidence is itself evidence only insofar as confidence is calibrated under comparable conditions. The statement "the witness is certain" describes a mental state. It does not automatically determine the accuracy of the proposition.
+
+\section{Reliability of recordings}
+\label{sec:a37}
+
+A recording may fail through fabrication, alteration, truncation, misleading perspective, timestamp error, metadata loss, compression artifact, sensor malfunction, or contextual omission. Let \(A\) denote authenticity, \(I\) integrity, \(C\) contextual sufficiency, and \(R\) relevance. Probative adequacy might require all four:
+
+\[
+Q=A\cap I\cap C\cap R.
+\]
+
+Then
+
+\[
+P(Q)
+=
+P(A)
+P(I\mid A)
+P(C\mid A,I)
+P(R\mid A,I,C).
+\]
+
+The factors should not automatically be treated as independent. A recording can have perfect bit-level integrity while being contextually misleading. Cryptographic verification may establish that a file has not changed since a particular registration time; it does not establish what occurred outside the frame, who controlled the sensor before registration, or whether the displayed segment is representative.
+
+A useful evidentiary statement should specify the level of verification:
+
+\[
+\operatorname{VerifiedHash}(R)
+\centernot\Rightarrow
+\operatorname{VerifiedCapture}(R)
+\centernot\Rightarrow
+\operatorname{VerifiedContext}(R)
+\centernot\Rightarrow
+\operatorname{VerifiedInterpretation}(R).
+\]
+
+\section{Hierarchical evidence}
+\label{sec:a38}
+
+Evidence often has nested structure. Videos belong to devices, devices to locations, observations to witnesses, witnesses to institutions, and institutions to broader political environments. A hierarchical model represents this dependence.
+
+Suppose observation \(Y_{ij}\) is generated by source \(j\) within institution \(i\):
+
+\[
+Y_{ij}
+=
+\mu+\alpha_i+\beta_{ij}+\varepsilon_{ij},
+\]
+
+where
+
+\[
+\alpha_i\sim\mathcal N(0,\sigma_\alpha^2),
+\qquad
+\beta_{ij}\sim\mathcal N(0,\sigma_\beta^2),
+\qquad
+\varepsilon_{ij}\sim\mathcal N(0,\sigma^2).
+\]
+
+The institutional effect \(\alpha_i\) captures shared biases or conditions. Treating every \(Y_{ij}\) as independent ignores \(\sigma_\alpha^2\) and overstates the effective evidence.
+
+Hierarchical modeling permits partial pooling. Information from related sources can inform one another without pretending that they are either completely independent or completely identical. This is particularly useful where evidence comes from multiple sensors, jurisdictions, laboratories, archives, or reporting organizations.
+
+\section{Latent-variable models}
+\label{sec:a39}
+
+Many legally and historically relevant properties are not observed directly. Intent, knowledge, coercion, coordination, and responsibility are inferred from indicators.
+
+Let \(Z\) be a latent state and \(E_1,\ldots,E_n\) observable indicators. A latent-variable model specifies
+
+\[
+P(E_{1:n},Z)
+=
+P(Z)\prod_iP(E_i\mid Z)
+\]
+
+under conditional independence. But this assumption is substantive. Indicators may influence one another or share causes not represented by \(Z\).
+
+Latent categories can also acquire false concreteness. A fitted variable called "dangerousness," "credibility," or "intent" is not automatically identical to the legal or moral concept bearing that name. It is a mathematical construct inferred from selected indicators under a particular model.
+
+The interpretation map
+
+\[
+\iota:Z_{\mathrm{model}}\to C_{\mathrm{institutional}}
+\]
+
+must therefore be justified separately. Statistical identifiability does not establish conceptual validity.
+
+\section{Exchangeability and its limits}
+\label{sec:a40}
+
+A sequence \(X_1,\ldots,X_n\) is exchangeable if its joint distribution is invariant under permutations:
+
+\[
+P(X_1=x_1,\ldots,X_n=x_n)
+=
+P(X_1=x_{\pi(1)},\ldots,X_n=x_{\pi(n)})
+\]
+
+for every permutation \(\pi\).
+
+Exchangeability permits observations to be treated as drawn from a common underlying process even when independence is not assumed directly. Much statistical learning relies, explicitly or implicitly, on some form of exchangeability between past and future cases.
+
+Public events often violate it. Cases influence one another; actors learn from previous enforcement; recording technology changes; investigators inherit earlier categories; and publicity modifies subsequent behavior. The order is causally meaningful.
+
+If a highly publicized case changes policy or behavior, later cases are not exchangeable with earlier ones. A model trained on the earlier distribution may therefore fail precisely because its deployment helped create a new distribution.
+
+\section{Censoring and survival of records}
+\label{sec:a41}
+
+Records survive for different lengths of time. Let \(T\) denote time until deletion, degradation, loss, or inaccessibility. The survival function is
+
+\[
+S(t)=P(T>t).
+\]
+
+If records associated with certain actors, institutions, or event types have different survival distributions, the historical archive becomes systematically distorted.
+
+Let \(Z\) denote record class. Then
+
+\[
+S(t\mid Z=z_1)
+\neq
+S(t\mid Z=z_2).
+\]
+
+Later investigators observe not the original universe of records but the subset that survived:
+
+\[
+\mathcal R_t
+=
+\{R_i:T_i>t\}.
+\]
+
+The probability that a historical claim is supportable may therefore depend upon preservation policy, material durability, classification, institutional continuity, and accidents of discovery. Absence from the surviving archive cannot be treated as simple evidence of historical absence.
+
+\section{Publication bias and the visible evidentiary record}
+\label{sec:a42}
+
+Suppose a study or report is published with probability depending upon its result \(Z\):
+
+\[
+P(S=1\mid Z).
+\]
+
+If striking, incriminating, statistically significant, or politically useful findings are more likely to become public, then the visible record has distribution
+
+\[
+P(Z\mid S=1)
+=
+\frac{P(S=1\mid Z)P(Z)}
+{P(S=1)}.
+\]
+
+This differs from the underlying distribution \(P(Z)\).
+
+The same mechanism applies beyond scientific publication. Allegations that fit established narratives may be reported more readily; exculpatory findings may appear later and receive less attention; routine non-events rarely generate records at all. Public evidence is consequently selected for reportability.
+
+Transparency about selection mechanisms is as important as transparency about individual items. A complete database of selected reports is not a complete representation of the process from which those reports were selected.
+
+\section{Multiple comparisons and causal storytelling}
+\label{sec:a43}
+
+When investigators search a large archive for patterns, some striking associations arise by chance. If \(m\) independent hypotheses are tested at significance level \(\alpha\), the probability of at least one false positive is
+
+\[
+1-(1-\alpha)^m.
+\]
+
+For \(m=100\) and \(\alpha=0.05\),
+
+\[
+1-(0.95)^{100}\approx0.994.
+\]
+
+The assumptions of independence and identical testing are simplified, but the general problem remains: a sufficiently large evidentiary archive contains coincidences.
+
+Post hoc narrative construction can make these coincidences appear inevitable. Once a pattern has been found, the search process that generated it disappears from the presentation. The observer sees the selected alignment but not the thousands of alternatives inspected and discarded.
+
+Probative assessment must therefore condition on the search procedure. A pattern predicted before inspection generally carries different evidentiary weight from one selected after extensive exploration.
+
+\section{Overfitting an event}
+\label{sec:a44}
+
+Overfitting occurs when a model captures idiosyncrasies of observed data that do not generalize. In ordinary prediction, one compares training and test performance. In a unique historical or legal event, there may be no directly comparable test set.
+
+Nevertheless, narrative overfitting can be defined as constructing an explanation with enough adjustable components to accommodate every known detail while providing little independent predictive or retrodictive constraint.
+
+Let model complexity be \(K(M)\) and fit be \(L(E\mid M)\). A penalized criterion has the form
+
+\[
+\operatorname{Score}(M)
+=
+-\log P(E\mid M)+\lambda K(M).
+\]
+
+A narrative that explains every fact only by introducing a new auxiliary assumption for each discrepancy may fit well while possessing poor explanatory economy.
+
+Yet simplicity cannot serve as an absolute rule. Real causal histories can be complicated. Complexity penalties are justified because flexible models can imitate evidence easily, not because reality is guaranteed simple.
+
+The proper concern is the relation between complexity and constraint: does the model take risks, exclude possibilities, and generate expectations that could prove it wrong?
+
+\section{Regularization and constrained updating}
+\label{sec:a45}
+
+In statistical estimation, regularization limits how drastically a model changes to fit available data. A regularized objective is
+
+\[
+\widehat\theta
+=
+\arg\min_\theta
+\left[
+L(E;\theta)+\lambda\Omega(\theta)
+\right],
+\]
+
+where \(L\) measures fit to evidence and \(\Omega\) penalizes complexity or deviation from an established structure.
+
+A proximity regularizer takes the form
+
+\[
+\Omega(\theta)
+=
+\|\theta-\theta_0\|^2,
+\]
+
+where \(\theta_0\) is the previous or pretrained state. Large \(\lambda\) resists rapid revision; small \(\lambda\) permits the new data to dominate.
+
+The AFF-Net analogy belongs here. A broadly pretrained backbone contains structure learned from a large and diverse dataset. Full fine-tuning on scarce labeled medical data allows a small sample to alter the entire representation, potentially capturing spurious features. Freezing most of the backbone and training a limited adapter restricts the update to a smaller subspace.
+
+An institutional analogue is
+
+\[
+\Theta_{t+1}
+=
+\arg\min_{\Theta\in\mathcal C}
+\left[
+L(E_t;\Theta)
++
+\lambda D(\Theta,\Theta_t)
+\right],
+\]
+
+where \(\mathcal C\) encodes procedural constraints. Early evidence may modify some beliefs without rewriting every prior classification, precedent, presumption, or standard of proof.
+
+The analogy must not be extended into an identity. Legal institutions are not passive pretrained models; their inherited structures embody power and may require radical correction. The point is narrower: limited, noisy, and selectively observed evidence is not statistically entitled to induce unrestricted change. A constrained update can preserve capacities acquired from broader experience while further evidence accumulates.
+
+The appropriate strength of regularization should decline as independent and robust evidence grows:
+
+\[
+\lambda=\lambda(Q(E)),
+\qquad
+\frac{d\lambda}{dQ}<0,
+\]
+
+where \(Q(E)\) measures evidentiary quality. A system whose regularization never yields becomes dogmatic. A system with no regularization becomes reactive.
+
+\section{Feature drift and institutional drift}
+\label{sec:a46}
+
+Let \(\phi_t(x)\) be the representation assigned to input \(x\) at time \(t\). Feature drift occurs when
+
+\[
+D\bigl(\phi_{t+1}(x),\phi_t(x)\bigr)
+\]
+
+becomes large after exposure to a narrow sample. In institutions, the analogous representation may be a classification of behavior, personhood, threat, credibility, or permissible action.
+
+An intensely publicized event can alter the institutional feature space itself. Behaviors formerly treated as ambiguous become coded as diagnostic; relationships acquire new presumptions; neutral anomalies become threat indicators. Subsequent evidence is then interpreted through the altered representation.
+
+This creates a feedback cycle:
+
+\[
+E_t
+\to
+\Theta_{t+1}
+\to
+\phi_{t+1}
+\to
+\operatorname{Select}(E_{t+1})
+\to
+\Theta_{t+2}.
+\]
+
+Early evidence does not merely influence a conclusion. It changes which later evidence the institution can recognize.
+
+Procedural restraint limits this feedback by separating provisional classification from durable representational revision. Precedent, formal findings, and permanent records should generally require more support than temporary investigative hypotheses.
+
+\section{Posterior predictive checking}
+\label{sec:a47}
+
+A model should be evaluated by asking whether data generated from its posterior predictive distribution resemble the observed data in relevant ways. The posterior predictive distribution is
+
+\[
+P(\widetilde E\mid E)
+=
+\int
+P(\widetilde E\mid\theta)
+P(\theta\mid E)
+\,d\theta.
+\]
+
+Choose a discrepancy statistic \(T(E)\). The posterior predictive probability
+
+\[
+P\left(
+T(\widetilde E)\geq T(E)
+\mid E
+\right)
+\]
+
+indicates whether the observed discrepancy is unusual under the fitted model.
+
+In evidentiary reasoning, an explanation should be tested against features it was not constructed merely to restate. If a narrative claims coordinated planning, does it predict the temporal organization, communication structure, resource distribution, or error pattern that such planning would plausibly generate? If it claims independent spontaneous action, does the observed correlation exceed what that account predicts?
+
+Posterior predictive failure should not automatically select a rival narrative. It may instead indicate that the entire model family is inadequate.
+
+\section{Calibration under adversarial conditions}
+\label{sec:a48}
+
+Ordinary calibration assumes that the data-generating process does not strategically respond to the predictor. In adversarial environments, actors alter behavior after learning how they are evaluated.
+
+Let a classifier use feature vector \(X\) and decision rule \(d(X)\). An actor chooses transformation \(g\) to optimize
+
+\[
+U_{\mathrm{actor}}(g)
+=
+B(d(g(X)))-C(g),
+\]
+
+where \(B\) is the benefit of obtaining a favorable decision and \(C\) the cost of changing observable features.
+
+The deployed distribution becomes
+
+\[
+P_{\mathrm{deploy}}(X,Y)
+\neq
+P_{\mathrm{predeploy}}(X,Y).
+\]
+
+Surveillance and risk scoring can therefore produce an arms race in visibility. Less powerful actors may become legible in ways that expose them, while sophisticated actors learn to generate the surface features associated with compliance.
+
+Institutional paranoia must be reflexive: it should suspect not only the subjects being evaluated but also the continued validity of the evaluation system.
+
+\section{Privacy and probabilistic inference}
+\label{sec:a49}
+
+Privacy loss is not limited to the disclosure of recorded facts. Observed variables \(X\) may permit inference about unobserved property \(Z\). The information that \(X\) carries about \(Z\) can be measured by mutual information:
+
+\[
+I(X;Z)
+=
+\sum_{x,z}
+P(x,z)
+\log
+\frac{P(x,z)}
+{P(x)P(z)}.
+\]
+
+If \(I(X;Z)>0\), observation of \(X\) reduces uncertainty about \(Z\). Several individually weak signals may jointly become highly informative:
+
+\[
+I(X_1,\ldots,X_n;Z)
+\gg
+I(X_i;Z).
+\]
+
+This is the probabilistic structure behind mosaic inference. Location traces, purchase histories, communication timing, social connections, and device metadata may jointly reveal medical, political, religious, occupational, or relational information never directly disclosed.
+
+Privacy regulation limited to explicitly sensitive fields therefore misses inferential privacy. The actionable object is not only the stored datum but the posterior an institution can construct:
+
+\[
+P(Z\mid X_{1:n}).
+\]
+
+A person may protect every direct statement of \(Z\) while losing practical privacy because the surrounding traces determine \(Z\) with high probability.
+
+\section{Differential privacy and bounded disclosure}
+\label{sec:a50}
+
+Differential privacy offers a formal guarantee limiting how much the inclusion of one person's data can change the distribution of released outputs. A randomized mechanism \(\mathcal M\) is \((\varepsilon,\delta)\)-differentially private if, for neighboring datasets \(D\) and \(D'\),
+
+\[
+P(\mathcal M(D)\in S)
+\leq
+e^\varepsilon
+P(\mathcal M(D')\in S)
++\delta
+\]
+
+for all measurable output sets \(S\).
+
+The guarantee is relational. It limits the additional inferential exposure caused by an individual's participation. It does not guarantee that the output reveals nothing about that individual, especially when similar information is already inferable from the population or external data.
+
+Differential privacy also introduces a privacy budget. Repeated releases compose, so apparently minor disclosures can accumulate. Under basic composition, mechanisms with parameters \(\varepsilon_1,\ldots,\varepsilon_k\) yield total privacy loss approximately bounded by
+
+\[
+\varepsilon_{\mathrm{total}}
+\leq
+\sum_{i=1}^{k}\varepsilon_i.
+\]
+
+This formalizes an important principle of the book: privacy cannot be evaluated one disclosure at a time while ignoring combinatorial accumulation.
+
+Differential privacy is not a general solution to legal transparency. It is most useful for aggregate statistical release. Courts, investigations, and public accountability often require particularized evidence. Its broader importance here lies in showing that publicity and privacy can sometimes be jointly designed rather than treated as absolute opposites.
+
+\section{Publicity as a change in the observation model}
+\label{sec:a51}
+
+Publicity does not merely distribute evidence to more observers. It changes the process being observed. Once actors know they are visible, they may perform, conceal, signal, provoke, or curate behavior.
+
+Let \(A\) be an actor's conduct and \(V\) the visibility regime. Then
+
+\[
+P(A\mid V=1)
+\neq
+P(A\mid V=0).
+\]
+
+A public recording is therefore not always a transparent sample of the behavior that would have occurred without recording. Publicity can deter misconduct, but it can also relocate misconduct outside the visible field or encourage symbolic actions designed for circulation.
+
+The observer must reason about a reflexive loop:
+
+\[
+V\to A\to R\to B\to V',
+\]
+
+where visibility affects action, action produces records, records update public belief, and belief changes future visibility practices.
+
+This complicates simple claims that more cameras reveal the underlying truth. Cameras alter the ecology whose truth is being investigated.
+
+\section{Public belief and common knowledge}
+\label{sec:a52}
+
+A proposition can be privately known, publicly announced, or made common knowledge. If everyone knows \(H\), that does not yet imply that everyone knows that everyone knows \(H\). Common knowledge involves an indefinitely iterated structure:
+
+\[
+K_1H,\quad K_2H,\quad K_1K_2H,\quad K_2K_1H,\ldots
+\]
+
+Publicity can transform behavior by creating higher-order beliefs even when it supplies little new first-order evidence. An accusation known privately by many people may have limited coordinating power. Once publicly announced, it becomes a reference point around which institutions, crowds, and adversaries can coordinate.
+
+The public effect of information therefore cannot be measured solely by its contribution to \(P(H\mid E)\). It also changes beliefs about what others believe and what actions they are likely to support.
+
+A legally untested claim may consequently acquire institutional force through common knowledge before it acquires evidentiary warrant.
+
+\section{Belief, acceptance, and institutional commitment}
+\label{sec:a53}
+
+An individual may assign high probability to a proposition without accepting it as a premise for action. Conversely, an institution may provisionally accept a proposition for a limited purpose without claiming that it is probably true in every sense.
+
+Let \(b(H)\in[0,1]\) denote probabilistic belief and \(A_c(H)\in\{0,1\}\) denote acceptance in context \(c\). Then
+
+\[
+A_c(H)
+\neq
+\mathbf 1[b(H)>\theta]
+\]
+
+in general. Acceptance also depends upon the stakes, burden of proof, available alternatives, and procedural role.
+
+A court may accept that sufficient evidence exists to authorize a search without accepting guilt. An employer may impose a temporary separation without making a final misconduct finding. A historian may treat a date as provisionally established while preserving a competing reconstruction.
+
+Institutional pathology arises when acceptance migrates across contexts without preserving its original type:
+
+\[
+A_{c_1}(H)
+\to
+A_{c_2}(H)
+\]
+
+despite \(c_1\neq c_2\). A low-threshold investigative flag becomes a public assertion, then a reputational fact, then an input to later risk scoring. The probability has not necessarily changed, but the operational consequences have expanded.
+
+\section{The provenance of priors}
+\label{sec:a54}
+
+Priors themselves have histories. Let the prior at time \(t\) be generated by earlier evidence \(E_{<t}\), institutional transformations \(T_{<t}\), and selection processes \(S_{<t}\):
+
+\[
+P_t(H)
+=
+\mathcal G(E_{<t},T_{<t},S_{<t}).
+\]
+
+A prior may therefore contain accumulated knowledge, accumulated prejudice, or both. Calling it a prior does not settle its legitimacy.
+
+A procedurally warranted prior should have recoverable provenance. One should be able to ask which observations produced it, whether those observations were representative, whether categories have changed, whether earlier errors were corrected, and whose experiences were excluded from the record.
+
+The legal analogue of prior auditing is examination of precedent, institutional history, enforcement disparity, and category construction. A system that regularizes toward an inherited state without auditing that state may preserve exactly the feature drift of an earlier era.
+
+Constrained updating must therefore operate at two timescales. Short-term regularization prevents a narrow new sample from causing impulsive change. Long-term review permits accumulated evidence to revise the structure toward which short-term updates are regularized.
+
+\section{A two-timescale model of institutional learning}
+\label{sec:a55}
+
+Let \(\theta_t\) denote fast operational beliefs and \(\Phi_t\) denote slow institutional structure. New evidence updates \(\theta_t\) rapidly:
+
+\[
+\theta_{t+1}
+=
+\theta_t
++
+\alpha_t
+g(E_t,\theta_t,\Phi_t),
+\]
+
+where \(\alpha_t\) is a comparatively large learning rate.
+
+Institutional structure changes more slowly:
+
+\[
+\Phi_{t+1}
+=
+\Phi_t
++
+\beta_t
+h(E_{1:t},\theta_{1:t},\Phi_t),
+\]
+
+with
+
+\[
+0<\beta_t\ll\alpha_t.
+\]
+
+This arrangement permits provisional response without allowing each new event to rewrite the entire system. Structural change occurs after evidence accumulates across cases, undergoes review, and reveals persistent inadequacy.
+
+The model also exposes two symmetric failures. If \(\alpha_t\) is too large, operational judgment becomes reactive. If \(\beta_t=0\), structural injustice becomes permanent. Freedom requires both resistance to premature collapse and capacity for eventual transformation.
+
+\section{A formal distinction between updating and authorization}
+\label{sec:a56}
+
+Let \(B_t\) be an institution's belief state and \(A_t\) its authorized action set. Evidence may update belief:
+
+\[
+B_{t+1}=U(B_t,E_t).
+\]
+
+Authorization is a separate map:
+
+\[
+A_{t+1}
+=
+\Gamma(B_{t+1},R,C),
+\]
+
+where \(R\) is the applicable rights structure and \(C\) the procedural context.
+
+It does not follow that every change in belief should change the action set:
+
+\[
+B_{t+1}\neq B_t
+\centernot\Rightarrow
+A_{t+1}\neq A_t.
+\]
+
+This separation is indispensable. Evidence can justify further investigation without justifying search, justify search without justifying charge, justify charge without justifying conviction, and justify conviction without justifying every possible punishment.
+
+Probability informs belief. Law governs the transition from belief to authorized force.
+
+\section{A probabilistic formulation of premature collapse}
+\label{sec:a57}
+
+Let \(\mathcal H_t\) be the active set of hypotheses at time \(t\), and let \(P_t\) be the current posterior distribution. Define a collapse operator
+
+\[
+C_\tau(\mathcal H_\tau,P_\tau)=\widehat H_\tau.
+\]
+
+Collapse is premature when later admissible evidence substantially changes the warranted conclusion:
+
+\[
+D\left(
+P_\tau,
+P_{\tau+\Delta}
+\right)>\epsilon
+\]
+
+and the action authorized at \(\tau\) was costly or irreversible.
+
+A more prospective definition uses expected value of information. Collapse at time \(\tau\) is premature when
+
+\[
+EVSI_\tau
+>
+C_{\mathrm{delay},\tau}
+\]
+
+and waiting remains institutionally possible.
+
+This does not mean a decision is illegitimate whenever later evidence changes it. Institutions must act under uncertainty. Prematurity concerns a mismatch among evidentiary maturity, expected learning, action severity, and reversibility.
+
+One can define a collapse-risk functional
+
+\[
+\mathcal C(\tau)
+=
+P\!\left(
+D(P_\tau,P_{\tau+\Delta})>\epsilon
+\mid E_{1:\tau}
+\right)
+\cdot
+I(a_\tau),
+\]
+
+where \(I(a_\tau)\) measures the irreversibility of the contemplated action. High collapse risk calls for stronger procedural restraint.
+
+\section{The probability of eventual recognition}
+\label{sec:a58}
+
+Let a relevant feature \(F\) exist in an archive at time \(0\). It must be retained, retrieved, interpreted, validated, and escalated. Let the corresponding events be \(R_1,\ldots,R_5\). Then
+
+\[
+P(\operatorname{recognized\ by}\ t)
+=
+P(R_1\cap\cdots\cap R_5\text{ by }t).
+\]
+
+Under a simplifying conditional decomposition,
+
+\[
+P(\operatorname{recognized\ by}\ t)
+=
+P(R_1)
+P(R_2\mid R_1)
+P(R_3\mid R_1,R_2)
+P(R_4\mid R_{1:3})
+P(R_5\mid R_{1:4}).
+\]
+
+Even moderately high probabilities compound. If each stage succeeds with probability \(0.7\), then the overall probability is
+
+\[
+0.7^5\approx0.168.
+\]
+
+Thus, a highly consequential feature may have less than a one-in-five chance of reaching institutional recognition despite no stage being exceptionally unreliable.
+
+Over time, repeated search, technical improvement, new questions, or independent investigators may raise the cumulative probability. This produces long-tailed recognition times and explains why evidence recorded immediately can acquire significance ten or twenty years later.
+
+\section{Delayed evidence and retrospective updating}
+\label{sec:a59}
+
+Suppose evidence \(E_t\) is recorded at event time \(t\) but recognized only at time \(t+\Delta\). The later posterior is
+
+\[
+P(H\mid E_{1:t+\Delta}),
+\]
+
+but the historical question concerns what could reasonably have been believed or authorized at the earlier time. These are different quantities:
+
+\[
+P(H\mid E_{\mathrm{available\ at}\ t})
+\]
+
+and
+
+\[
+P(H\mid E_{\mathrm{eventually\ recovered}}).
+\]
+
+Retrospective certainty should not be projected backward as though all later evidence had been available initially. Conversely, the reasonableness of an earlier decision does not make its conclusion eternally true after new evidence emerges.
+
+This yields two independent evaluations:
+
+\[
+J_{\mathrm{procedural}}
+=
+\operatorname{Quality}
+\left(
+\text{decision given evidence then available}
+\right),
+\]
+
+\[
+J_{\mathrm{substantive}}
+=
+\operatorname{Accuracy}
+\left(
+\text{decision given best evidence now available}
+\right).
+\]
+
+A decision can have been procedurally reasonable and substantively wrong. It can also have reached the right conclusion through an illegitimate procedure. These possibilities must remain distinct.
+
+\section{The asymmetry of accusation and correction}
+\label{sec:a60}
+
+Let \(A\) be an accusation and \(C\) a later correction. Their public reach may satisfy
+
+\[
+P(\operatorname{exposed\ to}\ A)
+>
+P(\operatorname{exposed\ to}\ C).
+\]
+
+Among those exposed to both, anchoring may yield
+
+\[
+P(H\mid A,C)
+\neq
+P(H\mid C,A).
+\]
+
+A purely Bayesian ideal with fully specified evidence treats order as irrelevant because
+
+\[
+P(H\mid A,C)
+=
+P(H\mid C,A).
+\]
+
+Human and institutional cognition often violates this commutativity because the first item changes attention, interpretation, memory, and the hypothesis space through which the second is understood.
+
+A realistic model must therefore allow the update operator to depend upon the current representation:
+
+\[
+B_{t+1}
+=
+U(E_{t+1};B_t,\Phi_t).
+\]
+
+If the accusation changes \(\Phi_t\), the later correction is not processed by the same system that received the accusation. Correction may require representational repair, not merely addition of another evidence item.
+
+\section{Noncommutative updating}
+\label{sec:a61}
+
+Classical conditioning on a fixed probability space is commutative with respect to the final evidence set:
+
+\[
+P(H\mid E_1,E_2)
+=
+P(H\mid E_2,E_1).
+\]
+
+Actual institutional updating may be noncommutative because evidence changes categories, search strategies, witness memories, resource allocations, and public incentives. Let \(U_{E}\) be an update operator. Then
+
+\[
+U_{E_2}U_{E_1}(B_0)
+\neq
+U_{E_1}U_{E_2}(B_0).
+\]
+
+This inequality should not be misunderstood as a rejection of probability theory. It indicates that the state being updated includes more than a fixed probability distribution. It includes the representation of hypotheses and the process by which subsequent evidence becomes observable.
+
+Noncommutative updating provides the bridge from probability to the later geometric appendix. Different evidentiary paths can transport institutional judgment to different endpoints even when they contain nominally similar information.
+
+\section{Privacy, publicity, and asymmetric error}
+\label{sec:a62}
+
+Privacy and publicity protect against different error distributions. Excessive secrecy raises the probability that institutional abuse remains undetected:
+
+\[
+P(\operatorname{undetected\ abuse}\mid \operatorname{opacity})
+\uparrow.
+\]
+
+Excessive exposure raises the probability that incomplete personal information produces public or institutional misclassification:
+
+\[
+P(\operatorname{misclassification}\mid \operatorname{unbounded\ exposure})
+\uparrow.
+\]
+
+The objective is not to minimize one risk without regard to the other. Let \(\kappa\) represent personal exposure and \(\rho\) institutional opacity. A general loss function is
+
+\[
+L(\kappa,\rho)
+=
+L_{\mathrm{concealed\ power}}(\rho)
++
+L_{\mathrm{exposed\ person}}(\kappa)
++
+L_{\mathrm{investigative\ failure}}(\kappa,\rho).
+\]
+
+The interaction term matters. Some privacy can improve evidentiary quality by reducing coercion, performance, witness contamination, or retaliatory pressure. Some publicity can improve privacy by exposing unauthorized surveillance or forcing institutions to specify their information practices.
+
+Privacy and publicity are therefore neither simple opposites nor universally substitutable goods.
+
+\section{Epistemic risk and moral risk}
+\label{sec:a63}
+
+An epistemic risk is the possibility of holding a false or badly calibrated belief. A moral or political risk is the possibility of acting wrongly. The two are related but not identical.
+
+Let \(e\) be epistemic error and \(a\) an action. The expected political harm is
+
+\[
+E[L(a,H)]
+=
+\sum_H
+P(H\mid E)L(a,H).
+\]
+
+A moderate epistemic error can produce enormous harm if the action is severe. A larger epistemic error may produce little harm if the belief remains private or supports only reversible inquiry.
+
+This distinction explains why freedom cannot be protected merely by improving predictive accuracy. The institutional question is how error propagates into action:
+
+\[
+\text{error}
+\to
+\text{classification}
+\to
+\text{authorization}
+\to
+\text{consequence}.
+\]
+
+Procedural law introduces resistance along this chain. It does not presume that error can be eliminated at the point of observation.
+
+\section{The probabilistic meaning of disciplined paranoia}
+\label{sec:a64}
+
+The power of paranoia is not captured by assigning high probability to malicious explanations. That would merely be a pessimistic prior. Disciplined paranoia instead operates at the level of model criticism.
+
+It maintains four reservations:
+
+\[
+\mathcal H\text{ may be incomplete},
+\]
+
+\[
+P(E\mid H)\text{ may be misspecified},
+\]
+
+\[
+E\text{ may have been selected non-randomly},
+\]
+
+\[
+\text{the action threshold may not follow from belief alone}.
+\]
+
+These reservations do not forbid conclusion. They require that confidence be indexed to its assumptions and that coercive consequences be indexed to the robustness of the conclusion.
+
+A compact formal expression is
+
+\[
+\operatorname{Authorize}(a)
+\quad\text{only if}\quad
+\inf_{M\in\mathfrak M_{\mathrm{adm}}}
+W(H,E,M)
+>
+\theta(a),
+\]
+
+where \(W\) is a warrant function, \(\mathfrak M_{\mathrm{adm}}\) is a procedurally justified family of models, and \(\theta(a)\) rises with the severity and irreversibility of \(a\).
+
+The infimum expresses caution across plausible interpretations. The restriction to admissible models prevents arbitrary possibilities from vetoing every action. The action-specific threshold prevents a single posterior confidence from licensing every consequence.
+
+\section{Summary propositions}
+\label{sec:a65}
+
+The results of this appendix can be condensed into twelve propositions.
+
+Proposition A.1: Representational incompleteness. A posterior distribution can be normalized over a formally exhaustive hypothesis set without that set being causally exhaustive.
+
+Proposition A.2: Likelihood relativity. Evidence has no hypothesis-independent probative strength. Its force depends upon its relative probability under competing explanations.
+
+Proposition A.3: Genealogical dependence. Repeated reports do not constitute repeated evidence when they descend from a common source or share a common error mechanism.
+
+Proposition A.4: Selection dependence. Publicly available evidence is generally conditioned upon processes of recording, preservation, retrieval, ranking, and publication.
+
+Proposition A.5: Precision under misspecification. Increasing data can produce increasing certainty around a systematically wrong model.
+
+Proposition A.6: Robustness requirement. A conclusion is stronger when it survives plausible variations in priors, likelihoods, dependency structures, and selection models.
+
+Proposition A.7: Temporal non-equivalence. The probability warranted by evidence available at the time of decision differs from the probability warranted by evidence recognized later.
+
+Proposition A.8: Salience divergence. The probability that evidence receives attention need not increase with its legal or causal relevance.
+
+Proposition A.9: Updating-authorization separation. Evidence may rationally change belief without authorizing a corresponding coercive action.
+
+Proposition A.10: Severity-sensitive thresholds. The evidentiary threshold should ordinarily rise with the severity, duration, asymmetry, and irreversibility of the contemplated action.
+
+Proposition A.11: Two-timescale learning. Institutions require fast provisional updating and slower structural revision; eliminating either produces reactivity or dogmatism.
+
+Proposition A.12: Disciplined paranoia. Rational distrust concerns not only which hypothesis is true but whether the hypotheses, evidence-selection process, likelihoods, and action rules are themselves adequate.
+
+\section{Concluding interpretation}
+\label{sec:a66}
+
+Probability theory clarifies why the abundance of records does not remove the need for legal or institutional restraint. A posterior is not produced by evidence alone. It is produced by evidence situated within a hypothesis space, a likelihood model, a provenance structure, a selection process, a reference class, and a rule governing when inquiry stops. Each element can fail while the final calculation remains internally correct.
+
+This does not make probabilistic reasoning futile. It makes its conditions visible. Properly used, probability separates relative support from mere consistency, exposes double-counted sources, represents delayed evidence, measures sensitivity to assumptions, and distinguishes the degree of belief from the authority to act. Improperly used, it conceals structural uncertainty beneath numerical precision.
+
+The legal requirement that claims pass through evidence, contestation, and standards of proof is therefore not an antiquated substitute for mathematical rationality. It is a social response to uncertainties that no single probability assignment can conclusively absorb. Procedure allows assumptions to be challenged by persons who were not represented in the original model. It permits new hypotheses to enter, provenance to be disputed, dependencies to be revealed, and action to be withheld when confidence is fragile.
+
+The power of paranoia lies in remembering that even a highly probable account remains an account. Its discipline lies in specifying what would warrant belief, what would warrant revision, and what degree of belief would warrant which action.
