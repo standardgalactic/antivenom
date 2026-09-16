@@ -1,5 +1,7 @@
 # Antivenom
 
+[Rhetoric](https://github.com/standardgalactic/antivenom/blob/main/rhetoric/README.md) — *Work in Progress*
+
 [Unfinishable Games](https://github.com/standardgalactic/antivenom/blob/main/monograph/README.md) — *Project*
 
 [Xylomorphic Computation](https://github.com/standardgalactic/antivenom/blob/main/futurology/README.md)

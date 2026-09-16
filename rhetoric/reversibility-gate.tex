@@ -1,0 +1,267 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{times}
+\usepackage{titling}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+
+\title{The Reversibility Gate\\[4pt]\large Evidence, Delay, and Action Under Unsettled Claims}
+\author{Flyxion}
+\date{September 2026}
+
+\newtheorem{principle}{Principle}
+\newtheorem{definition}{Definition}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A claim can be admissible to memory before it is admissible to action. This essay distinguishes three times relevant to a claim under pressure: when evidence is first observed, when a declared evidential process becomes capable of returning a settlement status, and when a particular action stops being forbidden by the joint cost of delay, error, and irreversible commitment. Streaming-memory architectures commonly track only the first two, treating maturity as though it were sufficient warrant for action. This conflates two properties that belong to different objects: a claim's readiness for judgment, which is a property of evidence, and an action's permissibility, which is a property of that action's own reversibility, consequences, and delay sensitivity, evaluated against whatever response has already been fixed. We introduce a reversibility gate that adjudicates the pair rather than reading permission off maturity alone, and we separate four operations routinely compressed into a single act of ``updating a belief'': revision, retraction, rollback, and repair. The result is a general vocabulary for systems that must act inside time, rather than after it.
+\end{abstract}
+
+\section{Introduction}
+
+Every system that reasons under time pressure faces a structural problem that has nothing to do with the sophistication of its inference. The problem is that evidence, judgment, and action do not arrive together. A sensor can register a signal before the process that would confirm or disconfirm its meaning has run its course. A witness can report an event before the corroborating record exists. A diagnostic test can return a value before the clinical picture it is meant to inform has stabilized. In each case, something enters the system's field of consideration well before the system is entitled to treat it as settled, and often before the system is entitled to act on it at all.
+
+Systems organized primarily around belief update or streaming sufficiency often leave the transition from epistemic settlement to action implicit. Decision theory has long separated credence from consequence: expected-utility theory weighs an action against its consequences under uncertainty \cite{Savage1954}, value-of-information analysis compares acting now against acquiring more evidence first \cite{Howard1966}, optimal-stopping theory addresses when further delay becomes worse than commitment \cite{ChowRobbinsSiegmund1971}, and option-value theory studies the asymmetric cost of foreclosing future choices under irreversibility \cite{DixitPindyck1994}. None of this is new. What streaming-memory architectures commonly lack is not a theory of action under uncertainty but an explicit representation connecting claim maturity, dependency lineage, action reversibility, and the later repair of states formed under a claim that is subsequently withdrawn. This essay argues that the resulting failures are separable into two distinct modes: acting too early, on evidence that has not matured, and waiting too long, past the point where inaction has itself become the costlier error. It further argues that the split is not a simple three-stage sequence: two of the relevant times belong to the claim, and the third belongs to the action considered against whatever response has already been fixed.
+
+The argument proceeds independently of any one implementation. A worked example from recent streaming-perception research is introduced only in the final section, as an illustration of where present systems sit relative to the distinctions defended here, not as their source.
+
+\section{Three Times of a Claim}
+
+Consider a proposition $p$ entering a system's attention at some moment, together with a declared maturity condition $\tau$: an evidential procedure, with its own modality and interval, that is expected to settle $p$.
+
+\begin{definition}[Observation time]
+$t_{\mathrm{observed}}(p)$ is the moment at which some evidence bearing on $p$ first becomes available to the system, regardless of whether that evidence is sufficient to decide $p$.
+\end{definition}
+
+\begin{definition}[Decidability time]
+$t_{\mathrm{decidable}}(p, \tau)$ is the moment at which the declared maturity condition $\tau$ for $p$ has been satisfied, expired, or failed, such that the system must assign a settlement status relative to that evidential procedure.
+\end{definition}
+
+The qualification relative to that evidential procedure is doing real work. In an open world, further evidence can almost always arrive from some other, undeclared source; decidability as defined here does not claim that reality has yielded its final word, only that the specific scheduled test has closed and a status is now due. This permits \emph{unresolved} to be a legitimate terminal status of the procedure rather than a symptom of the definition's failure. Observation and decidability are both times in the evidential career of $p$, and they satisfy, as a rule,
+\[
+t_{\mathrm{observed}}(p) \;\leq\; t_{\mathrm{decidable}}(p, \tau),
+\]
+since a procedure cannot close before the evidence it examines has begun to arrive.
+
+Actionability is not a third stage in this same career. It is not a property of $p$ alone.
+
+\begin{definition}[Actionability time, action- and background-indexed]
+For a candidate action $a$ considered against a background response $B$, $t_{\mathrm{actionable}}(p, a \mid B)$ is the earliest moment at which adding $a$ to $B$ is no longer forbidden by the loss comparison of Section~4.
+\end{definition}
+
+An actionable action can subsequently cross a stronger margin. Permission marks entry into the admissible response set; requirement marks the point at which leaving $B$ unchanged has become substantively worse, not merely no better. This is not a fourth time added to the count in the title: the gate may move from permit to require as evidence or urgency shifts, but that transition is a stronger threshold on the same underlying comparison that fixes actionability, not an independent stage a claim passes through.
+
+Because $t_{\mathrm{actionable}}$ is indexed to $a$ and $B$, a single claim can carry many actionability times at once, and each may fall before, at, or after $t_{\mathrm{decidable}}(p,\tau)$. A screen reading \emph{Gate 6} can make checking the audio feed actionable immediately and make a hedged spoken warning actionable somewhat later, while never making rerouting ground crews actionable before the announcement completes. A visible fire alarm can make sounding a provisional alert actionable at once and make evacuating a floor actionable slightly later, while never making flooding a server room with suppressant actionable, given how costly that action is to reverse, unless independent confirmation arrives. These are several actions on one claim, each with its own relation to $t_{\mathrm{decidable}}$, not points on a shared timeline that the claim itself passes through.
+
+This reframing is what gives the reversibility gate its work to do. If actionability were simply the last stop after observation and decidability, permission would reduce to a sufficiently mature claim, and the interesting cases, where urgency forces action before maturity or where irreversibility forbids action after it, would look like exceptions to a rule rather than the rule's actual content. Section~4 develops the comparison that fixes each $t_{\mathrm{actionable}}(p,a\mid B)$ directly, without presupposing any fixed order against $t_{\mathrm{decidable}}$.
+
+\section{Maturity Is Not Permission}
+
+The central confusion this essay opposes is the assumption that a claim's decidability status settles what may be done about it. It does not. Decidability is a property of the relationship between a claim and its declared evidential procedure. Permissibility is a property of the relationship between a claim, a specific candidate action, and that action's own consequences, should the claim later prove wrong.
+
+\begin{principle}[Separation of maturity and permission]
+A claim's readiness for judgment and an action's readiness to be taken are separate properties, belonging to different objects. Evidence and a declared maturity condition control the first. An action's reversibility and delay sensitivity, together with its claim-relative losses, compared against the alternatives available at the moment, control the second.
+\end{principle}
+
+Two consequences follow immediately. First, a claim can be fully decided, confirmed beyond its maturity condition, and some candidate action can still be forbidden, if that action is irreversible and the cost of a residual error, however small, is unacceptable relative to the benefit of acting now rather than after further corroboration. Second, and more consequentially for streaming and real-time systems, some other action can be permitted, or even required, on the very same claim while it is still immature, provided that action is itself reversible, provisional, or scoped to declared uncertainty rather than to false certainty.
+
+This second case is where many streaming answer gates fail: they represent only two explicit behaviors, answer or continue withholding. Neither is generally correct. The needed behavior is to select, from a menu of actions with differing reversibility, whichever one the loss comparison in Section~4 actually favors, which is very often a third thing: a hedged warning, a request for clarification, or an action explicitly scoped to the claim's declared uncertainty.
+
+\section{The Reversibility Gate}
+
+Formalizing the separation of Section~3 requires two representations, not one. A claim remains a purely epistemic object:
+\[
+c_i = \langle p_i,\, E_i,\, \mu_i,\, \tau_i,\, D_i,\, \sigma_i \rangle,
+\]
+where $p_i$ is the proposition itself, $E_i$ is its presently observed evidential support, $\mu_i$ names the modality or process expected eventually to settle it, $\tau_i$ is its maturity condition, $D_i$ is the set of downstream states or conclusions that causally depend on $c_i$, and $\sigma_i$ is its current status, drawn from a small set such as pending, verified, refuted, expired, or unresolved. Nothing about reversibility belongs here: the same claim, unchanged, can sit beneath actions with radically different consequences.
+
+Reversibility belongs to the action:
+\[
+a_j = \langle \alpha_j,\, \rho_j,\, \delta_j \rangle,
+\]
+where $\alpha_j$ identifies the action itself, $\rho_j$ is its reversibility class, and $\delta_j$ is its deadline or delay sensitivity. Nothing about a claim enters here: cutting power has the same $\rho_j$ and $\delta_j$ whether the pending claim is a fire, a cyberattack, or scheduled maintenance already underway. What differs by claim is not the action's own properties but what it costs relative to a specific proposition, so conditional loss is not a field of $a_j$ but a separate, claim-relative model:
+\[
+\ell(a_j, p_i, v), \qquad v \in \{\mathrm{true}, \mathrm{false}\},
+\]
+with
+\[
+\ell_i^{+}(a_j) = \ell(a_j, p_i, \mathrm{true}), \qquad \ell_i^{-}(a_j) = \ell(a_j, p_i, \mathrm{false}).
+\]
+Cutting power's loss if $p_i$ is a fire is not its loss if $p_i$ is a cyberattack, even though $\alpha_j$, $\rho_j$, and $\delta_j$ are unchanged; $\ell$ registers that relation directly rather than folding it into the action's own description. Checking a sensor, sounding a provisional alert, evacuating a floor, and discharging suppressant are four values of $\alpha_j$ answerable to many different claims, each with its own $\rho_j$ and $\delta_j$ fixed and its own $\ell_i^{\pm}$ varying by claim.
+
+The gate adjudicates a candidate action against a specified background response, not against an unspecified default state of the world. Let $B$ denote whichever actions have already been fixed, possibly the empty bundle $\varnothing$, and write $B \cup \{a\}$ for the response obtained by adding $a$ to it. This indexing is necessary because actions interact: whether a warning is required can depend on whether evacuation has already been ordered, so ``not taking $a$, holding everything else fixed'' has content only once everything else has been named. The gate is therefore written $G(c_i, a, t \mid B)$, and the present discussion assumes the actions under joint consideration are compatible; optimizing over mutually exclusive response bundles is left open.
+
+Let
+\[
+q_i(t) = P(p_i \mid E_i, t)
+\]
+be the system's current support for the claim. For any response $x$, whether a single action, a bundle, or $\varnothing$, extend $\ell_i^{\pm}$ to $x$ compositionally and define
+\[
+L(x \mid c_i, t) = q_i(t)\, \ell_i^{+}(x) + \bigl(1 - q_i(t)\bigr)\, \ell_i^{-}(x) + L_{\mathrm{delay}}(x, t) + L_{\mathrm{option}}(x, t),
+\]
+where $L_{\mathrm{delay}}(x,t)$ is the loss attributable to adopting or continuing $x$ at time $t$, including implementation latency and the consequences allowed to accumulate while $x$ remains in force, and $L_{\mathrm{option}}(x,t)$ is the value of future options that adopting $x$ forecloses. For a single action $a_j$, $L_{\mathrm{delay}}$ increases in $\delta_j$ once a deadline is exceeded, $L_{\mathrm{option}}$ increases with $\rho_j$'s distance from full reversibility, and $\ell_i^{+}(a_j)$, $\ell_i^{-}(a_j)$ are supplied by the claim-relative model above, evaluated against whichever claim $c_i$ is presently under consideration.
+
+Nothing here assigns zero option cost to $\varnothing$ or to any other response merely because it commits to no explicit intervention. Continuing to wait can foreclose exactly as many future options as discharging a suppressant early: an unmitigated fire can become uncontrollable in the same ninety seconds that a warning would have cost nothing to issue. Abstention is scored by the same three-term decomposition as any other response; it has no action of its own to name, not zero consequence by definition. A definition that fixed $L_{\mathrm{option}}(\varnothing) = 0$ would quietly reintroduce the assumption this essay opposes, that inaction is a safe default rather than one candidate response among others. The term is closely related to work on avoiding irreversible side effects in autonomous systems, although here reversibility is action-relative and evaluated jointly with claim maturity rather than treated only as a property of environmental exploration \cite{AmodeiEtAl2016}.
+
+The gate's adjudication is the marginal comparison
+\[
+\Delta L(c_i, a, t \mid B) = L(B \cup \{a\} \mid c_i, t) - L(B \mid c_i, t).
+\]
+Because $\Delta L$ is estimated rather than known exactly, exact equality to zero is not a workable boundary for a genuinely permissive middle category: it is a set of measure zero under any continuous loss, and a trichotomy built on it would return require or forbid for nearly every action, with permit surviving only as an unstable knife-edge. For decision margins $\varepsilon_R, \varepsilon_F \geq 0$,
+\[
+G(c_i, a, t \mid B) =
+\begin{cases}
+\operatorname{require}, & \Delta L(c_i, a, t \mid B) < -\varepsilon_R,\\[4pt]
+\operatorname{forbid}, & \Delta L(c_i, a, t \mid B) > \varepsilon_F,\\[4pt]
+\operatorname{permit}, & -\varepsilon_R \leq \Delta L(c_i, a, t \mid B) \leq \varepsilon_F.
+\end{cases}
+\]
+The margins can absorb measurement uncertainty, institutional standard, or a deliberate reluctance to convert every estimated advantage into an obligation. Permit now denotes a genuine region of substantive underdetermination, where neither adding $a$ nor leaving $B$ unchanged is sufficiently superior to impose a requirement or a prohibition, rather than a coincidence of exact numerical tie that estimation could essentially never produce.
+
+This formulation captures what the earlier disjunctive test, comparing one action against a single sufficiency threshold, could not. Maturity alone never licenses an action. Present evidential support enters the loss comparison through $q_i(t)$, while $\tau_i$ and $\sigma_i$ record whether the declared procedure has closed and what settlement status it returned; neither substitutes for the action-relative comparison. Because the comparison is marginal against a shared background rather than a single winner-take-all choice among competitors, the gate can return $\operatorname{require}$ for several compatible additions to the same background in turn, and can show that $B = \varnothing$ itself is dominated whenever at least one addition is required. Uncertainty is not abolished when action becomes necessary. It changes which additions to the background minimize prospective loss, and it can make several reversible, hedged commitments jointly required at the same moment that it forbids one irreversible addition on the identical claim. Where a genuine either-or choice arises between two actions that cannot both be added to $B$, the relevant comparison runs between the two resulting bundles directly rather than between each and its own marginal addition; that case is not developed further here.
+
+\subsection{A Worked Instance: The Server-Room Claim}
+
+Let $c_f$ be the pending claim that a server room contains an active electrical fire. Smoke has been observed; thermal confirmation is scheduled in ninety seconds, so $c_f$'s maturity condition $\tau_f$ has not yet been satisfied and $\sigma_f = \text{pending}$. Four candidate actions are available: issue a reversible warning ($a_{\mathrm{warn}}$), evacuate the adjacent area ($a_{\mathrm{evac}}$), cut power to the room ($a_{\mathrm{cut}}$), and discharge a suppressant that will destroy nearby equipment ($a_{\mathrm{suppress}}$). Waiting is not a fifth action to be separately gated. It is the background $B = \varnothing$ against which each of the four is marginally evaluated, since ``abstaining from waiting'' has no determinate content until some alternative is named.
+
+Nothing about $c_f$ changes across the four evaluations below. What changes is $\Delta L(c_f, a, t \mid \varnothing)$ for each action, because each carries its own $\rho_j$ and $\delta_j$, and its own claim-relative $\ell_i^{+}(a)$, $\ell_i^{-}(a)$:
+\[
+G(c_f, a_{\mathrm{warn}}, t \mid \varnothing) = \operatorname{require},
+\]
+since a warning is cheap and fully reversible, and materially reduces exposure if the claim is true, so $\Delta L$ falls well below $-\varepsilon_R$;
+\[
+G(c_f, a_{\mathrm{evac}}, t \mid \varnothing) = \operatorname{require},
+\]
+since evacuation is inconvenient but recoverable, while its omission exposes people to a strongly asymmetric loss should the claim be true;
+\[
+G(c_f, a_{\mathrm{cut}}, t \mid \varnothing) = \operatorname{permit},
+\]
+since cutting power trades a real but recoverable operational cost against a comparable reduction in fire risk: its estimated advantage is genuine but falls inside $[-\varepsilon_R, \varepsilon_F]$, not because the two expected losses happen to tie exactly, an implausibly precise claim, but because the estimate is close enough that measurement uncertainty and institutional caution both make either choice defensible; and
+\[
+G(c_f, a_{\mathrm{suppress}}, t \mid \varnothing) = \operatorname{forbid},
+\]
+since the future options destroyed by immediate discharge exceed $\varepsilon_F$ relative to what $c_f$'s present support justifies foreclosing, given that thermal confirmation ninety seconds later might show the discharge to have been unnecessary.
+
+Two required additions, one permitted, one forbidden, all from a single unsettled, unchanged claim: this is the demonstration a confidence threshold cannot produce, since a threshold returns one verdict per claim, not a different marginal verdict for each candidate addition to the background. And because $\Delta L(c_f, a_{\mathrm{warn}}, t \mid \varnothing) < -\varepsilon_R$ already, the all-wait background $B = \varnothing$ is itself dominated: some addition to it is required, so leaving it unchanged is not among the acceptable responses, without waiting ever needing to be gated as an action in its own right. The formal statement is a partition of the available action set, holding $c_i$, $t$, and $B$ fixed:
+\[
+\mathcal{A} = \mathcal{A}_{\mathrm{forbid}}(c_i, t \mid B) \sqcup \mathcal{A}_{\mathrm{permit}}(c_i, t \mid B) \sqcup \mathcal{A}_{\mathrm{require}}(c_i, t \mid B).
+\]
+The partition is action-sensitive rather than confidence-sensitive alone: a low-confidence claim can still require a cheap, reversible precaution while forbidding an expensive, irreversible one, and a highly confirmed claim can still fail to require any addition at all when the anticipated benefit is negligible or every available intervention is disproportionately destructive relative to it.
+
+The dependence on $B$ makes precise what would otherwise be an informal point about changing menus. Enlarging $B$ changes the marginal comparison for whatever is evaluated against it next: if a cheaper action already included in $B$ discharges part of what a costlier one would achieve, the costlier action's remaining marginal contribution shrinks, and a verdict of require can soften to permit. For purposes of this example, warning and evacuation are stipulated to address sufficiently different exposures that adding either to $B$ does not move the other across a decision margin; substitution effects of the kind just described are a property of how specific loss functions happen to overlap, not of the gate's construction, and nothing here demonstrates that warning and evacuation could never interact this way under a differently specified scenario.
+
+\subsection{Four operations, not one}
+\label{sec:four-operations}
+
+Ordinary language, and much of the literature on belief revision, uses a single verb, ``updating,'' for what are in fact four distinguishable operations on a claim and its dependents.
+
+The importance of recording justifications and dependency relations has a long history in truth-maintenance systems. Doyle's original TMS records the reasons supporting program beliefs so that contradictions can trigger dependency-directed reconsideration \cite{Doyle1979}; de Kleer's assumption-based TMS generalizes this approach by recording the environments under which propositions remain supported \cite{DeKleer1986}. The present taxonomy asks a narrower question about the strength of the correction actually performed once such dependencies exist.
+
+\begin{itemize}[leftmargin=1.6em]
+\item \textbf{Revision.} The proposition $p_i$ itself changes in light of new evidence, while its dependency structure $D_i$ is left unexamined.
+\item \textbf{Retraction.} The claim's warranted influence over $D_i$ is withdrawn, without necessarily recomputing the members of $D_i$ that had relied on it.
+\item \textbf{Rollback.} The members of $D_i$ are restored to, or recomputed from, the state they would have held had $c_i$ never been admitted, requiring an explicit and traversable dependency lineage.
+\item \textbf{Repair.} The surviving, uncontaminated portions of $D_i$ are identified and reconstructed from premises that did not depend on the refuted claim, without discarding conclusions that remain independently warranted.
+\end{itemize}
+
+A system that merely regenerates a summary after being told an earlier claim was false has performed revision, and perhaps something that reads like retraction. It has not thereby performed rollback, which requires that every downstream state be traceable to the claims it depended on, nor repair, which requires distinguishing contaminated from uncontaminated downstream conclusions rather than discarding or regenerating all of them indiscriminately. The distinction matters because a system that reports having ``corrected itself'' may have done no more than produce a new plausible-sounding summary, leaving stale conclusions embedded in text or state that was never re-examined because it was never explicitly linked to the retracted claim in the first place. A dependency structure that is explicit and traversable, without being a provenance-complete symbolic derivation graph, sits between these extremes: it can support retraction and a soft form of rollback, without guaranteeing that the recomputed state is equivalent to the state that would have arisen had the claim never been admitted.
+
+These four are the operations of correction; they do not exhaust what can happen to a claim as it matures. A claim can also be confirmed rather than refuted, in which case its provisional status is simply discharged: $\sigma_i$ moves to verified, and nothing about $p_i$ or $D_i$ is revised, retracted, rolled back, or repaired, because nothing about them was wrong. This discharge is not revision in the sense defined above, since the proposition itself does not change; it is the ordinary case of a maturity condition being satisfied in the claim's favor, and it is noted here only to mark that revision, retraction, rollback, and repair answer to error, not to settlement generally.
+
+This taxonomy is not offered as a replacement for AGM belief revision's classical distinction among expansion, contraction, and revision of a belief set \cite{AGM1985}. The two operate on different axes. Classical belief revision asks how a belief set should change when new information arrives. The present taxonomy asks what must happen to states already produced under the influence of a claim whose warrant has subsequently been withdrawn: whether the downstream computation was ever linked to that claim in a traceable way, and whether what survives the link's removal can be told apart from what cannot. A system could implement a fully AGM-rational revision policy at the level of its belief set and still fail every distinction drawn here, if the states it had already computed from the revised belief were never registered as dependent on it in the first place.
+
+\section{Worked Example: A Streaming-Perception System}
+
+A concrete instance of these distinctions, and of their present limits, appears in recent work on causal audiovisual streaming under the name Omni-Streaming Thinking (OST).\footnote{Du, Liu, Zheng, Li, Guo, Zhang, and Zou, ``Omni-Streaming Thinking,'' arXiv:2609.15128, September 2026. The reference implementation, released separately, is described below where it bears on the claims made here.} OST processes video and audio as they arrive, forms provisional claims about scene content, and defers a subset of those claims pending confirmation from a modality expected to resolve them later, for instance treating a visible gate number as a pending claim awaiting confirmation from a spoken announcement.
+
+In the vocabulary developed above, OST's claim registry supplies fields functioning as $\mu_i$ and $\tau_i$: an expected verifying modality and a scheduled review interval. Its verifier returns confirmed, refuted, or unresolved, with unresolved surviving as a legitimate terminal status once a retry is exhausted, which matches the $\tau$-relative definition of decidability adopted in Section~2 rather than a stronger definition on which decidability would require that no future evidence, from any source, could ever matter. This is a genuine instance of maturity-tracking, and its diagnostic benchmark demonstrates the point empirically rather than merely architecturally. Under an evaluation that keeps video fixed while retaining, muting, swapping, or mixing the audio channel, a form of causal intervention on the evidential source rather than a mere accuracy subset, the system reports a sensitivity measure of $d' = 2.95$, compared to at most $1.38$ for tested open baselines, indicating that its answers do in fact track the audio evidence rather than dataset priors or visual cues alone.
+
+The system's dependency handling is more developed than a first reading of its diagnostics suggests. Its reference implementation records claims as spans with explicit dependency links, maintains a registry and retraction algebra over those spans, and propagates a refuted span's reduced reliability to every span registered as depending on it, implemented as an additive bias on reasoning-token attention rather than as an edit to stored text. This is an explicit and traversable dependency representation in the sense of Section~\ref{sec:four-operations}, not the absence of one. What it is not is a provenance-complete derivation graph: the system can attenuate the influence of states registered as dependent on a refuted span, and can guide regeneration of the current interpretation under that attenuation, but it does not establish that every semantic consequence of the refuted span was in fact registered as dependent, nor that the regenerated state is equivalent to the state that would have arisen had the claim never been admitted. This is soft, span-level, lineage-aware rollback: real ground between unconstrained textual revision and the provenance-complete rollback that full traceability would require.
+
+This distinction also parallels the separation in database provenance between where an output originated and why it exists. A record of source location is not yet a complete account of which inputs and transformations were responsible for producing the result \cite{BunemanKhannaTan2001}. Provenance is therefore not exhausted by attaching a source identifier to a state; rollback requires enough derivational information to determine what would cease to be warranted if a contributing claim were removed.
+
+Read against that more precise characterization, the system's weaker diagnostic results are suggestive rather than diagnostic of a specific internal cause. Performance under directly conflicting evidence, where an earlier visible cue and a later spoken fact disagree, reaches $46.47\%$ accuracy, and joint recall under mixed or overlapping audio sources reaches $51.37\%$. These results are consistent with the limits of soft, span-level retraction sketched above, but they are equally consistent with perceptual failure upstream of any claim being formed, verifier miscalibration, an admitted claim that failed to capture the relevant proposition, or destructive compression as states are folded up the memory pyramid. The benchmark shows that conflict resolution and joint-source preservation are not yet reliable; it does not, by itself, isolate which stage of the pipeline is responsible.
+
+A sharper and independently supported point concerns the answer gate rather than the retraction mechanism. Both the paper and its reference implementation describe the gate's output space as the two-element set $\{\mathrm{WAIT}, \mathrm{ANSWER}\}$, with a hard registry rule that the learned head cannot override.\footnote{Enjun Du et al., \textit{OST} (reference implementation), \url{https://github.com/EnjunDu/OST}, accessed September 2026. The claims made here and in the discussion of dependency handling above, concerning the span registry, retraction algebra, attention-bias mechanism, and the answer gate's hard registry rule, are drawn from this implementation rather than from the manuscript alone.} This is better described as an informational coarsening than as a literal projection of the reversibility gate's three values onto OST's two:
+\[
+G_{\mathrm{OST}}(c, t) \in \{\mathrm{WAIT}, \mathrm{ANSWER}\}.
+\]
+OST does not compute forbid, permit, and require for a menu of typed actions and then merge two of the three outputs. It evaluates a different quantity altogether, a binary response-timing predicate, from which those three statuses, and the typed action comparisons underlying them, cannot be recovered. Some action Section~4's gate would permit could still surface as WAIT under OST, if an answer-critical claim remains pending in its registry; the two gates are not answering the same question at different resolutions, only overlapping in the cases where withholding altogether happens to be the right call under both.
+
+Nor is OST strictly incapable of hedged language. Nothing prevents its answer decoder, once ANSWER has been triggered, from generating a qualified statement such as ``the sign suggests Gate 6, but the announcement has not finished.'' The more precise and defensible criticism is not that OST can only ever assert categorically, but that it does not represent a provisional warning, a clarification request, and a categorical assertion as separately typed candidate actions with their own consequence, delay, and reversibility profiles at the level the gate adjudicates. Whatever differentiation of that kind appears in OST's output must be learned implicitly inside answer generation, invisible to the registry rule that is supposed to decide when answering is licensed at all, rather than adjudicated explicitly by a gate reasoning over a menu of typed actions. OST is not restricted to one possible utterance. It is restricted to one explicit action class at the level where permission is actually decided.
+
+\section{Toward an Executable Contract}
+
+The preceding sections are deliberately general enough to apply outside any single implementation: to scientific inference under provisional data, to testimony and its corroboration, to sensor fusion in autonomous systems, to editorial correction in publishing, and to collective judgment under partial information. Where a specific memory architecture requires an executable version of these distinctions, three operations require amendment.
+
+An operation responsible for admitting a claim into memory must be extended to accept and store $\tau_i$ and $D_i$ alongside the proposition and its present support, rather than admitting the proposition alone. An operation responsible for representing a candidate action must construct $a_j$ from that action's own identity, reversibility class, and delay sensitivity, independently of any particular claim it might be applied to; a separate operation must supply the claim-relative loss model $\ell(a_j, p_i, v)$ whenever $a_j$ is evaluated against a specific $c_i$. An operation responsible for converting a claim and a background response into a decision must submit the pair $(c_i, a_j)$ against the current background $B$ to the gate of Section~4, which returns $\operatorname{forbid}$, $\operatorname{permit}$, or $\operatorname{require}$ from the marginal comparison $\Delta L(c_i, a_j, t \mid B)$ against declared margins, and must select among revision, retraction, rollback, and repair according to which is actually warranted by the state of $D_i$, rather than defaulting to whichever is cheapest to compute.
+
+\begin{principle}[Maturity before permission]
+Admission is not settlement, and settlement is not permission. A claim may enter memory as an explicitly typed, provenance-bearing, future-testable inscription before its declared maturity condition has been satisfied. Until then, any propagation of the claim must preserve its provisional status. Separately, whatever action the claim's status might support must be evaluated against that action's own reversibility and delay sensitivity, together with its claim-relative loss, compared against the alternatives available at the moment, never against the claim's maturity alone.
+\end{principle}
+
+\section{Conclusion}
+
+Systems that must act inside time, rather than only after it, need a vocabulary richer than ``update the belief.'' They need to know when evidence arrived and when a declared evidential procedure closed, and they need, separately, a way to evaluate each candidate action's own reversibility, consequences, and delay sensitivity against the alternatives available at that moment. They need to distinguish a claim's readiness for judgment from an action's readiness to be taken, since these are properties of different objects rather than stages of one career, and they need four distinct operations, not one, for what happens when a claim already relied upon turns out to have been wrong. None of this requires exotic machinery. It requires only refusing to compress two evidential times, an action-indexed permission, and four repair operations into a single act of updating.
+
+\begin{thebibliography}{9}
+\bibitem{Savage1954}
+Leonard J. Savage.
+\textit{The Foundations of Statistics}.
+Wiley, New York, 1954.
+
+\bibitem{Howard1966}
+Ronald A. Howard.
+``Information Value Theory.''
+\textit{IEEE Transactions on Systems Science and Cybernetics}, 2(1):22--26, 1966.
+
+\bibitem{ChowRobbinsSiegmund1971}
+Yuan Shih Chow, Herbert Robbins, and David Siegmund.
+\textit{Great Expectations: The Theory of Optimal Stopping}.
+Houghton Mifflin, Boston, 1971.
+
+\bibitem{DixitPindyck1994}
+Avinash K. Dixit and Robert S. Pindyck.
+\textit{Investment Under Uncertainty}.
+Princeton University Press, Princeton, 1994.
+
+\bibitem{AGM1985}
+Carlos E. Alchourrón, Peter Gärdenfors, and David Makinson.
+``On the Logic of Theory Change: Partial Meet Contraction and Revision Functions.''
+\textit{Journal of Symbolic Logic}, 50(2):510--530, 1985.
+
+\bibitem{Doyle1979}
+Jon Doyle.
+``A Truth Maintenance System.''
+\textit{Artificial Intelligence}, 12(3):231--272, 1979.
+
+\bibitem{DeKleer1986}
+Johan de Kleer.
+``An Assumption-Based TMS.''
+\textit{Artificial Intelligence}, 28(2):127--162, 1986.
+
+\bibitem{BunemanKhannaTan2001}
+Peter Buneman, Sanjeev Khanna, and Wang-Chiew Tan.
+``Why and Where: A Characterization of Data Provenance.''
+In \textit{Database Theory---ICDT 2001}, Lecture Notes in Computer Science, vol.\ 1973, pp.\ 316--330. Springer, 2001.
+
+\bibitem{AmodeiEtAl2016}
+Dario Amodei, Chris Olah, Jacob Steinhardt, Paul Christiano, John Schulman, and Dan Mané.
+``Concrete Problems in AI Safety.''
+arXiv:1606.06565, 2016.
+
+\bibitem{ost2026}
+Enjun Du, Siyi Liu, Ziyu Zheng, Jingyu Li, Yiwen Guo, Yongqi Zhang, and Difan Zou.
+\textit{Omni-Streaming Thinking}.
+arXiv:2609.15128 [cs.LG], September 2026.
+
+\bibitem{ost-repo}
+Enjun Du et al.
+\textit{OST} (reference implementation).
+GitHub repository, \url{https://github.com/EnjunDu/OST}, accessed September 2026.
+\end{thebibliography}
+
+\end{document}
