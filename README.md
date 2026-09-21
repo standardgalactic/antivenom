@@ -1,5 +1,7 @@
 # Antivenom
 
+[Recurring Themes](https://github.com/standardgalactic/antivenom/blob/main/antivenom-recurring-themes.md)
+
 [Rhetoric](https://github.com/standardgalactic/antivenom/blob/main/rhetoric/README.md) — *Work in Progress*
 
 [Unfinishable Games](https://github.com/standardgalactic/antivenom/blob/main/monograph/README.md) — *Project*
