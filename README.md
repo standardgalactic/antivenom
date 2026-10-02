@@ -1,5 +1,9 @@
 # Antivenom
 
+[The Person Behind the Interface](https://standardgalactic.github.io/antivenom/mind/person-behind-the-interface.pdf)
+
+* [Audio Overview](https://standardgalactic.github.io/antivenom/mind/)
+
 [Recurring Themes](https://github.com/standardgalactic/antivenom/blob/main/antivenom-recurring-themes.md)
 
 [Rhetoric](https://github.com/standardgalactic/antivenom/blob/main/rhetoric/README.md) — *Work in Progress*

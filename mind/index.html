@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Illusion of the Digital Person</title>
+
+<style>
+:root{
+  --phosphor:#8fdcff;
+  --bright:#d7f4ff;
+  --bg:#010407;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+}
+
+body{
+  min-height:100vh;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--phosphor);
+  font-family:monospace;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+
+  cursor:pointer;
+  user-select:none;
+}
+
+/* CRT scanlines */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:20;
+
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(180,230,255,0.025) 0px,
+      rgba(180,230,255,0.025) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+
+  opacity:0.18;
+}
+
+/* faint glass reflection */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:19;
+
+  background:
+    radial-gradient(
+      ellipse at 30% 12%,
+      rgba(210,240,255,0.07),
+      transparent 28%
+    );
+
+  mix-blend-mode:screen;
+}
+
+.title{
+  margin-bottom:12px;
+
+  font-size:clamp(12px,2.8vw,15px);
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+
+  color:var(--phosphor);
+
+  text-shadow:
+    0 0 8px rgba(143,220,255,0.8),
+    0 0 18px rgba(80,180,255,0.25);
+}
+
+/* scope housing */
+.scope{
+  position:relative;
+
+  padding:14px;
+
+  border:1px solid rgba(143,220,255,0.25);
+
+  background:#02080c;
+
+  box-shadow:
+    0 0 22px rgba(100,200,255,0.08),
+    inset 0 0 30px rgba(100,200,255,0.04);
+}
+
+/* circular screen */
+#viz{
+  display:block;
+
+  width:min(470px,86vw);
+  height:min(470px,86vw);
+
+  border-radius:50%;
+
+  background:
+    radial-gradient(
+      circle at center,
+      #07121a 0%,
+      #02070b 65%,
+      #000 100%
+    );
+
+  border:2px solid rgba(143,220,255,0.38);
+
+  box-shadow:
+    inset 0 0 80px rgba(80,180,255,0.09),
+    0 0 18px rgba(100,200,255,0.12);
+}
+
+.status{
+  position:absolute;
+  right:20px;
+  bottom:18px;
+
+  font-size:9px;
+  letter-spacing:0.12em;
+
+  color:rgba(143,220,255,0.42);
+
+  pointer-events:none;
+}
+
+/*
+   Captions are deliberately raised above the bottom edge
+   and given a high z-index so the CRT overlays cannot
+   obscure them.
+*/
+.subs{
+  position:fixed;
+  left:50%;
+  bottom:48px;
+  transform:translateX(-50%);
+  z-index:50;
+
+  width:min(620px,92vw);
+  min-height:2.4em;
+
+  padding:8px 12px;
+
+  text-align:center;
+  font-size:clamp(13px,3.5vw,15px);
+  line-height:1.45;
+
+  overflow-wrap:anywhere;
+  white-space:normal;
+
+  color:#d7f4ff;
+
+  text-shadow:
+    0 0 7px rgba(143,220,255,0.9),
+    0 0 14px rgba(80,180,255,0.45);
+
+  background:rgba(0,8,14,0.72);
+
+  border:
+    1px solid rgba(143,220,255,0.25);
+
+  border-radius:4px;
+
+  pointer-events:none;
+}
+
+/* initial play indicator */
+.start{
+  position:fixed;
+  inset:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  z-index:10;
+
+  pointer-events:none;
+
+  transition:opacity .4s ease;
+}
+
+.start.hidden{
+  opacity:0;
+}
+
+.start-symbol{
+  width:0;
+  height:0;
+
+  border-top:13px solid transparent;
+  border-bottom:13px solid transparent;
+  border-left:21px solid rgba(180,235,255,0.78);
+
+  filter:
+    drop-shadow(
+      0 0 7px rgba(100,200,255,0.7)
+    );
+}
+
+@media(max-height:650px){
+
+  #viz{
+    width:min(350px,72vh);
+    height:min(350px,72vh);
+  }
+
+  .title{
+    margin-bottom:7px;
+  }
+
+  .subs{
+    bottom:20px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="title">
+  The Illusion of the Digital Person
+</div>
+
+<div class="scope">
+  <canvas id="viz"></canvas>
+  <div class="status">IDENTITY TRACE</div>
+</div>
+
+<div id="subs" class="subs"></div>
+
+<div id="start" class="start">
+  <div class="start-symbol"></div>
+</div>
+
+<audio id="audio" preload="auto">
+  <source
+    src="The_Illusion_of_the_Digital_Person.mp3"
+    type="audio/mpeg">
+</audio>
+
+<script>
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const audio =
+  document.getElementById("audio");
+
+const subs =
+  document.getElementById("subs");
+
+const startIndicator =
+  document.getElementById("start");
+
+const canvas =
+  document.getElementById("viz");
+
+const g =
+  canvas.getContext("2d");
+
+
+/* =========================================================
+   AUDIO GRAPH
+   ========================================================= */
+
+let audioCtx = null;
+let analyser = null;
+let waveform = null;
+
+function initAudio(){
+
+  if(audioCtx) return;
+
+  audioCtx =
+    new (
+      window.AudioContext ||
+      window.webkitAudioContext
+    )();
+
+  analyser =
+    audioCtx.createAnalyser();
+
+  analyser.fftSize = 2048;
+
+  waveform =
+    new Uint8Array(
+      analyser.fftSize
+    );
+
+  const source =
+    audioCtx.createMediaElementSource(
+      audio
+    );
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+}
+
+
+/* =========================================================
+   PLAY / PAUSE
+   ========================================================= */
+
+document.body.addEventListener(
+  "click",
+  async ()=>{
+
+    initAudio();
+
+    if(audioCtx.state === "suspended"){
+      await audioCtx.resume();
+    }
+
+    if(audio.paused){
+
+      try{
+
+        await audio.play();
+
+        startIndicator.classList.add(
+          "hidden"
+        );
+
+      }catch(err){
+
+        console.warn(
+          "Playback failed:",
+          err
+        );
+      }
+
+    }else{
+
+      audio.pause();
+    }
+  }
+);
+
+
+/* =========================================================
+   VTT SUBTITLES
+   ========================================================= */
+
+let cues = [];
+let lastSubtitle = null;
+
+async function loadVTT(file){
+
+  cues = [];
+
+  try{
+
+    console.log(
+      "Loading subtitles:",
+      file
+    );
+
+    /*
+       no-store is useful while developing because it prevents
+       an older VTT from being reused after you've regenerated
+       or replaced the subtitle file.
+    */
+
+    const response =
+      await fetch(
+        file,
+        {
+          cache:"no-store"
+        }
+      );
+
+    if(!response.ok){
+
+      throw new Error(
+        `HTTP ${response.status}: ${file}`
+      );
+    }
+
+    let text =
+      await response.text();
+
+    /*
+       Normalize Unix, Windows and old-style line endings.
+    */
+
+    text =
+      text
+        .replace(/\r\n/g,"\n")
+        .replace(/\r/g,"\n");
+
+    /*
+       VTT cues are separated by blank lines. Allow whitespace
+       on otherwise blank lines as well.
+    */
+
+    const blocks =
+      text.split(/\n\s*\n/);
+
+    for(const block of blocks){
+
+      const lines =
+        block
+          .trim()
+          .split("\n")
+          .map(
+            line =>
+              line.trim()
+          );
+
+      const timestampIndex =
+        lines.findIndex(
+          line =>
+            line.includes("-->")
+        );
+
+      if(timestampIndex === -1){
+        continue;
+      }
+
+      const timestampLine =
+        lines[timestampIndex];
+
+      const parts =
+        timestampLine.split("-->");
+
+      if(parts.length < 2){
+        continue;
+      }
+
+      /*
+         Remove optional VTT positioning/style directives
+         following the end timestamp.
+      */
+
+      const startString =
+        parts[0]
+          .trim()
+          .split(/\s+/)[0];
+
+      const endString =
+        parts[1]
+          .trim()
+          .split(/\s+/)[0];
+
+      const start =
+        parseVTTTime(
+          startString
+        );
+
+      const end =
+        parseVTTTime(
+          endString
+        );
+
+      const cueText =
+        lines
+          .slice(
+            timestampIndex + 1
+          )
+          .join(" ")
+          .replace(
+            /<[^>]+>/g,
+            ""
+          )
+          .trim();
+
+      if(
+        Number.isFinite(start) &&
+        Number.isFinite(end) &&
+        cueText
+      ){
+
+        cues.push({
+          start,
+          end,
+          text:cueText
+        });
+      }
+    }
+
+    cues.sort(
+      (a,b) =>
+        a.start - b.start
+    );
+
+    console.log(
+      `Parsed ${cues.length} subtitle cues`
+    );
+
+    /*
+       This gives immediate visual confirmation that the VTT
+       actually loaded and parsed.
+    */
+
+    if(cues.length){
+
+      subs.textContent =
+        "SUBTITLES READY";
+
+    }else{
+
+      subs.textContent =
+        "NO SUBTITLES PARSED";
+    }
+
+  }catch(err){
+
+    console.error(
+      "Subtitle load failed:",
+      err
+    );
+
+    subs.textContent =
+      "SUBTITLE FILE NOT FOUND";
+  }
+}
+
+
+function parseVTTTime(value){
+
+  value =
+    value
+      .trim()
+      .replace(",",".");
+
+  const parts =
+    value.split(":");
+
+  if(parts.length === 3){
+
+    return (
+      Number(parts[0]) * 3600 +
+      Number(parts[1]) * 60 +
+      Number(parts[2])
+    );
+  }
+
+  if(parts.length === 2){
+
+    return (
+      Number(parts[0]) * 60 +
+      Number(parts[1])
+    );
+  }
+
+  return Number(parts[0]) || 0;
+}
+
+
+/*
+   Called every animation frame rather than depending on
+   timeupdate. That makes short subtitle cues much harder
+   to miss.
+*/
+
+function updateSubtitle(){
+
+  if(!cues.length){
+    return;
+  }
+
+  const t =
+    audio.currentTime;
+
+  let active = null;
+
+  for(const cue of cues){
+
+    if(
+      t >= cue.start &&
+      t <= cue.end + 0.20
+    ){
+
+      active = cue;
+      break;
+    }
+
+    if(cue.start > t){
+      break;
+    }
+  }
+
+  const text =
+    active
+      ? active.text
+      : "";
+
+  if(text !== lastSubtitle){
+
+    subs.textContent =
+      text;
+
+    lastSubtitle =
+      text;
+  }
+}
+
+
+/*
+   Exact subtitle filename:
+*/
+
+loadVTT(
+  "The_Illusion_of_the_Digital_Person.vtt"
+);
+
+
+/* =========================================================
+   CANVAS
+   ========================================================= */
+
+const SIZE = 420;
+
+const DPR =
+  Math.min(
+    window.devicePixelRatio || 1,
+    2
+  );
+
+canvas.width =
+  SIZE * DPR;
+
+canvas.height =
+  SIZE * DPR;
+
+g.scale(
+  DPR,
+  DPR
+);
+
+
+/* =========================================================
+   VISUALIZER
+   ========================================================= */
+
+let frame = 0;
+let smoothEnergy = 0;
+
+function draw(){
+
+  frame++;
+
+  /*
+     Check subtitles on every animation frame.
+  */
+
+  updateSubtitle();
+
+
+  /*
+     Phosphor persistence.
+  */
+
+  g.fillStyle =
+    "rgba(1,5,8,0.13)";
+
+  g.fillRect(
+    0,
+    0,
+    SIZE,
+    SIZE
+  );
+
+  const cx =
+    SIZE / 2;
+
+  const cy =
+    SIZE / 2;
+
+  const R =
+    SIZE * 0.39;
+
+
+  /* ---------------------------------------------------------
+     Scope grid
+     --------------------------------------------------------- */
+
+  g.save();
+
+  g.beginPath();
+
+  g.arc(
+    cx,
+    cy,
+    R,
+    0,
+    Math.PI * 2
+  );
+
+  g.clip();
+
+  g.strokeStyle =
+    "rgba(110,205,255,0.035)";
+
+  g.lineWidth = 1;
+
+  const spacing = 28;
+
+  for(
+    let x = cx - R;
+    x <= cx + R;
+    x += spacing
+  ){
+
+    g.beginPath();
+
+    g.moveTo(
+      x,
+      cy - R
+    );
+
+    g.lineTo(
+      x,
+      cy + R
+    );
+
+    g.stroke();
+  }
+
+  for(
+    let y = cy - R;
+    y <= cy + R;
+    y += spacing
+  ){
+
+    g.beginPath();
+
+    g.moveTo(
+      cx - R,
+      y
+    );
+
+    g.lineTo(
+      cx + R,
+      y
+    );
+
+    g.stroke();
+  }
+
+
+  /* crosshair */
+
+  g.strokeStyle =
+    "rgba(130,215,255,0.055)";
+
+  g.beginPath();
+
+  g.moveTo(
+    cx - R,
+    cy
+  );
+
+  g.lineTo(
+    cx + R,
+    cy
+  );
+
+  g.moveTo(
+    cx,
+    cy - R
+  );
+
+  g.lineTo(
+    cx,
+    cy + R
+  );
+
+  g.stroke();
+
+
+  /* ---------------------------------------------------------
+     Live phase trace
+     --------------------------------------------------------- */
+
+  if(analyser){
+
+    analyser.getByteTimeDomainData(
+      waveform
+    );
+
+    let energy = 0;
+
+    for(
+      let i=0;
+      i<waveform.length;
+      i+=8
+    ){
+
+      const sample =
+        (
+          waveform[i] -
+          128
+        ) / 128;
+
+      energy +=
+        Math.abs(sample);
+    }
+
+    energy /=
+      waveform.length / 8;
+
+    smoothEnergy +=
+      (
+        energy -
+        smoothEnergy
+      ) * 0.08;
+
+
+    /*
+       Slowly varying time-delay embedding.
+    */
+
+    const lagFraction =
+      0.055 +
+      Math.sin(
+        frame * 0.0021
+      ) * 0.018 +
+      Math.sin(
+        frame * 0.00071
+      ) * 0.009;
+
+    const lag =
+      Math.max(
+        1,
+        Math.floor(
+          waveform.length *
+          lagFraction
+        )
+      );
+
+
+    /*
+       Dynamic gain keeps quiet speech visible.
+    */
+
+    const gain =
+      Math.min(
+        5.0,
+        1.5 /
+        Math.max(
+          smoothEnergy,
+          0.08
+        )
+      );
+
+
+    /* ghost persistence trace */
+
+    drawTrace(
+      lag + 7,
+      gain,
+      R,
+      cx,
+      cy,
+      "rgba(80,190,255,0.15)",
+      4.5,
+      0
+    );
+
+
+    /* principal trace */
+
+    drawTrace(
+      lag,
+      gain,
+      R,
+      cx,
+      cy,
+
+      `rgba(180,235,255,${
+        0.68 +
+        Math.min(
+          smoothEnergy * 1.5,
+          0.27
+        )
+      })`,
+
+      1.25 +
+      smoothEnergy * 2,
+
+      13 +
+      smoothEnergy * 24
+    );
+  }
+
+
+  g.restore();
+
+
+  /* ---------------------------------------------------------
+     Portal boundary
+     --------------------------------------------------------- */
+
+  g.beginPath();
+
+  g.arc(
+    cx,
+    cy,
+    R,
+    0,
+    Math.PI * 2
+  );
+
+  g.strokeStyle =
+    "rgba(143,220,255,0.32)";
+
+  g.lineWidth = 1.5;
+
+  g.stroke();
+
+
+  /* calibration marks */
+
+  for(let i=0;i<32;i++){
+
+    const a =
+      i / 32 *
+      Math.PI * 2;
+
+    const inner =
+      R + 3;
+
+    const outer =
+      R +
+      (
+        i % 4 === 0
+          ? 10
+          : 6
+      );
+
+    g.beginPath();
+
+    g.moveTo(
+      cx +
+      Math.cos(a) *
+      inner,
+
+      cy +
+      Math.sin(a) *
+      inner
+    );
+
+    g.lineTo(
+      cx +
+      Math.cos(a) *
+      outer,
+
+      cy +
+      Math.sin(a) *
+      outer
+    );
+
+    g.strokeStyle =
+      i % 4 === 0
+        ? "rgba(143,220,255,0.32)"
+        : "rgba(143,220,255,0.15)";
+
+    g.lineWidth = 1;
+
+    g.stroke();
+  }
+
+
+  requestAnimationFrame(
+    draw
+  );
+}
+
+
+/* =========================================================
+   TIME-DELAY PHASE TRACE
+   ========================================================= */
+
+function drawTrace(
+  lag,
+  gain,
+  radius,
+  cx,
+  cy,
+  stroke,
+  width,
+  glow
+){
+
+  const len =
+    waveform.length;
+
+  g.beginPath();
+
+  for(let i=0;i<len;i++){
+
+    const xSample =
+      (
+        waveform[i] -
+        128
+      ) / 128;
+
+    const ySample =
+      (
+        waveform[
+          (i + lag) % len
+        ] -
+        128
+      ) / 128;
+
+    const x =
+      cx +
+      xSample *
+      radius *
+      0.86 *
+      gain;
+
+    const y =
+      cy +
+      ySample *
+      radius *
+      0.86 *
+      gain;
+
+    if(i===0){
+
+      g.moveTo(
+        x,
+        y
+      );
+
+    }else{
+
+      g.lineTo(
+        x,
+        y
+      );
+    }
+  }
+
+  g.strokeStyle =
+    stroke;
+
+  g.lineWidth =
+    width;
+
+  g.shadowBlur =
+    glow;
+
+  g.shadowColor =
+    "#75d6ff";
+
+  g.stroke();
+
+  g.shadowBlur = 0;
+}
+
+
+draw();
+
+</script>
+
+</body>
+</html>
