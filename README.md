@@ -1,5 +1,11 @@
 # Antivenom
 
+[Wireheading and the Conditions of a Common World](https://standardgalactic.github.io/antivenom/wireheading_common_world.pdf)
+
+* [When the Dashboard Eats the Engine](https://standardgalactic.github.io/antivenom/wireheading-visualizer.html) — *Audio Overview*
+
+![](wireheading-cover.png)
+
 [The Person Behind the Interface](https://standardgalactic.github.io/antivenom/mind/person-behind-the-interface.pdf)
 
 * [Audio Overview](https://standardgalactic.github.io/antivenom/mind/)
