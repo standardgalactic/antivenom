@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Obligation to Grow</title>
+
+<style>
+:root {
+  --amber:#ffb84d;
+  --bright:#ffe1a3;
+  --dim:#8d5c24;
+  --background:#070502;
+}
+
+* { box-sizing:border-box; }
+
+html,body {
+  margin:0;
+  width:100%;
+  min-height:100%;
+}
+
+body {
+  min-height:100vh;
+  min-height:100dvh;
+  background:var(--background);
+  color:var(--amber);
+  font-family:"Courier New",monospace;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  cursor:pointer;
+  user-select:none;
+}
+
+/* CRT scanlines and subtle screen glare */
+body::before {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:15;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse at 27% 14%,
+      rgba(255,220,150,.09),
+      transparent 36%
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,185,80,.028) 0px,
+      rgba(255,185,80,.028) 1px,
+      transparent 2px,
+      transparent 4px
+    );
+}
+
+body::after {
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:14;
+  pointer-events:none;
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 35%,
+      rgba(0,0,0,.65) 100%
+    );
+}
+
+header {
+  margin-bottom:17px;
+  text-align:center;
+  z-index:2;
+}
+
+h1 {
+  margin:0;
+  font-size:clamp(13px,3vw,17px);
+  font-weight:normal;
+  letter-spacing:.19em;
+  text-transform:uppercase;
+  text-shadow:0 0 12px rgba(255,170,50,.6);
+}
+
+.subtitle {
+  margin-top:7px;
+  font-size:10px;
+  letter-spacing:.22em;
+  color:rgba(255,190,90,.55);
+}
+
+.monitor {
+  position:relative;
+  width:min(510px,88vw,62dvh);
+  aspect-ratio:1;
+  padding:14px;
+  background:#100b05;
+  border:1px solid rgba(255,175,60,.28);
+  box-shadow:
+    0 0 35px rgba(255,135,25,.08),
+    inset 0 0 25px rgba(255,135,25,.06);
+}
+
+canvas {
+  display:block;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  border:2px solid rgba(255,180,70,.35);
+  background:radial-gradient(
+    circle,
+    #1b1005 0%,
+    #090602 60%,
+    #020100 100%
+  );
+  box-shadow:
+    inset 0 0 85px rgba(255,140,30,.1),
+    0 0 25px rgba(255,150,40,.09);
+}
+
+.monitor-label {
+  position:absolute;
+  bottom:5px;
+  right:12px;
+  font-size:9px;
+  letter-spacing:.12em;
+  color:rgba(255,185,80,.5);
+}
+
+.readout {
+  display:flex;
+  justify-content:space-between;
+  width:min(510px,88vw,62dvh);
+  margin-top:10px;
+  font-size:10px;
+  letter-spacing:.12em;
+  color:rgba(255,190,100,.65);
+}
+
+#seek {
+  position:relative;
+  z-index:6;
+  width:min(510px,88vw,62dvh);
+  height:22px;
+  margin-top:4px;
+  display:flex;
+  align-items:center;
+  cursor:pointer;
+  touch-action:none;
+  outline:none;
+}
+
+#seekTrack {
+  position:relative;
+  width:100%;
+  height:6px;
+  background:#100b05;
+  border:1px solid rgba(255,175,60,.35);
+  box-shadow:inset 0 0 6px rgba(255,135,25,.12);
+}
+
+#seekFill {
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0;
+  background:linear-gradient(to right,rgba(255,150,40,.55),#ffd08a);
+  box-shadow:0 0 8px rgba(255,160,50,.55);
+}
+
+#seekThumb {
+  position:absolute;
+  top:50%;
+  left:0;
+  width:8px;
+  height:16px;
+  transform:translate(-50%,-50%);
+  background:var(--bright);
+  border:1px solid #ff9a25;
+  box-shadow:0 0 10px rgba(255,160,50,.8);
+}
+
+#seek:focus-visible #seekTrack {
+  border-color:var(--bright);
+}
+
+#seek:hover #seekThumb,
+#seek.dragging #seekThumb {
+  background:#fff3d6;
+}
+
+#captions {
+  position:fixed;
+  z-index:30;
+  bottom:48px;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(680px,92vw);
+  min-height:2.6em;
+  padding:9px 13px;
+  text-align:center;
+  font-size:clamp(13px,3.4vw,15px);
+  line-height:1.5;
+  color:var(--bright);
+  text-shadow:0 0 9px rgba(255,170,50,.65);
+  background:rgba(19,10,2,.82);
+  border:1px solid rgba(255,175,60,.2);
+  border-radius:3px;
+  pointer-events:none;
+  overflow-wrap:anywhere;
+}
+
+#essay {
+  position:fixed;
+  z-index:35;
+  bottom:13px;
+  left:50%;
+  transform:translateX(-50%);
+  color:var(--amber);
+  font-size:12px;
+  letter-spacing:.08em;
+  text-decoration:none;
+  opacity:.8;
+  cursor:pointer;
+}
+
+#essay:hover {
+  opacity:1;
+  text-decoration:underline;
+}
+
+#playIndicator {
+  position:absolute;
+  z-index:5;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:13px;
+  letter-spacing:.2em;
+  color:#ffe0a0;
+  text-shadow:0 0 14px #ff9a25;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+
+#playIndicator.hidden {
+  opacity:0;
+}
+
+@media(max-height:680px) {
+  header { margin-bottom:7px; }
+  .monitor {
+    width:min(360px,70dvh,78vw);
+    padding:9px;
+  }
+  .readout,
+  #seek {
+    width:min(360px,70dvh,78vw);
+  }
+  #captions { bottom:36px; }
+  #essay { bottom:7px; }
+}
+
+@media(prefers-reduced-motion:reduce) {
+  body::before { opacity:.5; }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>The Obligation to Grow</h1>
+  <div class="subtitle">PLATFORM EXPANSION / SYSTEM PRESSURE</div>
+</header>
+
+<div class="monitor">
+  <canvas id="scope"></canvas>
+  <div id="playIndicator">CLICK TO PLAY</div>
+  <div class="monitor-label">CRT / GROWTH MONITOR</div>
+</div>
+
+<div class="readout">
+  <span id="timeDisplay">00:00 / 00:00</span>
+  <span id="signalDisplay">SIGNAL STANDBY</span>
+</div>
+
+<div
+  id="seek"
+  role="slider"
+  tabindex="0"
+  aria-label="Audio position"
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow="0"
+>
+  <div id="seekTrack">
+    <div id="seekFill"></div>
+    <div id="seekThumb"></div>
+  </div>
+</div>
+
+<div id="captions" aria-live="off">LOADING SUBTITLES...</div>
+
+<a
+  id="essay"
+  href="https://standardgalactic.github.io/antivenom/obligation-to-grow.pdf"
+  target="_blank"
+  rel="noopener noreferrer"
+>The Obligation to Grow</a>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+"use strict";
+
+/* ----------------------------------------------------------
+   ELEMENTS AND AUDIO
+---------------------------------------------------------- */
+
+const audio = document.getElementById("audio");
+const canvas = document.getElementById("scope");
+const g = canvas.getContext("2d");
+
+const captions = document.getElementById("captions");
+const indicator = document.getElementById("playIndicator");
+const timeDisplay = document.getElementById("timeDisplay");
+const signalDisplay = document.getElementById("signalDisplay");
+const essay = document.getElementById("essay");
+
+const SIZE = 440;
+const DPR = Math.min(window.devicePixelRatio || 1,2);
+
+canvas.width = SIZE * DPR;
+canvas.height = SIZE * DPR;
+g.scale(DPR,DPR);
+
+/*
+   Seeking needs a seekable source. Many simple servers do not
+   support HTTP range requests, which makes the browser restart
+   the file from zero on any seek. The file is therefore loaded
+   fully into memory and played from a blob URL, which is always
+   seekable. If that fails (for example on file://), the plain
+   URL is used instead.
+*/
+const AUDIO_FILE = "Why_Platforms_Force_You_to_Grow.mp3";
+
+async function loadAudio() {
+  signalDisplay.textContent = "LOADING AUDIO";
+
+  try {
+    const response = await fetch(AUDIO_FILE);
+
+    if(!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const blob = await response.blob();
+    audio.src = URL.createObjectURL(
+      blob.type ? blob : new Blob([blob],{type:"audio/mpeg"})
+    );
+
+    signalDisplay.textContent = "SIGNAL STANDBY";
+
+  } catch(error) {
+    console.warn("Blob loading failed, using direct source:",error);
+    audio.src = AUDIO_FILE;
+    signalDisplay.textContent = "SIGNAL STANDBY";
+  }
+}
+
+loadAudio();
+
+let audioContext = null;
+let analyser = null;
+let waveform = null;
+
+function initializeAudio() {
+  if(audioContext) return;
+
+  audioContext = new (
+    window.AudioContext ||
+    window.webkitAudioContext
+  )();
+
+  analyser = audioContext.createAnalyser();
+  analyser.fftSize = 2048;
+  analyser.smoothingTimeConstant = .72;
+
+  waveform = new Uint8Array(analyser.fftSize);
+
+  const source = audioContext.createMediaElementSource(audio);
+  source.connect(analyser);
+  analyser.connect(audioContext.destination);
+}
+
+document.body.addEventListener("click",async event => {
+  if(event.target.closest("a") || event.target.closest("#seek")) return;
+
+  try {
+    initializeAudio();
+
+    if(audioContext.state === "suspended") {
+      await audioContext.resume();
+    }
+
+    if(audio.paused) {
+      await audio.play();
+    } else {
+      audio.pause();
+    }
+  } catch(error) {
+    console.error("Audio playback error:",error);
+    signalDisplay.textContent = "AUDIO ERROR";
+  }
+});
+
+essay.addEventListener("click",event => {
+  event.stopPropagation();
+});
+
+audio.addEventListener("play",() => {
+  indicator.classList.add("hidden");
+  signalDisplay.textContent = "SIGNAL ACTIVE";
+});
+
+audio.addEventListener("pause",() => {
+  indicator.textContent = "CLICK TO RESUME";
+  indicator.classList.remove("hidden");
+  signalDisplay.textContent = "SIGNAL PAUSED";
+});
+
+audio.addEventListener("ended",() => {
+  indicator.textContent = "REPLAY";
+  indicator.classList.remove("hidden");
+  signalDisplay.textContent = "SIGNAL COMPLETE";
+});
+
+/* ----------------------------------------------------------
+   SEEK BAR
+
+   Click or drag to jump to any point. Arrow keys move by five
+   seconds, Home and End jump to the ends. Seeking works before
+   playback begins, and the captions follow the new position.
+---------------------------------------------------------- */
+
+const seek = document.getElementById("seek");
+const seekFill = document.getElementById("seekFill");
+const seekThumb = document.getElementById("seekThumb");
+
+let dragging = false;
+
+function seekToPointer(event) {
+  const duration = audio.duration;
+  if(!Number.isFinite(duration) || duration <= 0) {
+    signalDisplay.textContent = "AUDIO NOT READY";
+    return;
+  }
+
+  const rect = seek.getBoundingClientRect();
+  const ratio = Math.min(1,Math.max(0,
+    (event.clientX-rect.left)/rect.width
+  ));
+
+  audio.currentTime = ratio*duration;
+  updateSeek();
+}
+
+function updateSeek() {
+  const duration = audio.duration;
+  const ready = Number.isFinite(duration) && duration > 0;
+  const ratio = ready
+    ? Math.min(1,audio.currentTime/duration)
+    : 0;
+
+  const percent = (ratio*100).toFixed(2) + "%";
+  seekFill.style.width = percent;
+  seekThumb.style.left = percent;
+  seek.setAttribute("aria-valuenow",Math.round(ratio*100));
+  seek.setAttribute("aria-valuetext",
+    formatTime(audio.currentTime) + " of " + formatTime(duration));
+}
+
+seek.addEventListener("pointerdown",event => {
+  event.preventDefault();
+  dragging = true;
+  seek.classList.add("dragging");
+  seek.setPointerCapture(event.pointerId);
+  seek.focus({preventScroll:true});
+  seekToPointer(event);
+});
+
+seek.addEventListener("pointermove",event => {
+  if(dragging) seekToPointer(event);
+});
+
+function endDrag(event) {
+  if(!dragging) return;
+  dragging = false;
+  seek.classList.remove("dragging");
+
+  if(seek.hasPointerCapture(event.pointerId)) {
+    seek.releasePointerCapture(event.pointerId);
+  }
+}
+
+seek.addEventListener("pointerup",endDrag);
+seek.addEventListener("pointercancel",endDrag);
+
+seek.addEventListener("keydown",event => {
+  const duration = audio.duration;
+  if(!Number.isFinite(duration)) return;
+
+  let target = null;
+
+  if(event.key === "ArrowRight" || event.key === "ArrowUp") {
+    target = audio.currentTime + 5;
+  } else if(event.key === "ArrowLeft" || event.key === "ArrowDown") {
+    target = audio.currentTime - 5;
+  } else if(event.key === "Home") {
+    target = 0;
+  } else if(event.key === "End") {
+    target = duration;
+  }
+
+  if(target === null) return;
+
+  event.preventDefault();
+  audio.currentTime = Math.min(duration,Math.max(0,target));
+  updateSeek();
+});
+
+audio.addEventListener("loadedmetadata",updateSeek);
+audio.addEventListener("durationchange",updateSeek);
+
+/* ----------------------------------------------------------
+   SUBTITLE PARSER
+
+   The VTT is fetched directly. Line endings, cue identifiers,
+   timing settings, and multiline subtitle cues are supported.
+---------------------------------------------------------- */
+
+let cues = [];
+let subtitleStatus = "LOADING SUBTITLES...";
+let previousCaption = null;
+
+function parseTime(value) {
+  const parts = value.replace(",",".").trim().split(":");
+  const numbers = parts.map(Number);
+
+  if(numbers.some(n => !Number.isFinite(n))) {
+    return NaN;
+  }
+
+  if(numbers.length === 3) {
+    return numbers[0]*3600 + numbers[1]*60 + numbers[2];
+  }
+
+  if(numbers.length === 2) {
+    return numbers[0]*60 + numbers[1];
+  }
+
+  return NaN;
+}
+
+async function loadSubtitles() {
+  const filename = "Why_Platforms_Force_You_to_Grow.vtt";
+
+  try {
+    const response = await fetch(filename,{cache:"no-store"});
+
+    if(!response.ok) {
+      throw new Error("HTTP " + response.status);
+    }
+
+    const content = (await response.text())
+      .replace(/^\uFEFF/,"")
+      .replace(/\r\n?/g,"\n");
+
+    const blocks = content.split(/\n\s*\n/);
+    const parsed = [];
+
+    for(const block of blocks) {
+      const lines = block.trim().split("\n");
+
+      const timingIndex = lines.findIndex(
+        line => line.includes("-->")
+      );
+
+      if(timingIndex < 0) continue;
+
+      const timing = lines[timingIndex].split("-->");
+      if(timing.length < 2) continue;
+
+      const start = parseTime(timing[0]);
+      const end = parseTime(timing[1].trim().split(/\s+/)[0]);
+
+      if(!Number.isFinite(start) ||
+         !Number.isFinite(end) ||
+         end <= start) continue;
+
+      const text = lines.slice(timingIndex+1)
+        .join(" ")
+        .replace(/<[^>]*>/g,"")
+        .replace(/\s+/g," ")
+        .trim();
+
+      if(text) parsed.push({start,end,text});
+    }
+
+    parsed.sort((a,b) => a.start-b.start);
+    cues = parsed;
+
+    subtitleStatus = cues.length
+      ? "SUBTITLES READY"
+      : "NO SUBTITLE CUES PARSED";
+
+    captions.textContent = subtitleStatus;
+
+    console.log("VTT loaded:",filename,"cues:",cues.length);
+
+  } catch(error) {
+    subtitleStatus = "SUBTITLE FILE NOT FOUND";
+    captions.textContent = subtitleStatus;
+    console.error("Subtitle loading error:",error);
+  }
+}
+
+function updateCaptions() {
+  if(!cues.length) return;
+
+  const t = audio.currentTime;
+  let current = "";
+
+  for(const cue of cues) {
+    if(t >= cue.start && t < cue.end + .12) {
+      current = cue.text;
+      break;
+    }
+    if(cue.start > t) break;
+  }
+
+  if(audio.paused && t === 0) {
+    current = subtitleStatus;
+  }
+
+  if(current !== previousCaption) {
+    captions.textContent = current;
+    previousCaption = current;
+  }
+}
+
+loadSubtitles();
+
+/* ----------------------------------------------------------
+   VISUALIZATION
+
+   The circular field represents an expanding system. The
+   central time-delay waveform is the live audio signal.
+   Rings and radial tension lines expand with measured energy.
+---------------------------------------------------------- */
+
+let frame = 0;
+let smoothEnergy = 0;
+let glitchRemaining = 0;
+let glitchOffset = 0;
+
+function drawTrace(lag,gain,cx,cy,R,color,width,glow) {
+  const len = waveform.length;
+
+  g.beginPath();
+
+  for(let i=0;i<len;i++) {
+    const a = (waveform[i]-128)/128;
+    const b = (waveform[(i+lag)%len]-128)/128;
+
+    const x = cx + a*R*gain*.84;
+    const y = cy + b*R*gain*.84;
+
+    if(i===0) g.moveTo(x,y);
+    else g.lineTo(x,y);
+  }
+
+  g.strokeStyle = color;
+  g.lineWidth = width;
+  g.shadowColor = "#ffb347";
+  g.shadowBlur = glow;
+  g.stroke();
+  g.shadowBlur = 0;
+}
+
+function formatTime(seconds) {
+  if(!Number.isFinite(seconds)) return "00:00";
+
+  const s = Math.floor(seconds);
+  return String(Math.floor(s/60)).padStart(2,"0") +
+    ":" + String(s%60).padStart(2,"0");
+}
+
+function draw() {
+  frame++;
+
+  updateCaptions();
+
+  if(!dragging) updateSeek();
+
+  if(frame%12 === 0) {
+    timeDisplay.textContent =
+      formatTime(audio.currentTime) +
+      " / " +
+      formatTime(audio.duration);
+  }
+
+  /* Slow phosphor decay leaves a short luminous trail. */
+  g.fillStyle = "rgba(7,4,1,.17)";
+  g.fillRect(0,0,SIZE,SIZE);
+
+  const cx = SIZE/2;
+  const cy = SIZE/2;
+  const R = SIZE*.405;
+
+  let energy = 0;
+
+  if(analyser) {
+    analyser.getByteTimeDomainData(waveform);
+
+    for(let i=0;i<waveform.length;i+=8) {
+      energy += Math.abs((waveform[i]-128)/128);
+    }
+
+    energy /= waveform.length/8;
+  }
+
+  smoothEnergy += (energy-smoothEnergy)*.07;
+
+  /* Rare, short horizontal sync disturbances. */
+  if(glitchRemaining <= 0 && Math.random()<.004) {
+    glitchRemaining = 2+Math.floor(Math.random()*6);
+    glitchOffset = (Math.random()-.5)*15;
+  }
+
+  const glitching = glitchRemaining>0;
+  if(glitchRemaining>0) glitchRemaining--;
+
+  g.save();
+  g.beginPath();
+  g.arc(cx,cy,R,0,Math.PI*2);
+  g.clip();
+
+  /* Fine industrial calibration grid. */
+  g.strokeStyle = "rgba(255,180,75,.033)";
+  g.lineWidth = 1;
+
+  for(let n=-7;n<=7;n++) {
+    const p = n*26;
+
+    g.beginPath();
+    g.moveTo(cx+p,cy-R);
+    g.lineTo(cx+p,cy+R);
+    g.stroke();
+
+    g.beginPath();
+    g.moveTo(cx-R,cy+p);
+    g.lineTo(cx+R,cy+p);
+    g.stroke();
+  }
+
+  /*
+     Expanding shells: increasing audio intensity temporarily
+     increases the pressure and deformation of the field.
+  */
+  for(let ring=0;ring<12;ring++) {
+    const base = 19+ring*13;
+    const pressure = smoothEnergy*28;
+    const phase = frame*.0017+ring*.35;
+
+    g.beginPath();
+
+    for(let i=0;i<=240;i++) {
+      const a = i/240*Math.PI*2;
+
+      const deformation =
+        Math.sin(a*5+phase)*2.5 +
+        Math.sin(a*9-phase*.6)*1.1;
+
+      const rr = base+pressure+deformation;
+
+      const x = cx+Math.cos(a)*rr;
+      const y = cy+Math.sin(a)*rr;
+
+      if(i===0) g.moveTo(x,y);
+      else g.lineTo(x,y);
+    }
+
+    g.strokeStyle =
+      `rgba(255,180,65,${.025+ring*.005})`;
+
+    g.lineWidth = 1;
+    g.stroke();
+  }
+
+  /* Radial connections give the field structural tension. */
+  for(let i=0;i<24;i++) {
+    const angle = i/24*Math.PI*2+frame*.0003;
+
+    const inner = 35+smoothEnergy*22;
+    const outer = R*.94;
+
+    g.beginPath();
+
+    g.moveTo(
+      cx+Math.cos(angle)*inner,
+      cy+Math.sin(angle)*inner
+    );
+
+    g.lineTo(
+      cx+Math.cos(angle)*outer,
+      cy+Math.sin(angle)*outer
+    );
+
+    g.strokeStyle = "rgba(255,180,70,.035)";
+    g.stroke();
+  }
+
+  /* The live time-delay oscilloscope trace. */
+  if(analyser) {
+    const lag = Math.max(1,Math.floor(
+      waveform.length*(
+        .075+
+        Math.sin(frame*.0028)*.022
+      )
+    ));
+
+    const gain = Math.min(
+      4.5,
+      1.1/Math.max(smoothEnergy,.08)
+    );
+
+    g.save();
+
+    if(glitching) {
+      g.translate(glitchOffset,0);
+    }
+
+    drawTrace(
+      lag+9,gain,cx,cy,R,
+      "rgba(255,135,35,.16)",5,0
+    );
+
+    drawTrace(
+      lag,gain,cx,cy,R,
+      "#ffdb91",
+      1.4+smoothEnergy*2.5,
+      12+smoothEnergy*25
+    );
+
+    g.restore();
+  }
+
+  /* A brief horizontal synchronization tear. */
+  if(glitching) {
+    const y = 40+Math.random()*(SIZE-80);
+
+    g.fillStyle = "rgba(255,190,90,.09)";
+    g.fillRect(0,y,SIZE,2+Math.random()*5);
+
+    g.strokeStyle = "rgba(255,220,140,.4)";
+    g.beginPath();
+    g.moveTo(0,y);
+    g.lineTo(SIZE,y);
+    g.stroke();
+  }
+
+  /* Occasional weak electronic noise speckles. */
+  for(let i=0;i<7;i++) {
+    const x = Math.random()*SIZE;
+    const y = Math.random()*SIZE;
+
+    g.fillStyle = "rgba(255,180,75,.09)";
+    g.fillRect(x,y,1.5,1);
+  }
+
+  g.restore();
+
+  /* Scope circumference and calibration marks. */
+  g.beginPath();
+  g.arc(cx,cy,R,0,Math.PI*2);
+  g.strokeStyle = "rgba(255,190,90,.35)";
+  g.lineWidth = 1.5;
+  g.stroke();
+
+  for(let i=0;i<48;i++) {
+    const a = i/48*Math.PI*2;
+    const major = i%6===0;
+
+    g.beginPath();
+    g.moveTo(
+      cx+Math.cos(a)*(R+3),
+      cy+Math.sin(a)*(R+3)
+    );
+    g.lineTo(
+      cx+Math.cos(a)*(R+(major?11:6)),
+      cy+Math.sin(a)*(R+(major?11:6))
+    );
+
+    g.strokeStyle = major
+      ? "rgba(255,190,90,.42)"
+      : "rgba(255,190,90,.17)";
+
+    g.lineWidth = 1;
+    g.stroke();
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+</script>
+</body>
+</html>

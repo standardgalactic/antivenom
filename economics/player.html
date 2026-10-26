@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Audio Essays</title>
+<style>
+:root{color-scheme:dark}*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#000;color:#7ee08f;font-family:monospace}body{min-height:100svh;display:flex;flex-direction:column;align-items:center;padding:24px 16px}body::after{content:"";position:fixed;inset:0;background:repeating-linear-gradient(to bottom,transparent 0px,transparent 2px,rgba(0,0,0,.35) 2px,rgba(0,0,0,.35) 4px);pointer-events:none}main{width:min(100%,720px);text-align:center}h1{font-size:18px;font-weight:normal;line-height:1.5;margin:18px 0}label{display:block;font-size:12px;margin-bottom:10px}select,button{background:#07120a;color:#9ee9aa;border:1px solid #254b2d;padding:10px;font:inherit;border-radius:4px}select{max-width:100%;width:100%}button{cursor:pointer}button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid #9ee9aa;outline-offset:4px}#scope{display:block;width:min(70vw,45svh,440px);aspect-ratio:1;margin:10px auto;border-radius:50%}#subtitle{min-height:5em;white-space:pre-line;color:rgba(180,255,190,.85);font-size:16px;line-height:1.6;margin:10px 0 20px}audio{display:block;width:100%;margin:18px 0}#status{font-size:12px;color:#7fae87;min-height:2em;line-height:1.5}#direct{display:inline-block;color:#8ec79a;font-size:12px;margin:10px}#trackLinks{display:flex;justify-content:center;gap:20px;margin:12px}a{color:#8ec79a}footer{font-size:11px;color:#64816a;margin:15px}
+</style>
+</head>
+<body><main>
+<label for="tracks">SELECT RECORDING</label><select id="tracks"></select>
+<nav id="trackLinks" aria-label="Direct track links"></nav>
+<h1 id="title"></h1><canvas id="scope" aria-hidden="true"></canvas>
+<div id="subtitle" aria-live="off"></div>
+<audio id="audio" controls preload="metadata" playsinline></audio>
+<div id="status" role="status"></div><a id="direct">Direct link to this track</a>
+</main>
+<script>
+'use strict';
+const tracks=[
+ {id:'failure',title:'How Platforms Profit From Your Failure',file:'How_Platforms_Profit_From_Your_Failure'},
+ {id:'perpetual-motion',title:'The Mathematical Proof Against Perpetual Motion',file:'The_Mathematical_Proof_Against_Perpetual_Motion'},
+ {id:'summaries',title:"Why Today's Summaries Fail Tomorrow",file:'Why_Today_s_Summaries_Fail_Tomorrow'}
+];
+const audio=document.getElementById('audio'),select=document.getElementById('tracks'),sub=document.getElementById('subtitle'),status=document.getElementById('status'),title=document.getElementById('title'),direct=document.getElementById('direct');
+let active=0,subtitleState='Loading subtitles',loadSerial=0,ctx,analyser,timeBuf;
+function trackURL(index){const url=new URL(location.href);url.searchParams.set('track',String(index+1));return url;}
+tracks.forEach((track,index)=>{const option=document.createElement('option');option.value=index;option.textContent=track.title;select.append(option);const link=document.createElement('a');link.href=trackURL(index).href;link.textContent=String(index+1);link.title=track.title;document.getElementById('trackLinks').append(link);});
+function requestedTrack(){const value=new URL(location.href).searchParams.get('track');return tracks.findIndex((t,i)=>value===String(i+1)||value===t.id||value===t.file||value===t.file+'.mp3');}
+function report(){status.textContent=(audio.error?'Audio could not be loaded':audio.ended?'Finished':audio.paused?'Paused':'Playing')+' · '+subtitleState;}
+async function ensureAudio(){try{if(!ctx){ctx=new(window.AudioContext||window.webkitAudioContext)();analyser=ctx.createAnalyser();analyser.fftSize=2048;timeBuf=new Uint8Array(analyser.fftSize);const source=ctx.createMediaElementSource(audio);source.connect(analyser);analyser.connect(ctx.destination);}if(ctx.state==='suspended')await ctx.resume();}catch(error){console.warn('Visualizer unavailable',error);}}
+// Native WebVTT parsing handles cue identifiers, timings, settings, and markup.
+function updateSubs(){const track=audio.textTracks[0];if(!track||!track.activeCues){sub.textContent='';return;}sub.replaceChildren();Array.from(track.activeCues).forEach((cue,i)=>{if(i)sub.append(document.createTextNode('\n'));sub.append(document.createTextNode(cue.getCueAsHTML().textContent));});}
+function loadTrack(index,updateURL=false,play=false){
+ const serial=++loadSerial;active=index;audio.pause();audio.removeAttribute('src');audio.querySelectorAll('track').forEach(t=>t.remove());sub.textContent='';select.value=String(index);title.textContent=tracks[index].title;document.title=tracks[index].title;subtitleState='Loading subtitles';
+ audio.src=encodeURI(tracks[index].file+'.mp3');const captions=document.createElement('track');captions.kind='subtitles';captions.srclang='en';captions.label='English';captions.src=encodeURI(tracks[index].file+'.vtt');
+ captions.addEventListener('load',()=>{if(serial!==loadSerial)return;subtitleState='Subtitles ready';captions.track.mode='hidden';updateSubs();report();});
+ captions.addEventListener('error',()=>{if(serial!==loadSerial)return;subtitleState='Subtitles unavailable';report();});
+ audio.append(captions);captions.track.mode='hidden';captions.track.addEventListener('cuechange',updateSubs);audio.load();direct.href=trackURL(index).href;
+ if(updateURL)history.pushState(null,'',trackURL(index));report();if(play){ensureAudio();audio.play().catch(()=>{report();});}
+}
+select.addEventListener('change',()=>loadTrack(Number(select.value),true,!audio.paused));
+window.addEventListener('popstate',()=>{const index=requestedTrack();loadTrack(index<0?0:index);});
+audio.addEventListener('pointerdown',ensureAudio);audio.addEventListener('keydown',ensureAudio);audio.addEventListener('play',()=>{ensureAudio();report();});['pause','ended','error'].forEach(event=>audio.addEventListener(event,report));['timeupdate','seeked'].forEach(event=>audio.addEventListener(event,updateSubs));
+const canvas=document.getElementById('scope'),pen=canvas.getContext('2d');let size=0;
+function resize(){size=canvas.clientWidth;const dpr=window.devicePixelRatio||1;canvas.width=Math.round(size*dpr);canvas.height=Math.round(size*dpr);pen.setTransform(dpr,0,0,dpr,0,0);}resize();window.addEventListener('resize',resize);
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');let lastFrame=0;
+function bolt(x1,y1,x2,y2,intensity){pen.beginPath();pen.moveTo(x1,y1);for(let i=1;i<10;i++){const t=i/10;pen.lineTo(x1+(x2-x1)*t+(Math.random()-.5)*size*.04*intensity,y1+(y2-y1)*t+(Math.random()-.5)*size*.04*intensity);}pen.lineTo(x2,y2);pen.strokeStyle=`rgba(120,255,140,${.15+intensity*.3})`;pen.lineWidth=1+intensity;pen.stroke();}
+function draw(now){requestAnimationFrame(draw);if(now-lastFrame<50)return;lastFrame=now;pen.fillStyle='rgba(0,0,0,.3)';pen.fillRect(0,0,size,size);if(reduced.matches)return;let energy=.04;if(analyser&&!audio.paused){analyser.getByteTimeDomainData(timeBuf);let sum=0;for(const sample of timeBuf)sum+=(sample-128)**2;energy=Math.min(Math.sqrt(sum/timeBuf.length)/40,1);}const center=size/2;for(let i=0;i<3+energy*10;i++){const angle=Math.random()*Math.PI*2,r=size*(.16+Math.random()*.30);bolt(center,center,center+Math.cos(angle)*r,center+Math.sin(angle)*r,energy);}}
+const initial=requestedTrack();loadTrack(initial<0?0:initial);requestAnimationFrame(draw);
+</script></body></html>

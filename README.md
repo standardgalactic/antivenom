@@ -1,5 +1,13 @@
 # Antivenom
 
+[The Obligation to Grow](https://standardgalactic.github.io/antivenom/obligation-to-grow.pdf)
+
+* [Why Platforms Force You to Grow](https://standardgalactic.github.io/antivenom/obligation-to-grow.html)
+
+[Metered Memory](https://standardgalactic.github.io/antivenom/metered-memory.pdf)
+
+* [Should Digital Storage Be Free?](https://standardgalactic.github.io/antivenom/console.html) — *Debate*
+
 [Wireheading and the Conditions of a Common World](https://standardgalactic.github.io/antivenom/wireheading_common_world.pdf)
 
 * [When the Dashboard Eats the Engine](https://standardgalactic.github.io/antivenom/wireheading-visualizer.html) — *Audio Overview*
