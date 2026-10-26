@@ -8,7 +8,7 @@ CANDIDATE_FILE="$(mktemp)"
 VIM_SCRIPT="$(mktemp)"
 MATCH_FILE="$(mktemp)"
 
-PATTERN='FLECTION|FLICTION|Felican|Felician|Felictian|Felixian|Flexen|Flaccion|Flagellian|Flakirin|Flakiron|Flaxian|Flaixion|Flixnian|Flaxion|Flaxon|Flaxson|Fleckession|Fleckstown|Flection|Flectional|Fleekshin|Fleishness|Fleishon|Flisheen|Flixenian|Fluxinian|Fleixing|Fleksheen|Flekshun|Fleksian|Fleksion|Flekzion|Fletchen|Fletcher|Fletchian|Fletchion|Fletian|Fletuchin|Flexian|Flexion|Flexition|Flexiton|Flexivision|Flextion|Flexumian|Fliccine|Flickditschian|Flickenden|Flickening|Flickession|Flickian|Flickiewen|Flickishin|Flicklian|Flickpnam|Flickrinnian|Flickshahn|Flicksham|Flickshan|Flickshane|Flickshank|Flickshanth|Flicksheen|Flicksheens|Flickshen|Flickshenman|Flickshian|Flickshin|Flickshion|Flickshon|Flicksion|Flickson|Flicksonin|Flickshorn|Flickstahn|Flickstein|Flickxion|Flickzion|Fliction|Flictionon|Flijnen|Flikshun|Flikstian|Flikxion|Flikzion|Flinchin|Flipchin|Flipchian|Flippshen|Flipschen|Flischin|Flisham|Flishan|Flishen|Flitchian|Flitchin|Flitchinan|Flitian|Flitschen|Flixton|Flixenum|Fleekshian|Flickshone|Flixieman|Fliximmon|Flicksheim|Flickshinen|Flieckshien|Flixioon|Flickshim|Flitching|Flitscheon|Flitschernard|Flitschian|Flixam|Flixan|Flixbyan|Flixchan|Flixchen|Flixen|Flixgen|Flixheen|Flixia|Flixian|Flickin|Flixidan|Flixie|Flixien|Flixim|Flixin|Flixing|Flixingen|Flixshink|Flixion|Flixionne|Flixium|Flixjan|Flixman|Flixon|Flixson|Flixten|Flixtion|Flixuen|Flixxion|Flixxon|Flixyon|Floodioxin|Fluxian|Fluxin|Fluxion|Fluxium|Fluxunian|Flykem|Flykshion|Flykshun|Flyxen|Flyxian|Flyxionn|Flyxionne|Flyxionu|Flyzion|Flickstone|Folicurian|Fouiches|Fuchin|Fugchin|Fuggeshin|Flickjino|Liction|Slikin|Klixian|Flisker|Flick Sheenan|Flick Sheehan|Flick Sheenum|Flick Sheen'
+PATTERN='FLECTION|FLICTION|Phlyxion|Phlyxian|Phlycaxion|Phlyzygian|Phyloxin|Phloxen|Phleoxian|Flyboxen|Flexendian|Fleichshind|Felican|Felician|Felicciana|Flaxine|Felictian|Felixian|Flexen|Fleixen|Flaccion|Flagellian|Flakirin|Flakiron|Flaxian|Flaixion|Flixnian|Flaxion|Flaxi|Flaxon|Flaxen|Flaxson|Fleckession|Fleckstown|Flection|Flectional|Fleekshin|Fleishness|Fleishon|Flisheen|Flixenian|Fluxinian|Fleixing|Fleksheen|Flekshun|Fleksian|Fleksion|Flekzion|Fletchen|Fletcher|Fleischer|Fletchian|Fletchion|Fletian|Fletuchin|Flexian|Flexion|Flexition|Flexiton|Flexivision|Flextion|Flexumian|Fleikshen|Fliccine|Flickditschian|Flickenden|Flickening|Flickession|Flickian|Flickiewen|Flickishin|Flicklian|Flickpnam|Flickrinnian|Flickshahn|Flicksham|Flickshan|Flickshane|Flickshank|Flickshanth|Flicksheen|Flicksheens|Flickshen|Flickshenman|Flickshian|Flickshin|Flickshion|Flickshon|Flicksion|Flickson|Flicksonin|Flickshorn|Flickstahn|Flickstein|Flickxion|Flickzion|Fliction|Flictionon|Fleissingen|Flijnen|Flikshun|Flikstian|Flikxion|Flikzion|Flinchin|Flipchin|Flipchian|Flippshen|Flyaction|Flyoxon|Flyaxon|Flyaxin|Flaregon|Fladiero|Flipschen|Flischin|Flisham|Flishan|Flishen|Flitchian|Flitchin|Flitchinan|Flitian|Flitschen|Flixton|Flixenum|Fleekshian|Flickshone|Flixieman|Fliximmon|Flyon|Flyshon|FlyExxon|Flanaxon|Flyxón|Flycone|Flicksheim|Flickshinen|Flieckshien|Flixioon|Flickshim|Flitching|Flitscheon|Flywitz and|Flitschernard|Flitschian|Flixam|Flixan|Flixbyan|Flixchan|Flixchen|Fleishian|Fleissing|Fly Agassine|Flagg-Messon|Fleixchen|Flyekson|Floxquan|Flagson|Flagstian|Flixen|Flixgen|Flixcher|Flixheen|Flixia|flixian|Flickin|Flixidan|Flixie|Flixien|Flixim|Flixin|Flixing|Flixingen|Flixshink|flixion|Florixian|Flixionne|Flixium|Flixjan|Flixman|Flixon|Flixson|Flixten|Flixtion|Flixuen|Flixxion|Flixxon|Flixyon|Floodioxin|Fluxian|Fluxin|Fluxion|Fluxium|Fluxunian|FlykemFlykshion|Flykshun|Flyxen|Flyxian|Flyxionn|Flyxionne|Flyxionu|Flyzion|Flickstone|Folicurian|Fouiches|Fuchin|Fugchin|Fuggeshin|Flickjino|Liction|Slikin|Klixian|Flisher|Flisker|Flyarian|Flyarion|Flick Sheenan|Flick Sheehan|Flick Sheenum|Flick Sheen|Flyluzen|Phlyoxian|Phlyoxion|Flyzon|Fligerson|Fleisinger|Flanagan|Flyxene|Flykon|Flaxodin|Flaixson|Flickshman|Flychart|flictions|flitchton|Flagarian|Flaggy and|Flagg-Zion|Floxium|Flymoxon|Flyaxiom|Fly Luxon|Flylic Sun|Flickeron|Flixionet|flickshione|FlexSign|Flackshen|Flickon|Flickshina|Flickshind|Flinction|Flixine|Flypexun|Flyson|Flegsen|Flickshenand|Flickshinn|Flixiana|Flickshenon|Vleitchin|flickshun|Flybian|flickshent|flikshin|flaction|flicion|flickshine|flickshing|flipchon|flishon|flixikin|flexemian|fliccion|flickshinian|flickshmer|flixenium|flixirin|flexton|flickaon|flickshaneer|flickshenian|flickshinin|flickshund|flickton|flippton|flixene|flixenon|flixinet|flixingin|flixiny|flixionin|flixionit|flixixion|fluxen|flickshun|flickshent|flikshin|flaction|flicion|flickshine|flickshing|flipchon|flishon|flakshion|flakshen|flixikin|flexemian|fliccion|flickshaw|flickshinian|flickshmer|flixenium|flixirin|flexine|flexton|flickaon|flickshaneer|flicksheet|flickshenian|flickshinin|flickshund|flickton|flagseon|flippton|flixene|flixenon|flixinet|flixingin|flixiny|flixionin|flixionit|flixixion|fluxen|flaikshen|flakion|flaskions|flaxleon|fleifson|flexan|flexchina|flexiz|flication|flickshaman|flickshamers|flickshanine|flickshannon|flickshant|flickshawn|flickshe|flickshie|flickshemia|flickshenow|flickshien|flickshigen|flickshinkues|flickshire|flykshin|flickshound|flickshow|flickshum|flictiona|flipption|flipsion|fliption|flission|flitchorn|flitton|flixation|flixenden|floxian|flixens|flixentian|fliximian|flixinen|flixinian|flixio|flixional|flixionian|flixions|flixit|flixition|flixivision|flixn|flixorin|flixsonen|flixtreon|flotition|flushion|fluxena|fluxenia|fluxim|fluxina|fluxinan|fluxunon|flykeon|flyon|flyexon|flygon|flyorson|flison|flyosyn|flyoxing|flyseon|flyseons|flyshon|flyxi|flyxon|flyoxin|flyaxium|flyaxian|flyoxian|flayoxian|flamixion|flyjan|flycon|flybonian|flyzeon|flimixian|flexio|fleixion|floxion|fletion|flaxo|fleixian|flygeon|fleoxian|flyex|flyloxian|flyloxion|flycorn|flexon|flysion|flyoxion|flyaxion|flamaxion|flamaxian|flyontion|flytoxian|flyskian|foxian|flyox|flyota|fliaxin|flagon|flegon|fleixson|fleisson|flyixian|flygation|flyana|flitine|flaydon|flyocean|flyerton|flyerson|flyerickson|flylexian|flymicazon|lexen|flaxseed|Fleischmann|Flaozo|Flizik|flakcion|flickston|flexzone|flexerion|flyrexian|flaxshin|flyoxone|flaoxin|flaxiom|floxia|flychristian|phlycemia|flaxenum|flaxor|flaxium|flaxcine|flaikshin|flinger|flytian|flynon|flexin|flexion|fluxion'
 
 cleanup() {
   rm -f "$CANDIDATE_FILE" "$VIM_SCRIPT" "$MATCH_FILE"
@@ -56,7 +56,7 @@ echo "Backup complete."
 } >> "$LOG_FILE"
 
 ############################################
-# Interactive affliction/infliction disambiguation
+# Interactive name/concept disambiguation
 #
 # Scanning happens on .txt only (the source transcripts). When a match
 # is confirmed as the name ("n"), the same word swap is propagated by
@@ -64,7 +64,7 @@ echo "Backup complete."
 # same basename, since those were generated together from the same text.
 ############################################
 
-echo "---- Interactive disambiguation: affliction / infliction (txt only, propagated to vtt/srt/json) ----"
+echo "---- Interactive disambiguation: affliction / infliction / fiction / friction (txt only, propagated to vtt/srt/json) ----"
 
 while IFS= read -r -d '' file; do
   python3 - "$file" "$LOG_FILE" <<'PY'
@@ -74,7 +74,7 @@ import os
 
 filename = sys.argv[1]
 log_file = sys.argv[2]
-pattern = re.compile(r'\b([Aa]ffliction|[Ii]nfliction|[Ff]iction)\b')
+pattern = re.compile(r'\b(affliction|infliction|fiction|friction)\b', re.IGNORECASE)
 
 try:
     tty = open("/dev/tty")
@@ -170,7 +170,7 @@ for i, line in enumerate(lines):
             else:
                 context_words = [matched_word]
 
-            lines[i] = pattern.sub("Flyxion", line)
+            lines[i] = line[:match.start()] + "Flyxion" + line[match.end():]
             modified = True
             log_entries.append(f"  L{i+1}: {original}")
             log_entries.append(f"        -> {lines[i].strip()}")
@@ -182,11 +182,11 @@ for i, line in enumerate(lines):
 if modified:
     with open(filename, "w", encoding="utf-8") as f:
         f.writelines(lines)
-    print(f"Updated (affliction/infliction pass): {filename}")
+    print(f"Updated (name/concept pass): {filename}")
 
 if log_entries:
     with open(log_file, "a", encoding="utf-8") as lf:
-        lf.write(f"\n[affliction/infliction] {filename}\n")
+        lf.write(f"\n[name/concept] {filename}\n")
         lf.write("\n".join(log_entries) + "\n")
 
 if quit_requested:
@@ -209,17 +209,42 @@ call writefile(g:flyxion_matches, '${MATCH_FILE}')
 %s/\\v\\coblocosm/oblicosm/g
 %s/\\v\\cMediaCoins/Media Quines/g
 %s/\\v\\bsphere[ ]+pop\\b/spherepop/g
-g/\v\c<amplit[- ]?wist>/call add(g:flyxion_matches, line('.') . "\x01" . getline('.'))
-g/\v\c<amplitwist>/call add(g:flyxion_matches, line('.') . "\x01" . getline('.'))
-%s/\v\c<amplit[- ]?wist>/amplitwist/g
-%s/\v\c<amplitwist>/amplitwist/g
 %s/\v\c<Zeem's scaled>/zoom-scaled/g
 %s/\v\c<Happo Praxis>/Haplopraxis/g
 %s/\v\c<haphopraxis>/Haplopraxis/g
+%s/\v\c<spiologist>/biologist/g
+%s/\v\c<ekphory>/ecphory/g
+%s/\v\c<ekphoric>/ecphoric/g
+%s/\v\c<ecferi>/ecphory/g
+%s/\v\c<semen>/\=submatch(0) =~# '^\u' ? 'Semon' : 'semon'/g
 g/\v\c<Pollack Sandpaper>/call add(g:flyxion_matches, line('.') . "\x01" . getline('.'))
 %s/\v\c<Pollack Sandpaper>/Polyxan paper/g
 g/\v\c<(${POLYXAN_PATTERN})>/call add(g:flyxion_matches, line('.') . "\x01" . getline('.'))
 %s/\v\c<(${POLYXAN_PATTERN})>/Polyxan/g
+
+" The history of memory
+%s/\v\c<listapod>/Listopad/g
+%s/\v\c<richard semen>/Richard Semon/g
+%s/\v\c<tolving>/Tulving/g
+%s/\v\c<n-gram>/engram/g
+%s/\v\c<nem books>/Mneme books/g
+
+" Ecphory terminology
+%s/\v\c<ekferi>/ecphory/g
+%s/\v\c<echphoric>/ecphoric/g
+%s/\v\c<phaseaware>/phase-aware/g
+
+" MEM-8 title and references
+%s/\v\c<mem[ -]?8>/MEM-8/g
+%s/\v\c<mimit>/MEM-8/g
+%s/\v\c<meme>/MEM-8/g
+
+" Context-specific transcription failures
+%s/\v\c<the QA>/the cue A/g
+%s/\v\c<query to illicit files>/query to a list of files/g
+%s/\v\c<a tractor basin sinkholes>/attractor-basin sinkholes/g
+%s/\v\c<delicate face structure>/delicate phase structure/g
+%s/\v\c<Flixi improvise>/Flyxion provides/g
 wq!
 EOF
 

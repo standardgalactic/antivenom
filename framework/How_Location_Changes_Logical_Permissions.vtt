@@ -1,0 +1,3890 @@
+WEBVTT
+
+00:00.000 --> 00:04.480
+What if the fundamental laws of logic, you know, didn't actually depend on what you were doing,
+
+00:04.640 --> 00:07.620
+but exactly where you were standing when you tried to do it?
+
+00:08.180 --> 00:08.720
+Right. Yeah.
+
+00:09.160 --> 00:11.220
+Like, let's say you have a basic command on your computer,
+
+00:11.880 --> 00:15.260
+something as simple as copy this file or delete this folder.
+
+00:15.680 --> 00:18.560
+We just naturally expect those commands to work universally.
+
+00:18.880 --> 00:21.400
+Exactly. A delete command is just a delete command.
+
+00:21.760 --> 00:26.300
+Right. Whether you execute it on your desktop or in a nested folder or,
+
+00:26.300 --> 00:32.140
+I don't know, deep inside a secure system directory, we operate under this fundamental assumption that
+
+00:32.140 --> 00:37.160
+the rules of logic and by extension, the rules of mathematics and coding are totally context
+
+00:37.160 --> 00:40.580
+independent. Yes, that's the baseline we all kind of live with.
+
+00:40.780 --> 00:45.760
+But you, our listener, are about to join us on an incredible journey where that entire
+
+00:45.760 --> 00:52.120
+assumption gets completely dismantled. Welcome to this deep dive. Today, our mission is to explore
+
+00:52.120 --> 00:55.320
+a truly mind bending piece of theoretical computer science.
+
+00:55.320 --> 00:56.420
+It really is. Yeah.
+
+00:56.580 --> 01:02.220
+We're looking at a paper published in October, 2026 by an independent researcher who goes by the
+
+01:02.220 --> 01:08.800
+name Flyxion. The title of the paper is Scoped Structural Rules in Combinatory Reduction.
+
+01:09.320 --> 01:09.980
+It's quite a title.
+
+01:10.640 --> 01:16.360
+And look, I know that sounds like we are about to read a dense, impenetrable textbook,
+
+01:16.660 --> 01:22.300
+but our goal today is to synthesize this highly theoretical mathematical logic into something you can
+
+01:22.300 --> 01:27.380
+visualize, understand, and, you know, maybe even use to rethink how we build secure software in the
+
+01:27.380 --> 01:27.960
+real world.
+
+01:28.200 --> 01:33.200
+It really is a revolutionary way of thinking about computation. I mean, the core premise Flyxion is
+
+01:33.200 --> 01:38.720
+introducing here asks us to imagine a universe where moving from one room in a mathematical
+
+01:38.720 --> 01:42.440
+formula to another completely changes your fundamental permissions.
+
+01:43.200 --> 01:43.340
+Wow.
+
+01:43.340 --> 01:47.400
+Yeah. The tools you hold in your hand might suddenly stop working just because you crossed
+
+01:47.400 --> 01:48.340
+an invisible threshold.
+
+01:49.020 --> 01:53.760
+I want to get right into how these rooms or locations change the rules, but I feel like
+
+01:53.760 --> 01:57.760
+before we can understand how the rules are restricted, we need to establish a baseline.
+
+01:57.980 --> 01:58.220
+Definitely.
+
+01:58.440 --> 02:03.880
+We need to know what the rules actually are in a pure unrestricted sense. The paper roots its
+
+02:03.880 --> 02:09.380
+entire argument in something called combinatory logic. So let's start there. For someone who might
+
+02:09.380 --> 02:15.400
+only be familiar with basic high school algebra, where we have variables like x and y, what exactly
+
+02:15.400 --> 02:16.920
+is combinatory logic?
+
+02:17.400 --> 02:22.780
+To understand that, we have to travel back in time a bit to the year 1924. A Russian mathematician
+
+02:22.780 --> 02:27.740
+named Moses Schonfinkel published a paper that introduced a radical idea.
+
+02:27.900 --> 02:28.180
+Okay.
+
+02:28.180 --> 02:35.020
+In standard algebra, or calculus, as you mentioned, we rely heavily on variables. We say things like,
+
+02:35.020 --> 02:41.180
+you know, f of x equals x plus 1. The x is a placeholder. It represents some unknown data
+
+02:41.180 --> 02:42.200
+that we'll slot in later.
+
+02:43.040 --> 02:49.220
+Schonfinkel asked a seemingly absurd question. Can we do all of mathematics and all of logic
+
+02:49.220 --> 02:53.800
+without ever using variables? Like, can we get rid of the placeholders entirely?
+
+02:54.320 --> 02:59.840
+Wait, how do you even write an equation without a placeholder? If I don't have an x to represent
+
+02:59.840 --> 03:05.280
+my data, how do I tell the formula what to do? You do it by building little self-contained
+
+03:05.280 --> 03:10.360
+mathematical machines that only know how to pass data around in highly specific ways.
+
+03:10.700 --> 03:11.100
+Interesting.
+
+03:11.680 --> 03:16.680
+Schonfinkel call these machines combinators. Instead of a complex formula full of x's and
+
+03:16.680 --> 03:19.340
+y's, you have a chain of these combinators.
+
+03:19.900 --> 03:20.660
+I see.
+
+03:20.940 --> 03:25.220
+You feed your raw data into the first machine on the assembly line, and it blindly hands it
+
+03:25.220 --> 03:30.460
+to the next machine, which hands it to the next, altering or routing the data based purely
+
+03:30.460 --> 03:34.980
+on the physical structure of the line. There are no placeholders, just routing mechanisms.
+
+03:35.500 --> 03:39.140
+Okay, I think I can picture that. It's like a physical factory floor.
+
+03:39.380 --> 03:39.740
+Exactly.
+
+03:40.360 --> 03:44.380
+The workers don't know what they are building. They just know that if a box comes down the
+
+03:44.380 --> 03:48.280
+conveyor belt, their specific job is to flip it upside down and pass it to the left.
+
+03:48.620 --> 03:53.760
+That is a perfect analogy. And just like a factory, you only need a few different types of workers
+
+03:53.760 --> 03:59.360
+to build almost anything. In Flashbonger's paper, the author takes these fundamental building blocks
+
+03:59.360 --> 04:02.920
+of computation and splits them into two distinct categories.
+
+04:03.580 --> 04:03.700
+Okay.
+
+04:03.900 --> 04:09.940
+The first category is what we call the neutral combinators. These are the simplest, most harmless
+
+04:09.940 --> 04:11.340
+workers on our assembly line.
+
+04:11.620 --> 04:17.160
+The paper mentions two of them specifically. There is the identity combinator, usually represented
+
+04:17.160 --> 04:21.900
+by the letter I, and the composition combinator, represented by B.
+
+04:21.900 --> 04:22.340
+Right.
+
+04:22.520 --> 04:25.000
+Let's walk through what these guys actually do on the factory floor.
+
+04:25.640 --> 04:31.680
+Well, the identity combinator, I, is essentially the laziest worker in the factory. If you hand
+
+04:31.680 --> 04:35.120
+a piece of data to I, it literally does nothing to it.
+
+04:35.280 --> 04:35.840
+Nothing at all.
+
+04:35.980 --> 04:40.000
+Nothing. It just turns around and hands that exact same piece of data to the next person
+
+04:40.000 --> 04:45.000
+in line. In mathematical terms, the function I applied to an argument just returns that argument
+
+04:45.000 --> 04:45.640
+unchanged.
+
+04:46.100 --> 04:47.760
+That sounds completely useless.
+
+04:47.760 --> 04:54.780
+I mean, why would we even need a machine that does nothing? It sounds useless until you realize
+
+04:54.780 --> 04:59.300
+that in a system without variables, pacing and timing are everything.
+
+05:00.260 --> 05:00.380
+Ah.
+
+05:00.660 --> 05:04.920
+Sometimes you need a placeholder just to keep a space occupied on the conveyor belt while
+
+05:04.920 --> 05:10.940
+another process finishes. I acts as that perfect neutral placeholder. It preserves the structure
+
+05:10.940 --> 05:12.120
+without altering the data.
+
+05:12.120 --> 05:17.400
+Okay. That makes sense. It's a delay tactic or a structural spacer. And then there is the
+
+05:17.400 --> 05:18.760
+composition combinator, B.
+
+05:19.140 --> 05:24.920
+Yes. B is a bit more active, but still completely neutral. Let's say you have two different processes,
+
+05:25.200 --> 05:27.120
+a painting machine and a drying machine.
+
+05:27.200 --> 05:27.440
+Right.
+
+05:28.100 --> 05:33.860
+If you feed those two machines and a raw widget into the B combinator, B just ensures they happen
+
+05:33.860 --> 05:38.280
+in the right sequence. It routes the widget into the painting machine, takes the result,
+
+05:38.700 --> 05:40.500
+and feeds it directly into the drying machine.
+
+05:40.500 --> 05:41.320
+Got it.
+
+05:41.640 --> 05:46.900
+It nests the functions. It doesn't create new data. It doesn't destroy the data. It just acts as a
+
+05:46.900 --> 05:49.020
+traffic cop, routing the flow of computation.
+
+05:49.300 --> 05:54.460
+I love that. So I and B are neutral because they don't mess with the inventory. Whatever
+
+05:54.460 --> 05:59.380
+resources you start with, you end with. They just move things around. But the paper quickly
+
+05:59.380 --> 06:02.920
+moves on to the second category of tools, and this is where things get really intense.
+
+06:03.260 --> 06:03.940
+Oh, yes.
+
+06:04.220 --> 06:06.720
+These are the structural combinators.
+
+06:06.720 --> 06:12.500
+Exactly. If the neutral combinators are just traffic cops, the structural combinators are
+
+06:12.500 --> 06:14.920
+the gods of this little universe.
+
+06:15.080 --> 06:15.340
+Wow.
+
+06:15.740 --> 06:20.680
+They have the power to alter reality, to change the actual quantity of resources in the system.
+
+06:21.600 --> 06:28.260
+And Phylaxion focuses on three specific structural tools, weakening, contraction, and exchange.
+
+06:28.260 --> 06:33.180
+And these map perfectly to everyday actions we take on a computer, right? I was reading this
+
+06:33.180 --> 06:37.640
+section and comparing it to physical objects versus digital files.
+
+06:37.700 --> 06:37.840
+Sure.
+
+06:37.840 --> 06:42.940
+Like, in the physical world, if I have an apple, I am bound by the laws of thermodynamics.
+
+06:43.260 --> 06:46.760
+I can't just wave a magic wand and instantly have two identical apples.
+
+06:46.960 --> 06:47.640
+Unfortunately not.
+
+06:47.640 --> 06:53.340
+Right. And if I throw the apple in the trash, the matter is still there. It's just rotting.
+
+06:53.740 --> 07:00.360
+But in a digital system, or in this formal combinatorial logic, we aren't bound by physical
+
+07:00.360 --> 07:05.540
+mass. We have tools that can literally conjure data from thin air or obliterate it entirely.
+
+07:06.380 --> 07:10.840
+Let's start with the one called contraction, represented by the letter W.
+
+07:10.840 --> 07:18.520
+W is your ultimate copy-paste tool. Let's say you have a function, a task that needs to be done,
+
+07:19.020 --> 07:24.000
+and you have exactly one piece of data. Let's call it a specific security key.
+
+07:24.380 --> 07:24.680
+Okay.
+
+07:25.180 --> 07:32.240
+If you feed that task and that one security key into the W combinator, W doesn't just apply the task.
+
+07:32.860 --> 07:37.180
+It looks at the security key, creates an identical clone of it out of nothing,
+
+07:37.680 --> 07:40.640
+and hands the task two copies of the key.
+
+07:40.840 --> 07:42.300
+It duplicates the resource.
+
+07:43.200 --> 07:44.060
+It's the magic wand.
+
+07:44.540 --> 07:44.760
+Yep.
+
+07:45.580 --> 07:50.600
+It takes one thing and makes it two. That's incredibly powerful, and as we'll see later,
+
+07:50.760 --> 07:53.420
+incredibly dangerous if you let it happen in the wrong place.
+
+07:53.640 --> 07:54.080
+Very true.
+
+07:54.600 --> 07:59.280
+Now, what about the opposite, the weakening combinator, represented by K?
+
+07:59.540 --> 08:05.080
+If W is copy-paste, K is your delete key. But it's a very specific kind of delete.
+
+08:05.820 --> 08:12.920
+Let's say you hand the K-combinator a vital piece of data, followed by some completely irrelevant trash data.
+
+08:13.120 --> 08:14.580
+Okay. Two pieces of data.
+
+08:14.840 --> 08:15.020
+Right.
+
+08:15.480 --> 08:20.480
+The K-combinator takes both, looks at the trash data, and completely annihilates it.
+
+08:20.860 --> 08:22.400
+It drops it into the void.
+
+08:22.400 --> 08:26.320
+It then outputs only the first vital piece of data.
+
+08:26.320 --> 08:30.260
+So it's a way of cleaning up. It lets you discard arguments that you no longer need.
+
+08:30.380 --> 08:34.340
+It takes two things and reduces them to one by just destroying the second thing.
+
+08:34.580 --> 08:34.880
+Precisely.
+
+08:35.540 --> 08:39.940
+And finally, we have the third structural tool, exchange, represented by C.
+
+08:39.940 --> 08:43.520
+Now, C doesn't create or destroy. It just reorders.
+
+08:44.160 --> 08:44.560
+Reorders.
+
+08:44.840 --> 08:50.180
+Yeah. If you hand C a task, followed by data packet A, followed by data packet B,
+
+08:50.600 --> 08:52.840
+the C-combinator swaps them.
+
+08:53.600 --> 08:57.320
+It feeds packet B into the task first, and then packet A.
+
+08:57.680 --> 08:58.740
+It changes the sequence.
+
+08:59.600 --> 09:03.180
+Okay. So just to make sure you listening are tracking with this toolkit,
+
+09:03.320 --> 09:06.080
+because this is the foundation for everything else we're going to talk about,
+
+09:06.080 --> 09:11.640
+we have our neutral routing tools, I and B, and we have our structural superpowers,
+
+09:12.000 --> 09:15.840
+W to duplicate, K to delete, and C to reorder.
+
+09:16.200 --> 09:16.640
+Exactly.
+
+09:17.080 --> 09:19.140
+But when I first read this, I was actually a bit confused,
+
+09:19.140 --> 09:21.480
+because I've dabbled in computer science,
+
+09:21.620 --> 09:24.060
+and normally when people talk about combinatorial logic,
+
+09:24.160 --> 09:27.240
+they talk about a very famous combinator called S.
+
+09:27.520 --> 09:28.500
+Ah, yes. S.
+
+09:28.700 --> 09:32.340
+Yeah. S is usually taught as the quintessential duplication tool,
+
+09:32.340 --> 09:36.080
+but this paper almost completely ignores S in favor of W.
+
+09:36.300 --> 09:37.920
+Why did the author make that choice?
+
+09:38.440 --> 09:39.620
+It's an excellent observation,
+
+09:39.800 --> 09:43.580
+and it brings us to a really crucial distinction made early in the paper.
+
+09:44.060 --> 09:49.360
+The author explicitly separates S from the pure concept of duplication.
+
+09:49.620 --> 09:50.040
+How so?
+
+09:50.400 --> 09:54.180
+It is true that historically the S-combinator is used to duplicate data.
+
+09:54.480 --> 09:57.320
+It takes two functions and one piece of data,
+
+09:57.520 --> 10:00.340
+and it feeds that same piece of data into both functions.
+
+10:00.340 --> 10:03.700
+So, yes, operationally, the data gets duplicated.
+
+10:04.220 --> 10:06.600
+But Flyxion points out that S is messy.
+
+10:07.000 --> 10:09.000
+It's not a pure atomic action.
+
+10:09.440 --> 10:10.080
+Messy how?
+
+10:10.700 --> 10:12.260
+Because it's doing too many things at once.
+
+10:12.540 --> 10:12.940
+Exactly.
+
+10:13.560 --> 10:14.620
+S doesn't just duplicate.
+
+10:15.080 --> 10:17.760
+It duplicates, it applies two different functions,
+
+10:18.180 --> 10:22.220
+and fundamentally, it reorganizes the spatial arrangement of the data.
+
+10:22.440 --> 10:22.980
+Oh, I see.
+
+10:23.400 --> 10:26.020
+It mixes duplication with routing and reordering.
+
+10:26.020 --> 10:32.500
+The author proves mathematically that if you want to isolate the absolute, pure essence of duplication,
+
+10:32.860 --> 10:34.580
+which is what the W-combinator does,
+
+10:35.020 --> 10:38.460
+you can actually build W from scratch if you have S,
+
+10:38.700 --> 10:41.740
+but only if you also have the exchange tool, C.
+
+10:41.960 --> 10:42.680
+Wait, really?
+
+10:43.160 --> 10:46.940
+Let's trace that out, because just throwing letters around doesn't help us visualize it.
+
+10:47.720 --> 10:52.900
+The paper claims that the pure copy tool, W, is exactly equivalent to lining up three other tools.
+
+10:53.160 --> 10:57.700
+The exchange tool, C, the S-combinator, and the identity tool, I.
+
+10:57.920 --> 10:58.420
+That's right.
+
+10:58.420 --> 11:01.320
+So, C, then S, then I.
+
+11:02.400 --> 11:06.400
+How does that combination miraculously act like a copy-paste button?
+
+11:07.020 --> 11:09.060
+Let's visualize the factory floor again.
+
+11:09.380 --> 11:10.380
+We have our assembly line.
+
+11:10.940 --> 11:13.840
+First in line is the C machine, the reorder tool.
+
+11:14.520 --> 11:17.060
+Behind it is the S machine, the messy duplicator.
+
+11:17.540 --> 11:20.520
+And behind that is the I machine, the lazy placeholder.
+
+11:20.780 --> 11:21.100
+Okay.
+
+11:21.340 --> 11:22.100
+I'm picturing it.
+
+11:22.100 --> 11:28.840
+Now, we send two things down the belt toward this setup, a task and a single piece of data we want to duplicate.
+
+11:29.520 --> 11:34.380
+Okay, so the C machine grabs the S machine, the task, and the data.
+
+11:35.060 --> 11:36.300
+What does C do?
+
+11:36.400 --> 11:39.760
+Its only job is to swap the second and third items it receives?
+
+11:39.940 --> 11:40.080
+Right.
+
+11:40.560 --> 11:45.720
+So, C looks at the task and the data, and it swaps their physical positions on the conveyor belt.
+
+11:46.020 --> 11:48.640
+Now the data is sitting in front of the task.
+
+11:48.880 --> 11:49.260
+Got it.
+
+11:49.260 --> 11:52.880
+Then this reorganized package rolls down to the S machine.
+
+11:53.600 --> 11:58.160
+Now S is looking at the lazy identity tool, I, the data, and the task.
+
+11:58.540 --> 11:59.520
+What does S do?
+
+12:00.040 --> 12:02.960
+S takes the piece of data, and it creates two copies.
+
+12:03.440 --> 12:08.840
+It hands one copy to the task, and it hands the other copy to the identity tool, I.
+
+12:09.560 --> 12:09.800
+Ugh.
+
+12:10.480 --> 12:12.880
+And we know exactly what the identity tool does.
+
+12:13.000 --> 12:14.280
+It does absolutely nothing.
+
+12:14.440 --> 12:15.180
+Exactly nothing.
+
+12:15.180 --> 12:19.320
+It just takes the copy it was handed and passes it forward untouched.
+
+12:19.660 --> 12:20.060
+Precisely.
+
+12:20.320 --> 12:21.880
+So what comes out the other end of the factory?
+
+12:22.720 --> 12:28.240
+The task, holding one copy of the data, followed immediately by the second, untouched copy of the data.
+
+12:28.620 --> 12:31.640
+You started with one piece of data, and you ended up with two.
+
+12:32.300 --> 12:34.280
+You achieved pure duplication.
+
+12:34.280 --> 12:35.540
+That is incredible.
+
+12:35.940 --> 12:36.040
+Yeah.
+
+12:36.180 --> 12:43.220
+But the paper's point here is that this trick only worked because the C machine was there at the beginning to swap the positions of the task in the data.
+
+12:43.340 --> 12:43.820
+That's the key.
+
+12:44.040 --> 12:48.620
+If you didn't have the power to exchange, the S machine wouldn't have been able to align the copies correctly.
+
+12:48.980 --> 12:49.380
+Exactly.
+
+12:50.340 --> 12:53.560
+And this proves that S relies heavily on the ability to reorder things.
+
+12:53.560 --> 12:58.080
+Flyxion wants a system where every power is completely isolated.
+
+12:58.940 --> 13:00.740
+So no messy, multi-purpose tools.
+
+13:00.940 --> 13:01.060
+Right.
+
+13:01.720 --> 13:03.180
+Copying should just be copying.
+
+13:03.900 --> 13:05.060
+Deleting should just be deleting.
+
+13:05.520 --> 13:07.180
+Reordering should just be reordering.
+
+13:08.020 --> 13:14.520
+By building the system on WKNC, the author isolates these structural powers down to their atomic core.
+
+13:14.520 --> 13:21.080
+Which makes a lot of sense, especially if you are going to start taking these powers away from people based on what room they're in.
+
+13:21.200 --> 13:23.760
+You need to know exactly which power you are revoking.
+
+13:23.940 --> 13:24.300
+Exactly.
+
+13:25.420 --> 13:27.520
+But the paper takes this isolation even further.
+
+13:28.100 --> 13:30.700
+There is a proof right after this, the separation proof.
+
+13:30.880 --> 13:35.720
+And this blew my mind because it essentially proves that these structural powers cannot be faked.
+
+13:35.940 --> 13:36.220
+Yes.
+
+13:36.640 --> 13:42.600
+You can't MacGyver a copy-paste tool if you only own a delete key and a reorder wand.
+
+13:43.280 --> 13:43.560
+Yes.
+
+13:44.160 --> 13:45.200
+The separation proof.
+
+13:45.600 --> 13:51.240
+It's a mathematically rigorous way of proving that these structural rules are fundamentally independent from one another.
+
+13:51.880 --> 13:58.800
+You cannot organically grow the power of duplication out of the powers of deletion, reordering, and identity.
+
+13:59.160 --> 14:04.500
+To prove this, the author dips into lambda calculus and uses a concept called affine terms.
+
+14:04.760 --> 14:10.540
+I want to linger on this because it's a beautiful concept, but the math jargon can be a high wall for listeners to climb.
+
+14:11.000 --> 14:11.220
+Fair enough.
+
+14:11.220 --> 14:15.820
+Without writing out equations on a chalkboard, how do we understand what an affine term is?
+
+14:16.420 --> 14:18.960
+Let's stick with our real-world analogies.
+
+14:19.680 --> 14:23.280
+Think about managing physical inventory in a highly strict warehouse.
+
+14:23.280 --> 14:27.940
+An affine system is a system governed by one unbreakable rule.
+
+14:28.580 --> 14:32.500
+Any resource that enters the warehouse can be used at most once.
+
+14:33.160 --> 14:40.440
+At most once, meaning I can use it zero times, like I can just throw it in the incinerator, or I can use it exactly one time.
+
+14:40.440 --> 14:42.080
+But I can never, ever use it twice.
+
+14:42.080 --> 14:43.080
+Correct.
+
+14:43.080 --> 14:46.120
+You cannot magically duplicate a physical crate.
+
+14:46.680 --> 14:56.020
+If you translate this back to lambda calculus, an affine term is a mathematical expression where every single variable appears at most one time.
+
+14:56.440 --> 14:57.000
+Okay.
+
+14:57.000 --> 15:02.540
+The crucial property of an affine system is that it preserves this trait over time.
+
+15:02.540 --> 15:13.020
+If you start with an affine formula and you let it evaluate, you know, the machines run, crunch the numbers, and spit out the final answer, that final answer will also be affine.
+
+15:13.020 --> 15:17.780
+It will never spontaneously generate multiple copies of a variable out of nowhere.
+
+15:18.500 --> 15:20.040
+It's like the conservation of mass.
+
+15:20.780 --> 15:21.000
+Okay.
+
+15:21.680 --> 15:24.400
+Let's test our toolkit against this warehouse rule.
+
+15:24.900 --> 15:28.000
+The neutral tools, I and B, they just pass things along.
+
+15:28.300 --> 15:32.420
+They take one input and pass on one output, so they definitely follow the rule.
+
+15:32.840 --> 15:33.700
+They are affine.
+
+15:34.060 --> 15:34.280
+Yes.
+
+15:34.640 --> 15:38.740
+The reorder tool, C, it takes two things and just swaps their order.
+
+15:39.140 --> 15:40.440
+It doesn't create anything.
+
+15:40.820 --> 15:41.720
+So that's affine.
+
+15:42.120 --> 15:42.840
+Right again.
+
+15:43.020 --> 15:51.840
+And the delete key, K, it takes a piece of data and throws it in the incinerator, so the data went from being used once to being used zero times.
+
+15:52.040 --> 15:55.300
+That perfectly fits the rule of at most once.
+
+15:55.740 --> 15:56.200
+Exactly.
+
+15:56.760 --> 16:03.000
+Every single one of those tools, I, B, C, and K, are inherently affine operations.
+
+16:03.000 --> 16:13.400
+Because of that, any complex machine you build, no matter how massive or complicated, if it's built only out of those four tools, the entire machine is strictly affine.
+
+16:13.400 --> 16:19.880
+But the W Combinator, the copy paste tool, by its very definition, it violates the warehouse rule.
+
+16:20.280 --> 16:23.640
+It takes one input and it outputs two identical copies.
+
+16:23.640 --> 16:24.320
+It uses the resource twice.
+
+16:24.320 --> 16:25.380
+It uses the resource twice.
+
+16:25.880 --> 16:26.080
+Right.
+
+16:26.600 --> 16:30.560
+So, imagine a skeptic comes along and says, I don't need your W tool.
+
+16:30.960 --> 16:37.020
+I'm a genius programmer, and I have written a massive, complicated formula using only I, B, C, and K.
+
+16:37.020 --> 16:41.380
+And I promise you, my formula acts exactly like a copy paste tool.
+
+16:41.760 --> 16:44.340
+How does the paper prove that skeptic is lying?
+
+16:44.700 --> 16:48.600
+By leaning on a foundational law of computer science called the Church-Rosser theorem.
+
+16:49.360 --> 16:54.740
+Without getting bogged down in the math, Church-Rosser guarantees that in these types of logical systems,
+
+16:55.140 --> 16:59.940
+you can't have a single formula evaluate to two completely different contradictory final answers.
+
+17:00.200 --> 17:00.480
+Right.
+
+17:00.480 --> 17:07.260
+Now, if the skeptic's formula is built only from affine tools, we know its final answer must mathematically be affine,
+
+17:07.480 --> 17:09.160
+meaning no variables are duplicated.
+
+17:09.560 --> 17:13.460
+But if the skeptic claims their formula perfectly mimics the W tool,
+
+17:13.940 --> 17:16.720
+that means its final answer must contain duplicated variables.
+
+17:17.100 --> 17:18.080
+It's a paradox.
+
+17:18.800 --> 17:24.560
+The formula can't output an answer with zero duplicates and an answer with massive duplicates at the same time.
+
+17:24.880 --> 17:26.960
+The Church-Rosser theorem says that's impossible.
+
+17:27.460 --> 17:29.600
+Therefore, the skeptic's formula cannot exist.
+
+17:29.840 --> 17:30.320
+Exactly.
+
+17:30.480 --> 17:33.480
+You cannot conjure duplication from nothing.
+
+17:34.240 --> 17:36.200
+Deletion can never create duplication.
+
+17:36.720 --> 17:39.520
+They are entirely separate, independent, structural powers.
+
+17:39.980 --> 17:41.580
+That is just deeply satisfying.
+
+17:42.100 --> 17:44.840
+It's like discovering the fundamental elements on a periodic table.
+
+17:45.120 --> 17:46.640
+You can't turn lead into gold.
+
+17:47.380 --> 17:48.800
+So, we've established our universe.
+
+17:49.040 --> 17:50.520
+We have neutral routing tools,
+
+17:50.660 --> 17:54.040
+and we have these three incredibly powerful, distinct, independent forces.
+
+17:54.400 --> 17:58.180
+The power to copy, the power to delete, and the power to reorder.
+
+17:58.780 --> 17:59.840
+Yes, the big three.
+
+17:59.840 --> 18:06.420
+And in standard logic, or standard computer programming, if you possess these powers, you are basically a god.
+
+18:06.780 --> 18:09.860
+You can use them anywhere, anytime, on any piece of data.
+
+18:09.860 --> 18:13.020
+Which brings us to the true innovation of Flyxion's work.
+
+18:13.020 --> 18:18.760
+What happens when we take these omnipotent tools and we start drawing borders around them?
+
+18:18.760 --> 18:19.400
+Right.
+
+18:19.400 --> 18:21.560
+This is the core twist.
+
+18:22.300 --> 18:24.820
+What if we introduce strict locations?
+
+18:25.640 --> 18:29.360
+Picture yourself walking into a massive, sprawling corporate office building.
+
+18:29.860 --> 18:31.020
+You are an executive.
+
+18:31.420 --> 18:32.220
+I like this analogy.
+
+18:32.220 --> 18:35.760
+In your pocket, you carry three ultimate administrative tools.
+
+18:35.760 --> 18:38.480
+A flash drive that can copy any file, which is W.
+
+18:38.840 --> 18:41.440
+A shredder that can destroy any document, K.
+
+18:41.840 --> 18:46.220
+And a sorting machine that can reorder any filing cabinet, C.
+
+18:46.800 --> 18:51.800
+If you are standing in the main lobby, what the paper refers to as the root level of the formula,
+
+18:51.800 --> 18:53.120
+you're a super user.
+
+18:53.680 --> 18:57.180
+The rules of the lobby say you are allowed to use all three of your tools.
+
+18:57.880 --> 19:00.300
+But formulas, like office buildings, have structure.
+
+19:00.760 --> 19:02.000
+They have nested components.
+
+19:02.700 --> 19:08.200
+The paper visualizes these separate spaces as brackets surrounding a piece of the formula.
+
+19:08.360 --> 19:08.960
+Okay, brackets.
+
+19:08.960 --> 19:13.220
+And on the outside of each bracket is a little subscript label, like an L.
+
+19:13.900 --> 19:19.360
+So mathematically, it looks like a bracket, some data inside, a closing bracket, and the letter L.
+
+19:19.640 --> 19:24.340
+So from the main lobby, I open a door and walk into a specific office, room L.
+
+19:24.920 --> 19:27.060
+Now, room L has a sign on the door.
+
+19:27.620 --> 19:29.400
+It's a localized permission structure.
+
+19:29.960 --> 19:31.560
+And the sign on the door says,
+
+19:31.560 --> 19:37.520
+In this room, you are only allowed to use the shredder, K, and the sorting machine, C.
+
+19:38.160 --> 19:42.540
+Copying files, W, is strictly prohibited by corporate policy.
+
+19:42.980 --> 19:43.460
+Exactly.
+
+19:44.000 --> 19:49.820
+The label L dictates precisely which of those three structural powers are permitted inside that specific bracket.
+
+19:50.100 --> 19:50.360
+Okay.
+
+19:50.500 --> 19:53.260
+So let's say you have a piece of code, a reducible expression,
+
+19:53.700 --> 19:55.760
+that is trying to execute a copy-paste command.
+
+19:56.220 --> 19:59.540
+If that code is sitting out in the lobby, it executes perfectly.
+
+19:59.540 --> 20:05.940
+But if that exact same piece of code is located inside bracket L, the copy-paste step is blocked.
+
+20:05.940 --> 20:13.440
+The paper is incredibly careful here to distinguish between two concepts, availability and admissibility.
+
+20:14.480 --> 20:16.600
+Availability versus admissibility.
+
+20:17.120 --> 20:20.060
+This tripped me up at first, but it is such a vital distinction.
+
+20:20.260 --> 20:24.500
+I want you to break that down for the listener because understanding this is the key to the whole paper.
+
+20:24.500 --> 20:26.400
+Let's use your office analogy.
+
+20:26.900 --> 20:27.720
+You walk into room L.
+
+20:28.260 --> 20:30.400
+You still have the W flash drive in your pocket.
+
+20:30.920 --> 20:32.620
+The tool hasn't vanished from the universe.
+
+20:33.000 --> 20:36.820
+The system as a whole still recognizes what a copy-paste command is.
+
+20:37.220 --> 20:38.220
+The tool is available.
+
+20:38.540 --> 20:38.760
+Right.
+
+20:38.820 --> 20:39.800
+I physically possess it.
+
+20:40.000 --> 20:46.260
+But because you are standing inside room L, the local rules forbid its use.
+
+20:46.260 --> 20:52.340
+Therefore, executing that copy-paste command is no longer admissible at your specific location.
+
+20:53.040 --> 20:55.900
+Availability is about what exists in the system globally.
+
+20:56.940 --> 21:00.580
+Admissibility is about what is legally allowed to happen locally.
+
+21:00.980 --> 21:03.300
+Wait, let's play this out practically.
+
+21:03.760 --> 21:04.000
+Okay.
+
+21:04.240 --> 21:10.380
+Because if you've ever tried to debug code, you know that when a program tries to do something it doesn't have permission to do, it usually crashes.
+
+21:10.620 --> 21:11.160
+Sure, yeah.
+
+21:11.160 --> 21:16.240
+It throws a fatal error or a segmentation fault and the whole program halts and catches fire.
+
+21:16.720 --> 21:25.120
+So if I have a formula sitting inside room L, and the formula says, execute the W command, but the room forbids W, what happens?
+
+21:26.020 --> 21:28.480
+Does the math equation just crash?
+
+21:28.720 --> 21:29.900
+No, it doesn't crash at all.
+
+21:30.440 --> 21:31.340
+It just freezes.
+
+21:31.940 --> 21:35.540
+It becomes what computer scientists call a normal form.
+
+21:36.160 --> 21:37.040
+A normal form.
+
+21:37.660 --> 21:39.020
+But it hasn't finished calculating.
+
+21:39.020 --> 21:42.020
+There's literally a command sitting right there waiting to be executed.
+
+21:42.640 --> 21:45.200
+Ah, but finished is a relative term.
+
+21:45.860 --> 21:53.340
+In mathematics, a term is considered to be in a normal form when there are absolutely no admissible steps left for it to take.
+
+21:53.760 --> 21:55.180
+Oh, admissible steps.
+
+21:55.340 --> 21:55.520
+Right.
+
+21:56.320 --> 22:02.220
+Usually that means the calculation has completely resolved down to its final answer, like 2 plus 2 becoming 4.
+
+22:02.220 --> 22:13.860
+But in Flyxion's scoped universe, a term can also reach a normal form simply because the laws of physics in that specific room prevent it from moving any further.
+
+22:14.600 --> 22:16.000
+That's wild.
+
+22:16.000 --> 22:29.900
+To use an example from the paper, if the delete key, K, is allowed in the main lobby but forbidden inside room L, then a formula trying to execute a delete command inside room L becomes completely inert.
+
+22:29.900 --> 22:36.500
+It sits there, frozen in time, containing an available tool that is permanently inadmissible.
+
+22:36.960 --> 22:39.100
+That is so eerie to think about.
+
+22:39.740 --> 22:48.180
+It's like holding a loaded spring in your hand, but the fundamental laws of thermodynamics in that one specific room prevent the spring from ever releasing.
+
+22:48.820 --> 22:51.720
+It's just stored potential energy that can never be realized.
+
+22:52.080 --> 22:52.300
+Yes.
+
+22:52.300 --> 22:55.880
+Okay, but what if the architecture of the building is more complicated?
+
+22:56.460 --> 22:59.000
+What if there are rooms within rooms within rooms?
+
+22:59.120 --> 23:05.020
+Like, I walk from the lobby into room L, and then inside room L there is a locked closet.
+
+23:05.160 --> 23:06.020
+Let's call it room M.
+
+23:06.500 --> 23:11.100
+This is where the paper introduces the calculation of effective permissions.
+
+23:11.840 --> 23:19.160
+To figure out what you are allowed to do at any specific spot deep inside a formula, you have to calculate the effective permission.
+
+23:19.160 --> 23:27.200
+And you do this by taking the intersection of the permissions of every single bracket that encloses you, all the way back out to the root level.
+
+23:27.580 --> 23:28.480
+The intersection.
+
+23:29.080 --> 23:36.200
+For those who might be a bit rusty on set theory, intersection means you only keep the items that appear in every single list.
+
+23:36.380 --> 23:42.340
+You only keep the permissions that are explicitly allowed by every single door you had to walk through to get to where you are.
+
+23:42.720 --> 23:43.200
+Precisely.
+
+23:43.780 --> 23:47.620
+And this leads to a very important lemma in the paper, Lemma 3.5.
+
+23:47.620 --> 23:54.800
+It states that effective permissions can only ever shrink, they can never grow, as you move deeper into nested brackets.
+
+23:55.740 --> 23:57.500
+Let's map it onto your office building.
+
+23:58.020 --> 23:59.320
+Okay, let's trace my walk.
+
+23:59.860 --> 24:00.740
+I start in the main lobby.
+
+24:01.140 --> 24:02.560
+The lobby is the root.
+
+24:02.840 --> 24:03.820
+It allows everything.
+
+24:04.020 --> 24:05.360
+Copy, delete, and reorder.
+
+24:05.860 --> 24:06.940
+You step into room L.
+
+24:07.660 --> 24:11.620
+The sign on door L says it allows delete and reorder, but forbids copy.
+
+24:12.080 --> 24:13.200
+So you lose W.
+
+24:13.200 --> 24:17.240
+Your effective permission is now just K, C.
+
+24:17.840 --> 24:18.120
+Right.
+
+24:18.640 --> 24:23.280
+Now, while standing inside room L, I see the door to closet M.
+
+24:23.860 --> 24:24.860
+I walk into the closet.
+
+24:25.460 --> 24:29.080
+Now, let's say the sign on closet M is actually very permissive.
+
+24:29.220 --> 24:34.500
+The sign on the closet door says, I allow copy W and delete K.
+
+24:34.880 --> 24:35.660
+What happens?
+
+24:35.820 --> 24:37.220
+Do I get my copy power back?
+
+24:37.720 --> 24:38.740
+No, you do not.
+
+24:39.400 --> 24:46.280
+Because to calculate your effective permission in the closet, you have to intersect the closet's rules with the rules of the room you were already in.
+
+24:46.920 --> 24:50.280
+Ah, because I'm still physically inside room L.
+
+24:50.580 --> 24:51.040
+Exactly.
+
+24:51.040 --> 24:57.820
+The closet allows W and K, but room L, which entirely surrounds the closet, already stripped away your W power.
+
+24:58.300 --> 25:01.780
+You cannot exercise a power in the closet that was forbidden by the outer room.
+
+25:02.320 --> 25:09.140
+So the intersection of K, C and W, K leaves you with only one effective permission, K.
+
+25:09.660 --> 25:11.420
+In the closet, you can only delete.
+
+25:11.920 --> 25:12.140
+Wow.
+
+25:12.700 --> 25:18.260
+A nested scope can further restrict what its ancestors allow, but it can never, ever extend it.
+
+25:18.260 --> 25:23.000
+But you cannot regain a lost privilege simply by walking deeper into a restricted area.
+
+25:23.760 --> 25:25.420
+And there was a profound consequence to this.
+
+25:25.880 --> 25:28.980
+Let's say a piece of code is frozen because it lacked a permission.
+
+25:29.160 --> 25:32.620
+It became that eerie, inert, normal form we talked about.
+
+25:33.580 --> 25:40.680
+Because permissions only shrink as you go deeper, if you take that frozen piece of code and bury it even deeper into more nested brackets,
+
+25:41.060 --> 25:44.540
+it will never spontaneously start calculating again.
+
+25:45.000 --> 25:48.020
+Moving it inward can only take away more permissions.
+
+25:48.260 --> 25:50.440
+It can never grant the missing one.
+
+25:50.980 --> 25:53.920
+Once it's stuck, moving it deeper keeps it stuck.
+
+25:54.660 --> 25:54.880
+Okay.
+
+25:55.020 --> 25:59.100
+If everything just stayed in its own room, the system would be incredibly simple.
+
+25:59.480 --> 26:04.500
+You just look at where a piece of data is, calculate the effective permissions of that specific room,
+
+26:04.980 --> 26:08.140
+run whatever commands are allowed, and freeze whatever commands aren't.
+
+26:08.260 --> 26:09.700
+It's entirely static.
+
+26:10.080 --> 26:10.940
+It would be, yes.
+
+26:10.940 --> 26:13.480
+But computer programs aren't static.
+
+26:13.800 --> 26:14.860
+Logic isn't static.
+
+26:15.020 --> 26:16.080
+Things have to interact.
+
+26:16.260 --> 26:18.440
+Functions need to pull data toward them.
+
+26:18.880 --> 26:23.040
+A formula in one room needs to grab a variable from another room to complete its calculation.
+
+26:23.560 --> 26:26.920
+What happens when these terms start crossing borders?
+
+26:26.920 --> 26:30.260
+And here we reach the absolute heart of the conflict in this paper.
+
+26:30.840 --> 26:32.900
+The threat to something called confluence.
+
+26:33.500 --> 26:34.100
+Confluence.
+
+26:34.380 --> 26:41.860
+But before we examine how confluence is broken, we have to understand why confluence is the holy grail of computer science.
+
+26:42.360 --> 26:45.760
+We have to define the piece before we introduce the threat.
+
+26:45.760 --> 26:46.160
+Confluence.
+
+26:46.160 --> 26:46.760
+Right.
+
+26:47.580 --> 26:48.180
+Confluence.
+
+26:48.600 --> 26:55.820
+If you've ever taken a math class and solved a long, complex algebraic equation, you intuitively understand confluence.
+
+26:56.200 --> 27:00.660
+It's the comforting guarantee that no matter what order you do your calculations in,
+
+27:01.140 --> 27:06.040
+as long as you follow the basic rules of math, you will eventually arrive at the exact same final answer.
+
+27:06.780 --> 27:11.360
+Let's say I have the equation parentheses 2 plus 3, parentheses 4 plus 1.
+
+27:11.700 --> 27:12.540
+You have choices there.
+
+27:12.760 --> 27:13.100
+Exactly.
+
+27:13.100 --> 27:20.980
+I could choose to add 2 plus 3 first, get 5, and then add 4 plus 1 to get 5, and then multiply them to get 25.
+
+27:21.500 --> 27:24.600
+Or I could choose to add 4 plus 1 first.
+
+27:25.260 --> 27:30.000
+It doesn't matter which path I take or which side of the equation I evaluate first.
+
+27:30.160 --> 27:32.740
+I am guaranteed to reach 25.
+
+27:33.820 --> 27:37.020
+The paths diverge, but they eventually flow back together.
+
+27:37.420 --> 27:40.440
+They are confluent, like rivers joining together.
+
+27:40.440 --> 27:44.240
+And in computing, confluence is essential for predictability.
+
+27:44.940 --> 27:51.420
+If a system is confluent, it means that while the computer might have thousands of different valid choices of what to process next,
+
+27:51.940 --> 27:54.160
+those choices can always be reconciled.
+
+27:54.700 --> 27:58.240
+All valid paths lead to the same final normal form.
+
+27:58.500 --> 27:58.740
+Right.
+
+27:58.740 --> 28:03.140
+And early in the paper, theorem 4.1 proves a comforting fact.
+
+28:03.140 --> 28:09.120
+If we keep all our structural tools locked in their static rooms and never let anything cross a boundary,
+
+28:09.400 --> 28:12.260
+the system is perfectly mathematically confluent.
+
+28:12.640 --> 28:13.560
+It is safe.
+
+28:13.880 --> 28:15.700
+But like we said, things have to move.
+
+28:16.340 --> 28:19.460
+So, Flyxion introduces a boundary rule to allow movement,
+
+28:19.460 --> 28:23.380
+specifically a rule called ABS, which stands for absorption.
+
+28:23.880 --> 28:26.700
+And this is the rule that shatters the universe.
+
+28:27.100 --> 28:27.660
+It really does.
+
+28:28.860 --> 28:34.300
+The rule of absorption is a mechanism for a function inside a restricted room to reach out and pull data inside.
+
+28:35.260 --> 28:36.740
+Mathematically, it is written like this.
+
+28:37.540 --> 28:40.500
+If you have a function U sitting inside bracket L,
+
+28:41.200 --> 28:45.120
+and it is being applied to some data V that is sitting outside the bracket,
+
+28:45.400 --> 28:47.480
+the function can absorb the data.
+
+28:48.020 --> 28:48.800
+Pulling it in.
+
+28:48.800 --> 28:53.680
+The boundary expands to swallow V, bringing it inside room L alongside U.
+
+28:54.120 --> 28:57.960
+Okay, I want everyone listening to pause and really visualize this,
+
+28:58.320 --> 29:01.820
+because this is where the paper stops being just abstract math
+
+29:01.820 --> 29:05.060
+and starts mirroring real-world security systems.
+
+29:05.480 --> 29:08.800
+I want you to imagine pulling something through an airport security checkpoint.
+
+29:09.040 --> 29:10.040
+I love this analogy.
+
+29:10.660 --> 29:14.600
+Let's say I am in the main terminal of the airport, the root lobby.
+
+29:15.100 --> 29:17.480
+The rules of the main terminal are very permissive.
+
+29:17.480 --> 29:18.940
+I have a full water bottle.
+
+29:19.300 --> 29:21.240
+The main terminal allows liquids.
+
+29:21.640 --> 29:25.020
+So if I evaluate my current state before I go through security,
+
+29:25.300 --> 29:28.200
+I can execute the drink water command.
+
+29:28.560 --> 29:29.740
+The action is admissible.
+
+29:30.540 --> 29:31.540
+Right, because you're in the lobby.
+
+29:32.220 --> 29:36.360
+But let's say I choose to use the absorption rule first.
+
+29:36.360 --> 29:42.000
+I take my water bottle, and I walk through the TSA security checkpoint and into the gate area.
+
+29:42.400 --> 29:44.600
+The gate area is a restricted scope.
+
+29:45.120 --> 29:46.820
+It explicitly forbids liquids.
+
+29:47.180 --> 29:52.300
+If I pull my water bottle across that boundary first, the TSA agent confiscates it.
+
+29:52.740 --> 29:55.380
+The drink water command is now permanently frozen.
+
+29:55.380 --> 30:01.000
+I get a totally fundamentally different result in my life purely based on the order of operations.
+
+30:01.320 --> 30:05.460
+That is a phenomenal, visceral way to understand theorem 4.2.
+
+30:05.800 --> 30:09.900
+That theorem formally states the moment you introduce the absorption rule,
+
+30:10.460 --> 30:12.600
+you ruin confluence completely.
+
+30:13.200 --> 30:13.540
+Wow.
+
+30:13.540 --> 30:19.960
+The very act of pulling data across a boundary changes the fundamental laws of physics governing that data.
+
+30:20.760 --> 30:25.240
+A step that was perfectly legal a moment ago becomes illegal just because its zip code changed.
+
+30:25.440 --> 30:29.600
+The paper provides a very specific mathematical counterexample to prove this,
+
+30:29.700 --> 30:30.600
+and I want to trace it out,
+
+30:30.740 --> 30:35.160
+because it proves that the uniqueness of final answers is utterly destroyed.
+
+30:35.540 --> 30:36.620
+Let's set the stage.
+
+30:36.620 --> 30:41.280
+We have our root lobby, and we have a restricted room called Scope L.
+
+30:41.700 --> 30:47.720
+The lobby permits everything, including the delete key, K, but Scope L strictly forbids K.
+
+30:48.240 --> 30:50.580
+So we construct a formula that looks like this.
+
+30:51.100 --> 30:55.280
+We have a function, let's call it A, sitting inside the restricted room L.
+
+30:55.780 --> 30:57.240
+So A is inside the brackets.
+
+30:57.900 --> 31:01.600
+Right outside the door, waiting in the lobby, is a package of data.
+
+31:01.600 --> 31:06.700
+And that package of data is a reducible expression, K, B, C.
+
+31:07.320 --> 31:08.620
+Let me visualize that clearly.
+
+31:09.440 --> 31:11.040
+Inside room L, we have A.
+
+31:11.800 --> 31:14.980
+Outside room L, we have parentheses K, B, C.
+
+31:15.700 --> 31:18.520
+Now, K, B, C is a command waiting to happen.
+
+31:18.740 --> 31:22.040
+It wants to use the delete key on C, leaving only B.
+
+31:22.600 --> 31:22.980
+Exactly.
+
+31:23.580 --> 31:25.820
+Now, you are the computer processor.
+
+31:26.320 --> 31:28.940
+You look at this setup, and you realize you have a choice.
+
+31:28.940 --> 31:33.980
+There are two completely valid legal moves you could make right now.
+
+31:34.400 --> 31:36.360
+We will call them path 1 and path 2.
+
+31:37.080 --> 31:38.100
+Let's walk down path 1.
+
+31:38.720 --> 31:43.620
+Path 1 is evaluating the package before taking it through the airport security checkpoint.
+
+31:44.360 --> 31:45.940
+So I look at parentheses K, B, C.
+
+31:46.500 --> 31:47.840
+It's sitting out in the root lobby.
+
+31:48.580 --> 31:51.760
+The lobby allows the delete key, so I execute the command.
+
+31:52.500 --> 31:56.820
+Parentheses K, B, C, deletes the C and reduces down to just a simple B.
+
+31:57.460 --> 31:58.220
+Perfectly valid.
+
+31:58.220 --> 32:01.640
+So now, your entire overall formula has simplified.
+
+32:02.360 --> 32:04.840
+You still have A sitting inside room L.
+
+32:05.300 --> 32:09.000
+But now, waiting outside the door is just the simple data B.
+
+32:09.380 --> 32:12.220
+And now, A looks out the door and says, come here, B.
+
+32:12.500 --> 32:14.660
+It executes the absorption rule.
+
+32:15.160 --> 32:18.500
+The boundary of room L expands and pulls B inside.
+
+32:19.160 --> 32:23.160
+So now, both A and B are sitting safely inside room L.
+
+32:23.500 --> 32:25.740
+They aren't trying to execute any forbidden commands.
+
+32:26.020 --> 32:27.020
+They are just sitting there.
+
+32:27.020 --> 32:30.660
+We have reached our final answer, our normal form.
+
+32:31.240 --> 32:34.860
+Path 1 results in the package A, B, inside room L.
+
+32:35.580 --> 32:36.520
+Flawless execution.
+
+32:37.340 --> 32:39.120
+Now, let's rewind time.
+
+32:39.620 --> 32:40.880
+We go back to the starting state.
+
+32:40.880 --> 32:43.300
+We have A inside room L.
+
+32:43.300 --> 32:49.120
+And outside in the lobby, we have the unevaluated package, paren, K, comma, B, close paren.
+
+32:49.120 --> 32:52.080
+This time, you choose path 2.
+
+32:52.080 --> 32:56.960
+You decide to perform the absorption step first before evaluating the package.
+
+32:56.960 --> 33:07.440
+Okay, so A reaches out of its room, grabs the entire raw expression, paren, K, comma, B, comma, C, and drags it through the security checkpoint into room L.
+
+33:07.440 --> 33:14.420
+So now I have a massive package sitting inside room L, A, combined with paren, K, comma, B, comma, C.
+
+33:14.420 --> 33:16.580
+And now what does the system try to do?
+
+33:16.580 --> 33:22.680
+Well, the system looks at K, bracket, B, C, and says, okay, time to execute the delete command.
+
+33:23.340 --> 33:23.780
+But wait.
+
+33:24.300 --> 33:27.420
+It looks at the sign on the door of the room it is currently standing in.
+
+33:27.720 --> 33:30.740
+Room L explicitly forbids the delete key, K.
+
+33:30.740 --> 33:33.320
+The TSA just confiscated the tool.
+
+33:34.040 --> 33:35.360
+The step is no longer admissible.
+
+33:35.940 --> 33:37.220
+So the formula just stops.
+
+33:37.380 --> 33:38.120
+It freezes.
+
+33:38.520 --> 33:40.620
+It becomes a normal form right there.
+
+33:41.580 --> 33:41.960
+Exactly.
+
+33:42.600 --> 33:50.320
+Your final answer on path 2 is the package A, bracket, K, B, C, permanently frozen inside room L.
+
+33:51.220 --> 33:52.420
+But look at what just happened.
+
+33:53.140 --> 33:56.140
+Path 1 gave us A, paren, bracket, B inside the room.
+
+33:56.640 --> 34:00.920
+Path 2 gave us A, paren, bracket, K, B, C inside the room.
+
+34:01.240 --> 34:04.280
+Those are two completely different, irreconcilable realities.
+
+34:04.900 --> 34:05.700
+The math is broken.
+
+34:06.520 --> 34:11.160
+Just by changing the arbitrary order in which the computer decided to process the steps,
+
+34:11.500 --> 34:14.100
+we arrived at different physical outcomes.
+
+34:14.660 --> 34:17.240
+This is the crux of the crisis in the paper.
+
+34:17.980 --> 34:24.760
+As Flyxion writes, a boundary rule can move a redex from a position where it is permitted to one where it is not.
+
+34:24.760 --> 34:31.460
+The legality of a mathematical transformation is now heavily dependent on its geographic position in the syntax tree.
+
+34:31.900 --> 34:32.020
+Right.
+
+34:32.980 --> 34:40.020
+If we want to build a system that is predictable, a system that doesn't just randomly generate different answers based on background processing speeds,
+
+34:40.660 --> 34:43.840
+we have to restrict when a piece of data is allowed to cross a boundary.
+
+34:44.320 --> 34:47.000
+We have to restore order to this universe.
+
+34:47.360 --> 34:50.760
+Which brings us to the next massive phase of the paper, restoring order.
+
+34:50.760 --> 34:56.720
+If the fundamental problem is that pulling a piece of data across a border changes how it evaluates,
+
+34:57.080 --> 35:04.160
+the incredibly obvious common sense solution seems to be just make sure it is completely done evaluating before you pull it across.
+
+35:04.580 --> 35:08.920
+Make sure it has reached its final answer out in the lobby and then bring it inside.
+
+35:09.540 --> 35:12.340
+That is the intuitive leap almost any computer scientist would make.
+
+35:12.760 --> 35:14.100
+You would propose a safety protocol.
+
+35:14.540 --> 35:18.060
+Only absorb a piece of data if that data is R-normal.
+
+35:18.440 --> 35:19.100
+R-normal.
+
+35:19.100 --> 35:25.420
+Right. R-normal is just a technical way of saying the data has no permitted steps left to take at its current location.
+
+35:25.740 --> 35:26.860
+It's done cooking.
+
+35:27.760 --> 35:34.020
+But theorem 4.4 in the paper proves that even this seemingly airtight safety rule is fundamentally flawed.
+
+35:34.340 --> 35:35.220
+It is not enough.
+
+35:35.680 --> 35:37.580
+Wait, I am genuinely lost here.
+
+35:37.580 --> 35:43.520
+If a piece of data is totally done evaluating, if it literally has no more moves it can make,
+
+35:43.900 --> 35:46.640
+how can moving it into a new room change anything?
+
+35:46.760 --> 35:49.160
+It has no moves left to change.
+
+35:49.580 --> 35:57.720
+Because of a deeply insidious concept called appending absorption that can be hidden like a Trojan horse inside the data itself.
+
+35:57.720 --> 35:58.720
+Oh no.
+
+35:59.040 --> 36:02.900
+The paper walks through a truly mind-bending counterexample to prove this.
+
+36:03.440 --> 36:06.380
+It demonstrates that a package of data can look completely finished.
+
+36:06.840 --> 36:10.480
+It can have absolutely zero permitted steps available in its current state.
+
+36:10.860 --> 36:12.660
+But it secretly contains a trap.
+
+36:13.340 --> 36:16.420
+And the mere act of crossing a boundary springs that trap.
+
+36:16.420 --> 36:22.040
+Okay, we have to dissect this trap slowly because this is where the paper reads like a mathematical heist movie.
+
+36:22.400 --> 36:25.980
+How do you build a Trojan horse in combinatory logic?
+
+36:26.840 --> 36:29.680
+We need to set up a slightly more complex building this time.
+
+36:30.260 --> 36:31.940
+We need two restricted rooms.
+
+36:32.420 --> 36:35.180
+Let's call them the sigma room and the tau room.
+
+36:35.300 --> 36:36.020
+Sigma and tau?
+
+36:36.500 --> 36:39.360
+And we need a very special structural tool.
+
+36:39.860 --> 36:41.340
+Let's invent a tool called P.
+
+36:42.080 --> 36:43.960
+P is a specialized delete key.
+
+36:43.960 --> 36:47.940
+It takes two arguments and it just deletes the second one.
+
+36:48.700 --> 36:49.860
+But here is the catch.
+
+36:50.740 --> 36:52.620
+P is a highly controversial tool.
+
+36:53.380 --> 36:57.280
+It is permitted everywhere in the building except inside the tau room.
+
+36:57.960 --> 37:00.100
+The tau room is like the ultimate VIP lounge.
+
+37:00.520 --> 37:02.600
+And the P tool is strictly banned from entering.
+
+37:03.500 --> 37:08.740
+If the label tau is anywhere in your chain of permissions, the P tool is instantly frozen.
+
+37:09.160 --> 37:10.400
+Okay, I am picturing it.
+
+37:10.400 --> 37:18.320
+P is a VIP pass that works in the lobby, it works in the sigma room, it works everywhere, except it is blacklisted from the tau room.
+
+37:18.580 --> 37:18.940
+Got it.
+
+37:19.620 --> 37:21.320
+Now we construct our starting formula.
+
+37:21.960 --> 37:26.860
+On the left side, sitting inside the exclusive tau room, we have a function called C.
+
+37:27.600 --> 37:30.520
+C is looking out the door, waiting to absorb some data.
+
+37:31.240 --> 37:31.500
+Okay.
+
+37:32.100 --> 37:33.480
+C is inside tau.
+
+37:33.480 --> 37:38.080
+On the right side, out in the lobby, is the data package that C wants to absorb.
+
+37:38.880 --> 37:40.100
+But this package is complicated.
+
+37:40.900 --> 37:42.260
+Let's call the whole package V.
+
+37:43.260 --> 37:46.940
+Inside package V, there is a mini room, the sigma room.
+
+37:47.920 --> 37:53.520
+Inside the sigma room is our controversial tool, P, and a single piece of data, A.
+
+37:53.520 --> 38:00.260
+Right outside the sigma room, still inside the overall package V, is a second piece of data, B.
+
+38:01.140 --> 38:04.060
+Let me make sure I have this spatial arrangement perfect.
+
+38:04.680 --> 38:06.560
+Package V is floating in the lobby.
+
+38:07.360 --> 38:11.320
+Inside V, there is a sigma room holding P and A.
+
+38:11.960 --> 38:14.680
+And sitting right next to that sigma room is B.
+
+38:15.300 --> 38:15.760
+Exactly.
+
+38:16.440 --> 38:19.020
+Now, let's test your intuitive safety rule.
+
+38:19.740 --> 38:21.940
+Look at package V sitting out in the lobby.
+
+38:21.940 --> 38:24.860
+Is V currently our normal?
+
+38:25.560 --> 38:27.820
+Does it have any permitted steps it can take right now?
+
+38:28.660 --> 38:29.900
+Let's look inside it.
+
+38:30.560 --> 38:33.140
+Inside the sigma room, we have P and A.
+
+38:33.660 --> 38:37.640
+Now, you said the P tool requires two arguments to fire.
+
+38:38.020 --> 38:41.000
+It needs two pieces of data so it can delete the second one.
+
+38:41.560 --> 38:42.860
+Right now, it only has A.
+
+38:43.320 --> 38:45.140
+It's a partial application.
+
+38:45.520 --> 38:47.620
+It's like a machine waiting for its second battery.
+
+38:48.060 --> 38:49.640
+So, P cannot fire.
+
+38:50.300 --> 38:50.600
+Correct.
+
+38:50.600 --> 38:54.520
+And B is just sitting outside the sigma room doing nothing.
+
+38:54.780 --> 38:55.580
+So, no.
+
+38:55.760 --> 38:57.580
+Nothing in package V can evaluate.
+
+38:58.060 --> 38:59.180
+It is completely stuck.
+
+38:59.400 --> 39:00.520
+It looks utterly dormant.
+
+39:00.760 --> 39:01.980
+It is our normal.
+
+39:02.780 --> 39:03.260
+Precisely.
+
+39:03.800 --> 39:08.380
+So, under your proposed safety rule, only absorb our normal arguments.
+
+39:08.920 --> 39:14.180
+The function C, sitting inside the towel room, looks at package V, sees that it is dormant, and says,
+
+39:14.640 --> 39:15.680
+You are safe to enter.
+
+39:15.680 --> 39:20.300
+C reaches out and pulls the entire package V into the towel room.
+
+39:20.300 --> 39:22.820
+Okay, so C drags the whole thing inside.
+
+39:23.180 --> 39:28.340
+Now, we have a massive formula where absolutely everything is enclosed inside the VIP towel room.
+
+39:28.340 --> 39:33.380
+Now, look incredibly closely at what is happening inside the towel room right now.
+
+39:34.060 --> 39:36.300
+You have C applied to package V.
+
+39:37.040 --> 39:38.840
+But, what was package V?
+
+39:39.540 --> 39:40.280
+Let's see.
+
+39:40.420 --> 39:42.040
+It was a sigma room.
+
+39:42.540 --> 39:43.000
+Exactly.
+
+39:43.320 --> 39:48.720
+It was a sigma room containing a function P, A, sitting right next to a piece of data, B.
+
+39:49.500 --> 39:52.840
+This is exactly the geometric setup for another absorption.
+
+39:53.760 --> 39:54.800
+Oh, my God.
+
+39:55.300 --> 39:57.840
+The sigma room is going to reach out and absorb B.
+
+39:58.400 --> 39:59.500
+That's the pending absorption.
+
+39:59.900 --> 40:02.400
+It was a boundary rule waiting to happen inside the package itself.
+
+40:02.840 --> 40:05.140
+Okay, so B gets sucked into the sigma room.
+
+40:05.280 --> 40:10.080
+Now, we have C sitting next to a sigma room that contains P, A, and B.
+
+40:10.600 --> 40:12.320
+And now look at what we have created.
+
+40:12.320 --> 40:19.200
+Inside that sigma room, the controversial tool P finally has its two arguments, A and B.
+
+40:19.880 --> 40:21.000
+The redex is complete.
+
+40:21.540 --> 40:22.880
+The second battery is inserted.
+
+40:23.400 --> 40:24.540
+The spring is loaded.
+
+40:25.340 --> 40:26.940
+P, A, B wants to fire.
+
+40:27.560 --> 40:29.740
+Delete B and reduce to A.
+
+40:30.520 --> 40:30.880
+But wait.
+
+40:31.520 --> 40:32.420
+Look at where it's sitting.
+
+40:33.040 --> 40:35.060
+It is inside the sigma room, yes.
+
+40:35.440 --> 40:36.680
+But where is the sigma room?
+
+40:37.060 --> 40:40.500
+The sigma room is now sitting entirely inside the towel room.
+
+40:40.500 --> 40:43.920
+We pulled the whole package into the VIP lounge in the very first step.
+
+40:44.760 --> 40:49.460
+And our strict rule was that the P tool is blacklisted if tau is anywhere in the chain above it.
+
+40:49.900 --> 40:50.340
+Exactly.
+
+40:50.720 --> 40:54.340
+The effective permission of that spot is the intersection of tau and sigma.
+
+40:54.920 --> 40:58.000
+And because tau forbids P, the step is blocked.
+
+40:58.880 --> 40:59.960
+The tool is confiscated.
+
+41:00.060 --> 41:01.940
+The term is permanently frozen.
+
+41:02.740 --> 41:05.920
+The trap is sprung, but the environment prevents it from resolving.
+
+41:05.920 --> 41:11.680
+Your final answer on this path is a permanently jammed mechanism inside the towel room.
+
+41:12.060 --> 41:12.540
+Okay.
+
+41:13.040 --> 41:16.100
+But what if we run it the other way?
+
+41:16.660 --> 41:19.600
+What if we don't absorb the package into the towel room immediately?
+
+41:20.040 --> 41:21.660
+Well, let's rewind to the start.
+
+41:22.280 --> 41:24.440
+The package V is sitting out in the lobby.
+
+41:24.860 --> 41:27.040
+We know it has a pending absorption inside it.
+
+41:27.500 --> 41:31.360
+Let's execute that pending absorption first out in the lobby.
+
+41:32.100 --> 41:32.320
+Okay.
+
+41:33.020 --> 41:36.920
+So out in the free lobby, the sigma room reaches out and absorbs B.
+
+41:38.000 --> 41:41.260
+Now the sigma room contains P, A, and B.
+
+41:41.980 --> 41:43.320
+P has both its batteries.
+
+41:43.820 --> 41:44.680
+It is ready to fire.
+
+41:45.500 --> 41:46.900
+It checks its permissions.
+
+41:47.600 --> 41:49.240
+It is inside the sigma room.
+
+41:49.740 --> 41:51.860
+Is the restrictive towel room anywhere above it?
+
+41:52.420 --> 41:52.800
+No.
+
+41:53.140 --> 41:54.200
+So it's out in the root lobby.
+
+41:55.160 --> 41:56.940
+So P is permitted.
+
+41:57.580 --> 41:58.240
+It fires.
+
+41:58.820 --> 41:59.720
+P deletes B.
+
+41:59.720 --> 42:02.860
+And the whole thing reduces down to just A.
+
+42:03.520 --> 42:11.380
+So now our entire massive package V has reduced down to a single piece of data, A, sitting inside a sigma room.
+
+42:11.680 --> 42:17.160
+And now finally, the C function, sitting in the VIP towel room, reaches out and absorbs it.
+
+42:17.280 --> 42:23.320
+So we end up with C and the sigma room holding A all inside the towel room.
+
+42:23.740 --> 42:24.080
+Yes.
+
+42:24.080 --> 42:27.420
+And I want you to compare that to our previous result.
+
+42:28.120 --> 42:31.580
+The first path gave us a jammed P machine holding two pieces of data.
+
+42:31.780 --> 42:34.520
+The second path gave us a clean, fully resolved A.
+
+42:34.680 --> 42:36.440
+They are completely different realities.
+
+42:36.440 --> 42:40.020
+This is the sheer brilliance of theorem 4.4.
+
+42:40.280 --> 42:45.140
+It proves mathematically that merely waiting for an argument to look done isn't enough.
+
+42:45.540 --> 42:48.480
+Because an argument can harbor a structural trap.
+
+42:48.900 --> 42:49.280
+Wow.
+
+42:49.280 --> 42:56.120
+Moving it into a restricted scope changes the rules of the environment before that hidden red X is exposed.
+
+42:56.860 --> 42:59.920
+By the time the trap springs, the permissions have changed.
+
+43:00.280 --> 43:03.200
+And the formula tries to evaluate under the wrong set of laws.
+
+43:03.660 --> 43:07.060
+It's like sneaking a dormant computer virus through a firewall.
+
+43:07.440 --> 43:11.560
+And then it activates on the other side where the antivirus software isn't looking for it.
+
+43:12.060 --> 43:14.500
+So how on earth do we fix this?
+
+43:14.500 --> 43:19.800
+We can't have a computational logic system that just shatters if a function absorbs an argument in the wrong order.
+
+43:20.560 --> 43:25.160
+The paper provides two distinct mathematically robust safety protocols to restore confluence.
+
+43:25.700 --> 43:30.820
+The first is outlined in theorem 4.7, the concept of settled arguments.
+
+43:31.320 --> 43:32.180
+Settled arguments.
+
+43:32.500 --> 43:35.780
+How does that differ from just being our normal and looking done?
+
+43:35.780 --> 43:42.000
+An argument is considered settled if it is our normal, meaning no actual combinators can fire right now.
+
+43:42.220 --> 43:48.220
+And it has absolutely zero pending absorptions left anywhere inside its structure.
+
+43:49.040 --> 43:49.520
+No traps.
+
+43:50.020 --> 43:50.340
+Exactly.
+
+43:50.900 --> 43:52.820
+You cannot just glance at the surface.
+
+43:52.960 --> 43:57.240
+You have to recursively scan the entire nested architecture of the package.
+
+43:57.740 --> 44:04.200
+If there is even one internal bracket sitting next to a variable waiting to pull it in, the package is not settled.
+
+44:04.200 --> 44:08.440
+You are strictly forbidden from moving the overarching package across a border.
+
+44:08.820 --> 44:13.720
+You must wait for all the internal dust to settle everywhere before you transfer it.
+
+44:14.340 --> 44:15.120
+I really like that.
+
+44:15.720 --> 44:17.820
+It's a highly conservative safety protocol.
+
+44:18.200 --> 44:22.620
+Wait until absolutely every internal process is finished before you go through security.
+
+44:23.060 --> 44:25.560
+But the paper offers a second solution, right?
+
+44:25.880 --> 44:28.320
+Theorem 4.9, insensitive arguments?
+
+44:28.800 --> 44:29.200
+Yes.
+
+44:29.860 --> 44:32.680
+The settled condition is safe, but it's very restrictive.
+
+44:32.680 --> 44:37.100
+The counter example we just mapped out needed two things to cause a paradox.
+
+44:37.840 --> 44:46.120
+It needed a pending absorption, the trapdoor, and it needed a controversial tool, the p-combinator, that was sensitive to the room's rules.
+
+44:46.840 --> 44:49.020
+Theorem 4.9 asks a clever question.
+
+44:49.520 --> 44:55.100
+What if we allow the trapdoors to exist as long as the package doesn't contain any controversial tools?
+
+44:55.100 --> 44:57.940
+Ah. Let's go back to section one.
+
+44:58.360 --> 44:59.960
+We split the tools into two groups.
+
+45:00.280 --> 45:02.300
+The structural ones, copy, delete, reorder.
+
+45:02.580 --> 45:04.020
+Those are the controversial ones.
+
+45:04.500 --> 45:06.660
+Those are the ones that get banned by room permissions.
+
+45:07.300 --> 45:13.200
+But the neutral tools, identity I and composition B, they just route traffic.
+
+45:13.420 --> 45:13.780
+Exactly.
+
+45:13.780 --> 45:15.460
+They are entirely harmless.
+
+45:15.620 --> 45:17.940
+They are permitted in every single room, universally.
+
+45:18.340 --> 45:18.860
+Precisely.
+
+45:19.440 --> 45:30.800
+If a package of data is insensitive, meaning you scan it and confirm it is built exclusively from INB and contains absolutely zero structural combinators, then it literally does not matter what room editors.
+
+45:31.920 --> 45:33.160
+Because they're always legal.
+
+45:33.380 --> 45:33.600
+Right.
+
+45:33.600 --> 45:39.840
+The rules governing its internal evaluation will never be revoked, because its tools are universally legal.
+
+45:40.400 --> 45:45.920
+Therefore, even if it has a pending absorption hidden inside it, you can safely drag it across a boundary.
+
+45:46.580 --> 45:54.480
+When that pending absorption finally fires on the other side, it won't suddenly find its permissions revoked, because it's only using universally approved tools.
+
+45:54.480 --> 46:05.260
+So if my water bottle is officially approved by every single aviation security agency on planet Earth, it doesn't matter if I decide to drink it in the lobby or at the gate, the result is perfectly identical.
+
+46:06.540 --> 46:08.240
+That is such an elegant workaround.
+
+46:08.960 --> 46:09.660
+It's very elegant.
+
+46:10.400 --> 46:13.040
+But I have to push back here on a very practical level.
+
+46:13.480 --> 46:18.380
+If I am building a real-world compiler based on this logic, efficiency is everything.
+
+46:18.380 --> 46:34.800
+If every time a variable wants to move from one function to another, the computer has to pause, freeze the system, and recursively scan the variable's entire molecular structure to check if it's settled or insensitive, isn't that going to be incredibly prohibitively slow?
+
+46:35.620 --> 46:37.820
+Doesn't this bureaucracy ruin the speed of computation?
+
+46:38.640 --> 46:43.500
+That is a highly practical concern, and it's exactly what a computer scientist would ask.
+
+46:44.120 --> 46:47.500
+Flagstine anticipates this explicitly in Proposition 4.11.
+
+46:48.380 --> 46:50.960
+And the answer is a resounding no.
+
+46:51.440 --> 46:53.020
+It does not ruin efficiency.
+
+46:53.740 --> 46:58.380
+The author proves mathematically that this safety check is highly decidable.
+
+46:59.180 --> 47:02.380
+Specifically, you can traverse the term in OV time.
+
+47:02.820 --> 47:06.320
+For those who aren't software engineers, OV is big O notation.
+
+47:06.780 --> 47:12.320
+It essentially means the time it takes to check the package scales linearly with the size of the package, V.
+
+47:12.740 --> 47:17.020
+If the package has 50 pieces of data, it takes roughly 50 steps to check it.
+
+47:17.020 --> 47:21.160
+You aren't caught in some infinite loop of checking and rechecking.
+
+47:21.980 --> 47:22.000
+Exactly.
+
+47:22.480 --> 47:24.640
+It requires a single swift traversal.
+
+47:25.200 --> 47:27.320
+The computer sweeps through the structure once.
+
+47:27.840 --> 47:30.440
+It checks the spine to see if any combinators can fire.
+
+47:31.120 --> 47:35.340
+It checks the effect of permissions using very fast, simple bit mask intersections.
+
+47:35.580 --> 47:36.420
+Okay, so it's quick.
+
+47:36.660 --> 47:37.160
+Very quick.
+
+47:37.160 --> 47:42.220
+It looks for any internal brackets acting as functions to spot pending absorptions.
+
+47:42.820 --> 47:45.040
+And it scans for sensitive structural tools.
+
+47:45.620 --> 47:46.260
+It's one pass.
+
+47:47.000 --> 47:49.800
+If it passes the check, you transfer the data.
+
+47:50.360 --> 47:52.320
+If it fails, you wait.
+
+47:53.160 --> 47:55.900
+The bureaucracy is actually exceptionally optimized.
+
+47:55.900 --> 48:03.080
+I love that we are talking about bureaucracy because that perfectly bridges us into the next major conceptual leap in the paper.
+
+48:04.040 --> 48:06.360
+We have been talking about these formulas as trees.
+
+48:06.780 --> 48:08.840
+A function branches out, holds some data.
+
+48:09.020 --> 48:11.300
+Maybe that data branches out into a nested room.
+
+48:11.660 --> 48:13.960
+It's a physical branching tree of logic.
+
+48:14.180 --> 48:14.260
+Right.
+
+48:14.360 --> 48:15.080
+A tree structure.
+
+48:15.080 --> 48:20.480
+And when a tree wants to use a piece of data in two different places, it literally copies the data.
+
+48:20.760 --> 48:22.580
+It physically duplicates the branch.
+
+48:23.000 --> 48:26.400
+This is called independent copying or call-by-name evaluation.
+
+48:26.880 --> 48:27.160
+Yes.
+
+48:27.520 --> 48:31.860
+And that is how pure mathematical logic usually conceptualizes things.
+
+48:32.540 --> 48:37.860
+But in the real world of hardware and silicon, physical duplication is incredibly expensive.
+
+48:37.860 --> 48:47.840
+If a computer needs to use a massive gigabyte-sized chunk of data in two different functions, copying that entire chunk of data wastes a tremendous amount of RAM.
+
+48:48.160 --> 48:48.400
+Right.
+
+48:48.620 --> 48:51.560
+So real-world computers don't usually use pure trees.
+
+48:51.720 --> 48:52.440
+They use graphs.
+
+48:53.100 --> 49:03.420
+Instead of copying the data, the computer leaves the data in one specific spot in memory, and it just draws two different arrows, two pointers, from the two functions back to that single piece of data.
+
+49:03.740 --> 49:04.880
+They share a reference to it.
+
+49:04.960 --> 49:06.780
+This is called call-by-need evaluation.
+
+49:06.780 --> 49:07.940
+It saves a ton of memory.
+
+49:08.640 --> 49:20.780
+And in standard, universally governed computer science, independent copying, meaning trees, and reference sharing, meaning graphs, are mathematically proven to produce the exact same final result.
+
+49:21.300 --> 49:23.920
+They just get there with different levels of memory efficiency.
+
+49:24.240 --> 49:24.480
+Right.
+
+49:24.980 --> 49:25.360
+Usually.
+
+49:25.620 --> 49:29.020
+But we aren't in a universally governed system anymore.
+
+49:29.560 --> 49:35.080
+We are in a scoped universe, where your permissions depend entirely on your geographic location.
+
+49:35.400 --> 49:35.920
+Exactly.
+
+49:35.920 --> 49:38.180
+And this is where my brain started breaking.
+
+49:38.980 --> 49:45.440
+If a single, physically shared piece of data is simultaneously pointed to by two different rooms, what rules is it supposed to follow?
+
+49:46.000 --> 49:47.820
+How do scopes handle shared references?
+
+49:48.380 --> 49:51.540
+This introduces the concept of scoped term graphs.
+
+49:52.180 --> 49:56.560
+And to understand how they work, we have to define a state of harmony called coherence.
+
+49:57.200 --> 49:59.440
+Let's say you have a single piece of shared data in a graph.
+
+49:59.820 --> 50:00.700
+Node X.
+
+50:01.020 --> 50:01.620
+Node X.
+
+50:01.620 --> 50:05.440
+Because it's a shared graph, X has multiple parents pointing to it.
+
+50:05.940 --> 50:09.220
+You can trace a path from the root down to X via parent A.
+
+50:09.800 --> 50:13.660
+Or you can trace a completely different path from the root down to X via parent B.
+
+50:13.900 --> 50:16.640
+So X is a single employee in a corporation.
+
+50:17.100 --> 50:21.020
+And they report directly to two different bosses, boss A and boss B.
+
+50:21.020 --> 50:22.160
+A perfect analogy.
+
+50:23.160 --> 50:24.920
+Coherence asks a simple question.
+
+50:26.480 --> 50:34.760
+If you trace the path from the root through boss A down to employee X, what exact set of effective permissions do you accumulate?
+
+50:34.760 --> 50:41.200
+And if you trace the path through boss B down to employee X, what set of effective permissions do you accumulate?
+
+50:42.280 --> 50:42.480
+Okay.
+
+50:42.780 --> 50:51.020
+If every single possible path leading to X results in the exact same set of permissions, then node X is coherent.
+
+50:51.980 --> 50:57.560
+Meaning both boss A and boss B handed the employee the exact same corporate rulebook.
+
+50:57.780 --> 51:00.780
+They are in total agreement about what the employee is allowed to do.
+
+51:00.780 --> 51:01.380
+Exactly.
+
+51:02.660 --> 51:07.820
+And theorem 5.2 proves that if a graph is coherent, the universe remains stable.
+
+51:08.860 --> 51:16.580
+The tree semantics, where you literally copy the employee, and the graph semantics, where they share the employee, will align perfectly.
+
+51:17.340 --> 51:18.580
+The math works out the same.
+
+51:19.300 --> 51:20.620
+But what if the bosses don't agree?
+
+51:21.140 --> 51:24.840
+What if boss A is standing out in the permissive lobby and says,
+
+51:24.840 --> 51:27.200
+You are fully authorized to delete files.
+
+51:27.820 --> 51:31.080
+And boss B is standing inside a highly restricted room and says,
+
+51:31.500 --> 51:34.060
+You are strictly forbidden from ever deleting files.
+
+51:34.700 --> 51:39.960
+And employee X is just one person, sitting at one desk, receiving both instructions simultaneously.
+
+51:40.720 --> 51:42.360
+That is incoherence.
+
+51:43.040 --> 51:49.060
+The shared node X now exists in a state of superposition between two contradictory jurisdictions.
+
+51:49.060 --> 51:53.960
+And this is where the mathematical reality literally fractures.
+
+51:54.400 --> 51:54.920
+Fractures.
+
+51:55.220 --> 52:03.060
+Flyxion details this beautifully in Example 5.4, showing that when coherence fails, three entirely distinct realities emerge,
+
+52:03.660 --> 52:08.620
+depending entirely on how the computer's memory policy is programmed to resolve the conflict.
+
+52:08.840 --> 52:14.280
+I want to map these three realities out very clearly, because this is my favorite part of the entire paper.
+
+52:14.640 --> 52:17.960
+It is the ultimate bureaucratic nightmare, formalized in math.
+
+52:17.960 --> 52:20.540
+Let's set up the specific employee task.
+
+52:21.140 --> 52:25.320
+Let's say employee X is a package of data that wants to execute a delete command.
+
+52:25.920 --> 52:28.400
+It is K bracket B comma C.
+
+52:29.100 --> 52:31.860
+It wants to delete C and just become B.
+
+52:32.200 --> 52:35.300
+Okay, the task on the desk is delete C.
+
+52:35.640 --> 52:39.600
+Now, because this is the graph, we use the W combinator to share this node.
+
+52:39.600 --> 52:48.340
+The exact formula in the paper wraps employee X in two different scopes via a helper function, but the geometric result is what matters.
+
+52:48.920 --> 52:50.020
+X has two parents.
+
+52:50.700 --> 52:53.460
+Parent 1 is wrapping X in scope L1.
+
+52:54.120 --> 52:56.740
+Parent 2 is wrapping X in scope L2.
+
+52:56.740 --> 52:57.560
+Okay, got it.
+
+52:58.220 --> 53:05.580
+X exists once in the physical memory of the computer, but it is being viewed through two different architectural lenses.
+
+53:05.920 --> 53:07.020
+Let's define the permissions.
+
+53:07.720 --> 53:09.240
+The root lobby allows everything.
+
+53:10.240 --> 53:12.700
+Boss 1, scope L1 is lenient.
+
+53:13.080 --> 53:14.520
+It allows the delete key, K.
+
+53:15.500 --> 53:18.880
+But boss 2, scope L2 is strict.
+
+53:19.440 --> 53:22.120
+It explicitly forbids the delete key, K.
+
+53:22.680 --> 53:23.800
+Okay, the trap is set.
+
+53:24.440 --> 53:25.720
+Boss 1 says delete it.
+
+53:26.080 --> 53:27.800
+Boss 2 says do not delete it.
+
+53:28.460 --> 53:29.840
+Employee X is holding the file.
+
+53:30.320 --> 53:30.920
+What happens?
+
+53:31.400 --> 53:32.980
+You said there are three realities.
+
+53:33.480 --> 53:37.300
+Let's look at reality 1, the pure tree system.
+
+53:38.020 --> 53:40.080
+In this reality, we don't actually share memory.
+
+53:40.900 --> 53:45.520
+When the system sees two parents, it literally physically duplicates employee X.
+
+53:45.980 --> 53:50.880
+It builds two separate desks and puts a clone of X at each one.
+
+53:50.880 --> 53:59.480
+Okay, so we have clone 1 sitting in room L1 with boss 1, and we have clone 2 sitting in room L2 with boss 2.
+
+53:59.860 --> 54:01.840
+They are entirely independent now.
+
+54:02.080 --> 54:02.520
+Exactly.
+
+54:03.720 --> 54:06.320
+Clone 1 is in L1, which allows deletion.
+
+54:06.840 --> 54:11.920
+So clone 1 successfully executes the command, deletes C, and becomes B.
+
+54:12.920 --> 54:16.180
+Clone 2 is in L2, which forbids deletion.
+
+54:16.180 --> 54:21.280
+So clone 2 is frozen, permanently stuck as parentheses KBC.
+
+54:21.920 --> 54:34.620
+So the final resolved answer in the pure tree reality is a massive formula where one branch successfully reduced to B, and the other branch is permanently jammed as parentheses KBC.
+
+54:34.620 --> 54:38.420
+The paper gives this specific final state of name, right?
+
+54:38.600 --> 54:40.520
+It calls it normal form N2.
+
+54:41.000 --> 54:41.220
+Yes.
+
+54:41.600 --> 54:49.740
+But remember, in a pure tree system, both clones technically started out in the root lobby before they were pulled into their respective rooms.
+
+54:50.400 --> 54:50.660
+Right.
+
+54:50.660 --> 55:03.200
+Depending on the timing, depending on if they evaluated before or after crossing the boundary, clone 2 could have executed its delete command while it was still in the lobby before boss 2 restricted it.
+
+55:03.720 --> 55:06.800
+If it did that, both clones would successfully become B.
+
+55:07.460 --> 55:10.040
+The paper calls that state normal form N1.
+
+55:10.040 --> 55:19.220
+So because of the timing quirks of crossing boundaries, the tree reality actually has two entirely valid possible outcomes.
+
+55:19.920 --> 55:24.940
+N1, where both succeed, and N2, where one succeeds and one is jammed.
+
+55:25.180 --> 55:25.640
+Exactly.
+
+55:26.320 --> 55:28.060
+Keep those two valid outcomes in mind.
+
+55:28.900 --> 55:33.760
+Now let's shift to reality 2, a computer running graph policy any.
+
+55:33.760 --> 55:44.880
+This is a system that uses shared memory, and its programmed rule for resolving jurisdictional conflicts is, if any path to the shared node allows a step, execute the step.
+
+55:45.280 --> 55:47.140
+That's the chaotic startup policy.
+
+55:47.480 --> 55:47.800
+Right.
+
+55:48.280 --> 55:52.280
+If either of your bosses says yes, just go for it and ignore the other one.
+
+55:52.540 --> 55:52.800
+Right.
+
+55:53.420 --> 55:55.340
+So employee X looks at its paths.
+
+55:56.020 --> 55:57.780
+Path L1 says yes to deletion.
+
+55:58.220 --> 55:59.340
+Path L2 says no.
+
+55:59.340 --> 56:03.920
+Since any path allows it, the system authorizes the step.
+
+56:04.580 --> 56:07.280
+X executes the delete command and becomes B.
+
+56:07.900 --> 56:08.340
+But wait.
+
+56:08.640 --> 56:14.180
+Because X is shared memory in a graph, it becomes B for both parents simultaneously.
+
+56:14.960 --> 56:21.920
+Even boss 2, who explicitly forbade the deletion, looks down at the desk and suddenly sees that the file has been deleted.
+
+56:22.480 --> 56:26.040
+The strict room has been contaminated by the rules of the lenient room.
+
+56:26.360 --> 56:26.760
+Exactly.
+
+56:26.760 --> 56:33.920
+Under graph policy any, the system successfully reaches state N1, where both sides see B.
+
+56:34.680 --> 56:38.180
+But it completely, permanently misses state N2.
+
+56:38.740 --> 56:46.280
+The act of sharing memory forcefully suppressed a valid mathematical reality that independent copying would have allowed.
+
+56:46.720 --> 56:47.120
+Wow.
+
+56:47.900 --> 56:52.500
+Okay, so policy any forces a consensus by just letting the most permissive rule win.
+
+56:53.000 --> 56:54.060
+What about reality 3?
+
+56:54.060 --> 56:57.900
+Reality 3 is a computer running graph policy all.
+
+56:58.780 --> 57:00.840
+This system is highly conservative.
+
+57:01.780 --> 57:10.360
+Its rule for resolving conflicts is a step is only permitted if it is explicitly allowed on all possible access paths.
+
+57:10.900 --> 57:13.120
+Both bosses must agree or you do nothing.
+
+57:13.400 --> 57:13.640
+Right.
+
+57:13.640 --> 57:15.660
+So employee X checks.
+
+57:16.320 --> 57:17.440
+Path L1 says yes.
+
+57:18.160 --> 57:19.180
+Path L2 says no.
+
+57:19.940 --> 57:21.660
+They do not have unanimous agreement.
+
+57:22.500 --> 57:24.160
+Therefore, the step is strictly blocked.
+
+57:24.860 --> 57:25.620
+The node freezes.
+
+57:26.260 --> 57:29.920
+So employee X is permanently stuck holding KBC.
+
+57:30.720 --> 57:31.660
+It can't evaluate.
+
+57:31.660 --> 57:37.940
+Which means the final output of the formula has KBC showing up in both branches.
+
+57:38.440 --> 57:40.420
+The paper calls this state N3.
+
+57:40.860 --> 57:41.160
+Yes.
+
+57:41.540 --> 57:43.700
+And here is the absolute kicker of the whole paper.
+
+57:44.720 --> 57:49.500
+State N3 is a state that is mathematically impossible to reach in the pure tree system.
+
+57:49.980 --> 57:51.500
+It is an artificial reality.
+
+57:51.500 --> 57:51.940
+Wait.
+
+57:52.060 --> 57:53.200
+I need to wrap my head around that.
+
+57:53.320 --> 57:55.480
+Why is it impossible in the tree system?
+
+57:56.000 --> 57:57.460
+Think back to reality 1.
+
+57:57.800 --> 57:58.280
+The tree.
+
+57:59.120 --> 58:03.500
+In the tree, clone 1 is completely independent and sits alone in room L1.
+
+58:04.200 --> 58:06.700
+Room L1 explicitly allows deletion.
+
+58:07.560 --> 58:08.720
+Clone 1 has the tool.
+
+58:09.240 --> 58:09.980
+It has the permission.
+
+58:10.560 --> 58:11.760
+And nothing is stopping it.
+
+58:12.560 --> 58:16.340
+Clone 1 would never just freeze as parentheses KBC.
+
+58:16.340 --> 58:21.080
+It would always, 100% of the time, execute the step and reduce to B.
+
+58:21.800 --> 58:22.980
+Oh, I see.
+
+58:23.420 --> 58:29.200
+In the graph policy all system, the branch in room L1 stopped reducing even though it physically
+
+58:29.200 --> 58:30.660
+possessed the permission to do so.
+
+58:30.940 --> 58:34.980
+It froze purely because it was tethered to a restrictive sibling in another room?
+
+58:35.400 --> 58:35.920
+Exactly.
+
+58:36.620 --> 58:41.860
+This violates the very definition of what a normal form is supposed to be in combinatorial
+
+58:41.860 --> 58:42.180
+logic.
+
+58:43.040 --> 58:45.780
+Policy all doesn't just miss valid possibilities.
+
+58:45.780 --> 58:51.200
+It actively hallucinates a completely new, artificially deadlocked reality that could
+
+58:51.200 --> 58:53.680
+not physically exist if you just copied the data.
+
+58:53.960 --> 58:56.680
+That is just, it's a terrifying thought for a software engineer.
+
+58:57.320 --> 58:58.560
+One boss says delete this.
+
+58:58.900 --> 59:00.460
+The other boss says never delete anything.
+
+59:00.700 --> 59:05.400
+And so the shared employee just freezes forever, actively failing a task they had full
+
+59:05.400 --> 59:07.080
+legal permission to complete half the time.
+
+59:07.620 --> 59:11.480
+It proves that sharing computational memory is not the same thing as sharing authority.
+
+59:11.800 --> 59:13.020
+It's a profound demonstration.
+
+59:13.020 --> 59:20.000
+The union of contexts, policy any, allows actions that illegally contaminate restricted
+
+59:20.000 --> 59:20.400
+scopes.
+
+59:21.280 --> 59:25.760
+The intersection of contexts, policy all, creates artificial deadlocks that shouldn't
+
+59:25.760 --> 59:26.160
+exist.
+
+59:26.560 --> 59:27.520
+It's a mess either way.
+
+59:27.940 --> 59:28.340
+Exactly.
+
+59:28.840 --> 59:34.160
+The moment incoherence appears in your graph, the very fabric of how logic is evaluated splinters
+
+59:34.160 --> 59:37.000
+into three fundamentally incompatible semantic universes.
+
+59:37.000 --> 59:42.280
+And this is why Flyxion spends so much time rigorously proving the exact conditions where
+
+59:42.280 --> 59:43.240
+coherence holds.
+
+59:43.580 --> 59:48.380
+If you are building a compiler for a new programming language based on this math, you have to know
+
+59:48.380 --> 59:52.220
+with absolute certainty which of those three universes your code is living in.
+
+59:52.300 --> 59:55.360
+Otherwise, your program will yield totally unpredictable results.
+
+59:55.360 --> 59:56.140
+Indeed.
+
+59:57.140 --> 01:00:01.620
+And understanding how these permissions conflict naturally raises questions about how these
+
+01:00:01.620 --> 01:00:06.580
+permissions evolve over the entire lifespan of a running program, which takes us directly
+
+01:00:06.580 --> 01:00:12.160
+into section six of the paper, the flow of time, or what Flyxion poetically calls the
+
+01:00:12.160 --> 01:00:13.960
+descent of admissibility.
+
+01:00:13.960 --> 01:00:14.560
+Right.
+
+01:00:14.720 --> 01:00:18.920
+Because up until now, we've mostly been talking about permissions in a static snapshot.
+
+01:00:19.440 --> 01:00:23.280
+We look at a frozen formula and ask, what is allowed right here, right now?
+
+01:00:23.900 --> 01:00:25.420
+But computation is a process.
+
+01:00:25.780 --> 01:00:30.480
+It is a living thing that moves forward in time, digesting itself, collapsing brackets,
+
+01:00:30.760 --> 01:00:31.940
+moving data around.
+
+01:00:32.540 --> 01:00:37.440
+How do the permissions governing a specific piece of data change as the formula digests itself
+
+01:00:37.440 --> 01:00:37.960
+over time?
+
+01:00:38.180 --> 01:00:43.720
+The paper formalizes this temporal evolution in Lemma 6.1 and Theorem 6.2.
+
+01:00:43.960 --> 01:00:47.060
+And the mathematical conclusion is stark and unforgiving.
+
+01:00:47.680 --> 01:00:52.320
+As a term reduces over time, the effective permissions of any surviving data can only
+
+01:00:52.320 --> 01:00:54.320
+decrease or stay the same.
+
+01:00:54.600 --> 01:00:56.320
+They never, ever increase.
+
+01:00:56.640 --> 01:00:59.340
+It's like a logical version of entropy or gravity.
+
+01:00:59.340 --> 01:01:02.020
+You can only lose privileges as you compute.
+
+01:01:02.180 --> 01:01:04.080
+You can never organically regain them.
+
+01:01:04.700 --> 01:01:08.240
+Let's trace logically why this has to be true based on the universe we've built.
+
+01:01:08.720 --> 01:01:12.800
+Think about a core step like executing a copy, a delete, or a reorder.
+
+01:01:12.800 --> 01:01:15.060
+What do those tools actually do?
+
+01:01:15.660 --> 01:01:16.680
+They just rearrange the data.
+
+01:01:17.120 --> 01:01:17.400
+Exactly.
+
+01:01:17.760 --> 01:01:20.700
+They just rearrange the data that is sitting directly in front of them.
+
+01:01:21.120 --> 01:01:23.160
+They do not push data through any doors.
+
+01:01:23.380 --> 01:01:24.400
+They don't cross boundaries.
+
+01:01:24.800 --> 01:01:28.520
+So the physical chain of brackets surrounding the data remains exactly the same.
+
+01:01:29.120 --> 01:01:31.220
+No boundary crossed means no permission change.
+
+01:01:31.740 --> 01:01:31.960
+Okay.
+
+01:01:32.080 --> 01:01:34.340
+So the core tools don't change permissions.
+
+01:01:34.840 --> 01:01:36.520
+What about the boundary rules?
+
+01:01:36.780 --> 01:01:38.460
+The things that actually move data?
+
+01:01:38.460 --> 01:01:44.260
+The boundary rules are SCR, which just wraps a piece of data in a brand new bracket, and
+
+01:01:44.260 --> 01:01:47.660
+ABS, which we discussed, pulling data into an existing bracket.
+
+01:01:48.360 --> 01:01:51.240
+What is the geometric result of both of those actions?
+
+01:01:51.800 --> 01:01:56.360
+In both cases, you are adding a brand new label to the chain of scopes enclosing the data.
+
+01:01:56.360 --> 01:02:01.660
+And as we established an hour ago, whenever you add a new label to a chain, you have to
+
+01:02:01.660 --> 01:02:06.540
+calculate the new effective permission by intersecting the old rules with the new rules.
+
+01:02:06.920 --> 01:02:10.700
+And an intersection in set theory can only ever shrink a set.
+
+01:02:10.900 --> 01:02:13.080
+It can never add a new element that wasn't there before.
+
+01:02:13.080 --> 01:02:13.900
+Precisely.
+
+01:02:14.440 --> 01:02:18.840
+If you didn't have the copy power before you walked through a door, intersecting your
+
+01:02:18.840 --> 01:02:23.880
+rules with the new room's rules is never, mathematically, going to magically grant you
+
+01:02:23.880 --> 01:02:24.660
+the copy power.
+
+01:02:25.160 --> 01:02:26.780
+You can only lose what you have.
+
+01:02:27.360 --> 01:02:31.500
+The paper uses two terms here that I think are really helpful for programmers, static
+
+01:02:31.500 --> 01:02:33.940
+classification versus dynamic classification.
+
+01:02:34.460 --> 01:02:35.220
+Let's define those.
+
+01:02:35.840 --> 01:02:40.320
+Static classification is what a compiler does when it just looks at the raw code before running
+
+01:02:40.320 --> 01:02:40.540
+it.
+
+01:02:40.540 --> 01:02:45.380
+It looks at the physical layout of the nested brackets and calculates the absolute maximum
+
+01:02:45.380 --> 01:02:49.260
+set of permissions that any part of the formula could ever possibly use.
+
+01:02:50.160 --> 01:02:53.860
+But Flitscham points out that this static view is just a bound.
+
+01:02:54.160 --> 01:02:54.740
+It's a ceiling.
+
+01:02:54.960 --> 01:02:55.980
+It is not a destiny.
+
+01:02:56.340 --> 01:02:58.320
+What do you mean by not a destiny?
+
+01:02:58.560 --> 01:03:00.720
+If the code says a bracket is there, isn't it there?
+
+01:03:01.340 --> 01:03:04.800
+Let's look at an example from the paper, Proposition 6.3.
+
+01:03:04.800 --> 01:03:11.800
+Suppose you have a formula, a function K, sitting inside a restricted room, L, waiting to absorb
+
+01:03:11.800 --> 01:03:14.240
+a piece of data, B, from the lobby.
+
+01:03:15.180 --> 01:03:19.300
+Let's say the root lobby allows K, but room L strictly forbids K.
+
+01:03:20.160 --> 01:03:25.620
+Okay, so statically, if I am just reading the code on the page, I see the K tool physically
+
+01:03:25.620 --> 01:03:30.340
+sitting inside room L. Therefore, I statically conclude, ah, this tool is blocked.
+
+01:03:30.340 --> 01:03:31.300
+It will never fire.
+
+01:03:32.200 --> 01:03:34.500
+But watch what happens dynamically when you press run.
+
+01:03:35.500 --> 01:03:41.900
+The function inside room L absorbs B. So now you have paren K, A, B sitting inside room
+
+01:03:41.900 --> 01:03:47.800
+L. The K tool has its arguments, but it's inside a restricted room, so it freezes.
+
+01:03:48.800 --> 01:03:50.180
+Your static prediction was correct.
+
+01:03:50.280 --> 01:03:51.200
+The tool didn't fire.
+
+01:03:51.200 --> 01:03:53.580
+Okay, but what's the alternative?
+
+01:03:54.180 --> 01:03:57.160
+The alternative is the airport security example we did earlier.
+
+01:03:58.180 --> 01:04:04.220
+What if the initial formula was A inside room L and paren KBC waiting out in the lobby?
+
+01:04:05.360 --> 01:04:10.380
+Statically, a compiler might scan that code, see that paren KBC is eventually going to be
+
+01:04:10.380 --> 01:04:16.580
+absorbed into room L, and say, well, room L forbids K, so this system will ultimately never
+
+01:04:16.580 --> 01:04:17.520
+use the K rule.
+
+01:04:17.520 --> 01:04:24.700
+But, if we dynamically execute the code and we evaluate paren KBC before it gets absorbed,
+
+01:04:25.240 --> 01:04:27.420
+it is sitting in the permissive lobby.
+
+01:04:27.800 --> 01:04:29.420
+It fires, it deletes C.
+
+01:04:29.660 --> 01:04:30.040
+Exactly.
+
+01:04:30.400 --> 01:04:36.200
+Dynamically, depending purely on the execution order, the system did use the K rule, even though
+
+01:04:36.200 --> 01:04:39.440
+a static scan of the final destination would imply it couldn't.
+
+01:04:39.940 --> 01:04:43.820
+The scope tree on the page only provides a boundary on what is possible.
+
+01:04:43.820 --> 01:04:49.620
+The dynamic classification, when it actually unfolds chronologically when the code runs,
+
+01:04:50.120 --> 01:04:54.520
+is the only true measure of what structural powers a term will actually utilize.
+
+01:04:54.880 --> 01:04:59.680
+So, you can't just scan the code and definitively know what logical rules it obeys.
+
+01:04:59.860 --> 01:05:05.360
+You have to actually run it or map out every single possible execution path, which is a huge
+
+01:05:05.360 --> 01:05:09.540
+headache for static analysis, but a beautiful reality of dynamic systems.
+
+01:05:09.840 --> 01:05:10.420
+It really is.
+
+01:05:10.420 --> 01:05:15.280
+This brings us to the final, massive conceptual zoom out of the paper.
+
+01:05:15.640 --> 01:05:19.960
+We've spent this whole time deep in the weeds of specific tools, copy, delete, reorder.
+
+01:05:20.480 --> 01:05:25.800
+But in Section 7, Flyxion steps back and asks, how does this concept of geographic permissions
+
+01:05:25.800 --> 01:05:29.040
+apply to abstract transition systems at large?
+
+01:05:29.040 --> 01:05:29.540
+Yes.
+
+01:05:29.760 --> 01:05:34.820
+He zooms out from the specific combinators and builds an abstract mathematical framework.
+
+01:05:35.140 --> 01:05:41.140
+He defines a system purely in terms of configurations, transitions, and admissibility rules.
+
+01:05:41.800 --> 01:05:46.560
+It's like stepping out of our specific corporate office building and looking at the very concept
+
+01:05:46.560 --> 01:05:48.540
+of architecture and physics themselves.
+
+01:05:48.540 --> 01:05:49.020
+Wow.
+
+01:05:49.480 --> 01:05:55.440
+And the big provocative question he asks in this section is, what happens if we take this complex,
+
+01:05:55.580 --> 01:05:59.820
+highly restricted, scoped universe, and we just erase all the boundaries?
+
+01:06:00.320 --> 01:06:02.840
+What if we tear down all the walls?
+
+01:06:03.060 --> 01:06:04.560
+This is the ultimate what if.
+
+01:06:04.720 --> 01:06:09.620
+If we erase the brackets, if we tear down the walls, does the system just seamlessly revert back
+
+01:06:09.620 --> 01:06:11.460
+to normal, unrestricted logic?
+
+01:06:11.460 --> 01:06:18.000
+To answer that, the paper analyzes this process, the abstraction of erasing boundaries, using
+
+01:06:18.000 --> 01:06:23.040
+three formal mathematical properties, preservation, reflection, and lifting.
+
+01:06:23.680 --> 01:06:28.640
+Let's break them down one by one because they tell a fascinating story about the physical
+
+01:06:28.640 --> 01:06:29.460
+nature of logic.
+
+01:06:30.160 --> 01:06:31.500
+First, preservation.
+
+01:06:32.540 --> 01:06:36.080
+Does erasing the boundaries preserve the validity of the steps you took?
+
+01:06:36.780 --> 01:06:38.060
+Let me think about that.
+
+01:06:38.060 --> 01:06:42.440
+If a mathematical step was legally allowed when there were strict rules, locked doors,
+
+01:06:42.560 --> 01:06:47.020
+and banned tools everywhere, it should definitely still be allowed when you remove all the doors
+
+01:06:47.020 --> 01:06:49.500
+and make everything universally legal, right?
+
+01:06:50.200 --> 01:06:50.680
+Yes.
+
+01:06:51.420 --> 01:06:55.000
+Proposition 7.1 proves that preservation holds unconditionally.
+
+01:06:55.840 --> 01:07:00.940
+Every single step that was admissible in the strict, scoped system remains a perfectly valid
+
+01:07:00.940 --> 01:07:03.600
+step in the unscoped, boundary-free world.
+
+01:07:03.600 --> 01:07:08.740
+The abstract semantics act as an over-approximation of the concrete ones.
+
+01:07:09.220 --> 01:07:12.320
+Everything that was possible before is still possible now.
+
+01:07:12.560 --> 01:07:13.120
+Okay.
+
+01:07:13.260 --> 01:07:15.060
+That makes perfect intuitive sense.
+
+01:07:15.560 --> 01:07:17.600
+What about the second property, reflection?
+
+01:07:18.400 --> 01:07:21.200
+Reflection asks the exact reverse question.
+
+01:07:21.740 --> 01:07:26.900
+If I observe a sequence of valid steps happening in the abstract, boundary-free world,
+
+01:07:26.900 --> 01:07:33.860
+can I safely assume that those exact same steps would also be valid back in the strict, scoped world?
+
+01:07:34.620 --> 01:07:35.900
+Well, definitely not.
+
+01:07:36.220 --> 01:07:40.040
+We literally just spent an hour proving that scopes exist to block things.
+
+01:07:40.460 --> 01:07:44.800
+If I execute a delete command in the boundary-free world, it works perfectly.
+
+01:07:45.360 --> 01:07:48.080
+But if I try to map that action back into the scoped world,
+
+01:07:48.320 --> 01:07:53.240
+I might discover that the delete command was actually sitting inside a restricted VIP room
+
+01:07:53.240 --> 01:07:54.740
+that explicitly banned it.
+
+01:07:54.740 --> 01:07:55.820
+Precisely.
+
+01:07:56.420 --> 01:08:00.740
+Proposition 7.2 formally proves that reflection fails entirely.
+
+01:08:01.380 --> 01:08:08.220
+It fails precisely because a scope has the power to withdraw a permission that the abstract root naturally grants.
+
+01:08:08.840 --> 01:08:14.360
+You cannot map the freedom of a boundary-free world back onto the strictness of a concrete walled world.
+
+01:08:14.360 --> 01:08:21.980
+Okay, so preservation works, strict rules map to free rules, but reflection fails, free rules do not map to strict rules.
+
+01:08:22.480 --> 01:08:23.980
+What is the third property?
+
+01:08:24.300 --> 01:08:25.220
+What is lifting?
+
+01:08:26.180 --> 01:08:28.720
+Lifting asks a slightly more nuanced question.
+
+01:08:29.040 --> 01:08:29.480
+It asks,
+
+01:08:30.120 --> 01:08:32.880
+For every valid move that happens in the boundary-free world,
+
+01:08:33.360 --> 01:08:38.680
+is there some corresponding valid move you can make in the scoped world right now to keep pace?
+
+01:08:38.680 --> 01:08:43.760
+Hmm. If reflection fails because you might lack the permission to do something,
+
+01:08:44.280 --> 01:08:46.220
+lifting must fail for the exact same reason, right?
+
+01:08:46.400 --> 01:08:51.220
+You try to make a move, but the scoped world says permission denied, so you can't lift the action.
+
+01:08:51.780 --> 01:08:54.480
+Actually, this is where the paper delivers a brilliant twist.
+
+01:08:55.100 --> 01:08:59.440
+The author proves that lifting fails for a completely fundamentally independent reason.
+
+01:09:00.000 --> 01:09:04.760
+It fails not just because of a loss of permission, but because of a loss of exposure.
+
+01:09:04.760 --> 01:09:10.220
+Loss of exposure. Okay, I think I have an analogy for this. Tell me if this tracks with the math.
+
+01:09:10.340 --> 01:09:10.740
+Go for it.
+
+01:09:11.200 --> 01:09:14.240
+Imagine a zoo. You have a lion, and right next to it you have a zebra.
+
+01:09:14.580 --> 01:09:17.060
+But between them is a massive, thick, concrete wall.
+
+01:09:17.540 --> 01:09:20.020
+That wall is our boundary, our scope bracket.
+
+01:09:20.580 --> 01:09:23.700
+Now, in the scoped world, the lion cannot eat the zebra. Why?
+
+01:09:24.120 --> 01:09:27.660
+It's not because eating zebras is against the rules or lacks permission.
+
+01:09:28.100 --> 01:09:32.020
+The lion can't eat the zebra because the wall physically interrupts the interaction.
+
+01:09:32.180 --> 01:09:33.460
+They literally cannot touch.
+
+01:09:33.460 --> 01:09:37.340
+That is an absolutely perfect visualization of the syntax tree.
+
+01:09:38.100 --> 01:09:43.320
+The bracket literally sits on the spine of the formula, wedged directly between the function and the argument.
+
+01:09:43.980 --> 01:09:48.260
+In the paper's terminology, the red X, the potential interaction is not exposed.
+
+01:09:49.080 --> 01:09:57.340
+Let's say you have the formula, the identity combinator I sitting inside bracket L trying to interact with data A outside the bracket.
+
+01:09:57.900 --> 01:10:00.920
+The bracket L is a physical wedge between I and A.
+
+01:10:00.920 --> 01:10:05.400
+Right. So, in the scoped world, the lion just sits there.
+
+01:10:05.900 --> 01:10:08.760
+The interaction doesn't even exist geometrically.
+
+01:10:09.580 --> 01:10:16.140
+But, if we apply our abstraction, if we erase all the boundaries and tear down the walls,
+
+01:10:16.400 --> 01:10:19.980
+the concrete wall between the lion and the zebra disappears.
+
+01:10:19.980 --> 01:10:23.860
+And, suddenly, the lion is standing directly next to the zebra.
+
+01:10:24.360 --> 01:10:26.240
+You've exposed a red X.
+
+01:10:26.700 --> 01:10:30.800
+In the boundary-free world, I is now sitting directly next to A.
+
+01:10:31.140 --> 01:10:33.380
+It interacts and it reduces to A.
+
+01:10:33.840 --> 01:10:36.260
+That is a completely valid abstract step.
+
+01:10:36.260 --> 01:10:41.020
+But, if you try to lift that step back to the scoped world, you can't.
+
+01:10:41.740 --> 01:10:45.980
+Not because the scoped world forbids the identity tool, identity is allowed everywhere,
+
+01:10:46.240 --> 01:10:50.620
+but because the physical geometry of the bracket prevents the event from even forming.
+
+01:10:50.620 --> 01:10:54.260
+That is exactly what Proposition 7.3 proves.
+
+01:10:54.760 --> 01:11:01.940
+Lifting fails because erasing a boundary can artificially create a red X that the boundary was originally physically interrupting.
+
+01:11:02.380 --> 01:11:05.720
+This proves a massive philosophical point about scoped logic.
+
+01:11:06.260 --> 01:11:09.500
+Loss of permission, meaning the legal rules written on the door,
+
+01:11:09.800 --> 01:11:16.160
+and loss of exposure, meaning the physical concrete wall itself, are two completely independent obstructions.
+
+01:11:16.880 --> 01:11:17.540
+That's fascinating.
+
+01:11:18.400 --> 01:11:23.720
+You can have an abstract step that fails to lift because you don't have the legal permission to execute the tool.
+
+01:11:24.300 --> 01:11:31.300
+Or, you can have an abstract step that fails to lift because the boundary is physically blocking the two pieces of data from touching each other,
+
+01:11:31.620 --> 01:11:32.620
+regardless of permission.
+
+01:11:32.620 --> 01:11:37.420
+It is just a master class in separating physical syntax from logical semantics.
+
+01:11:37.940 --> 01:11:40.240
+A bracket in this system is doing double duty.
+
+01:11:40.720 --> 01:11:43.100
+It is a syntactic wall that blocks touching,
+
+01:11:43.100 --> 01:11:46.300
+and it's a semantic rulebook that dictates laws.
+
+01:11:46.720 --> 01:11:49.460
+Erasing the bracket destroys both of those functions simultaneously,
+
+01:11:49.800 --> 01:11:53.980
+and you simply cannot perfectly map between a world with walls and a world without them.
+
+01:11:54.240 --> 01:11:59.820
+Which is exactly why FlightChain concludes that this isn't just a quirky variation of standard logic.
+
+01:12:00.540 --> 01:12:03.940
+This is an entirely new, distinct class of transition system.
+
+01:12:04.520 --> 01:12:06.660
+It is fundamentally boundary-governed.
+
+01:12:06.660 --> 01:12:11.500
+The geographic topology of the syntax tree, the literal shape of the formula,
+
+01:12:12.260 --> 01:12:15.360
+dictates the logical rules available at any given note.
+
+01:12:16.060 --> 01:12:18.640
+Space and logic are permanently intertwined.
+
+01:12:18.640 --> 01:12:24.580
+Okay. Let's take a deep breath and recap this incredible mind-bending journey.
+
+01:12:25.240 --> 01:12:29.020
+We started at the absolute beginning, looking at the basic building blocks of computation,
+
+01:12:29.320 --> 01:12:35.140
+these god-like combinators that allow you to route, copy, delete, and reorder the very fabric of reality
+
+01:12:35.140 --> 01:12:36.780
+without ever using variables.
+
+01:12:36.960 --> 01:12:37.240
+We did.
+
+01:12:37.800 --> 01:12:40.300
+Then we introduced the twist. Scopes.
+
+01:12:40.820 --> 01:12:43.120
+We built rooms with strict signs on the door,
+
+01:12:43.300 --> 01:12:46.560
+dictating which of those structural powers you were actually allowed to use.
+
+01:12:46.560 --> 01:12:51.920
+We saw how simply possessing a tool in your pocket doesn't mean it's legally admissible at your specific location.
+
+01:12:53.020 --> 01:12:55.540
+We explored the grave danger of crossing those borders,
+
+01:12:56.100 --> 01:13:01.700
+how pulling a dormant package of data through a security checkpoint can fundamentally break the confluence of reality,
+
+01:13:02.420 --> 01:13:05.680
+resulting in completely different, irreconcilable final answers,
+
+01:13:05.980 --> 01:13:08.600
+just based on the order in which the computer processed the steps.
+
+01:13:09.100 --> 01:13:12.260
+We looked at the rigorous solutions to fix that broken universe,
+
+01:13:12.260 --> 01:13:17.880
+making sure a package of data is totally settled with no hidden traps or completely insensitive,
+
+01:13:18.400 --> 01:13:21.980
+built only from universally approved tools before moving it across a border.
+
+01:13:22.720 --> 01:13:22.780
+Right.
+
+01:13:23.600 --> 01:13:26.360
+We fell down the terrifying rabbit hole of graph semantics,
+
+01:13:26.500 --> 01:13:30.460
+realizing that sharing a single file between two bosses with contradictory rules
+
+01:13:30.460 --> 01:13:35.560
+creates three distinct paradoxical realities, including artificial deadlocks.
+
+01:13:35.560 --> 01:13:37.160
+That was a wild ride.
+
+01:13:37.520 --> 01:13:42.140
+And finally, we zoomed all the way out to see how erasing these boundaries completely alters
+
+01:13:42.140 --> 01:13:46.020
+both the legal permissions and the physical exposure of the logic itself.
+
+01:13:46.340 --> 01:13:50.780
+It is a dense, incredibly intricate piece of theoretical mathematics.
+
+01:13:51.460 --> 01:13:56.520
+But before we sign off today, I want to leave you with one final, highly provocative thought,
+
+01:13:57.020 --> 01:13:59.580
+drawn from the conclusion in Section 8 of the paper.
+
+01:13:59.580 --> 01:14:03.780
+Because this isn't just abstract math for the sake of writing papers.
+
+01:14:04.760 --> 01:14:11.600
+Flyxion explicitly connects this scoped topology to something very real called linear logic,
+
+01:14:12.120 --> 01:14:15.520
+and specifically to exponential modalities.
+
+01:14:16.320 --> 01:14:17.120
+Linear logic.
+
+01:14:17.560 --> 01:14:20.200
+We touched on this briefly with the warehouse analogy.
+
+01:14:20.580 --> 01:14:23.960
+That's a computational system where resources are strictly managed.
+
+01:14:24.060 --> 01:14:26.560
+They must be used exactly once, right?
+
+01:14:27.080 --> 01:14:27.480
+Exactly.
+
+01:14:27.480 --> 01:14:33.740
+In normal, everyday programming, like writing a simple web app in Python, memory is cheap.
+
+01:14:34.140 --> 01:14:39.620
+You copy a string of text, you delete an object, you duplicate an array, you don't think about it.
+
+01:14:39.760 --> 01:14:43.480
+Because a background process called a garbage collector cleans up your mess.
+
+01:14:43.600 --> 01:14:43.840
+True.
+
+01:14:44.620 --> 01:14:50.060
+But in highly secure or severely resource-constrained environments like programming a satellite
+
+01:14:50.060 --> 01:14:56.460
+or a cryptographic smart contract, you want absolute ironclad control over your memory.
+
+01:14:56.460 --> 01:14:58.640
+You don't want accidental duplication.
+
+01:14:59.380 --> 01:15:01.300
+Linear logic gives you that control.
+
+01:15:02.220 --> 01:15:04.200
+But sometimes you do need to copy something.
+
+01:15:04.360 --> 01:15:09.960
+So linear logic uses modalities, often written mathematically as a little exclamation point,
+
+01:15:10.060 --> 01:15:18.080
+like exclamation A, to explicitly mark specific individual variables that are legally allowed to be duplicated or thrown away,
+
+01:15:18.500 --> 01:15:21.180
+while everything else remains strictly single use.
+
+01:15:21.180 --> 01:15:24.960
+Oh, I see where this is going.
+
+01:15:25.600 --> 01:15:28.600
+Flyxion is saying that these scopes we've been talking about,
+
+01:15:28.680 --> 01:15:33.100
+these brackets with permission labels on the door, act exactly like those modalities.
+
+01:15:33.600 --> 01:15:37.940
+Yes, but apply to the environment rather than the variable itself.
+
+01:15:38.500 --> 01:15:40.160
+Imagine a future programming language.
+
+01:15:40.160 --> 01:15:46.100
+The paper specifically mentions concatenative stack languages, like a language called Factor,
+
+01:15:46.520 --> 01:15:49.620
+where data is pushed and popped off a stack sequentially.
+
+01:15:50.320 --> 01:15:50.500
+Okay.
+
+01:15:51.060 --> 01:15:56.040
+Imagine writing code for a highly secure banking application where memory management and data security
+
+01:15:56.040 --> 01:16:01.160
+aren't handled by external antivirus tools or by hoping the programmer didn't make a typo.
+
+01:16:01.920 --> 01:16:07.860
+Imagine if the security was enforced by the literal geometric architecture of the code's environment.
+
+01:16:07.860 --> 01:16:09.840
+That's a huge idea.
+
+01:16:10.380 --> 01:16:17.360
+You create a linear scope in your code, a room where the laws of physics dictate that copying is physically impossible.
+
+01:16:18.020 --> 01:16:23.240
+You pass a highly sensitive secure token, like a user's password, into that scope.
+
+01:16:23.560 --> 01:16:29.420
+And you mathematically, provably know that the token cannot be duplicated by a malicious script
+
+01:16:29.420 --> 01:16:35.520
+because the local laws of physics in that specific bracket forbid the W combinator from functioning.
+
+01:16:35.520 --> 01:16:42.000
+It's like building a Faraday cage or a secure concrete bunker right into the syntax of your programming language.
+
+01:16:42.420 --> 01:16:48.000
+If a malicious piece of code manages to sneak in and tries to execute a copy command inside that bracket,
+
+01:16:48.360 --> 01:16:50.200
+it doesn't just fail a security check.
+
+01:16:50.580 --> 01:16:54.040
+The math itself refuses to acknowledge the action as admissible.
+
+01:16:54.600 --> 01:17:00.580
+The malicious script freezes as an inert normal form, permanently trapped by the geometry of the code.
+
+01:17:00.940 --> 01:17:01.380
+Exactly.
+
+01:17:01.380 --> 01:17:04.760
+How might this shape the future of secure software development?
+
+01:17:05.780 --> 01:17:11.020
+When permissions are topological, when the rules depend entirely on where you stand in the code,
+
+01:17:11.480 --> 01:17:16.780
+we might be able to build operating systems and compilers that are mathematically provably secure
+
+01:17:16.780 --> 01:17:19.600
+simply by their geographic design.
+
+01:17:19.600 --> 01:17:23.740
+That is an incredible, profound thought to mull over.
+
+01:17:24.440 --> 01:17:26.840
+We started this deep dive talking about gravity,
+
+01:17:27.200 --> 01:17:31.680
+how we inherently expect the laws of physics and the laws of code to be universal,
+
+01:17:31.920 --> 01:17:33.700
+no matter what room you are standing in.
+
+01:17:34.340 --> 01:17:41.080
+But what Flyxion has shown us is that in the architecture of logic, perhaps universality is a flaw.
+
+01:17:41.080 --> 01:17:46.680
+Maybe the most powerful, secure thing you can do is learn how to manipulate the laws of physics
+
+01:17:46.680 --> 01:17:48.400
+on a room-by-room basis.
+
+01:17:49.020 --> 01:17:52.320
+Because as our systems get more complex and more vulnerable,
+
+01:17:52.900 --> 01:17:55.800
+sometimes the only way to keep the entire universe safe
+
+01:17:55.800 --> 01:18:01.540
+is to ensure that the rules absolutely do care exactly where you are standing.
+
+01:18:02.020 --> 01:18:05.260
+Thank you so much for joining us on this deep dive into the source material.
+
+01:18:05.560 --> 01:18:06.280
+We'll see you next time.
+
+01:18:06.280 --> 01:18:36.260
+Thank you.
+

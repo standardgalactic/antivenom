@@ -1,5 +1,7 @@
 # Antivenom — Projects
 
+[The Solvency of Appearances](https://standardgalactic.github.io/antivenom/projects/solvency_of_appearances.pdf)
+
 [Trajectory and Residue](https://standardgalactic.github.io/antivenom/projects/constraint_closure-5.pdf) — *On Bullshit Jobs*
 
 * [Audio Overview](https://standardgalactic.github.io/antivenom/projects/?track=proof)
