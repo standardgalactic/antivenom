@@ -1,0 +1,561 @@
+\documentclass[11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[margin=1.15in]{geometry}
+\usepackage{setspace}
+\usepackage[colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
+\onehalfspacing
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0.2em}
+
+\newtheorem{proposition}{Proposition}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}[section]
+
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\kk}{\mathbf{k}}
+\newcommand{\Phib}{{\Phi_{\mathrm{B}}}}
+\newcommand{\TT}{\mathcal{T}}
+\newcommand{\FF}{\mathcal{F}}
+\newcommand{\Sb}{\bar{S}}
+\newcommand{\avg}[1]{\left\langle #1 \right\rangle}
+\newcommand{\Pk}{\mathcal{P}}
+
+\title{Expyrotic Cosmology: Memory-Mediated Relaxation and Spectral Reintegration}
+\author{Flyxion\\ Independent Researcher}
+\date{November 10, 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+Expyrotic cosmology proposes that observable structure is maintained through the repeated reintegration of information recorded in the cosmic microwave background (CMB) into the scalar, vector, and entropy fields of the Relativistic Scalar Vector Plenum (RSVP) framework. The paper formulates a specified evolution system with prescribed external forcing, on a prescribed background. In its reciprocal reference dynamics the scalar field follows an $L^2$ gradient flow and an auxiliary nonnegative density follows a Wasserstein gradient flow of a single free energy, with the transport velocity given by the gradient of a nonlocal potential; the full system adds non-variational terms. For this system the paper proves positivity of the auxiliary density, derives the exact dissipation balance of the full system including its non-variational terms, and shows monotone decay of the free energy in the reciprocal source-free case. The linear response to a prescribed record is solved exactly, with a stability analysis that separates the finite-box, positive-wavenumber and infrared results. The response is a transfer function, so the spectrum of the record is inherited rather than generated, and the origin of near scale invariance is moved to a recursion in which each epoch's output seeds the next. The fixed point of that recursion requires the long-wavelength gain to approach unity with an exponent equal to the spatial dimension plus the departure of the tilt from unity. Kernels whose Fourier transforms are analytic near the origin cannot supply this exponent under the stated assumptions, and an explicit signed kernel with a nonanalytic long-wavelength term is constructed that does, for which the finite-cycle infrared suppression is exact. The paper states as open questions the embedding of the output into a gravitating, multi-species cosmology, the consequent adiabaticity, acoustic-peak, tensor and isocurvature properties, the horizon problem, the naturalness of the kernel, and the physical meaning of the auxiliary density. All numerical statements are reproduced by an accompanying script.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+
+The inflationary paradigm of Guth, Linde, Albrecht and Steinhardt, together with the earlier work of Starobinsky and the fluctuation calculations of Mukhanov and Chibisov, has organized early-universe cosmology for more than four decades \cite{guth1981,linde1982,albrecht1982,starobinsky1980,mukhanov1981}. A quasi-exponential expansion dilutes curvature and relics, brings widely separated regions into causal contact, and converts vacuum fluctuations into a nearly scale-invariant, nearly Gaussian, adiabatic spectrum. The measured scalar spectral index of about $0.965$ and amplitude of about $2.1\times10^{-9}$, together with the absence of detected primordial tensor modes, are consistent with this picture \cite{planck2018vi,planck2018x}. The paradigm nevertheless carries open conceptual costs: its generic realizations require a homogeneous patch as an initial condition, the measure problem of eternal inflation obstructs statements about typicality, and inflationary spacetimes cannot be extended to the infinite past without a singularity \cite{ijjas2013,borde2003,albrecht2004}. These costs do not refute inflation. They motivate the investigation of structurally different accounts.
+
+The ekpyrotic and cyclic proposals replace the accelerated phase by a slow contraction and a bounce \cite{khoury2001,steinhardt2002}, and conformal cyclic cosmology joins successive aeons by a conformal rescaling \cite{penrose2010}. Expyrotic cosmology uses neither a bounce nor a conformal junction. The name is chosen for the one feature it shares with the ekpyrotic proposals, the absence of an accelerated phase, and not for a contraction, a bounce or a brane collision, none of which appears in what follows. It treats the CMB as a coarse-grained record, and it describes structure at later times as the result of a relaxation process in which fields are driven toward consistency with that record. Recurrence is the historical motivation for giving the dynamics a memory: a bounded system with finite entropy returns to the neighborhood of earlier states, and the associated recurrence time bounds the window on which stored information could be recoverable \cite{poincare1890,kac1947}. As Section~\ref{sec:time} explains, recurrence plays no technical role in the equations that follow, and the title names the mechanism, memory-mediated relaxation.
+
+
+If a single result is to be singled out, it is the following limited one. On a prescribed background and with a prescribed record, memory-mediated relaxation transmits the record's correlations to later times through an explicit transfer function; the linear dynamics are stable under a closed criterion; the reference dynamics relax monotonically; and an iterated version of the map has a computable fixed point whose spectral shape is controlled by one exponent, for which an explicit kernel exists. No claim is made here that the observed primordial spectrum, spatial flatness, or the absence of a singularity follows from the model.
+
+\subsection{Two commitments, kept distinct}
+
+The proposal combines two commitments that are logically independent. The first is ontological: the hot dense state of the standard model need not be the beginning of existence, and observable structure may result from transformations within an enduring substrate, the plenum of the RSVP framework, in which earlier configurations constrain later ones. The second is physical: memory-mediated relaxation of coupled scalar, vector and auxiliary fields toward consistency with a stored record is proposed as the way in which such constraint operates. Rejecting an absolute beginning does not establish the mechanism, and the failure of the mechanism, for instance through the nonexistence of a natural kernel with the properties required in Section~\ref{sec:recursion}, would leave the ontological motivation intelligible and untouched. Everything proved or computed below concerns the second commitment. The first is a motivation that nothing in this paper tests.
+
+\subsection{What the model explains and what it does not}\label{sec:scope}
+
+The CMB supplies the primordial pattern, and recovering that pattern at later times does not explain its first appearance. Two readings are therefore available. In the conditional reading the model describes the transmission of correlations from a prescribed record, and it is a model of subsequent structure formation conditioned on an existing radiation and field history. In the recursive reading, developed in Section~\ref{sec:recursion}, the record is the output of an earlier application of the same map, and the question of origin moves to the fixed point of that recursion and to the fresh randomness injected at each step, whose source is unexplained. Neither reading derives the record from first principles, and the conditional reading is the firm one.
+
+The equations describe fields on a prescribed, spatially flat, expanding background, and no metric evolution equation is included. The model therefore does not explain spatial curvature, the expansion history, or the absence of a singularity, and no claim about these is made. Gravitational backreaction and a stress-energy description are deferred. The record $\Phib$ enters as an external forcing, so the system is open, and the dissipation results of Section~\ref{sec:equations} are statements about relaxation under prescribed forcing. The history of $\Phib$ before the initial time is part of the input: a zero-mean, time-independent field set at recombination in the stationary analysis, and a prescribed realization of a Gaussian field of given spectrum in numerical work.
+
+Recurrence is not applied to the field equations, which are dissipative and are not measure preserving on a finite-measure state space; a long memory integral does not establish recurrence. Recurrence enters only as an assumption about the underlying fine-grained system, one that guarantees that information deposited in the record is in principle recoverable. No derivation of the effective equations from such a system is provided. The operational mechanism is memory-mediated relaxation with the memory time $\tau_K$ of Section~\ref{sec:time}, and a reader who prefers to drop the recurrence language loses no result.
+
+The equations contain diffusion, which propagates influence instantaneously, and convolutions with instantaneous kernels. They are therefore effective, parabolic descriptions that are not relativistically causal, and restricting a kernel to a finite spatial radius does not alter that. A causal statement would require a separately defined finite-duration update map with compactly supported kernels, and the iterates of such a map would have to be analyzed on their own terms. This paper makes no causal claim and, in particular, no claim to resolve the horizon problem.
+
+\subsection{Definitions, units and admissible values}\label{sec:defs}
+
+The scalar field $\Phi$ is real and dimensionless, with $|\Phi|\ll1$ in the linear regime and no positivity requirement. It is to be identified, as an assumption to be tested, with the comoving curvature perturbation $\zeta$, or on large scales with the fractional temperature perturbation $\Delta T/T$ through the Sachs-Wolfe relation, which holds up to a sign convention with $\Delta T/T=\pm\zeta/5$. The field $S\ge0$ is an auxiliary information-related density, defined as a comoving density: a quantity per unit comoving volume that is not diluted by expansion. Its interpretation as a local conditional uncertainty of $\Phi$ given the record is a closure hypothesis, discussed in Section~\ref{sec:info}, and nothing proved below depends on it. The vector field $\vv$ is the transport velocity of $S$, and the associated flux is $\mathbf J_S=S\vv-D_S\nabla S$. The equations of this paper are written in dimensionless variables. Reference scales $L_0$, $t_0$ and $S_0$ for length, time and density are chosen, the coordinates are measured in units of $L_0$ and $t_0$, $S$ in units of $S_0$, and the kinetic mobilities are absorbed into these choices, so that $D$, $D_S$, $\gamma$, $\eta$, $\eta_\Phi$, $\rho$, $\sigma$ and $J$ are dimensionless numbers, and the logarithm in the free energy stands for $\ln(S/S_0)$. Conversion to physical units requires the scales and mobilities to be specified, and is deferred until the fields are embedded in a cosmology. The free energy \eqref{eq:F} is defined up to an overall positive constant. The nonlocal potential is $\Psi=g*\Phi$, where $g$ is an even kernel with $\hat g(0)=0$, that is, a kernel that annihilates constants, so that the coupling acts only on fluctuations. 
+
+\section{Observational Context}
+
+A theory of primordial structure is judged against a compact set of observations. Spatial curvature is consistent with zero at the level of a few parts in a thousand with baryon acoustic oscillation data. The temperature anisotropies are statistically homogeneous and isotropic to a high degree, with an amplitude near $10^{-5}$. The perturbations are adiabatic to within percent-level isocurvature bounds, nearly Gaussian with $f_{\rm NL}^{\rm local}=-0.9\pm5.1$, and described over roughly three decades in wavenumber by a power law
+\begin{equation}
+\Pk_\zeta(k)=A_s\left(\frac{k}{k_0}\right)^{n_s-1},\qquad A_s\simeq2.1\times10^{-9},\quad n_s=0.9649\pm0.0042,
+\end{equation}
+\cite{planck2018vi,planck2018ix}, with $r<0.036$ at 95\% confidence \cite{bicep2021}. The acoustic peaks require that the initial perturbation of each Fourier mode be phase coherent, in the sense that only the growing adiabatic mode of the coupled photon, baryon, dark matter and metric system is excited \cite{albrecht1996,hu2002}. In single-field inflation the tensor amplitude is tied to the energy scale by $\Pk_h=2H_{\rm inf}^2/(\pi^2M_{\rm Pl}^2)=rA_s$, and the squeezed bispectrum is fixed by the tilt, $f_{\rm NL}^{\rm sq}=\tfrac5{12}(1-n_s)\approx0.015$, by the consistency relation \cite{maldacena2003,creminelli2004}. Ekpyrotic models give a nearly scale-invariant scalar spectrum and negligible tensors at the price of a bounce \cite{khoury2001,steinhardt2002}. The model of this paper shares with them only the absence of an accelerated phase, and none of the requirements just listed is derived from it. Which of them can be recovered once the fields are embedded in a gravitating, multi-species cosmology is the open question of Section~\ref{sec:open}.
+
+\section{Conceptual Foundations}\label{sec:concept}
+
+\subsection{The RSVP triple}
+
+The Relativistic Scalar Vector Plenum (RSVP) framework uses a scalar field $\Phi(\xx,t)$, a nonnegative auxiliary density $S(\xx,t)$, and the transport velocity $\vv(\xx,t)$ of $S$, with the definitions of Section~\ref{sec:defs}. Within the framework they have also been called a semantic density, an interpretive entropy and an entropy flow. Every statement below uses only the mathematical definitions, and the reading of $S$ as a measure of uncertainty is a hypothesis, not a premise.
+
+\subsection{The CMB as a boundary record}
+
+In standard cosmology the CMB temperature field is a two-dimensional dataset, the restriction of the photon distribution to the intersection of the observer's past light cone with the last scattering surface, a sphere of comoving radius $\chi_*\approx14$ Gpc. Its multipole coefficients are related to the three-dimensional primordial field by the line-of-sight integral
+\begin{equation}
+a_{\ell m}=4\pi(-i)^\ell\int\frac{\dd^3k}{(2\pi)^3}\Delta_\ell(k)\Phi_{\mathbf k}Y^*_{\ell m}(\hat{\mathbf k}),\qquad C_\ell=4\pi\int\frac{\dd k}{k}\Pk(k)\Delta_\ell^2(k),
+\label{eq:proj}
+\end{equation}
+where $\Delta_\ell(k)$ is the radiative transfer function and $\Pk(k)=k^3P(k)/2\pi^2$ is the dimensionless spectrum \cite{hu2002}. The three-dimensional record $\Phib(\xx,t')$ in the reintegration term is not itself observable. What is observable is its ensemble spectrum, and \eqref{eq:proj} maps a proposed three-dimensional spectrum into measured multipoles. Formula \eqref{eq:proj} presupposes that $\Phi$ has been embedded as a primordial curvature perturbation with growing adiabatic initial conditions in a cosmology containing radiation, baryons, dark matter and gravity. That embedding is not constructed here, and the formula is quoted to indicate what would follow if it were.
+
+At photon decoupling the scattering rate falls below the expansion rate and the photons cease to be dynamically coupled to the baryon plasma. The fine-grained state continues to evolve unitarily, and what is lost is the ability of a coarse-grained observer to recover the plasma state from the photons alone, which is effective decoherence through entanglement with untracked degrees of freedom \cite{zurek2003}. The record $\Phib$ is the coarse-grained trace that remains.
+
+\subsection{Information-theoretic reading as a closure hypothesis}\label{sec:info}
+
+For a field $\Phi$ and a record $\Phib$ the mutual information is
+\begin{equation}
+I(\Phi;\Phib)=H(\Phi)-H(\Phi\,|\,\Phib),
+\end{equation}
+with $H$ the differential entropy of the relevant ensemble \cite{cover2006}. A decrease of the conditional entropy $H(\Phi|\Phib)$ raises $I$ only if $H(\Phi)$ does not fall by more, so the two statements are not equivalent in general, and the mutual information is the quantity used below as the measure of recovery of the record. The auxiliary density $S$ is a nonnegative transported density. A differential conditional entropy need not be nonnegative, and its decomposition into local contributions requires a specified probability model and coarse-graining that are not given. The identification of $\int S$ with $H(\Phi|\Phib)$ is therefore a closure hypothesis: it states how the auxiliary density would be read if such a probability model were supplied, and the results below hold for $S$ as a nonnegative auxiliary field regardless of whether the hypothesis is accepted. In particular the conservation of $M=\int S\,\dd^3x$ in the reference dynamics is the conservation of the mass of an auxiliary density, not of a physical entropy.
+
+\section{Recurrence and the Hierarchy of Timescales}\label{sec:time}
+
+Poincar\'e's theorem states that a measure-preserving flow on a space of finite measure returns arbitrarily close to almost every initial point infinitely often \cite{poincare1890}. The quantitative form is Kac's lemma: for an ergodic transformation with invariant probability measure $\mu$ and a set $A$ with $\mu(A)>0$, the mean return time to $A$ is $\tau/\mu(A)$ for time step $\tau$ \cite{kac1947}. If the accessible phase space of a bounded region has an entropy deficit $\Delta S$ relative to the neighborhood of the initial state, then $\mu(A)\sim e^{-\Delta S}$ and
+\begin{equation}
+T_P\sim\tau\,e^{\Delta S}.
+\end{equation}
+For a universe dominated by a cosmological constant $\Lambda=3H_\Lambda^2$ the relevant entropy is that of the de Sitter horizon,
+\begin{equation}
+S_{\rm dS}=\frac{\pi}{GH_\Lambda^2}=\frac{3\pi}{G\Lambda}\approx10^{122},
+\end{equation}
+by the horizon entropy of Gibbons and Hawking \cite{gibbons1977}, so recurrence times of the static patch are of order $e^{10^{122}}$ in Planck units, as discussed by Dyson, Kleban and Susskind \cite{dyson2002}.
+
+The memory window is formally of length $T_P$. This number cannot be an operational timescale, since the age of the universe is of order $10^{61}$ Planck times. In practice the kernels decay exponentially, and the upper limit is a formal supremum. For $K(\tau)=e^{-\alpha\tau}$ the integral over $[0,T_P]$ equals $(1-e^{-\alpha T_P})/\alpha$, which differs from $1/\alpha$ by a quantity of order $e^{-\alpha T_P}$, negligible unless $\alpha\lesssim1/T_P$. The effective memory time is
+\begin{equation}
+\tau_K=\frac1\alpha\ll T_P,
+\end{equation}
+and the role of $T_P$ is logical: it marks the window on which the recurrence guarantee, were it applicable to an underlying fine-grained system, would assure the recoverability of the record. The recurrence theorem is not invoked as a theorem about the dissipative field equations, and the total duration of $n$ reintegration steps, $n\tau_{\rm epoch}$, is to be compared with the age of the universe and not with $T_P$. The epoch duration $\tau_{\rm epoch}$ is not the memory time $\tau_K$: it is the time for the system to relax to its response to a frozen record, and it depends on the relaxation matrix $M(k)$ as well as on $\alpha$, as discussed in Section~\ref{sec:recursion}.
+
+\section{The Revised Field Equations}\label{sec:equations}
+
+\subsection{Variational structure}
+
+Let $\Omega$ be a periodic comoving box of volume $V$, and let $\Psi=g*\Phi$ with $g$ even and $\hat g(0)=0$. Define the free energy
+\begin{equation}
+\FF[\Phi,S]=\int_\Omega\left[\frac D2|\nabla\Phi|^2+\frac\gamma2S\Phi^2-\varepsilon R\,\Phi+\frac12S^2+D_S\,S\ln S-\eta\,S\,\Psi\right]\dd^3x,
+\label{eq:F}
+\end{equation}
+where the reintegration source is
+\begin{equation}
+R(\xx,t)=\int_{t-T_P}^{t}\dd t'\int\dd^3x'\,K(t-t',\xx-\xx')\,\Phib(\xx',t').
+\label{eq:R}
+\end{equation}
+The scalar field follows the $L^2$ gradient flow $\partial_t\Phi=-\delta\FF/\delta\Phi$ and the density follows the Wasserstein gradient flow $\partial_tS=\nabla\!\cdot\!(S\nabla\,\delta\FF/\delta S)$, the construction of Jordan, Kinderlehrer and Otto for the Fokker-Planck equation and of Otto for the porous medium equation \cite{jko1998,otto2001}. Write
+\begin{equation}
+A\equiv\frac{\delta\FF}{\delta\Phi}=-D\nabla^2\Phi+\gamma S\Phi-\varepsilon R-\eta\,g*S,\qquad B\equiv\frac{\delta\FF}{\delta S}=\mu_S+D_S(\ln S+1),
+\end{equation}
+with $\mu_S=S+\tfrac\gamma2\Phi^2-\eta\Psi$, where evenness of $g$ moves the convolution from $\Phi$ to $S$. The reference dynamics are then
+\begin{align}
+\partial_t\Phi&=D\nabla^2\Phi-\gamma S\Phi+\eta\,g*S+\varepsilon R,\label{eq:Phi}\\
+\partial_tS+\nabla\!\cdot\!(S\vv)&=D_S\nabla^2S,\qquad\vv=-\nabla\mu_S=-\nabla S+\eta\nabla\Psi-\gamma\Phi\nabla\Phi.\label{eq:S0}
+\end{align}
+
+\subsection{The complete system}
+
+The reference dynamics describe relaxation without sources. Entropy production from gradients of $\Phi$, a collapse term and a homogeneous source give the full system
+\begin{align}
+\partial_t\Phi&=D\nabla^2\Phi-\gamma S\Phi+\eta_\Phi\,g*S+\varepsilon R[\Phib],\label{eq:full1}\\
+\partial_tS+\nabla\!\cdot\!(S\vv)&=D_S\nabla^2S+\sigma|\nabla\Phi|^2-\rho S+J,\label{eq:full2}\\
+\vv&=-\nabla S+\eta\nabla(g*\Phi)-\gamma\Phi\nabla\Phi.\label{eq:full3}
+\end{align}
+The reciprocal case $\eta_\Phi=\eta$ is the one in which the source-free part is the gradient flow of $\FF$. The case $\eta_\Phi=0$ without the drift $-\gamma\Phi\nabla\Phi$ is the simplest member of the family. The velocity contains the gradient of the scalar potential $g*\Phi$, corresponding to the vector kernel $G_i=\partial_ig$, because a scalar convolution cannot be added to the vector $-\nabla S$. The conservative form makes the density's transport the Wasserstein gradient velocity, and the drift $-\gamma\Phi\nabla\Phi$ is required for the exact dissipation identity below, while playing no role in the linear and second-order results of later sections.
+
+Spatial homogeneity of the nonlocal coupling requires care. A homogeneous state $(\Phi,S)=(0,\Sb)$ with zero-mean forcing is a solution of the scalar equation only if the term $\eta_\Phi\,g*\Sb=\eta_\Phi\hat g(0)\Sb$ vanishes, which is the reason for the requirement $\hat g(0)=0$ and for taking $\Phib$ to have zero spatial mean. With these conditions the homogeneous scalar mode obeys $\partial_t\bar\Phi=-\gamma\avg{S\Phi}$ and the background $(0,\Sb)$, with $\partial_t\Sb=J-\rho\Sb$ and so $\Sb=J/\rho$ in the absence of production, is an exact solution of the unforced equations. The alternative of a nonzero homogeneous $\bar\Phi$ would change the linear coefficients, including that of $-\gamma\Phi\nabla\Phi$, and is not pursued.
+
+\subsection{Basic properties}
+
+\begin{proposition}[Positivity of the auxiliary density]\label{prop:pos}
+Let $(\Phi,S)$ be a smooth solution of \eqref{eq:full1}--\eqref{eq:full3} on $[0,T)$ with periodic boundary conditions and $S(\cdot,0)\ge0$, with $D_S>0$, $\sigma\ge0$ and $J\ge0$. Then $S\ge0$ on $[0,T)$.
+\end{proposition}
+
+\begin{proof}
+Expanding the divergence, \eqref{eq:full2} becomes
+\begin{equation}
+\partial_tS=(S+D_S)\nabla^2S+\mathbf b\cdot\nabla S-c\,S+\sigma|\nabla\Phi|^2+J,
+\end{equation}
+where $\mathbf b=\nabla S-\eta\nabla\Psi+\gamma\Phi\nabla\Phi$ and $c=\rho+\eta\nabla^2\Psi-\gamma\nabla\!\cdot\!(\Phi\nabla\Phi)$ collect the contributions of the divergence term, the drift being a first-order coefficient times $\nabla S$ plus a zeroth-order coefficient times $S$. Fix a smooth solution on $[0,T)$. Its coefficients $\mathbf b$, $c$ and $\Phi$ are bounded on $[0,T']$ for every $T'<T$ by smoothness on the closed box. The coefficient $\mathbf b$ contains $\nabla S$, so the equation is quasilinear, but the particular solution under consideration satisfies the linear parabolic equation obtained by freezing these functions at their values along it, and that linear equation has bounded coefficients and a source $\sigma|\nabla\Phi|^2+J\ge0$. On any interval on which $S+D_S>0$ the principal coefficient is bounded below by a positive constant and the weak maximum principle gives $S\ge0$ there \cite{protter1967}. A continuity argument in time extends this to all of $[0,T)$, since $S\ge0$ gives $S+D_S\ge D_S>0$. No sign of $\rho$ is needed because the zeroth-order coefficient is absorbed by the substitution $S=e^{\lambda t}\tilde S$ with $\lambda$ large.
+\end{proof}
+
+\begin{proposition}[Dissipation in the reference dynamics]\label{prop:lyap}
+Let $\sigma=\rho=J=0$, $\eta_\Phi=\eta$, and let $R$ be independent of time. Then along smooth solutions of \eqref{eq:Phi}--\eqref{eq:S0} with $S>0$,
+\begin{equation}
+\frac{\dd\FF}{\dd t}=-\int_\Omega A^2\,\dd^3x-\int_\Omega S|\nabla B|^2\,\dd^3x\le0,
+\end{equation}
+and $M=\int_\Omega S\,\dd^3x$ is conserved.
+\end{proposition}
+
+\begin{proof}
+Differentiating \eqref{eq:F} gives $\dd\FF/\dd t=\int A\,\partial_t\Phi+\int B\,\partial_tS$ when $R$ is independent of time. Evenness of $g$ implies that the variation of $-\eta\int S(g*\Phi)$ with respect to $\Phi$ is $-\eta\,g*S$, so that \eqref{eq:Phi} reads $\partial_t\Phi=-A$ and the first integral is $-\int A^2$. Equation \eqref{eq:S0} reads $\partial_tS=\nabla\!\cdot\!(S\nabla B)$, and integration by parts on the periodic box gives $-\int S|\nabla B|^2$. Conservation of $M$ follows from the divergence form.
+\end{proof}
+
+For the full system the balance must be computed with its non-variational terms. Define $Q=\sigma|\nabla\Phi|^2-\rho S+J$ and $d=(\eta_\Phi-\eta)\,g*S$. Then \eqref{eq:full1} reads $\partial_t\Phi=-A+d$ and \eqref{eq:full2} reads $\partial_tS=\nabla\!\cdot\!(S\nabla B)+Q$, and so
+\begin{equation}
+\frac{\dd\FF}{\dd t}=-\int_\Omega A^2-\int_\Omega S|\nabla B|^2+\int_\Omega A\,d+\int_\Omega B\,Q-\varepsilon\int_\Omega\Phi\,\partial_tR.
+\label{eq:balance}
+\end{equation}
+Beyond the two dissipative terms, the free energy can change through the nonreciprocal coupling when $\eta_\Phi\ne\eta$, through production, collapse and source terms weighted by $B$, and through the time dependence of the record. The sign of $B$ is not restricted, because $D_S\ln S$ is negative for small $S$, so the collapse term $-\rho\int BS$ and the source term $J\int B$ can each increase $\FF$ as well as decrease it. A monotonicity statement for the full system needs restrictions on the parameters that are not derived here. Boundedness of $\FF$ below on the set of fixed mass $M$ is also not established: the terms $\tfrac12\int S^2$ and $D_S\int S\ln S$ are bounded below and the gradient term controls the nonconstant part of $\Phi$, but control of the zero mode of $\Phi$ and of the terms linear in $\Phi$ requires hypotheses that have not been supplied.
+
+\subsection{Expansion convention and the mean-field closure}
+
+The auxiliary density is a comoving density, so that its integral over a comoving volume is not diluted by expansion, and no term $3H$ appears in its equation. The expansion enters through the coordinates: for physical wavenumber $k/a$ the diffusive and porous-medium terms carry factors $1/a^2$, and the coefficients of the equations become time dependent. In a quasi-static approximation, valid when the relaxation rates exceed the Hubble rate and the rate of change of the record, these factors are held fixed and the comoving form of the equations of Section~\ref{sec:defs} is used with constant coefficients. The spatial average of \eqref{eq:full2} gives the equation for the homogeneous density,
+\begin{equation}
+\frac{\dd\Sb}{\dd t}=J+\sigma\avg{|\nabla\Phi|^2}-\rho\Sb,\qquad\Sb=\avg S,
+\end{equation}
+since the divergence terms average to zero. Replacing the nonlinearity by its spatial average and treating $\Sb$ as the background about which $S$ fluctuates defines the mean-field closure of Section~\ref{sec:background}.
+
+\section{Linear Theory and the Spectral Transfer Function}\label{sec:linear}
+
+\subsection{Expansion about the homogeneous background}
+
+Let the record have typical amplitude $\delta_B\ll1$ and zero spatial mean, and expand about the homogeneous solution $(0,\Sb)$ of Section~\ref{sec:equations}, so that $\Phi=\varphi^{(1)}+\varphi^{(2)}+\cdots$ and $S=\Sb+s^{(1)}+s^{(2)}+\cdots$. At first order the quadratic terms $\sigma|\nabla\Phi|^2$, $|\nabla S|^2$ and $\gamma\nabla\!\cdot\!(S\Phi\nabla\Phi)$ drop out, the advective coupling reduces to $-\eta\Sb\nabla^2\Psi$, and the Fourier transforms of the nonzero modes obey
+\begin{equation}
+\frac{\dd}{\dd t}\begin{pmatrix}\varphi_{\mathbf k}\\s_{\mathbf k}\end{pmatrix}=\begin{pmatrix}-a(k)&\eta_\Phi\hat g(k)\\\eta\Sb k^2\hat g(k)&-b(k)\end{pmatrix}\begin{pmatrix}\varphi_{\mathbf k}\\s_{\mathbf k}\end{pmatrix}+\begin{pmatrix}\varepsilon R_{\mathbf k}(t)\\0\end{pmatrix},
+\label{eq:linear}
+\end{equation}
+with $a(k)=Dk^2+\gamma\Sb$ and $b(k)=(\Sb+D_S)k^2+\rho$. The matrix is denoted $M(k)$. For $\eta\eta_\Phi>0$ and $k>0$ the rescaling
+\begin{equation}
+s_{\mathbf k}=k\sqrt{\frac{\eta\Sb}{\eta_\Phi}}\;\tilde s_{\mathbf k}
+\end{equation}
+transforms $M$ into a real symmetric matrix with off-diagonal entry $\sqrt{\eta\eta_\Phi\Sb}\,k\hat g(k)$, so the eigenvalues are real,
+\begin{equation}
+\lambda_\pm(k)=-\frac{a+b}{2}\pm\sqrt{\left(\frac{a-b}{2}\right)^2+\eta\eta_\Phi\Sb k^2\hat g^2}.
+\end{equation}
+The rescaling gives a symmetric matrix for any same-sign couplings and not only when $\eta=\eta_\Phi$. When $\eta_\Phi=0$ the matrix is triangular and the first-order scalar equation decouples from the density and the velocity: at linear order $s^{(1)}$ and $\vv^{(1)}$ are slaved to $\varphi^{(1)}$.
+
+\subsection{Stability}
+
+The long-range kernel $\hat g(k)=g_0/k$ for $k\ne0$ is defined on the torus by its Fourier multiplier with $\hat g(0)=0$. Its infinite-space analogue is the Riesz kernel $g(r)=g_0/(2\pi^2r^2)$, which the periodic kernel does not literally equal after subtracting a mean. The multiplier is used as a worked example. It has no compact support, and the zero mode is excluded by construction. The wavenumbers are the nonzero vectors of the dual lattice of the box, $|\kk|\ge k_{\min}=2\pi/L$, for a cubic box of side $L$.
+
+\begin{proposition}[Stability]\label{prop:stab}
+Let $\eta\eta_\Phi>0$, $D,D_S,\gamma,\Sb,\rho>0$, and $\Delta(k)=a(k)b(k)-\eta\eta_\Phi\Sb k^2\hat g(k)^2$. A nonzero mode $k$ of the unforced system \eqref{eq:linear} is asymptotically stable if and only if $\Delta(k)>0$. For $\hat g=g_0/k$,
+\begin{equation}
+\Delta(k)=D(\Sb+D_S)k^4+Bk^2+\Sb\left(\gamma\rho-\eta\eta_\Phi g_0^2\right),\qquad B=D\rho+\gamma\Sb(\Sb+D_S),
+\end{equation}
+and the following three statements hold.
+
+\noindent(i) Finite box. If $\gamma\rho\ge\eta\eta_\Phi g_0^2$ every nonzero mode is asymptotically stable, with a spectral gap bounded below by a positive constant depending on $k_{\min}$. If $\gamma\rho<\eta\eta_\Phi g_0^2$ the modes with $k<k_+$ are unstable, where
+\begin{equation}
+k_+^2=\frac{-B+\sqrt{B^2+4D(\Sb+D_S)\Sb(\eta\eta_\Phi g_0^2-\gamma\rho)}}{2D(\Sb+D_S)},
+\end{equation}
+and these modes are present in the box only if $k_{\min}<k_+$.
+
+\noindent(ii) Positive-wavenumber limit. For $\gamma\rho>\eta\eta_\Phi g_0^2$ one has $\inf_{k>0}\Delta(k)>0$, so the gap is uniform in the infinite-domain limit. At equality $\Delta(k)=D(\Sb+D_S)k^4+Bk^2>0$ for every $k>0$, each positive mode is stable, but $\Delta\to0$ as $k\to0$ and there is no uniform spectral gap.
+
+\noindent(iii) Infrared limit. As $k\to0^+$ the individual off-diagonal entries have no common finite limit, since $M_{12}\propto\hat g(k)=g_0/k$ diverges and $M_{21}\propto k^2\hat g(k)\to0$, but their product $M_{12}(k)M_{21}(k)\to\eta\eta_\Phi\Sb g_0^2$ is finite, and the eigenvalues approach the roots of $\lambda^2+(\gamma\Sb+\rho)\lambda+\Sb(\gamma\rho-\eta\eta_\Phi g_0^2)=0$. This is a statement about the limit of the positive modes, not about an included zero mode, which is excluded by $\hat g(0)=0$ and obeys its own scalar equation.
+\end{proposition}
+
+\begin{proof}
+A real $2\times2$ matrix with negative diagonal and real eigenvalues has two negative eigenvalues if and only if its determinant is positive, and $\det M=\Delta$. Expanding $\Delta$ for $\hat g=g_0/k$ gives a quadratic in $k^2$ with positive leading and middle coefficients, positive for all $k>0$ if and only if the constant term is nonnegative. The roots when it is negative give $k_+$, and the characteristic polynomial at $k\to0^+$ gives (iii).
+\end{proof}
+
+The statement is one of modewise spectral stability. For the $1/k$ multiplier the similarity transformation to the symmetric form is singular as $k\to0$, so although the eigenvalues have a uniform negative gap in the stable regime, the original variables can show amplification proportional to $1/k$ from initial density perturbations, and a uniform evolution bound on the infinite domain would need a weighted norm or additional infrared control.
+
+When the criterion is violated the instability is a long-wavelength one, with the growth rate largest for the longest modes. The stable regime is the one relevant to structure slaved to a record, and the condition $\gamma\rho\ge\eta\eta_\Phi g_0^2$ states that the damping of the scalar field must dominate the nonlocal feedback.
+
+\subsection{The stationary response}
+
+If the record is time independent, or varies slowly enough on the relaxation timescale for a quasi-static approximation, the forced system has a stationary response. For a record that fluctuates in time the response depends on frequency, through $(i\omega I-M(k))^{-1}$ with $\partial_t\mapsto i\omega$, and that case is not developed here. Writing $R_{\mathbf k}=\hat K(k)\Phib_{\mathbf k}$ with
+\begin{equation}
+\hat K(k)=\int_0^{T_P}\dd\tau\int\dd^3r\,e^{-i\kk\cdot\mathbf r}K(\tau,\mathbf r),
+\end{equation}
+and inverting $M$,
+\begin{equation}
+\varphi_{\mathbf k}=\TT(k)\Phib_{\mathbf k},\qquad\TT(k)=\frac{\varepsilon\hat K(k)b(k)}{\Delta(k)},\qquad s_{\mathbf k}=\chi(k)\varphi_{\mathbf k},\quad\chi(k)=\frac{\eta\Sb k^2\hat g(k)}{b(k)}.
+\label{eq:transfer}
+\end{equation}
+For $\eta_\Phi=0$ this reduces to $\TT(k)=\varepsilon\hat K(k)/(Dk^2+\gamma\Sb)$, a Lorentzian filter of width $\xi^{-1}=\sqrt{\gamma\Sb/D}$ multiplied by the kernel's transform. For the exponential memory $K(\tau,\mathbf r)=e^{-\alpha\tau}h(\mathbf r)$ with $\int h=1$ one has $\hat K(k)=(1-e^{-\alpha T_P})\hat h(k)/\alpha$, which is $\hat h(k)/\alpha$ in the infinite-memory limit $\alpha T_P\to\infty$, and the unit-gain condition at $k\to0^+$ for $\eta_\Phi=0$ is $\varepsilon=\alpha\gamma\Sb/(1-e^{-\alpha T_P})$, equal to $\alpha\gamma\Sb$ in that limit. For the long-range kernel the nonlocal coupling renormalizes the damping, since $\Delta(0^+)=\Sb\rho\,\gamma_{\rm eff}$ with $\gamma_{\rm eff}=\gamma-\eta\eta_\Phi g_0^2/\rho$, and the unit-gain condition becomes $\varepsilon\hat K(0)=\gamma_{\rm eff}\Sb$. Unit gain is a statement about the limit of positive modes.
+
+The response \eqref{eq:transfer} is time independent and a real function of $k$ multiplying the record, so it preserves the spatial phases of the input where $\TT>0$, while a negative value would introduce a phase shift of $\pi$. That is a statement about spatial phases. It is distinct from the selection of the temporal growing adiabatic mode of a coupled cosmological system, which is discussed in Section~\ref{sec:notdetermined}.
+
+\subsection{Spectrum, tilt and the angular spectrum}
+
+For a statistically homogeneous Gaussian record,
+\begin{equation}
+P(k)=|\TT(k)|^2P_{\rm B}(k),\qquad\Pk(k)=|\TT(k)|^2\Pk_{\rm B}(k),\qquad n_s-1=(n_{\rm B}-1)+2\,\frac{\dd\ln|\TT|}{\dd\ln k},
+\label{eq:tilt}
+\end{equation}
+where $n_{\rm B}-1=\dd\ln\Pk_{\rm B}/\dd\ln k$. If the output can be consistently embedded as a primordial curvature perturbation with growing adiabatic initial conditions, standard radiation transfer applies and the multipoles are given by $C_\ell=4\pi\int(\dd k/k)|\TT|^2\Pk_{\rm B}\Delta_\ell^2$, as in \eqref{eq:proj}. That embedding remains to be demonstrated. Conditional on it, the model would differ from the standard one only through the function $\Pk(k)$ at the input of the transfer calculation, so the entire acoustic phenomenology, including Silk damping \cite{silk1968}, would be inherited. The linear theory contains no mechanism that generates scale invariance: if the record is scale invariant and $|\TT|$ is flat the output is, and otherwise $\TT$ must compensate through \eqref{eq:tilt}. The origin of near scale invariance must therefore be sought in the boundary data or in the recursion of Section~\ref{sec:recursion}.
+
+\subsection{What the linear theory does not determine}\label{sec:notdetermined}
+
+A time-independent solution of the effective scalar equation does not determine the photon density, baryon density, dark matter density, velocities, metric constraints, or their relative perturbations. Whether the output yields adiabatic perturbations with only the growing mode, and therefore the phase coherence of the acoustic peaks, is conditional on the embedding just mentioned, and the model does not pass the coherence test automatically. The same applies to the tensor and isocurvature sectors. The three RSVP fields contain no tensor degree of freedom, but omitting gravitational degrees of freedom does not constitute a prediction of a tensor null: a coupling to gravity must be specified before a statement about primordial gravitational waves can be made. Once the scalar perturbation is embedded in general relativity, second-order scalar-induced tensor modes of order $\Pk_\zeta^2\sim10^{-17}$ to $10^{-18}$ are generic, but that estimate presupposes the embedding. Likewise the auxiliary density, perfectly correlated with the scalar field by \eqref{eq:transfer}, becomes an isocurvature perturbation only if it is coupled to a specified matter species, and no such coupling is given. These are open questions.
+
+\subsection{The coherence metric and its meaning}
+
+For the stationary response the normalized overlap of the field with the record is
+\begin{equation}
+C=\frac{\int\dd^3k\,\mathrm{Re}\,\TT(k)P_{\rm B}(k)}{\left(\int\dd^3k\,|\TT(k)|^2P_{\rm B}(k)\right)^{1/2}\left(\int\dd^3k\,P_{\rm B}(k)\right)^{1/2}}.
+\end{equation}
+
+\begin{proposition}\label{prop:coh}
+In the stationary linear regime $|C|\le1$. Equality $|C|=1$ holds if and only if $\TT$ is a nonzero real constant almost everywhere on the support of $P_{\rm B}$, and $C=+1$ if and only if that constant is positive.
+\end{proposition}
+
+\begin{proof}
+Regard $\mathrm{Re}\,\TT$ and the constant $1$ as elements of $L^2(P_{\rm B}\dd^3k)$. Cauchy-Schwarz gives $(\int\mathrm{Re}\,\TT\,P_{\rm B})^2\le\int(\mathrm{Re}\,\TT)^2P_{\rm B}\int P_{\rm B}\le\int|\TT|^2P_{\rm B}\int P_{\rm B}$. Equality in the first step requires $\mathrm{Re}\,\TT$ to be constant almost everywhere with respect to $P_{\rm B}$, and in the second step requires $\mathrm{Im}\,\TT=0$. A negative real constant gives $C=-1$.
+\end{proof}
+
+The proposition changes the interpretation of the metric. A high $C$ does not mean that the dynamics have recovered the record in an informationally rich sense; it means that the transfer function is nearly constant over the band carrying most of the power. Because the forcing contains the template, alignment with the template is built into the dynamics, and a high value does not validate the cosmology. Three controls are needed: unforced evolution, in which the field relaxes from a state correlated with the template; ordinary diffusion, in which the damping is removed; and randomized templates, in which the forcing is replaced by an independent realization of the same spectrum or by a phase-scrambled copy. Section~\ref{sec:computations} reports them. For a single realization the direct coherence and the overlap computed from that realization's own spectrum agree to numerical precision, whereas an ensemble spectrum predicts only the expectation.
+
+\section{Cyclic Reintegration and the Selection of the Spectrum}\label{sec:recursion}
+
+\subsection{The recursion and its fixed point}
+
+In a cyclic reading an epoch is one application of the stationary map, which represents completed relaxation of the system to the response to a frozen record. Its duration $\tau_{\rm epoch}$ depends on the relaxation matrix $M(k)$ as well as on the memory rate $\alpha$, and is not simply $\tau_K$; it would have to be derived from a finite-duration implementation and a convergence tolerance. The field produced in epoch $n$, together with fresh randomness, becomes the record of epoch $n+1$. Writing the Fourier amplitudes as $\Phi^{(n)}_{\mathbf k}$ and the fresh contribution as a zero-mean Gaussian field of spectrum $N(k)$, independent between epochs and independent of the initial field, so that no cross terms arise,
+\begin{equation}
+\Phi^{(n+1)}_{\mathbf k}=\TT(k)\Phi^{(n)}_{\mathbf k}+\xi^{(n)}_{\mathbf k},\qquad P_{n+1}(k)=|\TT(k)|^2P_n(k)+N(k).
+\end{equation}
+This is a first-order autoregressive process in the epoch index, mode by mode, for the nonzero modes. The constructed gain equals one at $k=0$, so a noisy zero mode would perform a random walk with no stationary variance, and the noise is taken to vanish there. When $|\TT|<1$ it converges to
+\begin{equation}
+P_*(k)=\frac{N(k)}{1-|\TT(k)|^2},\qquad P_n(k)=P_*(k)\left[1-|\TT(k)|^{2n}\right]+|\TT(k)|^{2n}P_0(k).
+\label{eq:fixed}
+\end{equation}
+The origin of the fresh randomness is not specified. Its wavenumber dependence is taken to be a power law $N(k)\propto k^q$, with $q=0$ for white noise.
+
+\subsection{The marginality condition}
+
+The shape of the fixed point is controlled by how close $|\TT|$ comes to unity at long wavelengths. Suppose
+\begin{equation}
+1-|\TT(k)|^2\simeq\left(\frac k{k_*}\right)^p,\qquad k\ll k_*.
+\label{eq:marginal}
+\end{equation}
+Then
+\begin{equation}
+\Pk_*(k)=\frac{k^3P_*}{2\pi^2}\propto\left(\frac k{k_*}\right)^{3+q-p},\qquad n_s-1=3+q-p.
+\label{eq:nsp}
+\end{equation}
+Scale invariance requires $p=3+q$, which is $p=3$ for white noise, equal to the number of spatial dimensions. The measured tilt $n_s-1=-0.035\pm0.004$ requires
+\begin{equation}
+p-q=3+(1-n_s)\simeq3.035,
+\end{equation}
+so that the departure from scale invariance is the departure of the exponent from the dimension. In words, near scale invariance of the fixed point is equivalent to marginality of the map at long wavelengths with a specific exponent.
+
+\subsection{What analytic kernels give}
+
+For a smooth, positive kernel in the case $\eta_\Phi=0$ with unit gain at $k\to0^+$, a short expansion gives
+\begin{equation}
+\TT(k)=1-\left(\frac D{\gamma\Sb}+\frac{\langle r^2\rangle_K}{6}\right)k^2+\mathcal O(k^4),\qquad\langle r^2\rangle_K=\frac{\int r^2K\,\dd^3r}{\int K\,\dd^3r},
+\end{equation}
+both terms in the parentheses being positive, so $1-|\TT|^2\propto k^2$, the case $p=2$, and $n_s-1=1+q$, a spectrum that is blue for white noise. Power-law tails $h(r)\propto r^{-(3+s)}$ with $0<s<2$ give $p=s<2$. A signed kernel permits cancellation of the $k^2$ coefficient, but cancellation alone does not produce $p\simeq3.035$. For an isotropic kernel whose Fourier transform is analytic near $k=0$ the expansion of $\TT$ contains only even powers, $\TT=1+c_2k^2+c_4k^4+\cdots$, and after $c_2$ is cancelled the generic next exponent is $p=4$, not $3.035$. With $p=4$ the tilt is $n_s-1=q-1$, so matching the data would require a noise spectrum with $q\simeq0.965$. The required exponent therefore needs either nonanalytic behavior of $\TT$ at $k=0$, or a noise spectrum tilted to compensate, or an approximation confined to a finite observational band. This is an existence problem, and the next subsection solves it in the first of these ways.
+
+\subsection{An explicit admissible kernel}
+
+\begin{proposition}[Existence of a kernel with the required gain]\label{prop:kernel}
+Let $D,\gamma,\Sb>0$, $p>2$ and $k_*>0$, set $\xi^2=D/(\gamma\Sb)$ and $\eta_\Phi=0$, $\varepsilon=\alpha\gamma\Sb/(1-e^{-\alpha T_P})$ (which is $\alpha\gamma\Sb$ for infinite memory), and take $K(\tau,\mathbf r)=e^{-\alpha\tau}h(\mathbf r)$ with
+\begin{equation}
+\hat h(k)=\left(1+\xi^2k^2\right)\exp\!\left[-\tfrac12\left(\frac k{k_*}\right)^p\right],\qquad h=(1-\xi^2\nabla^2)\kappa,\quad\hat\kappa(k)=e^{-\frac12(k/k_*)^p}.
+\end{equation}
+Then $h$ is real, radially symmetric and smooth, with $\int h=1$. If $p$ is a positive even integer, $\hat h$ is a Schwartz function, so $h$ is a Schwartz function and all its absolute moments are finite. If $p$ is not an even integer, $h(r)=\mathcal O(r^{-(3+p)})$ as $r\to\infty$, so $h\in L^1$, and since $p>2$ the second absolute moment $\int r^2|h|\,\dd^3r$ is finite. These tail statements and the moment identity below are results for infinite space. One has $\hat h(k)=1+\xi^2k^2+o(k^2)$, hence
+\begin{equation}
+\int r^2h\,\dd^3r=-\nabla_{\mathbf k}^2\hat h(0)=-6\xi^2<0,
+\end{equation}
+so that $h$ necessarily changes sign. On a periodic grid the kernel is a discretized realization, and its negative minimum is consistent with this sign change without independently testing the identity. The stationary gain is
+\begin{equation}
+\TT(k)=\exp\!\left[-\tfrac12\left(\frac k{k_*}\right)^p\right],\qquad1-|\TT(k)|^2=\left(\frac k{k_*}\right)^p+\mathcal O\!\left(k^{2p}\right),
+\end{equation}
+with $0<\TT\le1$ and no $k^2$ term. The fixed point of the recursion and its finite-cycle form are, in closed form,
+\begin{equation}
+P_*(k)=\frac{N(k)}{1-e^{-(k/k_*)^p}},\qquad P_n(k)=P_*(k)\left[1-e^{-n(k/k_*)^p}\right]\quad(P_0=0),
+\label{eq:exactPn}
+\end{equation}
+so that $k_c=k_*n^{-1/p}$ is exact.
+\end{proposition}
+
+\begin{proof}
+By the formulas of Section~\ref{sec:linear} with $\eta_\Phi=0$ and $\hat K=(1-e^{-\alpha T_P})\hat h/\alpha$, $\TT=\varepsilon\hat K/a=\gamma\Sb\,\hat h(k)/(Dk^2+\gamma\Sb)=\hat h(k)/(1+\xi^2k^2)$, which equals $\exp[-\frac12(k/k_*)^p]$ by the definition of $\hat h$. The function $\hat h$ is real, even and decays faster than any polynomial, so $h$ is smooth, and $\hat h(0)=1$ gives $\int h=1$. The singular part of $\hat\kappa$ at $k=0$ is $-\tfrac12(k/k_*)^p$, which is nonanalytic when $p$ is not an even integer, and the Fourier transform of $|k|^p$ in three dimensions decays as $r^{-(3+p)}$, which gives the stated tail; the operator $1-\xi^2\nabla^2$ preserves the leading tail up to a factor. The remaining statements follow from $|\TT|^{2n}=e^{-n(k/k_*)^p}$.
+\end{proof}
+
+The kernel is a deconvolution: $h=(1-\xi^2\nabla^2)\kappa$ is a smoothing profile $\kappa$ passed through the inverse of the diffusive loss, which is the sense in which reintegration inverts relaxation, here to all orders in $k^2$ with the residual $(k/k_*)^p$. With $p=3.035$ it supplies the required exponent for white fresh noise. The proposition is an existence result and not an explanation. The kernel is constructed by prescribing the gain and solving for $\hat h$; it changes sign, as the identity $\int r^2h\,\dd^3r=-6\xi^2<0$ requires for $p>2$; it is nonlocal with an algebraic tail; and it is not causal. Whether such a kernel arises from a more fundamental dynamics, and whether its exponent can be protected by a symmetry in the way the flatness of an inflaton potential is protected by approximate shift symmetry, is not shown. A heuristic motivation for a residual that scales as the volume in wavenumber space, $k^d$ with $d=3$, is that the information in a mode that cannot be recovered scales with the number of independent cells within a wavelength, but this is not a derivation.
+
+\subsection{Infrared behavior and the order of limits}
+
+For $q=0$ and $p\simeq3.035$ the fixed-point variance
+\begin{equation}
+\avg{\Phi^2}=\int\frac{\dd^3k}{(2\pi)^3}P_*(k)\propto\int_0k^{2+q-p}\,\dd k
+\end{equation}
+diverges at small $k$ whenever $2+q-p\le-1$, equivalently $n_s-1=3+q-p\le0$, logarithmically at equality, so the infinite-volume stationary field has no finite pointwise variance. This discussion holds a fixed ultraviolet cutoff, since for white injected noise $P_n(k)\to N_0$ at large $k$ and the continuum variance also diverges in the ultraviolet, even at finite $n$. The infrared analysis below studies only the infrared regulator at that fixed cutoff. The divergence depends on the regulator and the convergence is not uniform. In a finite box the stationary variance is cut off at $k_{\min}=2\pi/L$ and grows as $L^{p-q-3}$ for $p-q>3$, which is $L^{0.035}$ for the observed tilt. At finite cycle number in infinite volume the dimensional spectrum behaves as $P_n\sim nN\propto n\,k^q$ for $k\ll k_c$, and the dimensionless spectrum as $\Pk_n\propto n\,k^{3+q}$, so the infrared integral converges provided $q>-3$, which holds for white noise. The variance is then dominated by $k\sim k_c$ and grows as $n^{(p-q-3)/p}$ for $p-q>3$, here $n^{0.035/3.035}$. Both limits therefore grow without bound as slow powers, the two regulators give different growth laws, and no finite limiting variance exists for this spectrum, so a statement about the variance must name its regulator. This is the same kind of infrared regularization that scale-invariant spectra require in any cosmology.
+
+\subsection{Finite cycle number and infrared suppression}
+
+For the kernel of Proposition~\ref{prop:kernel} the finite-cycle spectrum is exactly
+\begin{equation}
+\Pk_n(k)=\Pk_*(k)\left[1-\exp\left(-\left(\frac k{k_c}\right)^p\right)\right],\qquad k_c=k_*n^{-1/p},
+\label{eq:suppress}
+\end{equation}
+and the same form holds approximately for any gain obeying \eqref{eq:marginal}. With $x=(k/k_*)^p$ the exact fixed-point spectrum contains the factor $1/(1-e^{-x})$ and is a power law only for $x\ll1$, so a low-multipole fit based on \eqref{eq:nsp} assumes that the observational band lies well below $k_*$, and otherwise the exact spectrum should be used in the likelihood. Modes with $k\ll k_c$ have not reached the fixed point and have power that grows only linearly with $n$. A cutoff of this functional form has been used phenomenologically in searches for large-scale power suppression \cite{contaldi2003}, so the model supplies a candidate origin for a parametrization already in use, with the exponent fixed by the marginality exponent and the cutoff fixed by the cycle count through $n=(k_*/k_c)^p$. A cutoff at $\ell\lesssim30$, that is $k_c\sim2\times10^{-3}\,\mathrm{Mpc}^{-1}$, with $k_*\sim1\,\mathrm{Mpc}^{-1}$, requires $n\sim10^8$ to $10^9$ cycles. This is a scaling statement, not a fit. It is a statement about the shape of the spectrum, and no inference about causal propagation or correlation length in physical space is drawn from it.
+
+\subsection{Ultraviolet behavior}
+
+At $k\gtrsim k_*$ the gain falls below unity and $P_*\to N(k)$, so the dimensionless spectrum grows like $k^{3+q}$. The scale $k_*$ must therefore lie above the largest wavenumber at which the spectrum is measured to be nearly scale invariant. The Planck spectra reach $0.2\,\mathrm{Mpc}^{-1}$, the Lyman-$\alpha$ forest a few inverse megaparsecs, and the COBE FIRAS limits on spectral distortions constrain the spectrum up to wavenumbers of order $10^4\,\mathrm{Mpc}^{-1}$ through dissipation of acoustic modes \cite{fixsen1996}. A turnover below a few inverse megaparsecs is excluded, and one below $10^4\,\mathrm{Mpc}^{-1}$ would plausibly produce spectral distortions in excess of the limits unless another mechanism cuts off the blue growth, subject to a dissipation calculation of the distortion amplitude that is not performed here.
+
+\section{The Homogeneous Entropy Background}\label{sec:background}
+
+The product $\gamma\Sb$ sets the damping of the scalar field and the coherence length of the response, and $\Sb$ is determined by the production and loss terms. Averaging the density equation in the stationary state gives $\rho\Sb=J+\sigma\avg{|\nabla\Phi|^2}$. In the mean-field closure with $\eta_\Phi=0$ the gradient energy of the response is
+\begin{equation}
+\avg{|\nabla\Phi|^2}=\int\dd\ln k\;k^2|\TT|^2\Pk_{\rm B}=\int\dd\ln k\;\frac{\varepsilon^2k^2|\hat K(k)|^2\Pk_{\rm B}(k)}{(Dk^2+\gamma\Sb)^2},
+\end{equation}
+so that $\Sb$ satisfies the gap equation
+\begin{equation}
+\rho\,\Sb=J+\sigma\varepsilon^2\,W(\Sb),\qquad W(\Sb)=\int\dd\ln k\;\frac{k^2|\hat K(k)|^2\Pk_{\rm B}(k)}{(Dk^2+\gamma\Sb)^2}.
+\label{eq:gap}
+\end{equation}
+
+\begin{proposition}[Uniqueness of the background]\label{prop:gap}
+Let $\gamma>0$, $D>0$, $\rho>0$, $\sigma\ge0$, $J\ge0$, $\varepsilon\ne0$, suppose $W(\Sb)<\infty$ for every $\Sb>0$, and suppose $J+\sigma\varepsilon^2W(0^+)>0$. Then \eqref{eq:gap} has exactly one positive solution.
+\end{proposition}
+
+\begin{proof}
+Let $F(\Sb)=\rho\Sb-J-\sigma\varepsilon^2W(\Sb)$. For each $k$ the integrand of $W$ is strictly decreasing in $\Sb$ when $\gamma>0$, so $W$ is strictly decreasing and continuous on $(0,\infty)$ and tends to zero as $\Sb\to\infty$ by dominated convergence. Hence $F$ is continuous and strictly increasing, $F(\Sb)\to+\infty$ as $\Sb\to\infty$, and $F(0^+)=-J-\sigma\varepsilon^2W(0^+)<0$ by hypothesis, where $W(0^+)$ may be infinite. The intermediate value theorem and strict monotonicity give a unique root.
+\end{proof}
+
+If $J=0$, $\sigma>0$ and $W(0^+)>0$ the positive root still exists, because $\Sb=0$ does not solve \eqref{eq:gap} in that case; for $\sigma=0$ the equation reduces to $\rho\Sb=J$ whatever the value of $W$; the homogeneous source is not needed for existence. It matters only in the absence of forcing, where $\Sb=J/\rho$ and $J=0$ gives $\Sb=0$. The corresponding coherence length is $\xi=\sqrt{D/\gamma\Sb_*}$, beyond which the transfer function is approximately $\varepsilon\hat K(k)/\gamma\Sb_*$, flat if $\hat K$ is nearly constant. The framework makes no statement about cosmic acceleration.
+
+The gap equation and the kernel of Proposition~\ref{prop:kernel} concern different parameter prescriptions. The kernel depends on the background through $\xi^2=D/(\gamma\Sb)$ and $\varepsilon\propto\gamma\Sb$, whereas Proposition~\ref{prop:gap} varies $\Sb$ at a fixed kernel and fixed $\varepsilon$. They are made compatible by choosing a target background $\Sb_t$, constructing the kernel and the forcing strength $\varepsilon_t$ at that value, and freezing them. Let $W_t(\Sb)$ denote $W$ computed with the frozen kernel.
+
+\begin{proposition}[Compatibility of the kernel and the gap equation]\label{prop:compat}
+Let $\Sb_t>0$, with $K$ and $\varepsilon_t$ frozen as above and the hypotheses of Proposition~\ref{prop:gap} satisfied. The frozen system has background $\Sb_t$ if and only if $J=\rho\Sb_t-\sigma\varepsilon_t^2W_t(\Sb_t)$. This value is admissible, $J\ge0$, if and only if $\sigma\varepsilon_t^2W_t(\Sb_t)\le\rho\Sb_t$, and in that case $\Sb_t$ is the unique positive solution of the gap equation.
+\end{proposition}
+
+\begin{proof}
+The statement $F(\Sb_t)=0$ for the function $F$ of Proposition~\ref{prop:gap} is exactly the displayed relation for $J$. If $\sigma=0$ then $J=\rho\Sb_t>0$, and otherwise $W_t(0^+)\ge W_t(\Sb_t)>0$, so $J+\sigma\varepsilon_t^2W_t(0^+)>0$ in either case and Proposition~\ref{prop:gap} gives uniqueness.
+\end{proof}
+
+At any other background the frozen kernel no longer compensates the diffusive attenuation exactly, so the exact marginal gain of Proposition~\ref{prop:kernel} holds at the target background only.
+
+\section{Nonlinear Corrections and Non-Gaussianity}
+
+The first-order theory is Gaussian if the record is. Departures arise at second order through the coupling $-\gamma S\Phi$. Take $\eta_\Phi=0$, so that the second-order scalar equation is closed, with $\hat g(0)=0$ and a zero-mean record. Using $s_{\mathbf k}=\chi(k)\varphi_{\mathbf k}$ from \eqref{eq:transfer}, the stationary second-order amplitude is
+\begin{equation}
+\varphi^{(2)}_{\mathbf k}=-\frac\gamma{a(k)}\int\frac{\dd^3q}{(2\pi)^3}\chi(q)\varphi^{(1)}_{\mathbf q}\varphi^{(1)}_{\mathbf k-\mathbf q}.
+\end{equation}
+The second-order field also has a nonzero homogeneous mean, $\langle\varphi^{(2)}\rangle=-\frac{\gamma}{a(0)}\int\frac{\dd^3q}{(2\pi)^3}\chi(q)P(q)$ with $a(0)=\gamma\Sb$, and the bispectrum below concerns the centered field and nonzero external modes.\footnote{For the long-range kernel $\hat g=g_0/k$ and $\rho>0$ one has $\chi(q)\simeq\eta\Sb g_0q/\rho$ at small $q$, so for a record with $P\propto q^{-3}$ or $q^{-3.035}$ the integral defining the mean is infrared convergent. It is controlled in the ultraviolet by the cutoff of the record. The centered field is used because the mean is a separate homogeneous shift, and no statement below depends on its value.} Contracting by Wick's theorem with $\langle\varphi_{\mathbf k_1}\varphi_{\mathbf k_2}\varphi_{\mathbf k_3}\rangle=(2\pi)^3\delta(\mathbf k_1+\mathbf k_2+\mathbf k_3)B$ gives
+\begin{equation}
+B(k_1,k_2,k_3)=-\gamma\sum_{(i,j,l)}\frac{\chi(k_i)+\chi(k_j)}{a(k_l)}P(k_i)P(k_j),
+\label{eq:bispec}
+\end{equation}
+where the sum is over the three choices of the index $l$ labeling the second-order mode. In the squeezed limit $k_3\to0$ with $k_1\simeq k_2\equiv k$ and $\chi(k_3)\to0$, which holds when $\hat g$ does not grow faster than $1/k$, the terms proportional to $P(k_3)$ dominate for the red, nearly scale-invariant spectra under discussion, for which $P(k_3)\gg P(k)$ as $k_3\to0$, though not for arbitrary record spectra, and $B\to-2\gamma\chi(k)P(k)P(k_3)/a(k)$. Comparison with the local form $B\to\frac{12}5f_{\rm NL}P(k)P(k_3)$ gives
+\begin{equation}
+f_{\rm NL}^{\rm eff}=-\frac56\,\frac{\gamma\chi(k)}{a(k)},
+\end{equation}
+which is dimensionless because $\Phi$ is, under the assumption that $\Phi$ is identified with the curvature perturbation. The squeezed coefficient is a property of the effective field and is not constrained to equal the single-clock value $\frac5{12}(1-n_s)$, because the auxiliary field is an independent degree of freedom; before a gravitational embedding it is not a demonstrated violation of any cosmological consistency relation. The bound $f_{\rm NL}^{\rm local}=-0.9\pm5.1$ \cite{planck2018ix} constrains $\gamma\chi/a$ to be of order unity or smaller. A measured $f_{\rm NL}^{\rm local}$ well above the single-clock value would indicate a multi-field or non-inflationary origin, not specifically this model.
+
+\section{Observational Program}
+
+The program is stated conditionally on the embedding of Section~\ref{sec:notdetermined}. The first and cleanest consequence concerns the infrared end of the primordial spectrum. The prediction \eqref{eq:suppress} has two parameters, $k_c$ and $p\simeq3$, in addition to tilt and amplitude, and for a Gaussian full-sky likelihood the Fisher information for the parameters $\theta_i$ is
+\begin{equation}
+F_{ij}=\sum_\ell\frac{2\ell+1}2f_{\rm sky}\frac{\partial_iC_\ell\,\partial_jC_\ell}{(C_\ell+N_\ell)^2},\qquad\partial_i\equiv\frac\partial{\partial\theta_i},
+\end{equation}
+with $N_\ell$ the noise spectrum and, for the spectrum \eqref{eq:nsp} with the suppression \eqref{eq:suppress}, $\theta=(p,k_c)$ at fixed amplitude for white injected noise, for which $n_s=4-p$ and the tilt is not an independent parameter. With an independent noise tilt $q$ the parameters are $(p,q,k_c)$ with $n_s=4+q-p$, and a fit with $n_s$, $k_c$ and $p$ all free is a phenomenological extension of the model. The suppression affects only the lowest multipoles, which are cosmic-variance limited, so $k_c$ cannot be determined better than that bound allows, and a result that rests on a handful of multipoles cannot support a strong conclusion. The second is the bispectrum \eqref{eq:bispec} and its effective $f_{\rm NL}$. The third is the small-scale turnover $k_*$, constrained by Lyman-$\alpha$ data and spectral distortions. The fourth is a negative statement: the cross-correlation of the CMB with the galaxy distribution is $C_\ell^{Tg}=4\pi\int(\dd k/k)\Pk(k)\Delta_\ell^T\Delta_\ell^g$ for any model in which both observables project the same primordial perturbation, so the correlation alone is not a signature, and a distinctive prediction would be a scale-dependent decorrelation of the amplitudes seen in the two tracers, which the linear model does not give. Anomalies of the lowest multipoles, the quadrupole-octopole alignment and the preferred axis \cite{deoliveira2004,land2005} and the parity asymmetry \cite{kim2010}, reviewed in \cite{schwarz2016}, can be quantified by the normalized angular momentum dispersion $A_\ell(\hat n)=\sum_mm^2|a_{\ell m}(\hat n)|^2/(\ell^2\sum_m|a_{\ell m}|^2)$ evaluated in a frame with polar axis $\hat n$ and by the ratio of mean power in even and odd multipoles. The model can accommodate such features through a kernel not invariant under inversion or a record with a preferred direction, but neither is a prediction. Tensor and isocurvature signals are not predictions of the model until a coupling to gravity and matter is specified. If a future embedding were to retain the absence of sourced tensor modes, a detection of $r\gtrsim10^{-3}$ \cite{litebird2019} would exclude it, while a non-detection would not distinguish it from the many inflationary models with small tensors.
+
+\section{Information-Theoretic Remarks}
+
+The information recovered by the stationary map can be computed without reference to $S$. For Gaussian fields suppose each Fourier mode of the output is $\varphi_{\mathbf k}=\TT(k)\Phib_{\mathbf k}+\xi_{\mathbf k}$ with independent noise of spectrum $N(k)$. The signal-to-noise ratio is $\mathrm{SNR}(k)=|\TT|^2P_{\rm B}/N$, the correlation coefficient with the record is $\varsigma_k^2=\mathrm{SNR}/(1+\mathrm{SNR})$, and for jointly Gaussian variables the mutual information per real degree of freedom is $-\tfrac12\ln(1-\varsigma_k^2)=\tfrac12\ln(1+\mathrm{SNR})$ \cite{cover2006}. Counting independent complex modes in a box of volume $V$, which number $V\,\dd^3k/(2\pi)^3$ over half of wavenumber space, the information recovered is
+\begin{equation}
+I(\Phi;\Phib)=\frac V2\int\frac{\dd^3k}{(2\pi)^3}\ln\left[1+\frac{|\TT(k)|^2P_{\rm B}(k)}{N(k)}\right].
+\end{equation}
+This is finite for any ultraviolet cutoff and vanishes when $\TT=0$. It is the appropriate measure of recovery, and it replaces the coherence metric as a diagnostic, since it depends on the signal-to-noise ratio and not on the overall amplitude of the output. It is computed for the channel defined by the stationary map and does not use the identification of $\int S$ with a conditional entropy.
+
+The density equation has the local form $\partial_tS+\nabla\!\cdot\!\mathbf J_S=\sigma|\nabla\Phi|^2+J-\rho S$ with production $\sigma|\nabla\Phi|^2+J\ge0$ and a sink $-\rho S$. If $S$ were read as a conditional information density, as in the closure hypothesis, the sink would represent export to unmodeled degrees of freedom, and a total bookkeeping would require a model of the reservoir that receives it. Such a model is not supplied, and by \eqref{eq:balance} the free energy has no sign-definite evolution once the non-variational terms are present. No statement about the second law is made. The entropy production associated with the dissipation integrals of Proposition~\ref{prop:lyap} is a standard consequence of reading $\FF$ as a free energy at an effective temperature, which is an interpretation and not a result of the dynamics.
+
+\section{Numerical Implementation}
+
+For the explicit seven-point scheme in three dimensions the diffusive limit of the scalar equation taken alone is $\Delta t\le\Delta x^2/(6D)$. In a single explicit update the diffusive, reaction, advective and collapse contributions act together, so separate bounds for each are necessary but not sufficient, and a heuristic diagnostic, and not a sufficient condition, is that the sum of the corresponding rates times $\Delta t$ be less than one, namely $\Delta t\,[\,6D/\Delta x^2+\gamma S_{\max}+6(S_{\max}+D_S)/\Delta x^2+\rho\,]\le1$, where $S_{\max}$ bounds $S$ along the flow. The velocity enters the scheme described below only through the face flux $S_f\,\partial B$ and not through a separate advection term, so no advective rate appears. With arithmetic face mobilities and a logarithmic chemical potential the coefficients depend on ratios of neighboring densities, which are unbounded near zero, so this expression does not establish positivity or stability. The scheme of the accompanying script is forward Euler in time and finite volume in space on a periodic grid, with flux $S_f\,\partial B$ on each cell face, where the face mobility $S_f$ is the arithmetic mean of the adjacent cell values, and with the same discrete potential $B$, including the term $D_S(\ln S+1)$, used in the flux and in the discrete free energy, whose gradient term uses forward differences. These choices make the semi-discrete system, in continuous time, an exact gradient flow of the discrete free energy with exact conservation of $\sum S$. For the fully discrete explicit scheme neither positivity of $S$ nor monotone decay of the discrete free energy is proved. In the computation reported below $S$ stayed positive and the free energy decreased at every sampled step, which is an observation for those parameters. A positivity-preserving or energy-stable fully discrete scheme would need a separate analysis, for instance an implicit step or an explicit restriction on the mobility and the step.
+
+For the linear scalar equation the exponential integrator
+\begin{equation}
+\hat\varphi_{n+1}(\kk)=e^{-a(k)\Delta t}\hat\varphi_n(\kk)+\frac{1-e^{-a(k)\Delta t}}{a(k)}\,\varepsilon\hat R_n(\kk)
+\end{equation}
+is exact for a source held constant over the step. For a spatially local exponential memory and a record held constant over a step the exact update of the memory field is
+\begin{equation}
+R_{n+1}=e^{-\alpha\Delta t}R_n+\frac{1-e^{-\alpha\Delta t}}{\alpha}\,\Phib_n,
+\end{equation}
+which is exact for the infinite-window exponential convolution with a record held constant over each step. For a strictly finite sliding window of length $T_P$ the memory obeys $\partial_tR=\Phib(t)-\alpha R-e^{-\alpha T_P}\Phib(t-T_P)$ in the spatially local case, and the outgoing-history term is neglected here under the approximation $\alpha T_P\gg1$. The Euler update $R_{n+1}=e^{-\alpha\Delta t}R_n+\Delta t\,\Phib_n$ has a relative error of order $\alpha\Delta t/2$ in the stationary value and is not used.
+
+\section{Reproducible Computations}\label{sec:computations}
+
+Three computations accompany the paper. They are produced by the script \texttt{reproduce\_expyrosis.py}, which uses only numpy, runs in about twenty seconds, and writes the files \texttt{results.json} and \texttt{diagnostics.npz}, which are distributed with the paper. All random numbers derive from a single seed (7) with fixed offsets for separate computations. The numbers below are those in \texttt{results.json}. The runs use single realizations on modest grids and are checks of implementation and algebra, not tests of nature.
+
+The first computation is linear and three dimensional. The grid has $48^3$ points in a periodic box of side $2\pi\cdot48/16\approx18.85$, with $D=1$, $\gamma=1$, $\Sb=0.5$, $\alpha=1$, a Gaussian memory profile of width $0.6$, the unit-gain value $\varepsilon=\alpha\gamma\Sb=0.5$ of the infinite-window limit $\alpha T_P\to\infty$ used throughout these computations, and a zero-mean Gaussian record with $P_{\rm B}\propto k^{-3}$. The scalar equation is advanced with the exponential integrator and the exact memory update with step $0.02$ for $3000$ steps. The measured ratio of output to input amplitude agrees with the analytic transfer function $\TT=\varepsilon\hat h/[\alpha(Dk^2+\gamma\Sb)]$ to a relative error of $1.5\times10^{-14}$ over all nonzero modes. The coherence with the record is $0.6305$, and the overlap computed from the spectrum of this same realization is $0.6305$ to better than $10^{-11}$, while the ensemble spectrum predicts $0.664$, the difference being the sampling variation of the single realization. The controls give the following. An independent realization of the same spectrum as the template gives coherence $-0.0098$, and a phase-scrambled copy with the same Fourier amplitudes gives $0.0048$. In the unforced control the field starts at the template and relaxes: its amplitude relative to the template is $1.7\times10^{-2}$ at $t=5$ $1.5\times10^{-6}$ at $t=20$ and $3.7\times10^{-17}$ at $t=60$, while its coherence is $0.45$, $0.34$ and $0.31$, so $C$ is blind to amplitude and cannot distinguish a maintained structure from a decayed one. Under forcing the retained amplitude relative to the template is $0.36$ for any template with the same amplitudes. Removing the damping, $\gamma=0$ with the same forcing, gives coherence $0.50$ and an amplitude ratio $1.54$, so a pure driven smoothing filter also correlates with the template, and $C$ does not discriminate the damped mechanism from ordinary driven diffusion. What does discriminate is the amplitude and the shape of the transfer function.
+
+The second computation tests Proposition~\ref{prop:kernel}. With $p=3.035$, $k_*=2$ and $\xi^2=D/\gamma\Sb=2$, the transfer function obtained by running the linear solver of the first computation with the profile $\hat h$ agrees with $\exp[-\frac12(k/k_*)^p]$ to $1.6\times10^{-14}$. The real-space profile has unit sum and changes sign, with minimum equal to $-0.076$ times its maximum, as the second-moment identity of Proposition~\ref{prop:kernel} requires. The recursion is then run mode by mode on a $64^3$ grid in a box of side $60$ with $k_*=1$ (a different cutoff from the $k_*=2$ of the kernel test, since the larger box resolves smaller wavenumbers; these parameters are stored in the results file), unit-variance complex Gaussian noise injected at every cycle, and $n=200$ cycles from a zero initial state. The measured mean power in nine radial bins between $k=0.12$ and $k=2$ is compared with the exact prediction \eqref{eq:exactPn}. The largest deviation is $10.8\%$, in the bin near $k=0.5$ that contains $314$ modes, which corresponds to $1.87$ standard deviations. The recursion simulates independent circular complex Gaussian amplitudes on the full grid, without Hermitian symmetry, and $N_{\rm modes}$ is the number of grid wavevectors in the bin. For $m$ such amplitudes with expected powers $P_j$ the bin average $\widehat P_b=m^{-1}\sum_j|z_j|^2$ has mean $m^{-1}\sum_jP_j$ and variance $m^{-2}\sum_jP_j^2$, and the deviations are measured in units of this exact standard deviation, which accounts for the variation of the expected power across the bin. For a real field conjugate modes are dependent, which would change the variance by a factor of order two. The bin centers and per-bin deviations are stored in the results file, and the largest deviation falls in the bin centered at $k=0.50$. The predicted cutoff for these parameters is $k_c=0.175$. This confirms the algebra of the suppression formula for this kernel.
+
+The third computation is two dimensional and tests Proposition~\ref{prop:lyap} and the balance \eqref{eq:balance}. The grid has $64^2$ points on a periodic box of side $2\pi$, with $D=\gamma=1$, $\eta=0.4$, $D_S=0.3$, $\varepsilon=1$, a Gaussian coherence kernel of width $0.5$ with $\hat g(0)=0$, a static zero-mean random source, and the entropy flux discretized with face-centered weights so that the semi-discrete system is an exact gradient flow of the discrete free energy. The system is advanced for $8000$ steps of $1.5\times10^{-4}$ in the reciprocal source-free case. The free energy falls from $83.8$ to $2.05$ with no increase at the sampled steps, the minimum of $S$ is $0.50$, and $\int S$ is conserved to machine precision. For the full system with $\eta_\Phi=3$, $\sigma=0.8$, $\rho=0.5$ and $J=0.3$ at a state with $S$ between $0.3$ and $1.3$, the rate of change of the discrete free energy obtained by a central difference along the flow is $-34.68$, and the right-hand side of the corrected balance \eqref{eq:balance} agrees with it to a relative error of $3.4\times10^{-10}$. Omitting the nonreciprocal term $\int Ad$ shifts the result by a relative $2.9\times10^{-4}$, a discrepancy six orders of magnitude above the residual of the corrected formula. The omitted term is small in this state, and that it is nevertheless detected is what gives the test its discriminating power. In a dilute state with $S$ between $0.02$ and $0.07$ one has $\int BS=-0.99$, so that the collapse contribution $-\rho\int BS=+0.50$ is positive, illustrating that the sink can increase the free energy.
+
+The parameter regions are as follows. The linear response is defined when $a(k)>0$ for the modes present, and is stable when $\Delta(k)>0$, which for the long-range kernel is the condition of Proposition~\ref{prop:stab}. The reintegrated amplitude is nonzero only if $\varepsilon\hat K(0^+)>0$ and equals the record amplitude at the largest scales only at the unit-gain value. Reintegration fails to regenerate structure when $\varepsilon\to0$, where the field decays on the relaxation time. With $\varepsilon$ and the kernel held fixed, increasing $\gamma\Sb$ increases the inverse coherence length $\xi^{-1}=\sqrt{\gamma\Sb/D}$, and when $\gamma\Sb\gg Dk_{\max}^2$ the gain is approximately $\varepsilon\hat K(k)/\gamma\Sb$, small, and flat only if $\hat K$ is itself nearly constant across the band, in which case amplitude is lost while shape is retained. For the compensating kernel of Proposition~\ref{prop:kernel} this attenuation is cancelled by construction, because $\varepsilon$ and $\xi$ are tied to $\gamma\Sb$, and the statement applies only to a kernel and forcing frozen at a different value of $\Sb$. None of these computations reproduces the observed primordial spectrum, resolves flatness, or addresses singularities.
+
+\section{Open Problems}\label{sec:open}
+
+The first problem is the kernel. Proposition~\ref{prop:kernel} shows that a kernel with the required long-wavelength gain exists, but it was constructed by prescribing the gain. A kernel that is natural, that arises from an underlying dynamics, that is regular, and that is either causal or accompanied by an explicit causal update map has not been constructed, and the requirement that all of these hold simultaneously is an existence problem that remains open. The second problem is the source and spectrum of the fresh randomness, on which the tilt depends through $p-q$. The third is the embedding in a gravitating cosmology: the specification of a coupling to gravity and to the radiation, baryon and dark matter components, from which adiabaticity, the phase coherence of the acoustic peaks, the tensor spectrum and the isocurvature content could be derived and not assumed. The fourth is the horizon problem, for which an explicitly causal finite-duration update map would have to be defined and its iterates analyzed. The fifth is the meaning of the auxiliary density, including a probability model in which it is a conditional entropy density. The sixth is the epoch structure: whether an epoch is a cosmological phase, a step of a single relaxation, or a bookkeeping device, and whether $n\tau_{\rm epoch}$ is compatible with the age of the universe for the $n\sim10^8$ to $10^9$ required by infrared suppression. The seventh is the boundedness of the free energy below, and monotonicity of a suitable functional for the full system under stated restrictions. The eighth is a covariant formulation with a stress-energy tensor and backreaction. The interdisciplinary applications of the RSVP framework to memory and narrative rest on the same gradient-flow structure but make no contribution to the cosmological claims.
+
+\section{Conclusion}
+
+The revised formulation makes a limited and checkable statement. On a prescribed background, a record is transmitted by memory-mediated relaxation through an explicit transfer function; the unforced reference dynamics are a gradient flow with a Lyapunov functional; the full system obeys an exact dissipation balance whose non-variational terms are identified; the linear modes are stable under a criterion that is stated separately for the finite box, the positive-wavenumber limit and the infrared limit; and an iterated version of the map has a closed-form fixed point and finite-cycle suppression, for which a kernel with the required exponent exists. The linear theory shows that the spectrum is inherited, which moves the explanatory burden to the recursion, and the recursion shows that near scale invariance is equivalent to marginality of the map at long wavelengths with the exponent $3+(1-n_s)$ for white noise. What the paper does not do is as important. It does not embed the fields in a gravitating cosmology, so it makes no derived claim about adiabaticity, acoustic coherence, tensor modes or isocurvature; it does not resolve the horizon problem; it does not explain flatness or the absence of a singularity; and it does not show that the kernel is natural. These are listed in Section~\ref{sec:open} as problems, and the decisive next advance is an admissible, natural kernel together with an embedding in which the stated consequences can be computed.
+
+\begin{thebibliography}{99}\small
+
+\bibitem{albrecht1982} A.~Albrecht and P.~J.~Steinhardt, Cosmology for Grand Unified Theories with Radiatively Induced Symmetry Breaking, \emph{Phys. Rev. Lett.} \textbf{48}, 1220 (1982).
+
+\bibitem{albrecht1996} A.~Albrecht, D.~Coulson, P.~Ferreira and J.~Magueijo, Causality, Randomness, and the Microwave Background, \emph{Phys. Rev. Lett.} \textbf{76}, 1413 (1996).
+
+\bibitem{albrecht2004} A.~Albrecht and L.~Sorbo, Can the Universe Afford Inflation?, \emph{Phys. Rev. D} \textbf{70}, 063528 (2004).
+
+\bibitem{bicep2021} BICEP/Keck Collaboration, Improved Constraints on Primordial Gravitational Waves Using Planck, WMAP, and BICEP/Keck Observations Through the 2018 Observing Season, \emph{Phys. Rev. Lett.} \textbf{127}, 151301 (2021).
+
+\bibitem{borde2003} A.~Borde, A.~H.~Guth and A.~Vilenkin, Inflationary Spacetimes Are Not Past-Complete, \emph{Phys. Rev. Lett.} \textbf{90}, 151301 (2003).
+
+\bibitem{contaldi2003} C.~R.~Contaldi, M.~Peloso, L.~Kofman and A.~Linde, Suppressing the Lower Multipoles in the CMB Anisotropies, \emph{J. Cosmol. Astropart. Phys.} \textbf{07}, 002 (2003).
+
+\bibitem{cover2006} T.~M.~Cover and J.~A.~Thomas, \emph{Elements of Information Theory}, 2nd ed. (Wiley, 2006).
+
+\bibitem{creminelli2004} P.~Creminelli and M.~Zaldarriaga, Single-Field Consistency Relation for the Three-Point Function, \emph{J. Cosmol. Astropart. Phys.} \textbf{10}, 006 (2004).
+
+\bibitem{deoliveira2004} A.~de Oliveira-Costa, M.~Tegmark, M.~Zaldarriaga and A.~Hamilton, The Significance of the Largest Scale CMB Fluctuations in WMAP, \emph{Phys. Rev. D} \textbf{69}, 063516 (2004).
+
+\bibitem{dyson2002} L.~Dyson, M.~Kleban and L.~Susskind, Disturbing Implications of a Cosmological Constant, \emph{J. High Energy Phys.} \textbf{10}, 011 (2002).
+
+\bibitem{fixsen1996} D.~J.~Fixsen et al., The Cosmic Microwave Background Spectrum from the Full COBE FIRAS Data Set, \emph{Astrophys. J.} \textbf{473}, 576 (1996).
+
+\bibitem{gibbons1977} G.~W.~Gibbons and S.~W.~Hawking, Cosmological Event Horizons, Thermodynamics, and Particle Creation, \emph{Phys. Rev. D} \textbf{15}, 2738 (1977).
+
+\bibitem{guth1981} A.~H.~Guth, Inflationary Universe: A Possible Solution to the Horizon and Flatness Problems, \emph{Phys. Rev. D} \textbf{23}, 347 (1981).
+
+\bibitem{hu2002} W.~Hu and S.~Dodelson, Cosmic Microwave Background Anisotropies, \emph{Annu. Rev. Astron. Astrophys.} \textbf{40}, 171 (2002).
+
+\bibitem{ijjas2013} A.~Ijjas, P.~J.~Steinhardt and A.~Loeb, Inflationary Paradigm in Trouble After Planck2013, \emph{Phys. Lett. B} \textbf{723}, 261 (2013).
+
+\bibitem{jko1998} R.~Jordan, D.~Kinderlehrer and F.~Otto, The Variational Formulation of the Fokker-Planck Equation, \emph{SIAM J. Math. Anal.} \textbf{29}, 1 (1998).
+
+\bibitem{kac1947} M.~Kac, On the Notion of Recurrence in Discrete Stochastic Processes, \emph{Bull. Amer. Math. Soc.} \textbf{53}, 1002 (1947).
+
+\bibitem{khoury2001} J.~Khoury, B.~A.~Ovrut, P.~J.~Steinhardt and N.~Turok, The Ekpyrotic Universe: Colliding Branes and the Origin of the Hot Big Bang, \emph{Phys. Rev. D} \textbf{64}, 123522 (2001).
+
+\bibitem{kim2010} J.~Kim and P.~Naselsky, Anomalous Parity Asymmetry of the Wilkinson Microwave Anisotropy Probe Power Spectrum Data at Low Multipoles, \emph{Astrophys. J. Lett.} \textbf{714}, L265 (2010).
+
+\bibitem{land2005} K.~Land and J.~Magueijo, The Axis of Evil, \emph{Phys. Rev. Lett.} \textbf{95}, 071301 (2005).
+
+\bibitem{linde1982} A.~D.~Linde, A New Inflationary Universe Scenario: A Possible Solution of the Horizon, Flatness, Homogeneity, Isotropy and Primordial Monopole Problems, \emph{Phys. Lett. B} \textbf{108}, 389 (1982).
+
+\bibitem{litebird2019} M.~Hazumi et al., LiteBIRD: A Satellite for the Studies of B-Mode Polarization and Inflation from Cosmic Background Radiation Detection, \emph{J. Low Temp. Phys.} \textbf{194}, 443 (2019).
+
+\bibitem{maldacena2003} J.~Maldacena, Non-Gaussian Features of Primordial Fluctuations in Single Field Inflationary Models, \emph{J. High Energy Phys.} \textbf{05}, 013 (2003).
+
+\bibitem{mukhanov1981} V.~F.~Mukhanov and G.~V.~Chibisov, Quantum Fluctuations and a Nonsingular Universe, \emph{JETP Lett.} \textbf{33}, 532 (1981).
+
+\bibitem{otto2001} F.~Otto, The Geometry of Dissipative Evolution Equations: The Porous Medium Equation, \emph{Comm. Partial Differential Equations} \textbf{26}, 101 (2001).
+
+\bibitem{penrose2010} R.~Penrose, \emph{Cycles of Time: An Extraordinary New View of the Universe} (Bodley Head, 2010).
+
+\bibitem{planck2018vi} Planck Collaboration, Planck 2018 Results. VI. Cosmological Parameters, \emph{Astron. Astrophys.} \textbf{641}, A6 (2020).
+
+\bibitem{planck2018ix} Planck Collaboration, Planck 2018 Results. IX. Constraints on Primordial Non-Gaussianity, \emph{Astron. Astrophys.} \textbf{641}, A9 (2020).
+
+\bibitem{planck2018x} Planck Collaboration, Planck 2018 Results. X. Constraints on Inflation, \emph{Astron. Astrophys.} \textbf{641}, A10 (2020).
+
+\bibitem{poincare1890} H.~Poincar\'e, Sur le Probl\`eme des Trois Corps et les \'Equations de la Dynamique, \emph{Acta Math.} \textbf{13}, 1 (1890).
+
+\bibitem{protter1967} M.~H.~Protter and H.~F.~Weinberger, \emph{Maximum Principles in Differential Equations} (Prentice-Hall, 1967).
+
+\bibitem{schwarz2016} D.~J.~Schwarz, C.~J.~Copi, D.~Huterer and G.~D.~Starkman, CMB Anomalies After Planck, \emph{Class. Quantum Grav.} \textbf{33}, 184001 (2016).
+
+\bibitem{silk1968} J.~Silk, Cosmic Black-Body Radiation and Galaxy Formation, \emph{Astrophys. J.} \textbf{151}, 459 (1968).
+
+\bibitem{starobinsky1980} A.~A.~Starobinsky, A New Type of Isotropic Cosmological Models Without Singularity, \emph{Phys. Lett. B} \textbf{91}, 99 (1980).
+
+\bibitem{steinhardt2002} P.~J.~Steinhardt and N.~Turok, A Cyclic Model of the Universe, \emph{Science} \textbf{296}, 1436 (2002).
+
+\bibitem{zurek2003} W.~H.~Zurek, Decoherence, Einselection, and the Quantum Origins of the Classical, \emph{Rev. Mod. Phys.} \textbf{75}, 715 (2003).
+
+\end{thebibliography}
+
+\end{document}

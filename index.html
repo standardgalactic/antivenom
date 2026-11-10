@@ -1,397 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antivenom Repository Showcase</title>
-    <style>
-        @font-face {
-            src: url('fonts/Sga-Regular.woff2') format('woff2'),
-                 url('fonts/Sga-Regular.woff') format('woff'),
-                 url('fonts/Sga-Regular.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-            font-family: 'Sga Regular';
-        }
-
-        body.sga {
-            font-family: 'Sga Regular';
-        }
-
-        body.sans-serif {
-            font-family: sans-serif;
-        }
-
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: black;
-            color: white;
-        }
-
-        .description {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            padding: 10px;
-            border: 1px solid #fff;
-            z-index: 1000;
-        }
-
-        #controlPanel {
-            z-index: 1000;
-            max-width: 300px;
-            display: none;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        @media(min-width: 768px) {
-            #controlPanel {
-                display: block;
-            }
-        }
-
-        body.sga #controlPanel,
-        body.sga .description {
-            font-size: 14px;
-        }
-
-        body.sans-serif #controlPanel,
-        body.sans-serif .description {
-            font-size: 10px;
-        }
-    </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>How Cosmic Memory Could Replace Inflation</title>
+<style>
+:root{--ink:#d5b985;--soft:#826b49;--line:#b99a61;--bg:#090a08}*{box-sizing:border-box}
+body{margin:0;min-height:100dvh;background:var(--bg);color:var(--ink);font:12px/1.5 'Courier New',monospace;display:flex;align-items:center;justify-content:center;padding:22px}
+.instrument{width:min(850px,100%);border:1px solid #5b4d35;padding:clamp(15px,3vw,30px);background:linear-gradient(140deg,#14150f,#090b09);box-shadow:0 0 0 5px #0c0d0a,0 15px 60px #000}
+.top{display:flex;justify-content:space-between;gap:15px;align-items:start;border-bottom:1px solid #4b4230;padding-bottom:16px}.eyebrow{font-size:10px;color:var(--soft);letter-spacing:.22em}h1{font-weight:normal;font-size:clamp(17px,3vw,26px);line-height:1.3;letter-spacing:.06em;margin:8px 0 0;max-width:620px}.lamp{width:8px;height:8px;border-radius:50%;background:#554b34;margin-top:7px;box-shadow:0 0 0 4px #1d1b13;flex:none}.lamp.on{background:#e3bd72;box-shadow:0 0 13px #e3bd72}
+.screen{position:relative;margin-top:21px;height:clamp(220px,40vw,355px);background:#060b09;border:1px solid #4c4c35;overflow:hidden;box-shadow:inset 0 0 50px #000}.screen:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(to bottom,transparent 0 3px,#ffffff06 4px 5px),radial-gradient(ellipse at center,transparent 45%,#0009 100%)}canvas{display:block;width:100%;height:100%}.screen-label{position:absolute;left:15px;top:12px;font-size:10px;letter-spacing:.15em;color:#a18b63;pointer-events:none}.screen-right{position:absolute;right:15px;top:12px;font-size:10px;color:#7e785e;pointer-events:none}
+.transport{display:flex;align-items:center;gap:15px;margin-top:22px}button{font:inherit;letter-spacing:.1em;color:var(--ink);background:#1d2018;border:1px solid #786646;padding:10px 18px;cursor:pointer;min-width:96px}button:hover,button:focus-visible{background:#343525;outline:1px solid #c2a875}button:disabled{opacity:.45;cursor:not-allowed}.time{font-variant-numeric:tabular-nums;white-space:nowrap;color:#b2a080;font-size:11px}input[type=range]{flex:1;min-width:30px;accent-color:#d7b47a;cursor:pointer;touch-action:pan-y}input[type=range]:disabled{opacity:.4;cursor:not-allowed}
+.status{display:flex;justify-content:space-between;gap:12px;color:var(--soft);font-size:10px;letter-spacing:.12em;margin-top:12px}#captions{min-height:70px;margin-top:20px;border-top:1px solid #3d392a;padding:19px 6px 7px;text-align:center;font-size:clamp(13px,2vw,16px);color:#e3cfaa;line-height:1.6;white-space:pre-wrap}footer{display:flex;justify-content:space-between;gap:16px;align-items:center;margin-top:12px;border-top:1px solid #3d392a;padding-top:14px;font-size:10px;letter-spacing:.1em;color:var(--soft)}a{color:var(--ink)}.hidden{display:none}@media(max-width:550px){.transport{gap:8px;flex-wrap:wrap}.transport input{order:3;flex-basis:100%}.status{font-size:9px}.time{font-size:10px}footer{align-items:start;flex-direction:column}}
+</style>
 </head>
-<body class="sga">
-    <div id="description" class="description" style="display: none;"></div>
-    <div id="controlPanel">
-        <p>Controls:</p>
-        <ul>
-            <li>C: Show/Hide Commands</li>
-            <li>W/S: Zoom in/out</li>
-            <li>A/D: Slide left/right</li>
-            <li>R/F: Slide up/down</li>
-            <li>Q/E: Rotate left/right</li>
-            <li>Z: Toggle Standard Galactic</li>
-            <li>X: Toggle Labels</li>
-            <li>G: Global Reset</li>
-            <li>+: Speed up expansion</li>
-            <li>-: Slow down expansion</li>
-            <li>F11: Toggle Fullscreen</li>
-        </ul>
-    </div>
-
-    <canvas id="canvas"></canvas>
-
-    <script>
-        const files = [
-            { name: 'LICENSE', description: 'License file detailing terms and permissions for using content from the Antivenom repository.' },
-            { name: 'README.md', description: 'Comprehensive README providing an introduction and key information about the Antivenom repository.' },
-            { name: 'Solar-Powered Laptop.txt', description: 'Detailed overview of Lenovo’s Yoga Solar PC, featuring integrated solar panels enabling charging through direct sunlight.' },
-            { name: 'Synthetic Epistemology.mhtml', description: 'A web archive (MHTML format) exploring Synthetic Epistemology, covering its foundations and implications.' },
-            { name: 'The-Gospel-of-the-Blatherskite.pdf', description: 'PDF document titled "The Gospel of the Blatherskite," exploring philosophical or satirical themes.' },
-            { name: 'antivenom-overview.txt', description: 'An overview document providing insights into the Antivenom project, including key objectives and context.' },
-            { name: 'biomimetics-overview.txt', description: 'Detailed explanation of methods to improve energy efficiency, latency, and representation in bioimaging AI models, highlighting pruning, quantization, and knowledge distillation.' },
-            { name: 'biomimetics.mp3', description: 'Audio discussion covering biomimetics, likely addressing recent advances and research findings.' },
-            { name: 'biomimetics.txt', description: 'Summary of research on efficient bioimaging AI, emphasizing compression techniques for enhanced model efficiency.' },
-            { name: 'continuous_swipe_trace.gif', description: 'Animated GIF illustrating a continuous swipe trace, demonstrating gesture input methods.' },
-            { name: 'continuum-overview.txt', description: 'Exploration of Stephen L. Talbot’s critical analysis on technology’s impact on human relationships, agency, and responsibility.' },
-            { name: 'continuum.mp3', description: 'Audio content discussing themes from Stephen L. Talbot’s "The Future Does Not Compute," focusing on technological skepticism and human agency.' },
-            { name: 'continuum.txt', description: 'Written summary reflecting on Stephen L. Talbot’s perspectives on technology and human relational authenticity.' },
-            { name: 'get-summaries.sh', description: 'Shell script designed to automatically retrieve and summarize contents of specified files.' },
-            { name: 'iconoclasm-overview.txt', description: 'Explanation of ensemble methods in machine learning, emphasizing the benefits of combining multiple models to enhance prediction accuracy.' },
-            { name: 'iconoclasm.mp3', description: 'Audio exploration of iconoclastic themes, drawing parallels with historical or contemporary challenges to established norms.' },
-            { name: 'iconoclasm.txt', description: 'Discussion on iconoclasm in religious texts, particularly examining acts challenging established practices or institutions.' },
-            { name: 'intersubjectividad-overview.txt', description: 'Analysis of intersubjectivity collapse due to cognitive diversity introduced by artificial intelligence, highlighting societal impacts and ethical challenges.' },
-            { name: 'intersubjectividad.mp3', description: 'Audio covering intersubjectividad, specifically its philosophical and societal implications in the context of AI and cognitive diversity.' },
-            { name: 'intersubjectividad.txt', description: 'Detailed exploration of intersubjectividad collapse and its implications on social coherence due to diverse cognitive architectures.' },
-            { name: 'intersubjectividad-overview.txt', description: 'Summary of intersubjectividad collapse, discussing societal vulnerabilities arising from cognitive and experiential diversity.' },
-            { name: 'intersubjectividad.mp3', description: 'Audio analysis of intersubjectividad collapse, examining potential existential risks for societies.' },
-            { name: 'intersubjectividad.txt', description: 'Insightful examination of Pavel Pakniewski’s concept of intersubjectividad collapse and its possible catastrophic outcomes.' },
-            { name: 'introduction-to-spherepop-overview.txt', description: 'Introductory overview of Sphere Pop, an innovative 3D programming language designed for intuitive learning and visualization of complex coding concepts.' },
-            { name: 'introduction-to-spherepop.mp3', description: 'Audio introduction outlining Sphere Pop’s educational value, innovative programming approach, and visualization capabilities.' },
-            { name: 'introduction-to-spherepop.txt', description: 'Written introduction to Sphere Pop, explaining its core concepts, applications, and educational implications.' },
-            { name: 'mindmap.webp', description: 'Mindmap image visually representing conceptual relationships and key ideas discussed in the repository.' },
-            { name: 'multiscale-overview.txt', description: 'Discussion on AI common sense testing via the Winograd Schema Challenge, analyzing its effectiveness and limitations with current AI advancements.' },
-            { name: 'multiscale.mp3', description: 'Audio content addressing linguistic disambiguation tests and their relevance in evaluating AI’s common sense reasoning abilities.' },
-            { name: 'multiscale.txt', description: 'Written summary critiquing the Winograd Schema Challenge’s adequacy in assessing true common sense reasoning in AI systems.' },
-            { name: 'notes-on-active-inference', description: 'Notes elaborating on active inference, a framework for understanding decision-making and cognition in biological and artificial systems.' },
-            { name: 'relevance-relations-overview.txt', description: 'Examination of non-computational aspects of cognition and consciousness, emphasizing evolutionary dynamics and the limitations of algorithmic approaches.' },
-            { name: 'relevance-relations.mp3', description: 'Audio discussing naturalistic theories of cognition, particularly the concept of relevance realization in organisms.' },
-            { name: 'relevance-relations.txt', description: 'Written review explaining why cognition and agency cannot be fully captured by computational models, highlighting biological complexity and adaptivity.' },
-            { name: 'spacetime-agency-overview.txt', description: 'Analysis of analogies in human language versus computer languages, addressing truth, lying, and interpretative contexts.' },
-            { name: 'spacetime-agency.mp3', description: 'Audio discussion on language, analogies, and the role of deception in human communication versus computational systems.' },
-            { name: 'spacetime-agency.txt', description: 'Reflection on the differences between natural analogical thinking and symbolic language, including societal implications.' },
-            { name: 'spherepop-overview.txt', description: 'In-depth introduction to Sphere Pop’s revolutionary programming approach, leveraging immersive 3D visualizations for educational and interactive coding experiences.' },
-            { name: 'spherepop.mp3', description: 'Audio elaboration on Sphere Pop, covering practical applications, game-based learning, and interactive programming.' },
-            { name: 'spherepop.txt', description: 'Detailed description of Sphere Pop’s interactive features, educational potential, and conceptual foundations.' }
-        ];
-
-        let isUsingCustomFont = true;
-
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        context.font = "24px 'Sga Regular'";
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-
-        let controlPanelTimeout;
-
-        function toggleControlPanel() {
-            const controlPanel = document.getElementById("controlPanel");
-            if (controlPanel.style.display === "none") {
-                controlPanel.style.display = "block";
-                resetControlPanelTimeout();
-            } else {
-                controlPanel.style.display = "none";
-                clearTimeout(controlPanelTimeout);
-            }
-        }
-
-        function resetControlPanelTimeout() {
-            clearTimeout(controlPanelTimeout);
-            controlPanelTimeout = setTimeout(() => {
-                document.getElementById("controlPanel").style.display = "none";
-            }, 10000);
-        }
-
-        function showDescription(file) {
-            const description = document.getElementById('description');
-            description.innerHTML = `<strong>${file.name}</strong><p>${file.description}</p>`;
-            description.style.display = 'block';
-        }
-
-        const controls = {
-            up: false, down: false,
-            left: false, right: false,
-            slideUp: false, slideDown: false,
-            rotateLeft: false, rotateRight: false,
-            showLabels: true,
-        };
-
-        let expansionSpeedMultiplier = 0.4;
-
-        let spaceship = {
-            x: canvas.width / 2,
-            y: canvas.height / 2,
-            z: 1,
-            speed: 0,
-            maxSpeed: 5,
-            rotation: 0,
-        };
-
-        let bubbles = [];
-        for (let i = 0; i < 100; i++) {
-            const file = files[Math.floor(Math.random() * files.length)];
-            bubbles.push({
-                x: Math.random() * canvas.width - spaceship.x,
-                y: Math.random() * canvas.height - spaceship.y,
-                z: Math.random() * canvas.width,
-                size: 3,
-                speed: Math.random() * 0.5 + 0.05,
-                file: file,
-                expandingCircle: {
-                    radius: 0,
-                    expansionSpeed: Math.random() * 0.15 + 0.05,
-                    isVisible: true,
-                    clicked: false,
-                },
-            });
-        }
-
-        function draw() {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            bubbles.sort((a, b) => b.z - a.z);
-
-            for (let bubble of bubbles) {
-                let scale = canvas.width / bubble.z * spaceship.z;
-                let x = spaceship.x + (bubble.x * Math.cos(spaceship.rotation) - bubble.y * Math.sin(spaceship.rotation)) * scale;
-                let y = spaceship.y + (bubble.x * Math.sin(spaceship.rotation) + bubble.y * Math.cos(spaceship.rotation)) * scale;
-
-                let bubbleOpacity = 1;
-                let fadeFactor = (bubble.expandingCircle.radius * scale) / (Math.max(canvas.width, canvas.height) * 0.75);
-                bubbleOpacity = Math.max(0.2, 1 - fadeFactor);
-
-                context.globalAlpha = bubbleOpacity;
-
-                if (bubble.expandingCircle.isVisible) {
-                    context.strokeStyle = `rgba(255, 255, 255, ${bubbleOpacity * 0.3})`;
-                    context.lineWidth = 2;
-                    context.beginPath();
-                    context.arc(x, y, bubble.expandingCircle.radius * scale, 0, Math.PI * 2);
-                    context.stroke();
-                }
-
-                if (bubble.expandingCircle.clicked) {
-                    context.strokeStyle = `rgba(0, 255, 0, ${bubbleOpacity * 0.4})`;
-                    context.lineWidth = 2;
-                    context.beginPath();
-                    context.arc(x, y, bubble.expandingCircle.radius * scale, 0, Math.PI * 2);
-                    context.stroke();
-                }
-
-                context.fillStyle = `rgba(255, 255, 255, ${bubbleOpacity})`;
-                context.beginPath();
-                context.arc(x, y, bubble.size * scale, 0, Math.PI * 2);
-                context.fill();
-
-                if (scale > 0.1 && controls.showLabels) {
-                    context.fillStyle = `rgba(255, 255, 255, ${bubbleOpacity * 0.8})`;
-                    context.fillText(bubble.file.name, x, y - 10);
-                }
-
-                context.globalAlpha = 1;
-            }
-        }
-
-        function update() {
-            if (controls.up) {
-                spaceship.z *= 1.05;
-            }
-            if (controls.down) {
-                spaceship.z *= 0.95;
-            }
-            if (controls.left) {
-                spaceship.x -= spaceship.maxSpeed;
-            }
-            if (controls.right) {
-                spaceship.x += spaceship.maxSpeed;
-            }
-            if (controls.slideUp) {
-                spaceship.y -= spaceship.maxSpeed;
-            }
-            if (controls.slideDown) {
-                spaceship.y += spaceship.maxSpeed;
-            }
-            if (controls.rotateLeft) {
-                spaceship.rotation -= 0.05;
-            }
-            if (controls.rotateRight) {
-                spaceship.rotation += 0.05;
-            }
-
-            for (let bubble of bubbles) {
-                bubble.z -= spaceship.speed;
-                if (bubble.z < 0.5) {
-                    bubble.z = canvas.width;
-                }
-
-                if (bubble.expandingCircle.isVisible || bubble.expandingCircle.clicked) {
-                    bubble.expandingCircle.radius += bubble.expandingCircle.expansionSpeed * expansionSpeedMultiplier;
-                    if (bubble.expandingCircle.radius > Math.max(canvas.width, canvas.height) * 1.5) {
-                        bubble.expandingCircle.radius = 0;
-                        if(bubble.expandingCircle.clicked){
-                            bubble.expandingCircle.clicked = false;
-                        }
-                    }
-                }
-            }
-        }
-
-        let keysPressed = {};
-        document.addEventListener("keydown", function(event) {
-            keysPressed[event.key] = true;
-
-            switch (event.key) {
-                case 'c':
-                    toggleControlPanel();
-                    resetControlPanelTimeout();
-                    break;
-                case 'w': controls.up = true; break;
-                case 's': controls.down = true; break;
-                case 'a': controls.right = true; break;
-                case 'd': controls.left = true; break;
-                case 'r': controls.slideDown = true; break;
-                case 'f': controls.slideUp = true; break;
-                case 'q': controls.rotateLeft = true; break;
-                case 'e': controls.rotateRight = true; break;
-                case 'x':
-                    controls.showLabels = !controls.showLabels;
-                    if (!controls.showLabels) {
-                        document.getElementById('description').style.display = 'none';
-                    }
-                    break;
-                case 'z':
-                    isUsingCustomFont = !isUsingCustomFont;
-                    if (isUsingCustomFont) {
-                        document.body.classList.add('sga');
-                        document.body.classList.remove('sans-serif');
-                        context.font = "24px 'Sga Regular'";
-                    } else {
-                        document.body.classList.add('sans-serif');
-                        document.body.classList.remove('sga');
-                        context.font = "18px sans-serif";
-                    }
-                    break;
-                case 'g': location.reload(); break;
-                case '+':
-                case '=':
-                    expansionSpeedMultiplier *= 1.1;
-                    break;
-                case '-': expansionSpeedMultiplier *= 0.9;
-                    break;
-            }
-        });
-
-        document.addEventListener("keyup", function(event) {
-            delete keysPressed[event.key];
-            switch (event.key) {
-                case 'w': controls.up = false; break;
-                case 's': controls.down = false; break;
-                case 'a': controls.right = false; break;
-                case 'd': controls.left = false; break;
-                case 'r': controls.slideDown = false; break;
-                case 'f': controls.slideUp = false; break;
-                case 'q': controls.rotateLeft = false; break;
-                case 'e': controls.rotateRight = false; break;
-            }
-        });
-
-        canvas.addEventListener('click', function(event) {
-            const description = document.getElementById('description');
-            if (description.style.display === 'block') {
-                description.style.display = 'none';
-            } else {
-                const rect = canvas.getBoundingClientRect();
-                const clickX = event.clientX - rect.left;
-                const clickY = event.clientY - rect.top;
-
-                for (let bubble of bubbles) {
-                    let scale = canvas.width / bubble.z * spaceship.z;
-                    let x = spaceship.x + (bubble.x * Math.cos(spaceship.rotation) - bubble.y * Math.sin(spaceship.rotation)) * scale;
-                    let y = spaceship.y + (bubble.x * Math.sin(spaceship.rotation) + bubble.y * Math.cos(spaceship.rotation)) * scale;
-                    let radius = bubble.size * scale;
-
-                    if (Math.hypot(clickX - x, clickY - y) <= radius) {
-                        showDescription(bubble.file);
-                        bubble.expandingCircle.clicked = true;
-                        bubble.expandingCircle.radius = 0;
-                        break;
-                    }
-                }
-            }
-        });
-
-        function loop() {
-            update();
-            draw();
-            requestAnimationFrame(loop);
-        }
-
-        loop();
-    </script>
+<body>
+<main class="instrument">
+<header class="top"><div><div class="eyebrow">FIELD MEMORY LABORATORY / SIGNAL 01</div><h1>HOW COSMIC MEMORY<br>COULD REPLACE INFLATION</h1></div><div class="lamp" id="lamp" aria-label="Playback indicator"></div></header>
+<section class="screen" aria-label="Audio waveform visualization"><canvas id="scope"></canvas><span class="screen-label">TEMPORAL RESIDUE / OSCILLOSCOPE</span><span class="screen-right">CH A &nbsp; 20 ms</span></section>
+<div class="transport"><button id="toggle" type="button">PLAY</button><input id="seek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="Seek playback position"><span class="time"><span id="now">00:00</span> / <span id="total">00:00</span></span></div>
+<div class="status"><span id="state">READY</span><span id="subtitleState">SUBTITLES LOADING</span></div>
+<div id="captions" aria-live="off">Select PLAY to begin.</div>
+<footer><span>CONTINUITY / RETENTION / COSMIC HISTORY</span><a id="essay" class="hidden" target="_blank" rel="noopener noreferrer">READ ESSAY ↗</a></footer>
+<audio id="audio" preload="metadata" src="How_Cosmic_Memory_Could_Replace_Inflation.mp3"></audio>
+</main>
+<script>
+'use strict';
+// Supply a published essay PDF URL here to show the essay link.
+const ESSAY_URL = 'https://standardgalactic.github.io/antivenom/expyrotic-cosmology.pdf';
+const essay = document.getElementById('essay');
+if(ESSAY_URL){essay.href=ESSAY_URL;essay.classList.remove('hidden');}
+const audio=document.getElementById('audio');
+const toggle=document.getElementById('toggle');
+const seek=document.getElementById('seek');
+const now=document.getElementById('now');
+const total=document.getElementById('total');
+const state=document.getElementById('state');
+const subtitleState=document.getElementById('subtitleState');
+const captions=document.getElementById('captions');
+const lamp=document.getElementById('lamp');
+const canvas=document.getElementById('scope');
+const pen=canvas.getContext('2d');
+let context,analyser,samples,history=[],cues=[],dragging=false;
+let cssWidth=0,cssHeight=0;
+function resize(){const rect=canvas.getBoundingClientRect();const dpr=Math.min(devicePixelRatio||1,2);cssWidth=rect.width;cssHeight=rect.height;canvas.width=Math.round(cssWidth*dpr);canvas.height=Math.round(cssHeight*dpr);pen.setTransform(dpr,0,0,dpr,0,0);}
+new ResizeObserver(resize).observe(canvas);resize();
+function initAudio(){if(context)return;context=new (window.AudioContext||window.webkitAudioContext)();analyser=context.createAnalyser();analyser.fftSize=2048;analyser.smoothingTimeConstant=.5;samples=new Uint8Array(analyser.fftSize);const source=context.createMediaElementSource(audio);source.connect(analyser);analyser.connect(context.destination);}
+toggle.addEventListener('click',async()=>{try{initAudio();if(context.state==='suspended')await context.resume();if(audio.paused)await audio.play();else audio.pause();}catch(e){state.textContent='PLAYBACK ERROR';console.error(e);}});
+audio.addEventListener('play',()=>{toggle.textContent='PAUSE';lamp.classList.add('on');state.textContent='SIGNAL ACTIVE';});
+audio.addEventListener('pause',()=>{toggle.textContent='PLAY';lamp.classList.remove('on');if(!audio.ended)state.textContent='PAUSED';});
+audio.addEventListener('ended',()=>{toggle.textContent='REPLAY';state.textContent='COMPLETE';});
+audio.addEventListener('error',()=>{state.textContent='AUDIO FILE ERROR';});
+const duration=()=>Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:0;
+const clock=t=>{if(!Number.isFinite(t))return '00:00';t=Math.max(0,Math.floor(t));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');};
+function updateDuration(){const d=duration();seek.disabled=!d;total.textContent=clock(d);if(!dragging&&d)seek.value=String(Math.round(audio.currentTime/d*1000));}
+audio.addEventListener('loadedmetadata',updateDuration);
+audio.addEventListener('durationchange',updateDuration);
+audio.addEventListener('canplay',updateDuration);
+seek.addEventListener('pointerdown',()=>{dragging=true;});
+seek.addEventListener('input',()=>{if(!duration())return;dragging=true;now.textContent=clock(Number(seek.value)/1000*duration());});
+function commitSeek(){if(!duration())return;const target=Number(seek.value)/1000*duration();try{audio.currentTime=target;state.textContent='SEEKING';}catch(e){state.textContent='SEEK ERROR';console.error(e);}dragging=false;updateCaptions(target);}
+seek.addEventListener('change',commitSeek);
+seek.addEventListener('pointerup',()=>{if(dragging)commitSeek();});
+seek.addEventListener('pointercancel',()=>{dragging=false;});
+audio.addEventListener('seeked',()=>{state.textContent=audio.paused?'PAUSED':'SIGNAL ACTIVE';updateDuration();updateCaptions(audio.currentTime);});
+function parseTimestamp(s){const p=s.trim().replace(',','.').split(':').map(Number);if(p.some(x=>!Number.isFinite(x)))return NaN;return p.length===3?p[0]*3600+p[1]*60+p[2]:p.length===2?p[0]*60+p[1]:NaN;}
+async function loadCaptions(){try{const response=await fetch('How_Cosmic_Memory_Could_Replace_Inflation.vtt',{cache:'no-store'});if(!response.ok)throw Error('HTTP '+response.status);const raw=(await response.text()).replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n');for(const block of raw.split(/\n\s*\n/)){const lines=block.trim().split('\n');const i=lines.findIndex(l=>l.includes('-->'));if(i<0)continue;const [a,b]=lines[i].split('-->');const start=parseTimestamp(a),end=parseTimestamp(b.trim().split(/\s+/)[0]);const text=lines.slice(i+1).join(' ').replace(/<[^>]*>/g,'').trim();if(Number.isFinite(start)&&Number.isFinite(end)&&end>start&&text)cues.push({start,end,text});}cues.sort((a,b)=>a.start-b.start);subtitleState.textContent=cues.length?'SUBTITLES READY':'NO CUES FOUND';}catch(e){subtitleState.textContent='VTT UNAVAILABLE';console.warn(e);}}
+function updateCaptions(t=audio.currentTime){if(!cues.length)return;const cue=cues.find(c=>t>=c.start&&t<c.end);captions.textContent=cue?cue.text:(audio.paused&&t===0?'Select PLAY to begin.':'');}
+loadCaptions();
+let lastSample=0;
+function draw(timestamp){requestAnimationFrame(draw);const w=cssWidth,h=cssHeight;if(!w||!h)return;pen.clearRect(0,0,w,h);pen.fillStyle='#060b09';pen.fillRect(0,0,w,h);const left=24,right=w-24,top=35,bottom=h-24;pen.strokeStyle='#263328';pen.lineWidth=1;for(let i=0;i<=10;i++){const x=left+(right-left)*i/10;pen.beginPath();pen.moveTo(x,top);pen.lineTo(x,bottom);pen.stroke();}for(let i=0;i<=6;i++){const y=top+(bottom-top)*i/6;pen.beginPath();pen.moveTo(left,y);pen.lineTo(right,y);pen.stroke();}pen.strokeStyle='#56604b';pen.beginPath();pen.moveTo(left,(top+bottom)/2);pen.lineTo(right,(top+bottom)/2);pen.stroke();
+if(analyser&&!audio.paused&&timestamp-lastSample>45){analyser.getByteTimeDomainData(samples);const trace=[];for(let i=0;i<256;i++){const v=samples[Math.floor(i*samples.length/256)];trace.push((v-128)/128);}history.unshift(trace);history=history.slice(0,7);lastSample=timestamp;}
+for(let j=history.length-1;j>=0;j--){const trace=history[j];const age=j/Math.max(1,history.length-1);const yCenter=(top+bottom)/2+age*28;const amp=(bottom-top)*.34;pen.beginPath();for(let i=0;i<trace.length;i++){const x=left+(right-left)*i/(trace.length-1);const y=yCenter-trace[i]*amp; if(i===0)pen.moveTo(x,y);else pen.lineTo(x,y);}pen.strokeStyle=j===0?'#dfc58d':`rgba(177,147,93,${.23*(1-age)+.045})`;pen.lineWidth=j===0?1.5:1;pen.shadowBlur=j===0?8:0;pen.shadowColor='#e3bf7e';pen.stroke();pen.shadowBlur=0;}
+if(!dragging){now.textContent=clock(audio.currentTime);if(duration())seek.value=String(Math.round(audio.currentTime/duration()*1000));}updateCaptions();}
+requestAnimationFrame(draw);
+</script>
 </body>
 </html>

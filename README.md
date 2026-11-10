@@ -1,5 +1,9 @@
 # Antivenom
 
+[Expyrotic Cosmology](https://standardgalactic.github.io/antivenom/expyrotic-cosmology.pdf)
+
+* [How Cosmic Memory Could Replace Inflation](https://standardgalactic.github.io/antivenom/)
+
 [The Obligation to Grow](https://standardgalactic.github.io/antivenom/obligation-to-grow.pdf)
 
 * [Why Platforms Force You to Grow](https://standardgalactic.github.io/antivenom/obligation-to-grow.html)
@@ -100,29 +104,3 @@ So, what have we learned? Your brain is an anxious little prediction engine, con
 
 
 [The Joy of Spherepop](https://standardgalactic.github.io/spherepop/Joy-of-Spherepop.pdf)
-
-
-<!--
-![](dark-patterns.jpg)
-
-
-[Interface Opacity](https://standardgalactic.github.io/antivenom/Interface%20Opacity.pdf)
-
-![](ankara-01.webp)
-![](ankara-02.webp)
-![](ankara-03.webp)
-![](ankara-04.webp)
-
-Click [here](https://standardgalactic.github.io/antivenom/notes-on-active-inference) to find out if YOU are a victim of surprise-induced existential meltdown!
-
-# Conceptual Map
-
-![](mindmap.webp)
-
-![](swipe_animation.gif)
-![](continuous_swipe_trace.gif)
-
-# Secret Message
-
-![](swipe_multiple_words_fixed.gif)
--->
