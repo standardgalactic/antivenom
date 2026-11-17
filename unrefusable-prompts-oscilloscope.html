@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How Software Defaults Steal Developer Credit</title>
+<style>
+  :root { color-scheme: dark; --amber: #e4bf83; --green: #b7e7a2; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: clamp(12px, 5vw, 60px);
+    background: #1a1814;
+    color: #f0e7d5;
+    font: 15px/1.55 ui-monospace, Consolas, monospace;
+  }
+  main {
+    max-width: 850px;
+    margin: auto;
+    padding: clamp(16px, 4vw, 36px);
+    background: #302a21;
+    border: 1px solid #6a5d48;
+    border-radius: 10px;
+    box-shadow: 0 16px 48px #0006;
+  }
+  h1 { margin: 0 0 22px; font: 400 clamp(28px, 6vw, 52px)/1.07 Georgia, serif; }
+  .screen {
+    overflow: hidden;
+    border: 8px solid #181a15;
+    border-radius: 18px;
+    outline: 1px solid #6a5d48;
+    background: #0b150f;
+  }
+  canvas { display: block; width: 100%; height: clamp(150px, 39vw, 300px); }
+  .transport { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; margin-top: 18px; }
+  button {
+    min-height: 44px;
+    padding: 6px 12px;
+    background: #42392b;
+    border: 1px solid #7b6a50;
+    border-radius: 4px;
+    color: #f0e7d5;
+    font: inherit;
+    cursor: pointer;
+  }
+  button:disabled { opacity: .55; cursor: default; }
+  #play { color: var(--amber); min-width: 7ch; }
+  #seek { display: block; width: 100%; margin: 13px 0 4px; accent-color: var(--amber); }
+  .time { display: flex; justify-content: space-between; color: #d1c3aa; font-variant-numeric: tabular-nums; }
+  #caption {
+    min-height: 4.5em;
+    margin: 16px 0;
+    padding: 11px 14px;
+    background: #211e18;
+    border-left: 2px solid var(--amber);
+    font: clamp(17px, 3vw, 22px)/1.4 Georgia, serif;
+    overflow-wrap: anywhere;
+  }
+  a { color: var(--amber); text-underline-offset: 4px; }
+  :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+  #status { color: #e0cdb0; font-size: 13px; }
+  #status:empty { display: none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>How Software Defaults Steal Developer Credit</h1>
+  <div class="screen"><canvas id="scope" aria-hidden="true"></canvas></div>
+  <div class="transport">
+    <button id="play" type="button">Play</button>
+    <button id="back" type="button" aria-label="Back 10 seconds" disabled>−10 s</button>
+    <button id="forward" type="button" aria-label="Forward 10 seconds" disabled>+10 s</button>
+    <button id="cc" type="button" aria-pressed="true">CC on</button>
+  </div>
+  <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Playback position" disabled>
+  <div class="time"><span id="elapsed">0:00</span><span id="duration">0:00</span></div>
+  <p id="caption" aria-label="Captions"></p>
+  <a href="https://standardgalactic.github.io/antivenom/unrefusable-prompts.pdf"
+     target="_blank" rel="noopener">Read Unrefusable Prompts (PDF)</a>
+  <p id="status" role="status"></p>
+  <audio id="audio" preload="metadata" src="How_software_defaults_steal_developer_credit.mp3">
+    <track id="subtitles" kind="captions" srclang="en" label="English"
+           src="How_software_defaults_steal_developer_credit.vtt">
+  </audio>
+</main>
+<script>
+  const byId = id => document.getElementById(id);
+  const audio = byId('audio');
+  const play = byId('play');
+  const seek = byId('seek');
+  const back = byId('back');
+  const forward = byId('forward');
+  const cc = byId('cc');
+  const caption = byId('caption');
+  const subtitles = byId('subtitles');
+  const canvas = byId('scope');
+  const pen = canvas.getContext('2d');
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+
+  let context, analyser, samples;
+  let animation = 0;
+  let audioError = '';
+  let captionError = '';
+
+  function showStatus() {
+    byId('status').textContent = [audioError, captionError].filter(Boolean).join(' ');
+  }
+
+  function clock(seconds) {
+    const whole = Number.isFinite(seconds) ? Math.floor(seconds) : 0;
+    return Math.floor(whole / 60) + ':' + String(whole % 60).padStart(2, '0');
+  }
+
+  function syncPosition() {
+    const duration = audio.duration;
+    const ready = Number.isFinite(duration) && duration > 0;
+    seek.disabled = back.disabled = forward.disabled = !ready;
+    if (!audio.seeking) seek.value = ready ? Math.round(audio.currentTime / duration * 1000) : 0;
+    const elapsed = clock(audio.currentTime);
+    const total = clock(duration);
+    byId('elapsed').textContent = elapsed;
+    byId('duration').textContent = total;
+    seek.setAttribute('aria-valuetext', elapsed + ' of ' + total);
+  }
+
+  function seekTo(seconds) {
+    if (seek.disabled) return;
+    const target = Math.max(0, Math.min(audio.duration, seconds));
+    seek.value = Math.round(target / audio.duration * 1000);
+    audio.currentTime = target;
+    syncPosition();
+  }
+
+  seek.addEventListener('input', () => seekTo(audio.duration * Number(seek.value) / 1000));
+  back.addEventListener('click', () => seekTo(audio.currentTime - 10));
+  forward.addEventListener('click', () => seekTo(audio.currentTime + 10));
+  for (const event of ['loadedmetadata', 'durationchange', 'timeupdate', 'seeked', 'emptied']) {
+    audio.addEventListener(event, syncPosition);
+  }
+  syncPosition();
+
+  function syncCaptions() {
+    const cues = cc.getAttribute('aria-pressed') === 'true' ? subtitles.track.activeCues : [];
+    caption.textContent = Array.from(cues || [], cue => cue.getCueAsHTML().textContent).join(' ');
+  }
+
+  subtitles.track.addEventListener('cuechange', syncCaptions);
+  subtitles.addEventListener('error', () => {
+    captionError = 'Captions could not load. Serve the page and matching VTT from the same folder.';
+    showStatus();
+  });
+  subtitles.track.mode = 'hidden';
+  cc.addEventListener('click', () => {
+    const enabled = cc.getAttribute('aria-pressed') !== 'true';
+    cc.setAttribute('aria-pressed', String(enabled));
+    cc.textContent = enabled ? 'CC on' : 'CC off';
+    caption.hidden = !enabled;
+    syncCaptions();
+  });
+
+  play.addEventListener('click', async () => {
+    if (!audio.paused) {
+      audio.pause();
+      return;
+    }
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!context && AudioContextClass && location.protocol !== 'file:') {
+        context = new AudioContextClass();
+        analyser = context.createAnalyser();
+        analyser.fftSize = 2048;
+        samples = new Float32Array(analyser.fftSize);
+        const source = context.createMediaElementSource(audio);
+        source.connect(analyser);
+        analyser.connect(context.destination);
+      }
+      await Promise.all([context?.resume(), audio.play()]);
+      audioError = '';
+    } catch {
+      audioError = 'Playback could not start. Check that the MP3 is beside this page.';
+    }
+    showStatus();
+  });
+
+  audio.addEventListener('error', () => {
+    audioError = 'The MP3 could not be loaded.';
+    showStatus();
+  });
+
+  function draw() {
+    animation = 0;
+    if (!pen) return;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    pen.fillStyle = '#0b150f';
+    pen.fillRect(0, 0, width, height);
+    pen.beginPath();
+    for (let x = width / 2 % 28; x < width; x += 28) {
+      pen.moveTo(x, 0);
+      pen.lineTo(x, height);
+    }
+    for (let y = height / 2 % 28; y < height; y += 28) {
+      pen.moveTo(0, y);
+      pen.lineTo(width, y);
+    }
+    pen.strokeStyle = '#243b2b';
+    pen.lineWidth = 1;
+    pen.stroke();
+
+    const live = analyser && !audio.paused && !audio.ended && !reducedMotion.matches;
+    if (live) analyser.getFloatTimeDomainData(samples);
+    pen.beginPath();
+    for (let i = 0; i < 512; i++) {
+      const x = i * width / 511;
+      const sample = live ? samples[i * 2] : 0;
+      const y = height / 2 - Math.max(-1, Math.min(1, sample * 2.4)) * height * .44;
+      if (i === 0) pen.moveTo(x, y);
+      else pen.lineTo(x, y);
+    }
+    pen.strokeStyle = '#b7e7a2';
+    pen.shadowColor = '#91cf78';
+    pen.shadowBlur = 8;
+    pen.lineWidth = 1.5;
+    pen.stroke();
+    pen.shadowBlur = 0;
+    if (live) animation = requestAnimationFrame(draw);
+  }
+
+  function redraw() {
+    cancelAnimationFrame(animation);
+    draw();
+  }
+
+  new ResizeObserver(() => {
+    const scale = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(canvas.clientWidth * scale);
+    canvas.height = Math.round(canvas.clientHeight * scale);
+    pen?.setTransform(scale, 0, 0, scale, 0, 0);
+    redraw();
+  }).observe(canvas);
+  reducedMotion.addEventListener('change', redraw);
+  for (const event of ['play', 'pause', 'ended']) {
+    audio.addEventListener(event, () => {
+      play.textContent = audio.ended ? 'Replay' : audio.paused ? 'Play' : 'Pause';
+      redraw();
+    });
+  }
+</script>
+</body>
+</html>

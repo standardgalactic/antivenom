@@ -1,8 +1,13 @@
 # Antivenom
 
+[Unrefusable Prompts](https://standardgalactic.github.io/antivenom/unrefusable-prompts.pdf)
+
+* [How Software Defaults Steal Developer Credit](https://standardgalactic.github.io/antivenom/unrefusable-prompts-oscilloscope.html)
+<!--
 [Expyrotic Cosmology](https://standardgalactic.github.io/antivenom/expyrotic-cosmology.pdf)
 
 * [How Cosmic Memory Could Replace Inflation](https://standardgalactic.github.io/antivenom/)
+-->
 
 [The Obligation to Grow](https://standardgalactic.github.io/antivenom/obligation-to-grow.pdf)
 
