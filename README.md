@@ -1,5 +1,9 @@
 # Antivenom
 
+[Moral Coherence and the Boundary of the Moral Community](https://standardgalactic.github.io/antivenom/ethics/moral-coherence.pdf)
+
+* [Why Animal Ethics Fail Mathematical Logic](https://standardgalactic.github.io/antivenom/ethics/)                                                                 
+
 [Unrefusable Prompts](https://standardgalactic.github.io/antivenom/unrefusable-prompts.pdf)
 
 * [How Software Defaults Steal Developer Credit](https://standardgalactic.github.io/antivenom/unrefusable-prompts-oscilloscope.html)

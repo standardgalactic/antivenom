@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moral Coherence and the Boundary of the Moral Community | Oscilloscope</title>
+<style>
+:root{color-scheme:dark;--phosphor:#a5e7a0;--dim:#608461;--bg:#080b08}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;min-height:100dvh;display:grid;place-items:center;background:var(--bg);color:var(--phosphor);font:13px 'Courier New',monospace}main{width:min(92vw,650px);padding:24px 0;text-align:center}h1{font-size:13px;font-weight:normal;letter-spacing:.12em;margin:0 0 22px;text-transform:uppercase;line-height:1.6}.scope{position:relative;width:min(100%,440px,53dvh);aspect-ratio:1;margin:auto;border-radius:50%;overflow:hidden;border:1px solid #354b35;background:#020602;box-shadow:0 0 0 7px #101610,0 0 0 8px #242c24,inset 0 0 40px #000}canvas{position:absolute;inset:0;width:100%;height:100%}.scope:after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:50%;background:radial-gradient(circle,transparent 58%,#0008 100%),repeating-linear-gradient(0deg,transparent 0 3px,#0002 3px 4px)}.controls{display:flex;align-items:center;gap:12px;width:min(100%,440px);margin:23px auto 0}button{font:inherit;color:var(--phosphor);background:transparent;border:1px solid #49634a;padding:7px 10px;cursor:pointer;min-width:62px}button:hover,button:focus-visible{background:#182718}input[type=range]{flex:1;min-width:0;accent-color:var(--phosphor);height:16px;cursor:pointer}input:disabled{opacity:.4;cursor:default}#clock{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;white-space:nowrap}#captions{min-height:4.5em;margin:20px auto 8px;max-width:600px;line-height:1.55;font-size:14px;color:#c3e6bf}#status{font-size:10px;letter-spacing:.08em;color:var(--dim);min-height:1.4em}a{display:inline-block;margin-top:12px;color:var(--dim);font-size:12px;line-height:1.5;text-decoration:none}a:hover,a:focus-visible{color:var(--phosphor);text-decoration:underline}
+.picker{display:flex;align-items:center;gap:12px;width:min(100%,440px);margin:0 auto 20px;text-align:left}.picker label{font-size:10px;color:var(--dim);letter-spacing:.12em}.picker select{flex:1;min-width:0;background:#0c130c;color:var(--phosphor);border:1px solid #354b35;padding:8px;font:12px 'Courier New',monospace;cursor:pointer}.hint{margin-top:12px;color:#506850;font-size:10px;letter-spacing:.05em}.controls{flex-wrap:wrap}.controls input[type=range]{flex:1 1 100%;order:3;height:24px;margin:0;touch-action:none}.controls #clock{margin-left:auto}
+</style>
+</head>
+<body><main>
+<h1>Moral Coherence</h1>
+<div class="scope"><canvas id="scope" aria-label="Live audio X–Y oscilloscope"></canvas></div>
+<div class="controls"><button id="play" type="button" title="Play or pause (Space)" aria-keyshortcuts="Space">PLAY</button><input id="seek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="Seek through recording"><span id="clock">0:00 / 0:00</span></div>
+<div id="captions"></div><div id="status" role="status">STANDBY</div>
+
+<audio id="audio" preload="metadata" ></audio>
+</main><script>
+'use strict';
+const audio=document.getElementById('audio'),play=document.getElementById('play'),seek=document.getElementById('seek'),clock=document.getElementById('clock'),caption=document.getElementById('captions'),status=document.getElementById('status'),canvas=document.getElementById('scope'),g=canvas.getContext('2d');
+const N=480,dpr=Math.min(devicePixelRatio||1,2);canvas.width=N*dpr;canvas.height=N*dpr;g.scale(dpr,dpr);
+let ctx,analyser,wave,drag=false,pending=null,seekTimer,blobURL=null,cues=[],subtitleState='LOADING SUBTITLES',lastCaption=null;
+let blobPromise=null,switching=false,knownDuration=0,serial=0,supportsRange=null;
+const MP3='Why_Animal_Ethics_Fail_Mathematical_Logic.mp3';
+const VTT=MP3.replace(/\.mp3$/i,'.vtt');
+audio.src=MP3;
+function init(){if(ctx)return;ctx=new (window.AudioContext||window.webkitAudioContext)();analyser=ctx.createAnalyser();analyser.fftSize=2048;wave=new Float32Array(analyser.fftSize);const source=ctx.createMediaElementSource(audio);source.connect(analyser);analyser.connect(ctx.destination);}
+function fmt(t){if(!Number.isFinite(t))return '0:00';t=Math.max(0,Math.floor(t));return Math.floor(t/60)+':'+String(t%60).padStart(2,'0');}
+function duration(){return Number.isFinite(audio.duration)&&audio.duration>0?audio.duration:knownDuration;}
+function valid(){return duration()>0;}
+function position(){return drag?Number(seek.value):pending?.target??audio.currentTime;}
+function sync(){const d=duration();seek.disabled=!d;if(d){seek.max=d;seek.step='0.01';if(!drag)seek.value=position();}clock.textContent=fmt(position())+' / '+fmt(d);}
+function report(s){status.textContent=s;}
+function prepareBlob(){if(!blobPromise){blobPromise=fetch(MP3).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.blob();}).then(b=>b.type==='audio/mpeg'?b:new Blob([b],{type:'audio/mpeg'})).catch(e=>{blobPromise=null;throw e;});}return blobPromise;}
+play.addEventListener('click',async()=>{try{init();await ctx.resume();if(audio.paused){if(audio.ended)audio.currentTime=0;await audio.play();}else audio.pause();}catch(e){report('PLAYBACK ERROR');console.error(e);}});
+document.addEventListener('keydown',e=>{
+  if(e.code!=='Space' && e.key!==' ')return;
+  if(e.altKey||e.ctrlKey||e.metaKey||e.target.isContentEditable||['TEXTAREA','SELECT'].includes(e.target.tagName)||(e.target.tagName==='INPUT'&&e.target.type!=='range'))return;
+  e.preventDefault();
+  if(!e.repeat)play.click();
+});
+audio.addEventListener('play',()=>{play.textContent='PAUSE';if(!switching)report(subtitleState);});audio.addEventListener('pause',()=>{play.textContent='PLAY';});audio.addEventListener('ended',()=>{play.textContent='PLAY';});audio.addEventListener('error',()=>{if(!switching)report('AUDIO FILE UNAVAILABLE');});
+for(const e of ['loadedmetadata','durationchange','timeupdate'])audio.addEventListener(e,()=>{if(Number.isFinite(audio.duration)&&audio.duration>0)knownDuration=audio.duration;sync();});
+/* Seeking. Servers without HTTP range support cannot jump inside a streamed
+   MP3, so the browser restarts it from zero. A cheap range probe detects this
+   at load. In that case the whole file is downloaded in the background, and a
+   seek swaps playback to the in-memory copy at the requested position. */
+async function probe(){
+  try{
+    const r=await fetch(MP3,{headers:{Range:'bytes=0-1'}});
+    supportsRange=r.status===206;
+    if(r.body)r.body.cancel().catch(()=>{});
+  }catch(e){supportsRange=null;}
+  if(supportsRange===false)prepareBlob().catch(e=>console.error(e));
+}
+async function swapAndSeek(){
+  if(switching)return;
+  switching=true;clearTimeout(seekTimer);
+  const resume=!audio.paused;
+  if(resume)audio.pause();
+  report('BUFFERING AUDIO FOR SEEKING');
+  try{
+    if(!blobURL){
+      const blob=await prepareBlob();
+      blobURL=URL.createObjectURL(blob);
+      await new Promise((resolve,reject)=>{const timer=setTimeout(()=>finish(Error('Metadata timeout')),15000);function finish(e){clearTimeout(timer);audio.removeEventListener('loadedmetadata',ok);audio.removeEventListener('error',bad);e?reject(e):resolve();}function ok(){finish();}function bad(){finish(Error('Blob audio error'));}audio.addEventListener('loadedmetadata',ok);audio.addEventListener('error',bad);audio.src=blobURL;audio.load();});
+    }
+    audio.currentTime=Math.min(pending?pending.target:audio.currentTime,duration());
+    if(resume)await audio.play();
+    report(subtitleState);
+  }catch(e){console.error(e);report('SEEK UNAVAILABLE');}
+  finally{switching=false;pending=null;sync();updateCaption();}
+}
+function verify(id){if(!pending||pending.id!==id||switching)return;const p=pending;const elapsed=(performance.now()-p.started)/1000;const t=audio.currentTime;const ok=!audio.seeking&&t>=p.target-1&&t<=p.target+elapsed+1.5;if(ok){pending=null;report(subtitleState);sync();}else if(!blobURL){swapAndSeek();}else{pending=null;report('SEEK NOT CONFIRMED');sync();}}
+function commit(){if(!drag||!valid())return;const target=Number(seek.value);drag=false;pending={target,id:++serial,started:performance.now()};clearTimeout(seekTimer);if(!switching){if(supportsRange===false&&!blobURL){swapAndSeek();}else{try{audio.currentTime=target;const id=serial;seekTimer=setTimeout(()=>verify(id),2500);}catch(e){if(!blobURL)swapAndSeek();else{pending=null;report('SEEK UNAVAILABLE');}}}}sync();updateCaption();}
+seek.addEventListener('pointerdown',()=>{if(!seek.disabled)drag=true;});seek.addEventListener('input',()=>{if(!valid())return;drag=true;sync();updateCaption();});
+for(const e of ['change','pointerup','pointercancel','blur'])seek.addEventListener(e,commit);
+window.addEventListener('pagehide',()=>{if(blobURL)URL.revokeObjectURL(blobURL);});
+function stamp(s){const p=s.trim().replace(',','.').split(':').map(Number);return p.reduce((a,b)=>a*60+b,0);}
+async function subtitles(){try{const r=await fetch(VTT);if(!r.ok)throw Error(r.status);const text=(await r.text()).replace(/^\uFEFF/,'').replace(/\r\n?/g,'\n');for(const block of text.split(/\n\s*\n/)){const lines=block.trim().split('\n');const i=lines.findIndex(l=>l.includes('-->'));if(i<0||/^(NOTE|STYLE|REGION)(\s|$)/.test(lines[0]))continue;const [a,b]=lines[i].split('-->');const start=stamp(a),end=stamp(b.trim().split(/\s+/)[0]);const value=lines.slice(i+1).join(' ').replace(/<[^>]*>/g,'').trim();if(Number.isFinite(start)&&Number.isFinite(end)&&end>start&&value)cues.push({start,end,value});}cues.sort((a,b)=>a.start-b.start);subtitleState=cues.length?'SUBTITLES READY':'NO SUBTITLE CUES';}catch(e){subtitleState='SUBTITLES UNAVAILABLE';}if(!switching)report(subtitleState);}
+function updateCaption(){const t=position();let text='';for(const c of cues){if(c.start>t)break;if(t<c.end)text+=(text?' ':'')+c.value;}if(text!==lastCaption){caption.textContent=text;lastCaption=text;}}
+subtitles();probe();
+let gain=1,last=performance.now();
+function draw(now){const dt=Math.min(100,now-last);last=now;const c=N/2,R=N*.43;g.fillStyle=`rgba(2,7,2,${1-Math.exp(-dt/65)})`;g.fillRect(0,0,N,N);
+// Static, faint oscilloscope graticule.
+g.save();g.beginPath();g.arc(c,c,R,0,Math.PI*2);g.clip();g.strokeStyle='#8bd88b0d';g.lineWidth=.7;g.beginPath();g.moveTo(c-R,c);g.lineTo(c+R,c);g.moveTo(c,c-R);g.lineTo(c,c+R);for(let i=-4;i<=4;i++){const p=i*R/5;g.moveTo(c+p,c-4);g.lineTo(c+p,c+4);g.moveTo(c-4,c+p);g.lineTo(c+4,c+p);}g.stroke();
+if(analyser&&!audio.paused&&!audio.seeking){analyser.getFloatTimeDomainData(wave);let sum=0,peak=0;for(const v of wave){sum+=v*v;peak=Math.max(peak,Math.abs(v));}const rms=Math.sqrt(sum/wave.length);const desired=Math.min(5,.28/Math.max(.055,rms));gain+=(desired-gain)*.09;const scale=R*Math.min(gain,.94/Math.max(.001,peak));const lag=Math.max(1,Math.round(ctx.sampleRate*.0027));if(rms>.0005){g.beginPath();for(let i=0;i<wave.length-lag;i+=2){const x=c+wave[i]*scale,y=c-wave[i+lag]*scale;if(i===0)g.moveTo(x,y);else g.lineTo(x,y);}g.strokeStyle='#b5ffad';g.lineWidth=.9;g.shadowColor='#7cff70';g.shadowBlur=5;g.stroke();g.shadowBlur=0;}}
+else if(!analyser||audio.paused){g.fillStyle='#b5ffad';g.beginPath();g.arc(c,c,1.3,0,Math.PI*2);g.fill();}g.restore();sync();updateCaption();requestAnimationFrame(draw);}
+g.fillStyle='#020702';g.fillRect(0,0,N,N);requestAnimationFrame(draw);sync();
+</script></body></html>
